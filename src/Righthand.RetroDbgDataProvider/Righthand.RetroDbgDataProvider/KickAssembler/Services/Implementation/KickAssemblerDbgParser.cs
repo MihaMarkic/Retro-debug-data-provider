@@ -40,18 +40,23 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
                 throw new Exception($"Excepted root element {rootName} but was {root.Name.LocalName}");
             }
             var source = GetElement(root, "Sources");
-            var sourcesTask = ParseSources(source, ct);
+            var sourcesTask = ParseFromLines(source, ParseSource, ct);
             var segments = root.Elements("Segment");
             var segmentsTask = ParseSegments(segments);
+            var labels = GetElement(root, "Labels");
+            var labelsTask = ParseFromLines(labels, ParseLabel, ct);
+            var breakpoints = GetElement(root, "Breakpoints");
+            var breakpointsTask = ParseFromLines(breakpoints, ParseBreakpoint, ct);
+            var watchpoints = GetElement(root, "Watchpoints");
+            var watchpointsTask = ParseFromLines(watchpoints, ParseWatchpoint, ct);
             return new C64Debugger(
                 (string?)root.Attribute("Version") ?? "?",
-                await sourcesTask,
-                await segmentsTask,
-                ImmutableArray<Label>.Empty,
-                ImmutableArray<Breakpoint>.Empty,
-                ImmutableArray<Watchpoint>.Empty
+                await sourcesTask.ConfigureAwait(false),
+                await segmentsTask.ConfigureAwait(false),
+                await labelsTask.ConfigureAwait(false),
+                await breakpointsTask.ConfigureAwait(false),
+                await watchpointsTask.ConfigureAwait(false)
                 );
-            throw new NotImplementedException();
         }
         catch (Exception ex)
         {
@@ -74,7 +79,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
     }
     internal async ValueTask<ImmutableArray<Segment>> ParseSegments(IEnumerable<XElement> segments)
     {
-        var tasks = segments.Select(s => ParseSegment(s));
+        var tasks = segments.Select(ParseSegment);
         var builder = ImmutableArray.CreateBuilder<Segment>();
         foreach (var task in tasks)
         {
@@ -101,21 +106,13 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         }
         return builder.ToImmutable();
     }
-    internal ValueTask<Block> ParseBlock(XElement block)
+    internal async ValueTask<Block> ParseBlock(XElement block, CancellationToken ct = default)
     {
-        string lines = block.Value;
-        var builder = ImmutableArray.CreateBuilder<BlockItem>(CountChars(lines, '\n') + 1);
-        using (var reader = new StringReader(lines))
-        {
-            while (reader.ReadLine() is { } line)
-            {
-                builder.Add(ParseBlockItem(line));
-            }
-        }
+        var blockItems = ParseFromLines(block, ParseBlockItem, ct);
         var result = new Block(
             (string)(block.Attribute("name") ?? throw new Exception("Block missing a name attribute")),
-            builder.ToImmutable());
-        return new ValueTask<Block>(result);
+            await blockItems.ConfigureAwait(false));
+        return result;
     }
 
     internal static BlockItem ParseBlockItem(string line)
@@ -148,9 +145,10 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
 
 
     /// <summary>
-    /// Parses hex text in form of '$XXXX'
+    /// Parses hex text in form of '$ABED'
     /// </summary>
     /// <param name="text"></param>
+    /// <param name="digitsCount"></param>
     /// <returns></returns>
     internal static ushort ParseHexText(string text, int digitsCount)
     {
@@ -170,18 +168,20 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         return result;
     }
 
-    internal ValueTask<ImmutableArray<Source>> ParseSources(XElement sources, CancellationToken ct = default)
+    internal ValueTask<ImmutableArray<T>> ParseFromLines<T>(XElement sources, 
+        Func<string, T> parseLine,
+        CancellationToken ct = default)
     {
         string lines = sources.Value;
-        var builder = ImmutableArray.CreateBuilder<Source>(CountChars(lines, '\n') + 1);
+        var builder = ImmutableArray.CreateBuilder<T>(CountChars(lines, '\n') + 1);
         using (var reader = new StringReader(lines))
         {
             while (reader.ReadLine() is { } line)
             {
-                builder.Add(ParseSource(line));
+                builder.Add(parseLine(line));
             }
         }
-        return new ValueTask<ImmutableArray<Source>>(builder.ToImmutable());
+        return new ValueTask<ImmutableArray<T>>(builder.ToImmutable());
     }
 
     internal static Source ParseSource(string line)
@@ -204,6 +204,49 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         {
             return new Source(index, SourceOrigin.User, parts[1]);
         }
+    }
+    internal static Label ParseLabel(string line)
+    {
+        var parts = line.Trim().Split(',');
+        if (parts.Length != 8)
+        {
+            throw new Exception($"Label line '{line}' should have eight parts separated by comma");
+        }
+        return new Label(
+            SegmentName: parts[0],
+            Address: ParseHexText(parts[1], 4),
+            Name: parts[2],
+            ParseFileLocationFragment(parts[3], parts[4], parts[5], parts[6], parts[7])
+        );
+    }
+
+    internal static Breakpoint ParseBreakpoint(string line)
+    {
+        var parts = line.Trim().Split(',');
+        if (parts.Length != 3)
+        {
+            throw new Exception($"Breakpoint line '{line}' should have three parts separated by comma");
+        }
+        return new Breakpoint(
+            SegmentName: parts[0],
+            Address: ParseHexText(parts[1], 4),
+            Argument: parts[1]
+        );
+    }
+
+    internal static Watchpoint ParseWatchpoint(string line)
+    {
+        var parts = line.Trim().Split(',');
+        if (parts.Length != 4)
+        {
+            throw new Exception($"Watchpoint line '{line}' should have four parts separated by comma");
+        }
+        return new Watchpoint(
+            SegmentName: parts[0],
+            Address1: ParseHexText(parts[1], 4),
+            Address2: parts[2] != string.Empty ? ParseHexText(parts[2], 4): null,
+            Argument: parts[3]
+        );
     }
 }
 

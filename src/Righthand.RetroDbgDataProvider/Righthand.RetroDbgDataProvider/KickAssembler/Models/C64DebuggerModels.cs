@@ -19,8 +19,7 @@ public record Source(int Index, SourceOrigin Origin, string Path);
 public record Segment(string Name, ImmutableArray<Block> Blocks);
 public record Block(string Name, ImmutableArray<BlockItem> Items);
 public record BlockItem(ushort Start, ushort End, FileLocation FileLocation);
-public record Label(string SegmentName, ushort Address, string Name, int Start, int End,
-    FileLocation FileLocation);
+public record Label(string SegmentName, ushort Address, string Name, FileLocation FileLocation);
 public record FileLocation(int SourceIndex, int Line1, int Col1,
     int Line2, int Col2);
 public record Breakpoint(string SegmentName, ushort Address, string? Argument);
