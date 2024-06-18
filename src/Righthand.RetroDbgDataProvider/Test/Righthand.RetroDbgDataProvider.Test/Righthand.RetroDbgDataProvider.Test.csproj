@@ -20,4 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Righthand.RetroDbgDataProvider\Righthand.RetroDbgDataProvider.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Samples\KickAssembler\FullSample.dbg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

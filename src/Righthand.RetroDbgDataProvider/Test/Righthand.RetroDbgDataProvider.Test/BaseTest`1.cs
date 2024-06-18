@@ -34,4 +34,8 @@ public abstract class BaseTest<T>
     {
         target = null!;
     }
+    protected static string LoadKickAssSample(string name)
+    {
+        return File.ReadAllText(Path.Combine("Samples", "KickAssembler", name));
+    }
 }

@@ -37,4 +37,73 @@ public class KickAssemblerDbgParserTest : BaseTest<KickAssemblerDbgParser>
             Assert.That(actual, Is.EqualTo(0x0801));
         }
     }
+    [TestFixture]
+    public class ParseBlockItem : KickAssemblerDbgParserTest
+    {
+        [Test]
+        public void GivenCorrectValue_ParsesCorrectly()
+        {
+            var actual = KickAssemblerDbgParser.ParseBlockItem("$0801,$0802,0,56,2,56,6");
+
+            Assert.That(
+                actual, Is.EqualTo(
+                    new BlockItem(0x0801, 0x0802, new FileLocation(0, 56, 2, 56, 6))));
+        }
+    }
+    [TestFixture]
+    public class ParseLabel : KickAssemblerDbgParserTest
+    {
+        [Test]
+        public void GivenCorrectValue_ParsesCorrectly()
+        {
+            var actual = KickAssemblerDbgParser.ParseLabel("Default,$4000,start,1,5,1,5,6");
+
+            Assert.That(actual, Is.EqualTo(
+                new Label("Default", 0x4000, "start", new FileLocation(1, 5, 1, 5, 6))
+                ));
+        }
+    }
+    [TestFixture]
+    public class ParseBreakpoint : KickAssemblerDbgParserTest
+    {
+        [Test]
+        public void GivenCorrectValue_ParsesCorrectly()
+        {
+            var actual = KickAssemblerDbgParser.ParseBreakpoint("Default,$2002,if y&lt;5");
+
+            Assert.That(actual, Is.EqualTo(new Breakpoint("Default", 0x2002, "if y<5")));
+        }
+    }
+    [TestFixture]
+    public class ParseWatchpoint : KickAssemblerDbgParserTest
+    {
+        [Test]
+        public void GivenCorrectValue_ParsesCorrectly()
+        {
+            var actual = KickAssemblerDbgParser.ParseWatchpoint("Default,$2000,$2002,store");
+
+            Assert.That(actual, Is.EqualTo(new Watchpoint("Default", 0x2000, 0x2002, "store")));
+        }
+    }
+    [TestFixture]
+    public class LoadContentAsync : KickAssemblerDbgParserTest
+    {
+        [Test]
+        public async Task GivenSampleFile_ParsesCorrectly()
+        {
+            var sample = LoadKickAssSample("FullSample.dbg");
+            var actual = await Target.LoadContentAsync(sample);
+
+            Assert.That(actual.Sources.Length, Is.EqualTo(3));
+            Assert.That(actual.Segments.Length, Is.EqualTo(2));
+            var defaultSegment = actual.Segments[0];
+            Assert.That(defaultSegment.Name, Is.EqualTo("Default"));
+            Assert.That(defaultSegment.Blocks.Length, Is.EqualTo(3));
+            var basicBlock = defaultSegment.Blocks[0];
+            Assert.That(basicBlock.Name, Is.EqualTo("Basic"));
+            Assert.That(actual.Labels.Length, Is.EqualTo(3));
+            Assert.That(actual.Breakpoints.Length, Is.EqualTo(1));
+            Assert.That(actual.Watchpoints.Length, Is.EqualTo(1));
+        }
+    }
 }

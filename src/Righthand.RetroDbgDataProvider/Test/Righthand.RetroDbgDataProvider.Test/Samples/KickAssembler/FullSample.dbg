@@ -1,0 +1,45 @@
+﻿<C64debugger version="1.0">
+   <Sources values="INDEX,FILE">
+      0,KickAss.jar:/include/autoinclude.asm
+      1,D:\Temp\KickAssembler\VS64\src\test.asm
+      2,D:\Temp\KickAssembler\VS64\src\hello.asm
+   </Sources>
+
+   <Segment name="Default" dest="" values="START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
+      <Block name="Basic">
+         $0801,$0802,0,56,2,56,6
+         $0803,$0804,0,57,5,57,9
+         $0805,$0805,0,58,5,58,9
+         $0806,$080a,0,59,2,59,6
+         $080b,$080b,0,60,2,60,6
+         $080c,$080d,0,62,5,62,9
+      </Block>
+      <Block name="Default">
+         $2000,$2001,1,2,5,2,7
+      </Block>
+      <Block name="Unnamed">
+         $c000,$c001,2,8,5,8,7
+         $c002,$c004,2,9,5,9,7
+         $c005,$c006,2,18,5,18,7
+         $c007,$c009,2,19,5,19,7
+         $c00a,$c00a,2,14,5,14,7
+      </Block>
+   </Segment>
+   <Segment name="AdditionalEmpty" dest="" values="START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
+   </Segment>
+
+   <Labels values="SEGMENT,ADDRESS,NAME,START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
+      Default,$2000,label,1,1,1,1,6
+      Default,$c000,start,2,7,1,7,6
+      Default,$080c,upstartEnd,0,61,1,61,11
+   </Labels>
+
+   <Breakpoints values="SEGMENT,ADDRESS,ARGUMENT">
+      Default,$2002,if y&lt;5
+   </Breakpoints>
+
+   <Watchpoints values="SEGMENT,ADDRESS1,ADDRESS2,ARGUMENT">
+      Default,$2000,$2002,store
+   </Watchpoints>
+
+</C64debugger>

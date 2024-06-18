@@ -2,6 +2,7 @@
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using System.Collections.Immutable;
 using System.Globalization;
+using System.Web;
 using System.Xml.Linq;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
@@ -178,7 +179,10 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         {
             while (reader.ReadLine() is { } line)
             {
-                builder.Add(parseLine(line));
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    builder.Add(parseLine(line));
+                }
             }
         }
         return new ValueTask<ImmutableArray<T>>(builder.ToImmutable());
@@ -230,7 +234,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         return new Breakpoint(
             SegmentName: parts[0],
             Address: ParseHexText(parts[1], 4),
-            Argument: parts[1]
+            Argument: HttpUtility.HtmlDecode(parts[2])
         );
     }
 
