@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Righthand.RetroDbgDataProvider", "Righthand.RetroDbgDataProvider\Righthand.RetroDbgDataProvider.csproj", "{1DE43F9F-41AD-4F7B-A64C-E4D74366DC1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Righthand.RetroDbgDataProvider", "Righthand.RetroDbgDataProvider\Righthand.RetroDbgDataProvider.csproj", "{1DE43F9F-41AD-4F7B-A64C-E4D74366DC1F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7CE05460-0E11-47EC-B2D4-75D225DF1569}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{8C11230B-C5DE-44C1-A4C9-D9C8B174FA75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Righthand.RetroDbgDataProvider.Test", "Test\Righthand.RetroDbgDataProvider.Test\Righthand.RetroDbgDataProvider.Test.csproj", "{F5817A7F-DF93-48D0-A493-A59A0C45F619}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Righthand.RetroDbgDataProvider.Test", "Test\Righthand.RetroDbgDataProvider.Test\Righthand.RetroDbgDataProvider.Test.csproj", "{F5817A7F-DF93-48D0-A493-A59A0C45F619}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
