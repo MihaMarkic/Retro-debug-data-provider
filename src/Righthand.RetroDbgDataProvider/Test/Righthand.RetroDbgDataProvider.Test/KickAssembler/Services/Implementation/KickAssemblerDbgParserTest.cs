@@ -12,10 +12,10 @@ public class KickAssemblerDbgParserTest : BaseTest<KickAssemblerDbgParser>
         [Test]
         public void GivenSampleKickAssJarLine_ParserCorrectly()
         {
-            var actual = KickAssemblerDbgParser.ParseSource("0,KickAss.jar:/include/autoinclude.asm");
+            var actual = KickAssemblerDbgParser.ParseSource("0,KickAss.jar:/include/auto_include.asm");
 
             Assert.That(actual,
-                Is.EqualTo(new Source(0, SourceOrigin.KickAss, "/include/autoinclude.asm")));
+                Is.EqualTo(new Source(0, SourceOrigin.KickAss, "/include/auto_include.asm")));
         }
         [Test]
         public void GivenSampleUserLine_ParserCorrectly()
