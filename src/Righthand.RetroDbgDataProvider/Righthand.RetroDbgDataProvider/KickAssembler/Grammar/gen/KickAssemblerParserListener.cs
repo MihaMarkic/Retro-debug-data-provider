@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
+// Generated from /Users/miha/Projects/rthand/c64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -41,15 +41,15 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProgram([NotNull] KickAssemblerParser.ProgramContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.line"/>.
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.unit"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterLine([NotNull] KickAssemblerParser.LineContext context);
+	void EnterUnit([NotNull] KickAssemblerParser.UnitContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.line"/>.
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.unit"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitLine([NotNull] KickAssemblerParser.LineContext context);
+	void ExitUnit([NotNull] KickAssemblerParser.UnitContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.label"/>.
 	/// </summary>
@@ -100,6 +100,176 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitExpression([NotNull] KickAssemblerParser.ExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.assignment_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAssignment_expression([NotNull] KickAssemblerParser.Assignment_expressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.assignment_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAssignment_expression([NotNull] KickAssemblerParser.Assignment_expressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.shorthand_assignment_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterShorthand_assignment_expression([NotNull] KickAssemblerParser.Shorthand_assignment_expressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.shorthand_assignment_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitShorthand_assignment_expression([NotNull] KickAssemblerParser.Shorthand_assignment_expressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.unary_operator"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterUnary_operator([NotNull] KickAssemblerParser.Unary_operatorContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.unary_operator"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitUnary_operator([NotNull] KickAssemblerParser.Unary_operatorContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.classFunction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterClassFunction([NotNull] KickAssemblerParser.ClassFunctionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.classFunction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitClassFunction([NotNull] KickAssemblerParser.ClassFunctionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.function"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFunction([NotNull] KickAssemblerParser.FunctionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.function"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFunction([NotNull] KickAssemblerParser.FunctionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.condition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCondition([NotNull] KickAssemblerParser.ConditionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.condition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCondition([NotNull] KickAssemblerParser.ConditionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.compiler_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCompiler_statement([NotNull] KickAssemblerParser.Compiler_statementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.compiler_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCompiler_statement([NotNull] KickAssemblerParser.Compiler_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.print"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPrint([NotNull] KickAssemblerParser.PrintContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.print"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPrint([NotNull] KickAssemblerParser.PrintContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.printnow"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPrintnow([NotNull] KickAssemblerParser.PrintnowContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.printnow"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPrintnow([NotNull] KickAssemblerParser.PrintnowContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.var"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterVar([NotNull] KickAssemblerParser.VarContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.var"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitVar([NotNull] KickAssemblerParser.VarContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.const"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterConst([NotNull] KickAssemblerParser.ConstContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.const"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitConst([NotNull] KickAssemblerParser.ConstContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.if"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterIf([NotNull] KickAssemblerParser.IfContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.if"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitIf([NotNull] KickAssemblerParser.IfContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.errorif"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterErrorif([NotNull] KickAssemblerParser.ErrorifContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.errorif"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitErrorif([NotNull] KickAssemblerParser.ErrorifContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.eval"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEval([NotNull] KickAssemblerParser.EvalContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.eval"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEval([NotNull] KickAssemblerParser.EvalContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.break"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBreak([NotNull] KickAssemblerParser.BreakContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.break"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBreak([NotNull] KickAssemblerParser.BreakContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.watch"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterWatch([NotNull] KickAssemblerParser.WatchContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.watch"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitWatch([NotNull] KickAssemblerParser.WatchContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.watchArguments"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterWatchArguments([NotNull] KickAssemblerParser.WatchArgumentsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.watchArguments"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitWatchArguments([NotNull] KickAssemblerParser.WatchArgumentsContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.directive"/>.
 	/// </summary>

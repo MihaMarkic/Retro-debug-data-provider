@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
+// Generated from /Users/miha/Projects/rthand/c64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -38,11 +38,11 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] KickAssemblerParser.ProgramContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="KickAssemblerParser.line"/>.
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.unit"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitLine([NotNull] KickAssemblerParser.LineContext context);
+	Result VisitUnit([NotNull] KickAssemblerParser.UnitContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.label"/>.
 	/// </summary>
@@ -73,6 +73,108 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] KickAssemblerParser.ExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.assignment_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAssignment_expression([NotNull] KickAssemblerParser.Assignment_expressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.shorthand_assignment_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitShorthand_assignment_expression([NotNull] KickAssemblerParser.Shorthand_assignment_expressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.unary_operator"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitUnary_operator([NotNull] KickAssemblerParser.Unary_operatorContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.classFunction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitClassFunction([NotNull] KickAssemblerParser.ClassFunctionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.function"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunction([NotNull] KickAssemblerParser.FunctionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.condition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCondition([NotNull] KickAssemblerParser.ConditionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.compiler_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCompiler_statement([NotNull] KickAssemblerParser.Compiler_statementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.print"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPrint([NotNull] KickAssemblerParser.PrintContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.printnow"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPrintnow([NotNull] KickAssemblerParser.PrintnowContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.var"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitVar([NotNull] KickAssemblerParser.VarContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.const"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitConst([NotNull] KickAssemblerParser.ConstContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.if"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIf([NotNull] KickAssemblerParser.IfContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.errorif"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitErrorif([NotNull] KickAssemblerParser.ErrorifContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.eval"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEval([NotNull] KickAssemblerParser.EvalContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.break"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBreak([NotNull] KickAssemblerParser.BreakContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.watch"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitWatch([NotNull] KickAssemblerParser.WatchContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.watchArguments"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitWatchArguments([NotNull] KickAssemblerParser.WatchArgumentsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.directive"/>.
 	/// </summary>

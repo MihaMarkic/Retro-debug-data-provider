@@ -29,6 +29,17 @@ CPU6502: '_6502';
 DTV: 'dtv';
 CPU65C02: '_65c02';
 
+PRINT: 'print';
+PRINTNOW: 'printnow';
+VAR: 'var';
+CONST: 'const';
+IF: 'if';
+ERRORIF: 'errorif';
+EVAL: 'eval';
+
+BREAK: 'break';
+WATCH: 'watch';
+
 OPEN_BRACE               : '{' ; //{ this.OnOpenBrace(); };
 CLOSE_BRACE              : '}' ; //{ this.OnCloseBrace(); };
 OPEN_BRACKET             : '[';

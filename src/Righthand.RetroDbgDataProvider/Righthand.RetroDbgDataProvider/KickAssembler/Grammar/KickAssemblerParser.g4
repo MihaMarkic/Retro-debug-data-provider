@@ -5,12 +5,12 @@ options {
 }
 
 program: 
-    line*;
+    unit ((EOL | SEMICOLON) unit)?;         // unit is a basic unit separated by newline or semicolon
 
 // needs a lot of love
 
-line: 
-    instruction
+unit:
+    | instruction
     | label
     | directive;
 
@@ -20,7 +20,7 @@ label:
 instruction: fullOpcode argumentList?;
 
 argumentList
-	: argument (COMMA argumentList)?
+	: argument (COMMA argument)*
 	; 
 argument
 	: (PLUS | MINUS)+
@@ -31,21 +31,69 @@ argument
 	;
 
 expression:  
-//	'(' expression ')'
+	OPEN_PARENS expression CLOSE_PARENS
 //	| expression binaryop expression
 //	| expression logicalop expression
-//	| expression '*' expression
-//	| expression '/' expression
-//	| expression '+' expression
-//	| expression '-' expression
-//	| ('>' | '<') expression
-//	| expression logicalop expression
+	| expression STAR expression
+	| expression DIV expression
+	| expression PLUS expression
+	| expression MINUS expression
+	| (LT | GT) expression
+	| classFunction
+	| function
+	| STRING
 //	| pseudoOps
-	 number
-//	| CHAR 
+	| number
+	| STRING 
 //	| label 
 	;
 	
+assignment_expression
+    : UNQUOTED_STRING ASSIGNMENT expression;
+shorthand_assignment_expression
+    : UNQUOTED_STRING unary_operator;
+        
+unary_operator
+    : PLUS PLUS
+    | MINUS MINUS
+    | PLUS ASSIGNMENT
+    | MINUS ASSIGNMENT
+    | STAR ASSIGNMENT
+    | DIV ASSIGNMENT
+    ;
+	
+classFunction: STRING DOT STRING OPEN_PARENS argumentList? CLOSE_PARENS;
+function: STRING OPEN_PARENS argumentList? CLOSE_PARENS;
+	
+condition: expression;
+	
+compiler_statement
+    : DOT (
+          print
+        | printnow
+        | var
+        | const
+        | if
+        | errorif
+        | eval
+        | break
+        | watch
+    );
+
+print: PRINT expression;
+printnow: PRINTNOW expression;
+var: VAR assignment_expression;
+const: CONST assignment_expression;
+if: IF OPEN_PARENS expression CLOSE_PARENS compiler_statement;
+errorif: ERRORIF OPEN_PARENS expression CLOSE_PARENS COMMA STRING;
+eval: EVAL assignment_expression;
+break: BREAK STRING?;
+watch: WATCH watchArguments;
+watchArguments
+    : expression
+    | expression COMMA expression
+    | expression COMMA expression? COMMA STRING;
+
 directive
     : DOT (
         cpuDirective 

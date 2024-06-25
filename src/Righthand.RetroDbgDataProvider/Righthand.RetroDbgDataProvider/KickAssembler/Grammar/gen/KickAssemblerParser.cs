@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
+// Generated from /Users/miha/Projects/rthand/c64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -39,76 +39,86 @@ public partial class KickAssemblerParser : Parser {
 		ONLYA=1, ABS=2, BINARY_TEXT=3, C64_TEXT=4, TEXT_TEXT=5, ASCII=6, PETSCII_MIXED=7, 
 		PETSCII_UPPER=8, SCREENCODE_MIXED=9, SCREENCODE_UPPER=10, ENCODING=11, 
 		FILL=12, FILLWORD=13, LOHIFILL=14, BYTE=15, WORD=16, DWORD=17, CPU=18, 
-		CPU6502NOILLEGALS=19, CPU6502=20, DTV=21, CPU65C02=22, OPEN_BRACE=23, 
-		CLOSE_BRACE=24, OPEN_BRACKET=25, CLOSE_BRACKET=26, OPEN_PARENS=27, CLOSE_PARENS=28, 
-		DOT=29, COMMA=30, COLON=31, SEMICOLON=32, PLUS=33, MINUS=34, STAR=35, 
-		DIV=36, PERCENT=37, AMP=38, BITWISE_OR=39, CARET=40, BANG=41, TILDE=42, 
-		ASSIGNMENT=43, LT=44, GT=45, INTERR=46, DOUBLE_COLON=47, OP_COALESCING=48, 
-		OP_INC=49, OP_DEC=50, OP_AND=51, OP_OR=52, OP_PTR=53, OP_EQ=54, OP_NE=55, 
-		OP_LE=56, OP_GE=57, OP_ADD_ASSIGNMENT=58, OP_SUB_ASSIGNMENT=59, OP_MULT_ASSIGNMENT=60, 
-		OP_DIV_ASSIGNMENT=61, OP_MOD_ASSIGNMENT=62, OP_AND_ASSIGNMENT=63, OP_OR_ASSIGNMENT=64, 
-		OP_XOR_ASSIGNMENT=65, OP_LEFT_SHIFT=66, OP_LEFT_SHIFT_ASSIGNMENT=67, OP_COALESCING_ASSIGNMENT=68, 
-		OP_RANGE=69, DEC_NUMBER=70, HEX_NUMBER=71, BIN_NUMBER=72, CHAR=73, STRING=74, 
-		HASH=75, DOUBLE_QUOTE=76, UNQUOTED_STRING=77, SYMBOL=78, SINGLE_LINE_COMMENT=79, 
-		MULTI_LINE_COMMENT=80, EOL=81, WS=82, ADC=83, AND=84, ASL=85, BCC=86, 
-		BCS=87, BEQ=88, BIT=89, BMI=90, BNE=91, BPL=92, BRA=93, BRK=94, BVC=95, 
-		BVS=96, CLC=97, CLD=98, CLI=99, CLV=100, CMP=101, CPX=102, CPY=103, DEC=104, 
-		DEX=105, DEY=106, EOR=107, INC=108, INX=109, INY=110, JMP=111, JSR=112, 
-		LDA=113, LDY=114, LDX=115, LSR=116, NOP=117, ORA=118, PHA=119, PHX=120, 
-		PHY=121, PHP=122, PLA=123, PLP=124, PLY=125, ROL=126, ROR=127, RTI=128, 
-		RTS=129, SBC=130, SEC=131, SED=132, SEI=133, STA=134, STX=135, STY=136, 
-		STZ=137, TAX=138, TAY=139, TSX=140, TXA=141, TXS=142, TYA=143;
+		CPU6502NOILLEGALS=19, CPU6502=20, DTV=21, CPU65C02=22, PRINT=23, PRINTNOW=24, 
+		VAR=25, CONST=26, IF=27, ERRORIF=28, EVAL=29, BREAK=30, WATCH=31, OPEN_BRACE=32, 
+		CLOSE_BRACE=33, OPEN_BRACKET=34, CLOSE_BRACKET=35, OPEN_PARENS=36, CLOSE_PARENS=37, 
+		DOT=38, COMMA=39, COLON=40, SEMICOLON=41, PLUS=42, MINUS=43, STAR=44, 
+		DIV=45, PERCENT=46, AMP=47, BITWISE_OR=48, CARET=49, BANG=50, TILDE=51, 
+		ASSIGNMENT=52, LT=53, GT=54, INTERR=55, DOUBLE_COLON=56, OP_COALESCING=57, 
+		OP_INC=58, OP_DEC=59, OP_AND=60, OP_OR=61, OP_PTR=62, OP_EQ=63, OP_NE=64, 
+		OP_LE=65, OP_GE=66, OP_ADD_ASSIGNMENT=67, OP_SUB_ASSIGNMENT=68, OP_MULT_ASSIGNMENT=69, 
+		OP_DIV_ASSIGNMENT=70, OP_MOD_ASSIGNMENT=71, OP_AND_ASSIGNMENT=72, OP_OR_ASSIGNMENT=73, 
+		OP_XOR_ASSIGNMENT=74, OP_LEFT_SHIFT=75, OP_LEFT_SHIFT_ASSIGNMENT=76, OP_COALESCING_ASSIGNMENT=77, 
+		OP_RANGE=78, DEC_NUMBER=79, HEX_NUMBER=80, BIN_NUMBER=81, CHAR=82, STRING=83, 
+		HASH=84, DOUBLE_QUOTE=85, UNQUOTED_STRING=86, SYMBOL=87, SINGLE_LINE_COMMENT=88, 
+		MULTI_LINE_COMMENT=89, EOL=90, WS=91, ADC=92, AND=93, ASL=94, BCC=95, 
+		BCS=96, BEQ=97, BIT=98, BMI=99, BNE=100, BPL=101, BRA=102, BRK=103, BVC=104, 
+		BVS=105, CLC=106, CLD=107, CLI=108, CLV=109, CMP=110, CPX=111, CPY=112, 
+		DEC=113, DEX=114, DEY=115, EOR=116, INC=117, INX=118, INY=119, JMP=120, 
+		JSR=121, LDA=122, LDY=123, LDX=124, LSR=125, NOP=126, ORA=127, PHA=128, 
+		PHX=129, PHY=130, PHP=131, PLA=132, PLP=133, PLY=134, ROL=135, ROR=136, 
+		RTI=137, RTS=138, SBC=139, SEC=140, SED=141, SEI=142, STA=143, STX=144, 
+		STY=145, STZ=146, TAX=147, TAY=148, TSX=149, TXA=150, TXS=151, TYA=152;
 	public const int
-		RULE_program = 0, RULE_line = 1, RULE_label = 2, RULE_instruction = 3, 
-		RULE_argumentList = 4, RULE_argument = 5, RULE_expression = 6, RULE_directive = 7, 
-		RULE_memoryDirective = 8, RULE_cpuDirective = 9, RULE_byteDirective = 10, 
-		RULE_wordDirective = 11, RULE_dwordDirective = 12, RULE_textDirective = 13, 
-		RULE_fillDirective = 14, RULE_fillDirectiveArguments = 15, RULE_fillExpression = 16, 
-		RULE_encodingDirective = 17, RULE_encodingDirectiveValue = 18, RULE_importFileDirective = 19, 
-		RULE_importDataDirective = 20, RULE_labelName = 21, RULE_define = 22, 
-		RULE_file = 23, RULE_numberList = 24, RULE_number = 25, RULE_decNumber = 26, 
-		RULE_hexNumber = 27, RULE_binNumber = 28, RULE_opcodeExtension = 29, RULE_fullOpcode = 30, 
-		RULE_opcode = 31;
+		RULE_program = 0, RULE_unit = 1, RULE_label = 2, RULE_instruction = 3, 
+		RULE_argumentList = 4, RULE_argument = 5, RULE_expression = 6, RULE_assignment_expression = 7, 
+		RULE_shorthand_assignment_expression = 8, RULE_unary_operator = 9, RULE_classFunction = 10, 
+		RULE_function = 11, RULE_condition = 12, RULE_compiler_statement = 13, 
+		RULE_print = 14, RULE_printnow = 15, RULE_var = 16, RULE_const = 17, RULE_if = 18, 
+		RULE_errorif = 19, RULE_eval = 20, RULE_break = 21, RULE_watch = 22, RULE_watchArguments = 23, 
+		RULE_directive = 24, RULE_memoryDirective = 25, RULE_cpuDirective = 26, 
+		RULE_byteDirective = 27, RULE_wordDirective = 28, RULE_dwordDirective = 29, 
+		RULE_textDirective = 30, RULE_fillDirective = 31, RULE_fillDirectiveArguments = 32, 
+		RULE_fillExpression = 33, RULE_encodingDirective = 34, RULE_encodingDirectiveValue = 35, 
+		RULE_importFileDirective = 36, RULE_importDataDirective = 37, RULE_labelName = 38, 
+		RULE_define = 39, RULE_file = 40, RULE_numberList = 41, RULE_number = 42, 
+		RULE_decNumber = 43, RULE_hexNumber = 44, RULE_binNumber = 45, RULE_opcodeExtension = 46, 
+		RULE_fullOpcode = 47, RULE_opcode = 48;
 	public static readonly string[] ruleNames = {
-		"program", "line", "label", "instruction", "argumentList", "argument", 
-		"expression", "directive", "memoryDirective", "cpuDirective", "byteDirective", 
-		"wordDirective", "dwordDirective", "textDirective", "fillDirective", "fillDirectiveArguments", 
-		"fillExpression", "encodingDirective", "encodingDirectiveValue", "importFileDirective", 
-		"importDataDirective", "labelName", "define", "file", "numberList", "number", 
-		"decNumber", "hexNumber", "binNumber", "opcodeExtension", "fullOpcode", 
-		"opcode"
+		"program", "unit", "label", "instruction", "argumentList", "argument", 
+		"expression", "assignment_expression", "shorthand_assignment_expression", 
+		"unary_operator", "classFunction", "function", "condition", "compiler_statement", 
+		"print", "printnow", "var", "const", "if", "errorif", "eval", "break", 
+		"watch", "watchArguments", "directive", "memoryDirective", "cpuDirective", 
+		"byteDirective", "wordDirective", "dwordDirective", "textDirective", "fillDirective", 
+		"fillDirectiveArguments", "fillExpression", "encodingDirective", "encodingDirectiveValue", 
+		"importFileDirective", "importDataDirective", "labelName", "define", "file", 
+		"numberList", "number", "decNumber", "hexNumber", "binNumber", "opcodeExtension", 
+		"fullOpcode", "opcode"
 	};
 
 	private static readonly string[] _LiteralNames = {
 		null, "'a'", "'abs'", "'binary'", "'c64'", "'text'", "'ascii'", "'petscii_mixed'", 
 		"'petscii_upper'", "'screencode_mixed'", "'screencode_upper'", "'encoding'", 
 		"'fill'", "'fillword'", "'lohifill'", null, null, null, "'cpu'", "'_6502NoIllegals'", 
-		"'_6502'", "'dtv'", "'_65c02'", "'{'", "'}'", "'['", "']'", "'('", "')'", 
-		"'.'", "','", "':'", "';'", "'+'", "'-'", "'*'", "'/'", "'%'", "'&'", 
-		"'|'", "'^'", "'!'", "'~'", "'='", "'<'", "'>'", "'?'", "'::'", "'??'", 
-		"'++'", "'--'", "'&&'", "'||'", "'->'", "'=='", "'!='", "'<='", "'>='", 
-		"'+='", "'-='", "'*='", "'/='", "'%='", "'&='", "'|='", "'^='", "'<<'", 
-		"'<<='", "'??='", "'..'", null, null, null, null, null, "'#'", "'\"'", 
-		null, null, null, null, null, null, "'adc'", "'and'", "'asl'", "'bcc'", 
-		"'bcs'", "'beq'", "'bit'", "'bmi'", "'bne'", "'bpl'", "'bra'", "'brk'", 
-		"'bvc'", "'bvs'", "'clc'", "'cld'", "'cli'", "'clv'", "'cmp'", "'cpx'", 
-		"'cpy'", "'dec'", "'dex'", "'dey'", "'eor'", "'inc'", "'inx'", "'iny'", 
-		"'jmp'", "'jsr'", "'lda'", "'ldy'", "'ldx'", "'lsr'", "'nop'", "'ora'", 
-		"'pha'", "'phx'", "'phy'", "'php'", "'pla'", "'plp'", "'ply'", "'rol'", 
-		"'ror'", "'rti'", "'rts'", "'sbc'", "'sec'", "'sed'", "'sei'", "'sta'", 
-		"'stx'", "'sty'", "'stz'", "'tax'", "'tay'", "'tsx'", "'txa'", "'txs'", 
-		"'tya'"
+		"'_6502'", "'dtv'", "'_65c02'", "'print'", "'printnow'", "'var'", "'const'", 
+		"'if'", "'errorif'", "'eval'", "'break'", "'watch'", "'{'", "'}'", "'['", 
+		"']'", "'('", "')'", "'.'", "','", "':'", "';'", "'+'", "'-'", "'*'", 
+		"'/'", "'%'", "'&'", "'|'", "'^'", "'!'", "'~'", "'='", "'<'", "'>'", 
+		"'?'", "'::'", "'??'", "'++'", "'--'", "'&&'", "'||'", "'->'", "'=='", 
+		"'!='", "'<='", "'>='", "'+='", "'-='", "'*='", "'/='", "'%='", "'&='", 
+		"'|='", "'^='", "'<<'", "'<<='", "'??='", "'..'", null, null, null, null, 
+		null, "'#'", "'\"'", null, null, null, null, null, null, "'adc'", "'and'", 
+		"'asl'", "'bcc'", "'bcs'", "'beq'", "'bit'", "'bmi'", "'bne'", "'bpl'", 
+		"'bra'", "'brk'", "'bvc'", "'bvs'", "'clc'", "'cld'", "'cli'", "'clv'", 
+		"'cmp'", "'cpx'", "'cpy'", "'dec'", "'dex'", "'dey'", "'eor'", "'inc'", 
+		"'inx'", "'iny'", "'jmp'", "'jsr'", "'lda'", "'ldy'", "'ldx'", "'lsr'", 
+		"'nop'", "'ora'", "'pha'", "'phx'", "'phy'", "'php'", "'pla'", "'plp'", 
+		"'ply'", "'rol'", "'ror'", "'rti'", "'rts'", "'sbc'", "'sec'", "'sed'", 
+		"'sei'", "'sta'", "'stx'", "'sty'", "'stz'", "'tax'", "'tay'", "'tsx'", 
+		"'txa'", "'txs'", "'tya'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "ONLYA", "ABS", "BINARY_TEXT", "C64_TEXT", "TEXT_TEXT", "ASCII", 
 		"PETSCII_MIXED", "PETSCII_UPPER", "SCREENCODE_MIXED", "SCREENCODE_UPPER", 
 		"ENCODING", "FILL", "FILLWORD", "LOHIFILL", "BYTE", "WORD", "DWORD", "CPU", 
-		"CPU6502NOILLEGALS", "CPU6502", "DTV", "CPU65C02", "OPEN_BRACE", "CLOSE_BRACE", 
-		"OPEN_BRACKET", "CLOSE_BRACKET", "OPEN_PARENS", "CLOSE_PARENS", "DOT", 
-		"COMMA", "COLON", "SEMICOLON", "PLUS", "MINUS", "STAR", "DIV", "PERCENT", 
-		"AMP", "BITWISE_OR", "CARET", "BANG", "TILDE", "ASSIGNMENT", "LT", "GT", 
-		"INTERR", "DOUBLE_COLON", "OP_COALESCING", "OP_INC", "OP_DEC", "OP_AND", 
-		"OP_OR", "OP_PTR", "OP_EQ", "OP_NE", "OP_LE", "OP_GE", "OP_ADD_ASSIGNMENT", 
+		"CPU6502NOILLEGALS", "CPU6502", "DTV", "CPU65C02", "PRINT", "PRINTNOW", 
+		"VAR", "CONST", "IF", "ERRORIF", "EVAL", "BREAK", "WATCH", "OPEN_BRACE", 
+		"CLOSE_BRACE", "OPEN_BRACKET", "CLOSE_BRACKET", "OPEN_PARENS", "CLOSE_PARENS", 
+		"DOT", "COMMA", "COLON", "SEMICOLON", "PLUS", "MINUS", "STAR", "DIV", 
+		"PERCENT", "AMP", "BITWISE_OR", "CARET", "BANG", "TILDE", "ASSIGNMENT", 
+		"LT", "GT", "INTERR", "DOUBLE_COLON", "OP_COALESCING", "OP_INC", "OP_DEC", 
+		"OP_AND", "OP_OR", "OP_PTR", "OP_EQ", "OP_NE", "OP_LE", "OP_GE", "OP_ADD_ASSIGNMENT", 
 		"OP_SUB_ASSIGNMENT", "OP_MULT_ASSIGNMENT", "OP_DIV_ASSIGNMENT", "OP_MOD_ASSIGNMENT", 
 		"OP_AND_ASSIGNMENT", "OP_OR_ASSIGNMENT", "OP_XOR_ASSIGNMENT", "OP_LEFT_SHIFT", 
 		"OP_LEFT_SHIFT_ASSIGNMENT", "OP_COALESCING_ASSIGNMENT", "OP_RANGE", "DEC_NUMBER", 
@@ -155,12 +165,14 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class ProgramContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public LineContext[] line() {
-			return GetRuleContexts<LineContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public UnitContext[] unit() {
+			return GetRuleContexts<UnitContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public LineContext line(int i) {
-			return GetRuleContext<LineContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public UnitContext unit(int i) {
+			return GetRuleContext<UnitContext>(i);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EOL() { return GetToken(KickAssemblerParser.EOL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SEMICOLON() { return GetToken(KickAssemblerParser.SEMICOLON, 0); }
 		public ProgramContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -192,20 +204,27 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 67;
+			State = 98;
+			unit();
+			State = 101;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (((((_la - 29)) & ~0x3f) == 0 && ((1L << (_la - 29)) & -17732923532767167L) != 0) || ((((_la - 93)) & ~0x3f) == 0 && ((1L << (_la - 93)) & 2251799813685247L) != 0)) {
+			if (_la==SEMICOLON || _la==EOL) {
 				{
-				{
-				State = 64;
-				line();
-				}
-				}
-				State = 69;
-				ErrorHandler.Sync(this);
+				State = 99;
 				_la = TokenStream.LA(1);
+				if ( !(_la==SEMICOLON || _la==EOL) ) {
+				ErrorHandler.RecoverInline(this);
+				}
+				else {
+					ErrorHandler.ReportMatch(this);
+				    Consume();
+				}
+				State = 100;
+				unit();
+				}
 			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -219,7 +238,7 @@ public partial class KickAssemblerParser : Parser {
 		return _localctx;
 	}
 
-	public partial class LineContext : ParserRuleContext {
+	public partial class UnitContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public InstructionContext instruction() {
 			return GetRuleContext<InstructionContext>(0);
 		}
@@ -229,37 +248,44 @@ public partial class KickAssemblerParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public DirectiveContext directive() {
 			return GetRuleContext<DirectiveContext>(0);
 		}
-		public LineContext(ParserRuleContext parent, int invokingState)
+		public UnitContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_line; } }
+		public override int RuleIndex { get { return RULE_unit; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
-			if (typedListener != null) typedListener.EnterLine(this);
+			if (typedListener != null) typedListener.EnterUnit(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
-			if (typedListener != null) typedListener.ExitLine(this);
+			if (typedListener != null) typedListener.ExitUnit(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitLine(this);
+			if (typedVisitor != null) return typedVisitor.VisitUnit(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public LineContext line() {
-		LineContext _localctx = new LineContext(Context, State);
-		EnterRule(_localctx, 2, RULE_line);
+	public UnitContext unit() {
+		UnitContext _localctx = new UnitContext(Context, State);
+		EnterRule(_localctx, 2, RULE_unit);
 		try {
-			State = 73;
+			State = 107;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
+			case Eof:
+			case SEMICOLON:
+			case EOL:
+				EnterOuterAlt(_localctx, 1);
+				{
+				}
+				break;
 			case ADC:
 			case AND:
 			case ASL:
@@ -321,25 +347,25 @@ public partial class KickAssemblerParser : Parser {
 			case TXA:
 			case TXS:
 			case TYA:
-				EnterOuterAlt(_localctx, 1);
+				EnterOuterAlt(_localctx, 2);
 				{
-				State = 70;
+				State = 104;
 				instruction();
 				}
 				break;
 			case BANG:
 			case UNQUOTED_STRING:
-				EnterOuterAlt(_localctx, 2);
+				EnterOuterAlt(_localctx, 3);
 				{
-				State = 71;
+				State = 105;
 				label();
 				}
 				break;
 			case DOT:
 			case STAR:
-				EnterOuterAlt(_localctx, 3);
+				EnterOuterAlt(_localctx, 4);
 				{
-				State = 72;
+				State = 106;
 				directive();
 				}
 				break;
@@ -395,9 +421,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 75;
+			State = 109;
 			labelName();
-			State = 76;
+			State = 110;
 			instruction();
 			}
 		}
@@ -450,14 +476,14 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 78;
+			State = 112;
 			fullOpcode();
-			State = 80;
+			State = 114;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (((((_la - 25)) & ~0x3f) == 0 && ((1L << (_la - 25)) & 1372190511465221L) != 0)) {
+			if (((((_la - 34)) & ~0x3f) == 0 && ((1L << (_la - 34)) & 1935140466459397L) != 0)) {
 				{
-				State = 79;
+				State = 113;
 				argumentList();
 				}
 			}
@@ -476,12 +502,15 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class ArgumentListContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ArgumentContext argument() {
-			return GetRuleContext<ArgumentContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ArgumentContext[] argument() {
+			return GetRuleContexts<ArgumentContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA() { return GetToken(KickAssemblerParser.COMMA, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ArgumentListContext argumentList() {
-			return GetRuleContext<ArgumentListContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ArgumentContext argument(int i) {
+			return GetRuleContext<ArgumentContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] COMMA() { return GetTokens(KickAssemblerParser.COMMA); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA(int i) {
+			return GetToken(KickAssemblerParser.COMMA, i);
 		}
 		public ArgumentListContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -514,20 +543,24 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 82;
+			State = 116;
 			argument();
-			State = 85;
+			State = 121;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==COMMA) {
+			while (_la==COMMA) {
 				{
-				State = 83;
+				{
+				State = 117;
 				Match(COMMA);
-				State = 84;
-				argumentList();
+				State = 118;
+				argument();
 				}
+				}
+				State = 123;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
 			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -593,20 +626,19 @@ public partial class KickAssemblerParser : Parser {
 		EnterRule(_localctx, 10, RULE_argument);
 		int _la;
 		try {
-			State = 103;
+			State = 140;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case PLUS:
-			case MINUS:
+			switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 88;
+				State = 125;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 87;
+					State = 124;
 					_la = TokenStream.LA(1);
 					if ( !(_la==PLUS || _la==MINUS) ) {
 					ErrorHandler.RecoverInline(this);
@@ -617,54 +649,50 @@ public partial class KickAssemblerParser : Parser {
 					}
 					}
 					}
-					State = 90;
+					State = 127;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( _la==PLUS || _la==MINUS );
 				}
 				break;
-			case HASH:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 92;
+				State = 129;
 				Match(HASH);
-				State = 93;
+				State = 130;
 				number();
 				}
 				break;
-			case OPEN_PARENS:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 94;
+				State = 131;
 				Match(OPEN_PARENS);
-				State = 95;
+				State = 132;
 				argumentList();
-				State = 96;
+				State = 133;
 				Match(CLOSE_PARENS);
 				}
 				break;
-			case OPEN_BRACKET:
+			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 98;
+				State = 135;
 				Match(OPEN_BRACKET);
-				State = 99;
+				State = 136;
 				argumentList();
-				State = 100;
+				State = 137;
 				Match(CLOSE_BRACKET);
 				}
 				break;
-			case DEC_NUMBER:
-			case HEX_NUMBER:
-			case BIN_NUMBER:
+			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 102;
-				expression();
+				State = 139;
+				expression(0);
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -679,9 +707,30 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class ExpressionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_PARENS() { return GetToken(KickAssemblerParser.OPEN_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_PARENS() { return GetToken(KickAssemblerParser.CLOSE_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LT() { return GetToken(KickAssemblerParser.LT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GT() { return GetToken(KickAssemblerParser.GT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ClassFunctionContext classFunction() {
+			return GetRuleContext<ClassFunctionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FunctionContext function() {
+			return GetRuleContext<FunctionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public NumberContext number() {
 			return GetRuleContext<NumberContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STAR() { return GetToken(KickAssemblerParser.STAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIV() { return GetToken(KickAssemblerParser.DIV, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS() { return GetToken(KickAssemblerParser.PLUS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS() { return GetToken(KickAssemblerParser.MINUS, 0); }
 		public ExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -707,13 +756,1285 @@ public partial class KickAssemblerParser : Parser {
 
 	[RuleVersion(0)]
 	public ExpressionContext expression() {
-		ExpressionContext _localctx = new ExpressionContext(Context, State);
-		EnterRule(_localctx, 12, RULE_expression);
+		return expression(0);
+	}
+
+	private ExpressionContext expression(int _p) {
+		ParserRuleContext _parentctx = Context;
+		int _parentState = State;
+		ExpressionContext _localctx = new ExpressionContext(Context, _parentState);
+		ExpressionContext _prevctx = _localctx;
+		int _startState = 12;
+		EnterRecursionRule(_localctx, 12, RULE_expression, _p);
+		int _la;
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 154;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
+			case 1:
+				{
+				State = 143;
+				Match(OPEN_PARENS);
+				State = 144;
+				expression(0);
+				State = 145;
+				Match(CLOSE_PARENS);
+				}
+				break;
+			case 2:
+				{
+				State = 147;
+				_la = TokenStream.LA(1);
+				if ( !(_la==LT || _la==GT) ) {
+				ErrorHandler.RecoverInline(this);
+				}
+				else {
+					ErrorHandler.ReportMatch(this);
+				    Consume();
+				}
+				State = 148;
+				expression(6);
+				}
+				break;
+			case 3:
+				{
+				State = 149;
+				classFunction();
+				}
+				break;
+			case 4:
+				{
+				State = 150;
+				function();
+				}
+				break;
+			case 5:
+				{
+				State = 151;
+				Match(STRING);
+				}
+				break;
+			case 6:
+				{
+				State = 152;
+				number();
+				}
+				break;
+			case 7:
+				{
+				State = 153;
+				Match(STRING);
+				}
+				break;
+			}
+			Context.Stop = TokenStream.LT(-1);
+			State = 170;
+			ErrorHandler.Sync(this);
+			_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
+			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( ParseListeners!=null )
+						TriggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					State = 168;
+					ErrorHandler.Sync(this);
+					switch ( Interpreter.AdaptivePredict(TokenStream,7,Context) ) {
+					case 1:
+						{
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 156;
+						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
+						State = 157;
+						Match(STAR);
+						State = 158;
+						expression(11);
+						}
+						break;
+					case 2:
+						{
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 159;
+						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
+						State = 160;
+						Match(DIV);
+						State = 161;
+						expression(10);
+						}
+						break;
+					case 3:
+						{
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 162;
+						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
+						State = 163;
+						Match(PLUS);
+						State = 164;
+						expression(9);
+						}
+						break;
+					case 4:
+						{
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 165;
+						if (!(Precpred(Context, 7))) throw new FailedPredicateException(this, "Precpred(Context, 7)");
+						State = 166;
+						Match(MINUS);
+						State = 167;
+						expression(8);
+						}
+						break;
+					}
+					} 
+				}
+				State = 172;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			UnrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public partial class Assignment_expressionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ASSIGNMENT() { return GetToken(KickAssemblerParser.ASSIGNMENT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public Assignment_expressionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_assignment_expression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterAssignment_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitAssignment_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAssignment_expression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Assignment_expressionContext assignment_expression() {
+		Assignment_expressionContext _localctx = new Assignment_expressionContext(Context, State);
+		EnterRule(_localctx, 14, RULE_assignment_expression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 105;
-			number();
+			State = 173;
+			Match(UNQUOTED_STRING);
+			State = 174;
+			Match(ASSIGNMENT);
+			State = 175;
+			expression(0);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Shorthand_assignment_expressionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Unary_operatorContext unary_operator() {
+			return GetRuleContext<Unary_operatorContext>(0);
+		}
+		public Shorthand_assignment_expressionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_shorthand_assignment_expression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterShorthand_assignment_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitShorthand_assignment_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitShorthand_assignment_expression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Shorthand_assignment_expressionContext shorthand_assignment_expression() {
+		Shorthand_assignment_expressionContext _localctx = new Shorthand_assignment_expressionContext(Context, State);
+		EnterRule(_localctx, 16, RULE_shorthand_assignment_expression);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 177;
+			Match(UNQUOTED_STRING);
+			State = 178;
+			unary_operator();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Unary_operatorContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] PLUS() { return GetTokens(KickAssemblerParser.PLUS); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS(int i) {
+			return GetToken(KickAssemblerParser.PLUS, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] MINUS() { return GetTokens(KickAssemblerParser.MINUS); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS(int i) {
+			return GetToken(KickAssemblerParser.MINUS, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ASSIGNMENT() { return GetToken(KickAssemblerParser.ASSIGNMENT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STAR() { return GetToken(KickAssemblerParser.STAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIV() { return GetToken(KickAssemblerParser.DIV, 0); }
+		public Unary_operatorContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_unary_operator; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterUnary_operator(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitUnary_operator(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUnary_operator(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Unary_operatorContext unary_operator() {
+		Unary_operatorContext _localctx = new Unary_operatorContext(Context, State);
+		EnterRule(_localctx, 18, RULE_unary_operator);
+		try {
+			State = 192;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
+			case 1:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 180;
+				Match(PLUS);
+				State = 181;
+				Match(PLUS);
+				}
+				break;
+			case 2:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 182;
+				Match(MINUS);
+				State = 183;
+				Match(MINUS);
+				}
+				break;
+			case 3:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 184;
+				Match(PLUS);
+				State = 185;
+				Match(ASSIGNMENT);
+				}
+				break;
+			case 4:
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 186;
+				Match(MINUS);
+				State = 187;
+				Match(ASSIGNMENT);
+				}
+				break;
+			case 5:
+				EnterOuterAlt(_localctx, 5);
+				{
+				State = 188;
+				Match(STAR);
+				State = 189;
+				Match(ASSIGNMENT);
+				}
+				break;
+			case 6:
+				EnterOuterAlt(_localctx, 6);
+				{
+				State = 190;
+				Match(DIV);
+				State = 191;
+				Match(ASSIGNMENT);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ClassFunctionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] STRING() { return GetTokens(KickAssemblerParser.STRING); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING(int i) {
+			return GetToken(KickAssemblerParser.STRING, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOT() { return GetToken(KickAssemblerParser.DOT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_PARENS() { return GetToken(KickAssemblerParser.OPEN_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_PARENS() { return GetToken(KickAssemblerParser.CLOSE_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ArgumentListContext argumentList() {
+			return GetRuleContext<ArgumentListContext>(0);
+		}
+		public ClassFunctionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_classFunction; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterClassFunction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitClassFunction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitClassFunction(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ClassFunctionContext classFunction() {
+		ClassFunctionContext _localctx = new ClassFunctionContext(Context, State);
+		EnterRule(_localctx, 20, RULE_classFunction);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 194;
+			Match(STRING);
+			State = 195;
+			Match(DOT);
+			State = 196;
+			Match(STRING);
+			State = 197;
+			Match(OPEN_PARENS);
+			State = 199;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (((((_la - 34)) & ~0x3f) == 0 && ((1L << (_la - 34)) & 1935140466459397L) != 0)) {
+				{
+				State = 198;
+				argumentList();
+				}
+			}
+
+			State = 201;
+			Match(CLOSE_PARENS);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FunctionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_PARENS() { return GetToken(KickAssemblerParser.OPEN_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_PARENS() { return GetToken(KickAssemblerParser.CLOSE_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ArgumentListContext argumentList() {
+			return GetRuleContext<ArgumentListContext>(0);
+		}
+		public FunctionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_function; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterFunction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitFunction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFunction(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FunctionContext function() {
+		FunctionContext _localctx = new FunctionContext(Context, State);
+		EnterRule(_localctx, 22, RULE_function);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 203;
+			Match(STRING);
+			State = 204;
+			Match(OPEN_PARENS);
+			State = 206;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (((((_la - 34)) & ~0x3f) == 0 && ((1L << (_la - 34)) & 1935140466459397L) != 0)) {
+				{
+				State = 205;
+				argumentList();
+				}
+			}
+
+			State = 208;
+			Match(CLOSE_PARENS);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ConditionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public ConditionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_condition; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterCondition(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitCondition(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCondition(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ConditionContext condition() {
+		ConditionContext _localctx = new ConditionContext(Context, State);
+		EnterRule(_localctx, 24, RULE_condition);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 210;
+			expression(0);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Compiler_statementContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOT() { return GetToken(KickAssemblerParser.DOT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public PrintContext print() {
+			return GetRuleContext<PrintContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public PrintnowContext printnow() {
+			return GetRuleContext<PrintnowContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public VarContext var() {
+			return GetRuleContext<VarContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ConstContext @const() {
+			return GetRuleContext<ConstContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public IfContext @if() {
+			return GetRuleContext<IfContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ErrorifContext errorif() {
+			return GetRuleContext<ErrorifContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public EvalContext eval() {
+			return GetRuleContext<EvalContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public BreakContext @break() {
+			return GetRuleContext<BreakContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public WatchContext watch() {
+			return GetRuleContext<WatchContext>(0);
+		}
+		public Compiler_statementContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_compiler_statement; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterCompiler_statement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitCompiler_statement(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompiler_statement(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Compiler_statementContext compiler_statement() {
+		Compiler_statementContext _localctx = new Compiler_statementContext(Context, State);
+		EnterRule(_localctx, 26, RULE_compiler_statement);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 212;
+			Match(DOT);
+			State = 222;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case PRINT:
+				{
+				State = 213;
+				print();
+				}
+				break;
+			case PRINTNOW:
+				{
+				State = 214;
+				printnow();
+				}
+				break;
+			case VAR:
+				{
+				State = 215;
+				var();
+				}
+				break;
+			case CONST:
+				{
+				State = 216;
+				@const();
+				}
+				break;
+			case IF:
+				{
+				State = 217;
+				@if();
+				}
+				break;
+			case ERRORIF:
+				{
+				State = 218;
+				errorif();
+				}
+				break;
+			case EVAL:
+				{
+				State = 219;
+				eval();
+				}
+				break;
+			case BREAK:
+				{
+				State = 220;
+				@break();
+				}
+				break;
+			case WATCH:
+				{
+				State = 221;
+				watch();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class PrintContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PRINT() { return GetToken(KickAssemblerParser.PRINT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public PrintContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_print; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterPrint(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitPrint(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPrint(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public PrintContext print() {
+		PrintContext _localctx = new PrintContext(Context, State);
+		EnterRule(_localctx, 28, RULE_print);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 224;
+			Match(PRINT);
+			State = 225;
+			expression(0);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class PrintnowContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PRINTNOW() { return GetToken(KickAssemblerParser.PRINTNOW, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public PrintnowContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_printnow; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterPrintnow(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitPrintnow(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPrintnow(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public PrintnowContext printnow() {
+		PrintnowContext _localctx = new PrintnowContext(Context, State);
+		EnterRule(_localctx, 30, RULE_printnow);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 227;
+			Match(PRINTNOW);
+			State = 228;
+			expression(0);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class VarContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode VAR() { return GetToken(KickAssemblerParser.VAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Assignment_expressionContext assignment_expression() {
+			return GetRuleContext<Assignment_expressionContext>(0);
+		}
+		public VarContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_var; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterVar(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitVar(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitVar(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public VarContext var() {
+		VarContext _localctx = new VarContext(Context, State);
+		EnterRule(_localctx, 32, RULE_var);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 230;
+			Match(VAR);
+			State = 231;
+			assignment_expression();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ConstContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CONST() { return GetToken(KickAssemblerParser.CONST, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Assignment_expressionContext assignment_expression() {
+			return GetRuleContext<Assignment_expressionContext>(0);
+		}
+		public ConstContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_const; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterConst(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitConst(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitConst(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ConstContext @const() {
+		ConstContext _localctx = new ConstContext(Context, State);
+		EnterRule(_localctx, 34, RULE_const);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 233;
+			Match(CONST);
+			State = 234;
+			assignment_expression();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class IfContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IF() { return GetToken(KickAssemblerParser.IF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_PARENS() { return GetToken(KickAssemblerParser.OPEN_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_PARENS() { return GetToken(KickAssemblerParser.CLOSE_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Compiler_statementContext compiler_statement() {
+			return GetRuleContext<Compiler_statementContext>(0);
+		}
+		public IfContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_if; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterIf(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitIf(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIf(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public IfContext @if() {
+		IfContext _localctx = new IfContext(Context, State);
+		EnterRule(_localctx, 36, RULE_if);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 236;
+			Match(IF);
+			State = 237;
+			Match(OPEN_PARENS);
+			State = 238;
+			expression(0);
+			State = 239;
+			Match(CLOSE_PARENS);
+			State = 240;
+			compiler_statement();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ErrorifContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ERRORIF() { return GetToken(KickAssemblerParser.ERRORIF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_PARENS() { return GetToken(KickAssemblerParser.OPEN_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_PARENS() { return GetToken(KickAssemblerParser.CLOSE_PARENS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA() { return GetToken(KickAssemblerParser.COMMA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
+		public ErrorifContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_errorif; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterErrorif(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitErrorif(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitErrorif(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ErrorifContext errorif() {
+		ErrorifContext _localctx = new ErrorifContext(Context, State);
+		EnterRule(_localctx, 38, RULE_errorif);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 242;
+			Match(ERRORIF);
+			State = 243;
+			Match(OPEN_PARENS);
+			State = 244;
+			expression(0);
+			State = 245;
+			Match(CLOSE_PARENS);
+			State = 246;
+			Match(COMMA);
+			State = 247;
+			Match(STRING);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EvalContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EVAL() { return GetToken(KickAssemblerParser.EVAL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Assignment_expressionContext assignment_expression() {
+			return GetRuleContext<Assignment_expressionContext>(0);
+		}
+		public EvalContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_eval; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterEval(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitEval(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEval(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EvalContext eval() {
+		EvalContext _localctx = new EvalContext(Context, State);
+		EnterRule(_localctx, 40, RULE_eval);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 249;
+			Match(EVAL);
+			State = 250;
+			assignment_expression();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class BreakContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BREAK() { return GetToken(KickAssemblerParser.BREAK, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
+		public BreakContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_break; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterBreak(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitBreak(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBreak(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public BreakContext @break() {
+		BreakContext _localctx = new BreakContext(Context, State);
+		EnterRule(_localctx, 42, RULE_break);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 252;
+			Match(BREAK);
+			State = 254;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,13,Context) ) {
+			case 1:
+				{
+				State = 253;
+				Match(STRING);
+				}
+				break;
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class WatchContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WATCH() { return GetToken(KickAssemblerParser.WATCH, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public WatchArgumentsContext watchArguments() {
+			return GetRuleContext<WatchArgumentsContext>(0);
+		}
+		public WatchContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_watch; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterWatch(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitWatch(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitWatch(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public WatchContext watch() {
+		WatchContext _localctx = new WatchContext(Context, State);
+		EnterRule(_localctx, 44, RULE_watch);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 256;
+			Match(WATCH);
+			State = 257;
+			watchArguments();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class WatchArgumentsContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] COMMA() { return GetTokens(KickAssemblerParser.COMMA); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA(int i) {
+			return GetToken(KickAssemblerParser.COMMA, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
+		public WatchArgumentsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_watchArguments; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterWatchArguments(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitWatchArguments(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitWatchArguments(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public WatchArgumentsContext watchArguments() {
+		WatchArgumentsContext _localctx = new WatchArgumentsContext(Context, State);
+		EnterRule(_localctx, 46, RULE_watchArguments);
+		int _la;
+		try {
+			State = 272;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,15,Context) ) {
+			case 1:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 259;
+				expression(0);
+				}
+				break;
+			case 2:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 260;
+				expression(0);
+				State = 261;
+				Match(COMMA);
+				State = 262;
+				expression(0);
+				}
+				break;
+			case 3:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 264;
+				expression(0);
+				State = 265;
+				Match(COMMA);
+				State = 267;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (((((_la - 36)) & ~0x3f) == 0 && ((1L << (_la - 36)) & 202310139904001L) != 0)) {
+					{
+					State = 266;
+					expression(0);
+					}
+				}
+
+				State = 269;
+				Match(COMMA);
+				State = 270;
+				Match(STRING);
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -785,70 +2106,70 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DirectiveContext directive() {
 		DirectiveContext _localctx = new DirectiveContext(Context, State);
-		EnterRule(_localctx, 14, RULE_directive);
+		EnterRule(_localctx, 48, RULE_directive);
 		try {
-			State = 120;
+			State = 287;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case DOT:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 107;
+				State = 274;
 				Match(DOT);
-				State = 117;
+				State = 284;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
+				switch ( Interpreter.AdaptivePredict(TokenStream,16,Context) ) {
 				case 1:
 					{
-					State = 108;
+					State = 275;
 					cpuDirective();
 					}
 					break;
 				case 2:
 					{
-					State = 109;
+					State = 276;
 					byteDirective();
 					}
 					break;
 				case 3:
 					{
-					State = 110;
+					State = 277;
 					wordDirective();
 					}
 					break;
 				case 4:
 					{
-					State = 111;
+					State = 278;
 					dwordDirective();
 					}
 					break;
 				case 5:
 					{
-					State = 112;
+					State = 279;
 					textDirective();
 					}
 					break;
 				case 6:
 					{
-					State = 113;
+					State = 280;
 					fillDirective();
 					}
 					break;
 				case 7:
 					{
-					State = 114;
+					State = 281;
 					encodingDirective();
 					}
 					break;
 				case 8:
 					{
-					State = 115;
+					State = 282;
 					importFileDirective();
 					}
 					break;
 				case 9:
 					{
-					State = 116;
+					State = 283;
 					importDataDirective();
 					}
 					break;
@@ -858,7 +2179,7 @@ public partial class KickAssemblerParser : Parser {
 			case STAR:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 119;
+				State = 286;
 				memoryDirective();
 				}
 				break;
@@ -910,17 +2231,17 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public MemoryDirectiveContext memoryDirective() {
 		MemoryDirectiveContext _localctx = new MemoryDirectiveContext(Context, State);
-		EnterRule(_localctx, 16, RULE_memoryDirective);
+		EnterRule(_localctx, 50, RULE_memoryDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 122;
+			State = 289;
 			Match(STAR);
-			State = 123;
+			State = 290;
 			Match(ASSIGNMENT);
-			State = 124;
+			State = 291;
 			number();
-			State = 125;
+			State = 292;
 			Match(STRING);
 			}
 		}
@@ -967,14 +2288,14 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public CpuDirectiveContext cpuDirective() {
 		CpuDirectiveContext _localctx = new CpuDirectiveContext(Context, State);
-		EnterRule(_localctx, 18, RULE_cpuDirective);
+		EnterRule(_localctx, 52, RULE_cpuDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 127;
+			State = 294;
 			Match(CPU);
-			State = 128;
+			State = 295;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 7864320L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1027,13 +2348,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ByteDirectiveContext byteDirective() {
 		ByteDirectiveContext _localctx = new ByteDirectiveContext(Context, State);
-		EnterRule(_localctx, 20, RULE_byteDirective);
+		EnterRule(_localctx, 54, RULE_byteDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 130;
+			State = 297;
 			Match(BYTE);
-			State = 131;
+			State = 298;
 			numberList();
 			}
 		}
@@ -1079,13 +2400,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public WordDirectiveContext wordDirective() {
 		WordDirectiveContext _localctx = new WordDirectiveContext(Context, State);
-		EnterRule(_localctx, 22, RULE_wordDirective);
+		EnterRule(_localctx, 56, RULE_wordDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 133;
+			State = 300;
 			Match(WORD);
-			State = 134;
+			State = 301;
 			numberList();
 			}
 		}
@@ -1131,13 +2452,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DwordDirectiveContext dwordDirective() {
 		DwordDirectiveContext _localctx = new DwordDirectiveContext(Context, State);
-		EnterRule(_localctx, 24, RULE_dwordDirective);
+		EnterRule(_localctx, 58, RULE_dwordDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 136;
+			State = 303;
 			Match(DWORD);
-			State = 137;
+			State = 304;
 			numberList();
 			}
 		}
@@ -1181,13 +2502,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public TextDirectiveContext textDirective() {
 		TextDirectiveContext _localctx = new TextDirectiveContext(Context, State);
-		EnterRule(_localctx, 26, RULE_textDirective);
+		EnterRule(_localctx, 60, RULE_textDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 139;
+			State = 306;
 			Match(TEXT_TEXT);
-			State = 140;
+			State = 307;
 			Match(STRING);
 			}
 		}
@@ -1239,12 +2560,12 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FillDirectiveContext fillDirective() {
 		FillDirectiveContext _localctx = new FillDirectiveContext(Context, State);
-		EnterRule(_localctx, 28, RULE_fillDirective);
+		EnterRule(_localctx, 62, RULE_fillDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 142;
+			State = 309;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 28672L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1253,11 +2574,11 @@ public partial class KickAssemblerParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 143;
+			State = 310;
 			number();
-			State = 144;
+			State = 311;
 			Match(COMMA);
-			State = 145;
+			State = 312;
 			fillDirectiveArguments();
 			}
 		}
@@ -1310,9 +2631,9 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FillDirectiveArgumentsContext fillDirectiveArguments() {
 		FillDirectiveArgumentsContext _localctx = new FillDirectiveArgumentsContext(Context, State);
-		EnterRule(_localctx, 30, RULE_fillDirectiveArguments);
+		EnterRule(_localctx, 64, RULE_fillDirectiveArguments);
 		try {
-			State = 153;
+			State = 320;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case DEC_NUMBER:
@@ -1320,90 +2641,27 @@ public partial class KickAssemblerParser : Parser {
 			case BIN_NUMBER:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 147;
+				State = 314;
 				number();
 				}
 				break;
 			case OPEN_BRACKET:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 148;
+				State = 315;
 				Match(OPEN_BRACKET);
-				State = 149;
+				State = 316;
 				numberList();
-				State = 150;
+				State = 317;
 				Match(CLOSE_BRACKET);
 				}
 				break;
 			case Eof:
-			case DOT:
-			case STAR:
-			case BANG:
-			case UNQUOTED_STRING:
-			case ADC:
-			case AND:
-			case ASL:
-			case BCC:
-			case BCS:
-			case BEQ:
-			case BIT:
-			case BMI:
-			case BNE:
-			case BPL:
-			case BRA:
-			case BRK:
-			case BVC:
-			case BVS:
-			case CLC:
-			case CLD:
-			case CLI:
-			case CLV:
-			case CMP:
-			case CPX:
-			case CPY:
-			case DEC:
-			case DEX:
-			case DEY:
-			case EOR:
-			case INC:
-			case INX:
-			case INY:
-			case JMP:
-			case JSR:
-			case LDA:
-			case LDY:
-			case LDX:
-			case LSR:
-			case NOP:
-			case ORA:
-			case PHA:
-			case PHX:
-			case PHY:
-			case PHP:
-			case PLA:
-			case PLP:
-			case PLY:
-			case ROL:
-			case ROR:
-			case RTI:
-			case RTS:
-			case SBC:
-			case SEC:
-			case SED:
-			case SEI:
-			case STA:
-			case STX:
-			case STY:
-			case STZ:
-			case TAX:
-			case TAY:
-			case TSX:
-			case TXA:
-			case TXS:
-			case TYA:
+			case SEMICOLON:
+			case EOL:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 152;
+				State = 319;
 				fillExpression();
 				}
 				break;
@@ -1449,7 +2707,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FillExpressionContext fillExpression() {
 		FillExpressionContext _localctx = new FillExpressionContext(Context, State);
-		EnterRule(_localctx, 32, RULE_fillExpression);
+		EnterRule(_localctx, 66, RULE_fillExpression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -1501,17 +2759,17 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EncodingDirectiveContext encodingDirective() {
 		EncodingDirectiveContext _localctx = new EncodingDirectiveContext(Context, State);
-		EnterRule(_localctx, 34, RULE_encodingDirective);
+		EnterRule(_localctx, 68, RULE_encodingDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 157;
+			State = 324;
 			Match(ENCODING);
-			State = 158;
+			State = 325;
 			Match(DOUBLE_QUOTE);
-			State = 159;
+			State = 326;
 			encodingDirectiveValue();
-			State = 160;
+			State = 327;
 			Match(DOUBLE_QUOTE);
 			}
 		}
@@ -1558,12 +2816,12 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EncodingDirectiveValueContext encodingDirectiveValue() {
 		EncodingDirectiveValueContext _localctx = new EncodingDirectiveValueContext(Context, State);
-		EnterRule(_localctx, 36, RULE_encodingDirectiveValue);
+		EnterRule(_localctx, 70, RULE_encodingDirectiveValue);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 162;
+			State = 329;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1984L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1617,24 +2875,24 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ImportFileDirectiveContext importFileDirective() {
 		ImportFileDirectiveContext _localctx = new ImportFileDirectiveContext(Context, State);
-		EnterRule(_localctx, 38, RULE_importFileDirective);
+		EnterRule(_localctx, 72, RULE_importFileDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 164;
+			State = 331;
 			Match(HASH);
-			State = 166;
+			State = 333;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==UNQUOTED_STRING) {
 				{
-				State = 165;
+				State = 332;
 				define();
 				}
 			}
 
-			State = 168;
+			State = 335;
 			Match(STRING);
 			}
 		}
@@ -1692,12 +2950,12 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ImportDataDirectiveContext importDataDirective() {
 		ImportDataDirectiveContext _localctx = new ImportDataDirectiveContext(Context, State);
-		EnterRule(_localctx, 40, RULE_importDataDirective);
+		EnterRule(_localctx, 74, RULE_importDataDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 170;
+			State = 337;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 56L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1706,25 +2964,25 @@ public partial class KickAssemblerParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 171;
+			State = 338;
 			file();
-			State = 178;
+			State = 345;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==COMMA) {
 				{
-				State = 172;
+				State = 339;
 				Match(COMMA);
-				State = 173;
+				State = 340;
 				number();
-				State = 176;
+				State = 343;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==COMMA) {
 					{
-					State = 174;
+					State = 341;
 					Match(COMMA);
-					State = 175;
+					State = 342;
 					number();
 					}
 				}
@@ -1774,31 +3032,31 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public LabelNameContext labelName() {
 		LabelNameContext _localctx = new LabelNameContext(Context, State);
-		EnterRule(_localctx, 42, RULE_labelName);
+		EnterRule(_localctx, 76, RULE_labelName);
 		try {
-			State = 184;
+			State = 351;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,12,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,22,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 180;
+				State = 347;
 				Match(BANG);
-				State = 181;
+				State = 348;
 				Match(UNQUOTED_STRING);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 182;
+				State = 349;
 				Match(BANG);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 183;
+				State = 350;
 				Match(UNQUOTED_STRING);
 				}
 				break;
@@ -1843,11 +3101,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DefineContext define() {
 		DefineContext _localctx = new DefineContext(Context, State);
-		EnterRule(_localctx, 44, RULE_define);
+		EnterRule(_localctx, 78, RULE_define);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 186;
+			State = 353;
 			Match(UNQUOTED_STRING);
 			}
 		}
@@ -1890,11 +3148,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FileContext file() {
 		FileContext _localctx = new FileContext(Context, State);
-		EnterRule(_localctx, 46, RULE_file);
+		EnterRule(_localctx, 80, RULE_file);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 188;
+			State = 355;
 			Match(STRING);
 			}
 		}
@@ -1943,21 +3201,21 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public NumberListContext numberList() {
 		NumberListContext _localctx = new NumberListContext(Context, State);
-		EnterRule(_localctx, 48, RULE_numberList);
+		EnterRule(_localctx, 82, RULE_numberList);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 190;
+			State = 357;
 			number();
-			State = 193;
+			State = 360;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==COMMA) {
 				{
-				State = 191;
+				State = 358;
 				Match(COMMA);
-				State = 192;
+				State = 359;
 				numberList();
 				}
 			}
@@ -2011,29 +3269,29 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public NumberContext number() {
 		NumberContext _localctx = new NumberContext(Context, State);
-		EnterRule(_localctx, 50, RULE_number);
+		EnterRule(_localctx, 84, RULE_number);
 		try {
-			State = 198;
+			State = 365;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case DEC_NUMBER:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 195;
+				State = 362;
 				decNumber();
 				}
 				break;
 			case HEX_NUMBER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 196;
+				State = 363;
 				hexNumber();
 				}
 				break;
 			case BIN_NUMBER:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 197;
+				State = 364;
 				binNumber();
 				}
 				break;
@@ -2080,11 +3338,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DecNumberContext decNumber() {
 		DecNumberContext _localctx = new DecNumberContext(Context, State);
-		EnterRule(_localctx, 52, RULE_decNumber);
+		EnterRule(_localctx, 86, RULE_decNumber);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 200;
+			State = 367;
 			Match(DEC_NUMBER);
 			}
 		}
@@ -2127,11 +3385,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public HexNumberContext hexNumber() {
 		HexNumberContext _localctx = new HexNumberContext(Context, State);
-		EnterRule(_localctx, 54, RULE_hexNumber);
+		EnterRule(_localctx, 88, RULE_hexNumber);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 202;
+			State = 369;
 			Match(HEX_NUMBER);
 			}
 		}
@@ -2174,11 +3432,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public BinNumberContext binNumber() {
 		BinNumberContext _localctx = new BinNumberContext(Context, State);
-		EnterRule(_localctx, 56, RULE_binNumber);
+		EnterRule(_localctx, 90, RULE_binNumber);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 204;
+			State = 371;
 			Match(BIN_NUMBER);
 			}
 		}
@@ -2222,12 +3480,12 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public OpcodeExtensionContext opcodeExtension() {
 		OpcodeExtensionContext _localctx = new OpcodeExtensionContext(Context, State);
-		EnterRule(_localctx, 58, RULE_opcodeExtension);
+		EnterRule(_localctx, 92, RULE_opcodeExtension);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 206;
+			State = 373;
 			_la = TokenStream.LA(1);
 			if ( !(_la==ONLYA || _la==ABS) ) {
 			ErrorHandler.RecoverInline(this);
@@ -2283,26 +3541,26 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FullOpcodeContext fullOpcode() {
 		FullOpcodeContext _localctx = new FullOpcodeContext(Context, State);
-		EnterRule(_localctx, 60, RULE_fullOpcode);
+		EnterRule(_localctx, 94, RULE_fullOpcode);
 		try {
-			State = 213;
+			State = 380;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,15,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,25,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 208;
+				State = 375;
 				opcode();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 209;
+				State = 376;
 				opcode();
-				State = 210;
+				State = 377;
 				Match(DOT);
-				State = 211;
+				State = 378;
 				opcodeExtension();
 				}
 				break;
@@ -2407,14 +3665,14 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public OpcodeContext opcode() {
 		OpcodeContext _localctx = new OpcodeContext(Context, State);
-		EnterRule(_localctx, 62, RULE_opcode);
+		EnterRule(_localctx, 96, RULE_opcode);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 215;
+			State = 382;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 83)) & ~0x3f) == 0 && ((1L << (_la - 83)) & 2305843009213693951L) != 0)) ) {
+			if ( !(((((_la - 92)) & ~0x3f) == 0 && ((1L << (_la - 92)) & 2305843009213693951L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -2434,74 +3692,147 @@ public partial class KickAssemblerParser : Parser {
 		return _localctx;
 	}
 
+	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
+		switch (ruleIndex) {
+		case 6: return expression_sempred((ExpressionContext)_localctx, predIndex);
+		}
+		return true;
+	}
+	private bool expression_sempred(ExpressionContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 0: return Precpred(Context, 10);
+		case 1: return Precpred(Context, 9);
+		case 2: return Precpred(Context, 8);
+		case 3: return Precpred(Context, 7);
+		}
+		return true;
+	}
+
 	private static int[] _serializedATN = {
-		4,1,143,218,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		4,1,152,385,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
 		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
-		2,29,7,29,2,30,7,30,2,31,7,31,1,0,5,0,66,8,0,10,0,12,0,69,9,0,1,1,1,1,
-		1,1,3,1,74,8,1,1,2,1,2,1,2,1,3,1,3,3,3,81,8,3,1,4,1,4,1,4,3,4,86,8,4,1,
-		5,4,5,89,8,5,11,5,12,5,90,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,
-		3,5,104,8,5,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,118,8,
-		7,1,7,3,7,121,8,7,1,8,1,8,1,8,1,8,1,8,1,9,1,9,1,9,1,10,1,10,1,10,1,11,
-		1,11,1,11,1,12,1,12,1,12,1,13,1,13,1,13,1,14,1,14,1,14,1,14,1,14,1,15,
-		1,15,1,15,1,15,1,15,1,15,3,15,154,8,15,1,16,1,16,1,17,1,17,1,17,1,17,1,
-		17,1,18,1,18,1,19,1,19,3,19,167,8,19,1,19,1,19,1,20,1,20,1,20,1,20,1,20,
-		1,20,3,20,177,8,20,3,20,179,8,20,1,21,1,21,1,21,1,21,3,21,185,8,21,1,22,
-		1,22,1,23,1,23,1,24,1,24,1,24,3,24,194,8,24,1,25,1,25,1,25,3,25,199,8,
-		25,1,26,1,26,1,27,1,27,1,28,1,28,1,29,1,29,1,30,1,30,1,30,1,30,1,30,3,
-		30,214,8,30,1,31,1,31,1,31,0,0,32,0,2,4,6,8,10,12,14,16,18,20,22,24,26,
-		28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,0,7,1,0,33,34,1,
-		0,19,22,1,0,12,14,1,0,6,10,1,0,3,5,1,0,1,2,1,0,83,143,215,0,67,1,0,0,0,
-		2,73,1,0,0,0,4,75,1,0,0,0,6,78,1,0,0,0,8,82,1,0,0,0,10,103,1,0,0,0,12,
-		105,1,0,0,0,14,120,1,0,0,0,16,122,1,0,0,0,18,127,1,0,0,0,20,130,1,0,0,
-		0,22,133,1,0,0,0,24,136,1,0,0,0,26,139,1,0,0,0,28,142,1,0,0,0,30,153,1,
-		0,0,0,32,155,1,0,0,0,34,157,1,0,0,0,36,162,1,0,0,0,38,164,1,0,0,0,40,170,
-		1,0,0,0,42,184,1,0,0,0,44,186,1,0,0,0,46,188,1,0,0,0,48,190,1,0,0,0,50,
-		198,1,0,0,0,52,200,1,0,0,0,54,202,1,0,0,0,56,204,1,0,0,0,58,206,1,0,0,
-		0,60,213,1,0,0,0,62,215,1,0,0,0,64,66,3,2,1,0,65,64,1,0,0,0,66,69,1,0,
-		0,0,67,65,1,0,0,0,67,68,1,0,0,0,68,1,1,0,0,0,69,67,1,0,0,0,70,74,3,6,3,
-		0,71,74,3,4,2,0,72,74,3,14,7,0,73,70,1,0,0,0,73,71,1,0,0,0,73,72,1,0,0,
-		0,74,3,1,0,0,0,75,76,3,42,21,0,76,77,3,6,3,0,77,5,1,0,0,0,78,80,3,60,30,
-		0,79,81,3,8,4,0,80,79,1,0,0,0,80,81,1,0,0,0,81,7,1,0,0,0,82,85,3,10,5,
-		0,83,84,5,30,0,0,84,86,3,8,4,0,85,83,1,0,0,0,85,86,1,0,0,0,86,9,1,0,0,
-		0,87,89,7,0,0,0,88,87,1,0,0,0,89,90,1,0,0,0,90,88,1,0,0,0,90,91,1,0,0,
-		0,91,104,1,0,0,0,92,93,5,75,0,0,93,104,3,50,25,0,94,95,5,27,0,0,95,96,
-		3,8,4,0,96,97,5,28,0,0,97,104,1,0,0,0,98,99,5,25,0,0,99,100,3,8,4,0,100,
-		101,5,26,0,0,101,104,1,0,0,0,102,104,3,12,6,0,103,88,1,0,0,0,103,92,1,
-		0,0,0,103,94,1,0,0,0,103,98,1,0,0,0,103,102,1,0,0,0,104,11,1,0,0,0,105,
-		106,3,50,25,0,106,13,1,0,0,0,107,117,5,29,0,0,108,118,3,18,9,0,109,118,
-		3,20,10,0,110,118,3,22,11,0,111,118,3,24,12,0,112,118,3,26,13,0,113,118,
-		3,28,14,0,114,118,3,34,17,0,115,118,3,38,19,0,116,118,3,40,20,0,117,108,
-		1,0,0,0,117,109,1,0,0,0,117,110,1,0,0,0,117,111,1,0,0,0,117,112,1,0,0,
-		0,117,113,1,0,0,0,117,114,1,0,0,0,117,115,1,0,0,0,117,116,1,0,0,0,118,
-		121,1,0,0,0,119,121,3,16,8,0,120,107,1,0,0,0,120,119,1,0,0,0,121,15,1,
-		0,0,0,122,123,5,35,0,0,123,124,5,43,0,0,124,125,3,50,25,0,125,126,5,74,
-		0,0,126,17,1,0,0,0,127,128,5,18,0,0,128,129,7,1,0,0,129,19,1,0,0,0,130,
-		131,5,15,0,0,131,132,3,48,24,0,132,21,1,0,0,0,133,134,5,16,0,0,134,135,
-		3,48,24,0,135,23,1,0,0,0,136,137,5,17,0,0,137,138,3,48,24,0,138,25,1,0,
-		0,0,139,140,5,5,0,0,140,141,5,74,0,0,141,27,1,0,0,0,142,143,7,2,0,0,143,
-		144,3,50,25,0,144,145,5,30,0,0,145,146,3,30,15,0,146,29,1,0,0,0,147,154,
-		3,50,25,0,148,149,5,25,0,0,149,150,3,48,24,0,150,151,5,26,0,0,151,154,
-		1,0,0,0,152,154,3,32,16,0,153,147,1,0,0,0,153,148,1,0,0,0,153,152,1,0,
-		0,0,154,31,1,0,0,0,155,156,1,0,0,0,156,33,1,0,0,0,157,158,5,11,0,0,158,
-		159,5,76,0,0,159,160,3,36,18,0,160,161,5,76,0,0,161,35,1,0,0,0,162,163,
-		7,3,0,0,163,37,1,0,0,0,164,166,5,75,0,0,165,167,3,44,22,0,166,165,1,0,
-		0,0,166,167,1,0,0,0,167,168,1,0,0,0,168,169,5,74,0,0,169,39,1,0,0,0,170,
-		171,7,4,0,0,171,178,3,46,23,0,172,173,5,30,0,0,173,176,3,50,25,0,174,175,
-		5,30,0,0,175,177,3,50,25,0,176,174,1,0,0,0,176,177,1,0,0,0,177,179,1,0,
-		0,0,178,172,1,0,0,0,178,179,1,0,0,0,179,41,1,0,0,0,180,181,5,41,0,0,181,
-		185,5,77,0,0,182,185,5,41,0,0,183,185,5,77,0,0,184,180,1,0,0,0,184,182,
-		1,0,0,0,184,183,1,0,0,0,185,43,1,0,0,0,186,187,5,77,0,0,187,45,1,0,0,0,
-		188,189,5,74,0,0,189,47,1,0,0,0,190,193,3,50,25,0,191,192,5,30,0,0,192,
-		194,3,48,24,0,193,191,1,0,0,0,193,194,1,0,0,0,194,49,1,0,0,0,195,199,3,
-		52,26,0,196,199,3,54,27,0,197,199,3,56,28,0,198,195,1,0,0,0,198,196,1,
-		0,0,0,198,197,1,0,0,0,199,51,1,0,0,0,200,201,5,70,0,0,201,53,1,0,0,0,202,
-		203,5,71,0,0,203,55,1,0,0,0,204,205,5,72,0,0,205,57,1,0,0,0,206,207,7,
-		5,0,0,207,59,1,0,0,0,208,214,3,62,31,0,209,210,3,62,31,0,210,211,5,29,
-		0,0,211,212,3,58,29,0,212,214,1,0,0,0,213,208,1,0,0,0,213,209,1,0,0,0,
-		214,61,1,0,0,0,215,216,7,6,0,0,216,63,1,0,0,0,16,67,73,80,85,90,103,117,
-		120,153,166,176,178,184,193,198,213
+		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,7,35,
+		2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,2,40,7,40,2,41,7,41,2,42,7,42,
+		2,43,7,43,2,44,7,44,2,45,7,45,2,46,7,46,2,47,7,47,2,48,7,48,1,0,1,0,1,
+		0,3,0,102,8,0,1,1,1,1,1,1,1,1,3,1,108,8,1,1,2,1,2,1,2,1,3,1,3,3,3,115,
+		8,3,1,4,1,4,1,4,5,4,120,8,4,10,4,12,4,123,9,4,1,5,4,5,126,8,5,11,5,12,
+		5,127,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,3,5,141,8,5,1,6,1,6,
+		1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,3,6,155,8,6,1,6,1,6,1,6,1,6,1,
+		6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,5,6,169,8,6,10,6,12,6,172,9,6,1,7,1,7,1,
+		7,1,7,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,
+		193,8,9,1,10,1,10,1,10,1,10,1,10,3,10,200,8,10,1,10,1,10,1,11,1,11,1,11,
+		3,11,207,8,11,1,11,1,11,1,12,1,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,
+		13,1,13,1,13,3,13,223,8,13,1,14,1,14,1,14,1,15,1,15,1,15,1,16,1,16,1,16,
+		1,17,1,17,1,17,1,18,1,18,1,18,1,18,1,18,1,18,1,19,1,19,1,19,1,19,1,19,
+		1,19,1,19,1,20,1,20,1,20,1,21,1,21,3,21,255,8,21,1,22,1,22,1,22,1,23,1,
+		23,1,23,1,23,1,23,1,23,1,23,1,23,3,23,268,8,23,1,23,1,23,1,23,3,23,273,
+		8,23,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,1,24,3,24,285,8,24,1,
+		24,3,24,288,8,24,1,25,1,25,1,25,1,25,1,25,1,26,1,26,1,26,1,27,1,27,1,27,
+		1,28,1,28,1,28,1,29,1,29,1,29,1,30,1,30,1,30,1,31,1,31,1,31,1,31,1,31,
+		1,32,1,32,1,32,1,32,1,32,1,32,3,32,321,8,32,1,33,1,33,1,34,1,34,1,34,1,
+		34,1,34,1,35,1,35,1,36,1,36,3,36,334,8,36,1,36,1,36,1,37,1,37,1,37,1,37,
+		1,37,1,37,3,37,344,8,37,3,37,346,8,37,1,38,1,38,1,38,1,38,3,38,352,8,38,
+		1,39,1,39,1,40,1,40,1,41,1,41,1,41,3,41,361,8,41,1,42,1,42,1,42,3,42,366,
+		8,42,1,43,1,43,1,44,1,44,1,45,1,45,1,46,1,46,1,47,1,47,1,47,1,47,1,47,
+		3,47,381,8,47,1,48,1,48,1,48,0,1,12,49,0,2,4,6,8,10,12,14,16,18,20,22,
+		24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,
+		72,74,76,78,80,82,84,86,88,90,92,94,96,0,9,2,0,41,41,90,90,1,0,42,43,1,
+		0,53,54,1,0,19,22,1,0,12,14,1,0,6,10,1,0,3,5,1,0,1,2,1,0,92,152,395,0,
+		98,1,0,0,0,2,107,1,0,0,0,4,109,1,0,0,0,6,112,1,0,0,0,8,116,1,0,0,0,10,
+		140,1,0,0,0,12,154,1,0,0,0,14,173,1,0,0,0,16,177,1,0,0,0,18,192,1,0,0,
+		0,20,194,1,0,0,0,22,203,1,0,0,0,24,210,1,0,0,0,26,212,1,0,0,0,28,224,1,
+		0,0,0,30,227,1,0,0,0,32,230,1,0,0,0,34,233,1,0,0,0,36,236,1,0,0,0,38,242,
+		1,0,0,0,40,249,1,0,0,0,42,252,1,0,0,0,44,256,1,0,0,0,46,272,1,0,0,0,48,
+		287,1,0,0,0,50,289,1,0,0,0,52,294,1,0,0,0,54,297,1,0,0,0,56,300,1,0,0,
+		0,58,303,1,0,0,0,60,306,1,0,0,0,62,309,1,0,0,0,64,320,1,0,0,0,66,322,1,
+		0,0,0,68,324,1,0,0,0,70,329,1,0,0,0,72,331,1,0,0,0,74,337,1,0,0,0,76,351,
+		1,0,0,0,78,353,1,0,0,0,80,355,1,0,0,0,82,357,1,0,0,0,84,365,1,0,0,0,86,
+		367,1,0,0,0,88,369,1,0,0,0,90,371,1,0,0,0,92,373,1,0,0,0,94,380,1,0,0,
+		0,96,382,1,0,0,0,98,101,3,2,1,0,99,100,7,0,0,0,100,102,3,2,1,0,101,99,
+		1,0,0,0,101,102,1,0,0,0,102,1,1,0,0,0,103,108,1,0,0,0,104,108,3,6,3,0,
+		105,108,3,4,2,0,106,108,3,48,24,0,107,103,1,0,0,0,107,104,1,0,0,0,107,
+		105,1,0,0,0,107,106,1,0,0,0,108,3,1,0,0,0,109,110,3,76,38,0,110,111,3,
+		6,3,0,111,5,1,0,0,0,112,114,3,94,47,0,113,115,3,8,4,0,114,113,1,0,0,0,
+		114,115,1,0,0,0,115,7,1,0,0,0,116,121,3,10,5,0,117,118,5,39,0,0,118,120,
+		3,10,5,0,119,117,1,0,0,0,120,123,1,0,0,0,121,119,1,0,0,0,121,122,1,0,0,
+		0,122,9,1,0,0,0,123,121,1,0,0,0,124,126,7,1,0,0,125,124,1,0,0,0,126,127,
+		1,0,0,0,127,125,1,0,0,0,127,128,1,0,0,0,128,141,1,0,0,0,129,130,5,84,0,
+		0,130,141,3,84,42,0,131,132,5,36,0,0,132,133,3,8,4,0,133,134,5,37,0,0,
+		134,141,1,0,0,0,135,136,5,34,0,0,136,137,3,8,4,0,137,138,5,35,0,0,138,
+		141,1,0,0,0,139,141,3,12,6,0,140,125,1,0,0,0,140,129,1,0,0,0,140,131,1,
+		0,0,0,140,135,1,0,0,0,140,139,1,0,0,0,141,11,1,0,0,0,142,143,6,6,-1,0,
+		143,144,5,36,0,0,144,145,3,12,6,0,145,146,5,37,0,0,146,155,1,0,0,0,147,
+		148,7,2,0,0,148,155,3,12,6,6,149,155,3,20,10,0,150,155,3,22,11,0,151,155,
+		5,83,0,0,152,155,3,84,42,0,153,155,5,83,0,0,154,142,1,0,0,0,154,147,1,
+		0,0,0,154,149,1,0,0,0,154,150,1,0,0,0,154,151,1,0,0,0,154,152,1,0,0,0,
+		154,153,1,0,0,0,155,170,1,0,0,0,156,157,10,10,0,0,157,158,5,44,0,0,158,
+		169,3,12,6,11,159,160,10,9,0,0,160,161,5,45,0,0,161,169,3,12,6,10,162,
+		163,10,8,0,0,163,164,5,42,0,0,164,169,3,12,6,9,165,166,10,7,0,0,166,167,
+		5,43,0,0,167,169,3,12,6,8,168,156,1,0,0,0,168,159,1,0,0,0,168,162,1,0,
+		0,0,168,165,1,0,0,0,169,172,1,0,0,0,170,168,1,0,0,0,170,171,1,0,0,0,171,
+		13,1,0,0,0,172,170,1,0,0,0,173,174,5,86,0,0,174,175,5,52,0,0,175,176,3,
+		12,6,0,176,15,1,0,0,0,177,178,5,86,0,0,178,179,3,18,9,0,179,17,1,0,0,0,
+		180,181,5,42,0,0,181,193,5,42,0,0,182,183,5,43,0,0,183,193,5,43,0,0,184,
+		185,5,42,0,0,185,193,5,52,0,0,186,187,5,43,0,0,187,193,5,52,0,0,188,189,
+		5,44,0,0,189,193,5,52,0,0,190,191,5,45,0,0,191,193,5,52,0,0,192,180,1,
+		0,0,0,192,182,1,0,0,0,192,184,1,0,0,0,192,186,1,0,0,0,192,188,1,0,0,0,
+		192,190,1,0,0,0,193,19,1,0,0,0,194,195,5,83,0,0,195,196,5,38,0,0,196,197,
+		5,83,0,0,197,199,5,36,0,0,198,200,3,8,4,0,199,198,1,0,0,0,199,200,1,0,
+		0,0,200,201,1,0,0,0,201,202,5,37,0,0,202,21,1,0,0,0,203,204,5,83,0,0,204,
+		206,5,36,0,0,205,207,3,8,4,0,206,205,1,0,0,0,206,207,1,0,0,0,207,208,1,
+		0,0,0,208,209,5,37,0,0,209,23,1,0,0,0,210,211,3,12,6,0,211,25,1,0,0,0,
+		212,222,5,38,0,0,213,223,3,28,14,0,214,223,3,30,15,0,215,223,3,32,16,0,
+		216,223,3,34,17,0,217,223,3,36,18,0,218,223,3,38,19,0,219,223,3,40,20,
+		0,220,223,3,42,21,0,221,223,3,44,22,0,222,213,1,0,0,0,222,214,1,0,0,0,
+		222,215,1,0,0,0,222,216,1,0,0,0,222,217,1,0,0,0,222,218,1,0,0,0,222,219,
+		1,0,0,0,222,220,1,0,0,0,222,221,1,0,0,0,223,27,1,0,0,0,224,225,5,23,0,
+		0,225,226,3,12,6,0,226,29,1,0,0,0,227,228,5,24,0,0,228,229,3,12,6,0,229,
+		31,1,0,0,0,230,231,5,25,0,0,231,232,3,14,7,0,232,33,1,0,0,0,233,234,5,
+		26,0,0,234,235,3,14,7,0,235,35,1,0,0,0,236,237,5,27,0,0,237,238,5,36,0,
+		0,238,239,3,12,6,0,239,240,5,37,0,0,240,241,3,26,13,0,241,37,1,0,0,0,242,
+		243,5,28,0,0,243,244,5,36,0,0,244,245,3,12,6,0,245,246,5,37,0,0,246,247,
+		5,39,0,0,247,248,5,83,0,0,248,39,1,0,0,0,249,250,5,29,0,0,250,251,3,14,
+		7,0,251,41,1,0,0,0,252,254,5,30,0,0,253,255,5,83,0,0,254,253,1,0,0,0,254,
+		255,1,0,0,0,255,43,1,0,0,0,256,257,5,31,0,0,257,258,3,46,23,0,258,45,1,
+		0,0,0,259,273,3,12,6,0,260,261,3,12,6,0,261,262,5,39,0,0,262,263,3,12,
+		6,0,263,273,1,0,0,0,264,265,3,12,6,0,265,267,5,39,0,0,266,268,3,12,6,0,
+		267,266,1,0,0,0,267,268,1,0,0,0,268,269,1,0,0,0,269,270,5,39,0,0,270,271,
+		5,83,0,0,271,273,1,0,0,0,272,259,1,0,0,0,272,260,1,0,0,0,272,264,1,0,0,
+		0,273,47,1,0,0,0,274,284,5,38,0,0,275,285,3,52,26,0,276,285,3,54,27,0,
+		277,285,3,56,28,0,278,285,3,58,29,0,279,285,3,60,30,0,280,285,3,62,31,
+		0,281,285,3,68,34,0,282,285,3,72,36,0,283,285,3,74,37,0,284,275,1,0,0,
+		0,284,276,1,0,0,0,284,277,1,0,0,0,284,278,1,0,0,0,284,279,1,0,0,0,284,
+		280,1,0,0,0,284,281,1,0,0,0,284,282,1,0,0,0,284,283,1,0,0,0,285,288,1,
+		0,0,0,286,288,3,50,25,0,287,274,1,0,0,0,287,286,1,0,0,0,288,49,1,0,0,0,
+		289,290,5,44,0,0,290,291,5,52,0,0,291,292,3,84,42,0,292,293,5,83,0,0,293,
+		51,1,0,0,0,294,295,5,18,0,0,295,296,7,3,0,0,296,53,1,0,0,0,297,298,5,15,
+		0,0,298,299,3,82,41,0,299,55,1,0,0,0,300,301,5,16,0,0,301,302,3,82,41,
+		0,302,57,1,0,0,0,303,304,5,17,0,0,304,305,3,82,41,0,305,59,1,0,0,0,306,
+		307,5,5,0,0,307,308,5,83,0,0,308,61,1,0,0,0,309,310,7,4,0,0,310,311,3,
+		84,42,0,311,312,5,39,0,0,312,313,3,64,32,0,313,63,1,0,0,0,314,321,3,84,
+		42,0,315,316,5,34,0,0,316,317,3,82,41,0,317,318,5,35,0,0,318,321,1,0,0,
+		0,319,321,3,66,33,0,320,314,1,0,0,0,320,315,1,0,0,0,320,319,1,0,0,0,321,
+		65,1,0,0,0,322,323,1,0,0,0,323,67,1,0,0,0,324,325,5,11,0,0,325,326,5,85,
+		0,0,326,327,3,70,35,0,327,328,5,85,0,0,328,69,1,0,0,0,329,330,7,5,0,0,
+		330,71,1,0,0,0,331,333,5,84,0,0,332,334,3,78,39,0,333,332,1,0,0,0,333,
+		334,1,0,0,0,334,335,1,0,0,0,335,336,5,83,0,0,336,73,1,0,0,0,337,338,7,
+		6,0,0,338,345,3,80,40,0,339,340,5,39,0,0,340,343,3,84,42,0,341,342,5,39,
+		0,0,342,344,3,84,42,0,343,341,1,0,0,0,343,344,1,0,0,0,344,346,1,0,0,0,
+		345,339,1,0,0,0,345,346,1,0,0,0,346,75,1,0,0,0,347,348,5,50,0,0,348,352,
+		5,86,0,0,349,352,5,50,0,0,350,352,5,86,0,0,351,347,1,0,0,0,351,349,1,0,
+		0,0,351,350,1,0,0,0,352,77,1,0,0,0,353,354,5,86,0,0,354,79,1,0,0,0,355,
+		356,5,83,0,0,356,81,1,0,0,0,357,360,3,84,42,0,358,359,5,39,0,0,359,361,
+		3,82,41,0,360,358,1,0,0,0,360,361,1,0,0,0,361,83,1,0,0,0,362,366,3,86,
+		43,0,363,366,3,88,44,0,364,366,3,90,45,0,365,362,1,0,0,0,365,363,1,0,0,
+		0,365,364,1,0,0,0,366,85,1,0,0,0,367,368,5,79,0,0,368,87,1,0,0,0,369,370,
+		5,80,0,0,370,89,1,0,0,0,371,372,5,81,0,0,372,91,1,0,0,0,373,374,7,7,0,
+		0,374,93,1,0,0,0,375,381,3,96,48,0,376,377,3,96,48,0,377,378,5,38,0,0,
+		378,379,3,92,46,0,379,381,1,0,0,0,380,375,1,0,0,0,380,376,1,0,0,0,381,
+		95,1,0,0,0,382,383,7,8,0,0,383,97,1,0,0,0,26,101,107,114,121,127,140,154,
+		168,170,192,199,206,222,254,267,272,284,287,320,333,343,345,351,360,365,
+		380
 	};
 
 	public static readonly ATN _ATN =
