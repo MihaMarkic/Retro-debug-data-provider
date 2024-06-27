@@ -4,49 +4,67 @@ options {
     tokenVocab = KickAssemblerLexer;
 }
 
-program: 
-    unit ((EOL | SEMICOLON) unit)?;         // unit is a basic unit separated by newline or semicolon
+program: units;
+             // unit is a basic unit separated by newline or semicolon
 
 // needs a lot of love
+
+units: unit ((EOL | SEMICOLON) unit)*;
 
 unit:
     | instruction
     | label
-    | directive;
+    | directive
+    | scope;
 
 label:
     labelName instruction;
     
 instruction: fullOpcode argumentList?;
 
+scope
+    : UNQUOTED_STRING COLON OPEN_BRACE units CLOSE_BRACE  // Function1: { ... }
+    | OPEN_BRACE units CLOSE_BRACE;                       // { ... }
+
 argumentList
 	: argument (COMMA argument)*
 	; 
 argument
 	: (PLUS | MINUS)+
-	| HASH number
+	| HASH numeric
 	| OPEN_PARENS argumentList CLOSE_PARENS
 	| OPEN_BRACKET argumentList CLOSE_BRACKET
 	| expression
 	;
 
-expression:  
-	OPEN_PARENS expression CLOSE_PARENS
-//	| expression binaryop expression
+expression
+    : OPEN_PARENS expression CLOSE_PARENS
+	| OPEN_BRACKET expression CLOSE_BRACKET // both () and [] are supported
+	| expression binaryop expression
 //	| expression logicalop expression
 	| expression STAR expression
 	| expression DIV expression
 	| expression PLUS expression
 	| expression MINUS expression
-	| (LT | GT) expression
+	| expression compareop expression
+//	| (LT | GT) expression
 	| classFunction
 	| function
 	| STRING
 //	| pseudoOps
-	| number
+	| numeric
 	| STRING 
+	| boolean
 //	| label 
 	;
+	
+binaryop
+    : BITWISE_OR
+    | AMP
+    | CARET
+    | TILDE
+    | OP_LEFT_SHIFT
+    | OP_RIGHT_SHIFT;
 	
 assignment_expression
     : UNQUOTED_STRING ASSIGNMENT expression;
@@ -61,7 +79,14 @@ unary_operator
     | STAR ASSIGNMENT
     | DIV ASSIGNMENT
     ;
-	
+
+compareop
+    : OP_EQ
+    | OP_NE
+    | OP_LE
+    | OP_GE
+    | GT
+    | LT;
 classFunction: STRING DOT STRING OPEN_PARENS argumentList? CLOSE_PARENS;
 function: STRING OPEN_PARENS argumentList? CLOSE_PARENS;
 	
@@ -78,6 +103,7 @@ compiler_statement
         | eval
         | break
         | watch
+        | enum
     );
 
 print: PRINT expression;
@@ -93,6 +119,12 @@ watchArguments
     : expression
     | expression COMMA expression
     | expression COMMA expression? COMMA STRING;
+enum
+    : OPEN_BRACE enumValues CLOSE_BRACE;
+enumValues
+    : enumValue (COMMA enumValue)*;
+enumValue
+    : UNQUOTED_STRING (ASSIGNMENT number)?;
 
 directive
     : DOT (
@@ -165,16 +197,26 @@ define
 file
     : STRING
     ;
-
+    
 numberList
-    : number (COMMA numberList)?
+    : number (COMMA number)*
     ;
 
-number: decNumber | hexNumber | binNumber ; //| nonPrefixedHexNumber;
+numericList: numeric (COMMA numeric)*;
+
+numeric
+    : CHAR                                          // char is a valid number
+    | lohibyte? number;                             //| nonPrefixedHexNumber;
+
+number: decNumber | hexNumber | binNumber; //| nonPrefixedHexNumber;
+    
+lohibyte: GT | LT;
 
 decNumber: DEC_NUMBER ; 
 hexNumber: HEX_NUMBER ;
 binNumber: BIN_NUMBER ;      // testing
+
+boolean: TRUE | FALSE;
 
 opcodeExtension
     : ONLYA

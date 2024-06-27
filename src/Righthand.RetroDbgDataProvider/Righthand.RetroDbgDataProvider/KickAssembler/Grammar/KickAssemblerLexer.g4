@@ -84,9 +84,13 @@ OP_AND_ASSIGNMENT        : '&=';
 OP_OR_ASSIGNMENT         : '|=';
 OP_XOR_ASSIGNMENT        : '^=';
 OP_LEFT_SHIFT            : '<<';
+OP_RIGHT_SHIFT           : '>>';
 OP_LEFT_SHIFT_ASSIGNMENT : '<<=';
 OP_COALESCING_ASSIGNMENT : '??=';
 OP_RANGE                 : '..';
+
+TRUE                     : 'true';
+FALSE                    : 'false';
 
 DEC_NUMBER: DEC_DIGIT+; 
 HEX_NUMBER: '$' HEX_DIGIT+ ;

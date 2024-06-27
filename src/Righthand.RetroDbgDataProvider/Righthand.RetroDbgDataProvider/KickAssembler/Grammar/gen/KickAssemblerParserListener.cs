@@ -41,6 +41,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProgram([NotNull] KickAssemblerParser.ProgramContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.units"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterUnits([NotNull] KickAssemblerParser.UnitsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.units"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitUnits([NotNull] KickAssemblerParser.UnitsContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.unit"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -70,6 +80,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitInstruction([NotNull] KickAssemblerParser.InstructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.scope"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterScope([NotNull] KickAssemblerParser.ScopeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.scope"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitScope([NotNull] KickAssemblerParser.ScopeContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.argumentList"/>.
 	/// </summary>
@@ -101,6 +121,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitExpression([NotNull] KickAssemblerParser.ExpressionContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.binaryop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBinaryop([NotNull] KickAssemblerParser.BinaryopContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.binaryop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBinaryop([NotNull] KickAssemblerParser.BinaryopContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.assignment_expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -130,6 +160,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitUnary_operator([NotNull] KickAssemblerParser.Unary_operatorContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.compareop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCompareop([NotNull] KickAssemblerParser.CompareopContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.compareop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCompareop([NotNull] KickAssemblerParser.CompareopContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.classFunction"/>.
 	/// </summary>
@@ -270,6 +310,36 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitWatchArguments([NotNull] KickAssemblerParser.WatchArgumentsContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.enum"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEnum([NotNull] KickAssemblerParser.EnumContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.enum"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEnum([NotNull] KickAssemblerParser.EnumContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.enumValues"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEnumValues([NotNull] KickAssemblerParser.EnumValuesContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.enumValues"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEnumValues([NotNull] KickAssemblerParser.EnumValuesContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.enumValue"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEnumValue([NotNull] KickAssemblerParser.EnumValueContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.enumValue"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEnumValue([NotNull] KickAssemblerParser.EnumValueContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.directive"/>.
 	/// </summary>
@@ -451,6 +521,26 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitNumberList([NotNull] KickAssemblerParser.NumberListContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.numericList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterNumericList([NotNull] KickAssemblerParser.NumericListContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.numericList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitNumericList([NotNull] KickAssemblerParser.NumericListContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.numeric"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterNumeric([NotNull] KickAssemblerParser.NumericContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.numeric"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitNumeric([NotNull] KickAssemblerParser.NumericContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.number"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -460,6 +550,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitNumber([NotNull] KickAssemblerParser.NumberContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.lohibyte"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLohibyte([NotNull] KickAssemblerParser.LohibyteContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.lohibyte"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLohibyte([NotNull] KickAssemblerParser.LohibyteContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.decNumber"/>.
 	/// </summary>
@@ -490,6 +590,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitBinNumber([NotNull] KickAssemblerParser.BinNumberContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.boolean"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBoolean([NotNull] KickAssemblerParser.BooleanContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.boolean"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBoolean([NotNull] KickAssemblerParser.BooleanContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.opcodeExtension"/>.
 	/// </summary>

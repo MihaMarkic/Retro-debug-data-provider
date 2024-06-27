@@ -38,6 +38,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] KickAssemblerParser.ProgramContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.units"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitUnits([NotNull] KickAssemblerParser.UnitsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.unit"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -55,6 +61,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitInstruction([NotNull] KickAssemblerParser.InstructionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.scope"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitScope([NotNull] KickAssemblerParser.ScopeContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.argumentList"/>.
 	/// </summary>
@@ -74,6 +86,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] KickAssemblerParser.ExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.binaryop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBinaryop([NotNull] KickAssemblerParser.BinaryopContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.assignment_expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -91,6 +109,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitUnary_operator([NotNull] KickAssemblerParser.Unary_operatorContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.compareop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCompareop([NotNull] KickAssemblerParser.CompareopContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.classFunction"/>.
 	/// </summary>
@@ -175,6 +199,24 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitWatchArguments([NotNull] KickAssemblerParser.WatchArgumentsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.enum"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEnum([NotNull] KickAssemblerParser.EnumContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.enumValues"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEnumValues([NotNull] KickAssemblerParser.EnumValuesContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.enumValue"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEnumValue([NotNull] KickAssemblerParser.EnumValueContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.directive"/>.
 	/// </summary>
@@ -284,11 +326,29 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitNumberList([NotNull] KickAssemblerParser.NumberListContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.numericList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNumericList([NotNull] KickAssemblerParser.NumericListContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.numeric"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNumeric([NotNull] KickAssemblerParser.NumericContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.number"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitNumber([NotNull] KickAssemblerParser.NumberContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.lohibyte"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLohibyte([NotNull] KickAssemblerParser.LohibyteContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.decNumber"/>.
 	/// </summary>
@@ -307,6 +367,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBinNumber([NotNull] KickAssemblerParser.BinNumberContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.boolean"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBoolean([NotNull] KickAssemblerParser.BooleanContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.opcodeExtension"/>.
 	/// </summary>
