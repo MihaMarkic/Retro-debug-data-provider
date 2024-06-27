@@ -86,7 +86,7 @@ var: VAR assignment_expression;
 const: CONST assignment_expression;
 if: IF OPEN_PARENS expression CLOSE_PARENS compiler_statement;
 errorif: ERRORIF OPEN_PARENS expression CLOSE_PARENS COMMA STRING;
-eval: EVAL assignment_expression;
+eval: EVAL shorthand_assignment_expression;
 break: BREAK STRING?;
 watch: WATCH watchArguments;
 watchArguments
