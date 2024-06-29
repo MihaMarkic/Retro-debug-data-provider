@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from /Users/miha/Projects/rthand/c64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
+// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -408,6 +408,438 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitEnumValue([NotNull] KickAssemblerParser.EnumValueContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.for"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFor([NotNull] KickAssemblerParser.ForContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.for"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFor([NotNull] KickAssemblerParser.ForContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.while"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterWhile([NotNull] KickAssemblerParser.WhileContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.while"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitWhile([NotNull] KickAssemblerParser.WhileContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.struct"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterStruct([NotNull] KickAssemblerParser.StructContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.struct"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitStruct([NotNull] KickAssemblerParser.StructContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.variableList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterVariableList([NotNull] KickAssemblerParser.VariableListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.variableList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitVariableList([NotNull] KickAssemblerParser.VariableListContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.define"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDefine([NotNull] KickAssemblerParser.DefineContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.define"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDefine([NotNull] KickAssemblerParser.DefineContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.functionDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFunctionDefine([NotNull] KickAssemblerParser.FunctionDefineContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.functionDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFunctionDefine([NotNull] KickAssemblerParser.FunctionDefineContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.return"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterReturn([NotNull] KickAssemblerParser.ReturnContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.return"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitReturn([NotNull] KickAssemblerParser.ReturnContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPseudoCommandDefine([NotNull] KickAssemblerParser.PseudoCommandDefineContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPseudoCommandDefine([NotNull] KickAssemblerParser.PseudoCommandDefineContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefineArguments"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPseudoCommandDefineArguments([NotNull] KickAssemblerParser.PseudoCommandDefineArgumentsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefineArguments"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPseudoCommandDefineArguments([NotNull] KickAssemblerParser.PseudoCommandDefineArgumentsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.namespace"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterNamespace([NotNull] KickAssemblerParser.NamespaceContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.namespace"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitNamespace([NotNull] KickAssemblerParser.NamespaceContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.labelDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLabelDirective([NotNull] KickAssemblerParser.LabelDirectiveContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.labelDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLabelDirective([NotNull] KickAssemblerParser.LabelDirectiveContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.plugin"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPlugin([NotNull] KickAssemblerParser.PluginContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.plugin"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPlugin([NotNull] KickAssemblerParser.PluginContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.segment"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSegment([NotNull] KickAssemblerParser.SegmentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.segment"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSegment([NotNull] KickAssemblerParser.SegmentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.segmentDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSegmentDef([NotNull] KickAssemblerParser.SegmentDefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.segmentDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSegmentDef([NotNull] KickAssemblerParser.SegmentDefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.segmentOut"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSegmentOut([NotNull] KickAssemblerParser.SegmentOutContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.segmentOut"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSegmentOut([NotNull] KickAssemblerParser.SegmentOutContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.fileDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFileDirective([NotNull] KickAssemblerParser.FileDirectiveContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.fileDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFileDirective([NotNull] KickAssemblerParser.FileDirectiveContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.diskDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDiskDirective([NotNull] KickAssemblerParser.DiskDirectiveContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.diskDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDiskDirective([NotNull] KickAssemblerParser.DiskDirectiveContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.diskDirectiveContent"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDiskDirectiveContent([NotNull] KickAssemblerParser.DiskDirectiveContentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.diskDirectiveContent"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDiskDirectiveContent([NotNull] KickAssemblerParser.DiskDirectiveContentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.parameterMap"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterParameterMap([NotNull] KickAssemblerParser.ParameterMapContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.parameterMap"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitParameterMap([NotNull] KickAssemblerParser.ParameterMapContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.parameterMapItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterParameterMapItems([NotNull] KickAssemblerParser.ParameterMapItemsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.parameterMapItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitParameterMapItems([NotNull] KickAssemblerParser.ParameterMapItemsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.parameterMapItem"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterParameterMapItem([NotNull] KickAssemblerParser.ParameterMapItemContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.parameterMapItem"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitParameterMapItem([NotNull] KickAssemblerParser.ParameterMapItemContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.modify"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterModify([NotNull] KickAssemblerParser.ModifyContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.modify"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitModify([NotNull] KickAssemblerParser.ModifyContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.fileModify"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFileModify([NotNull] KickAssemblerParser.FileModifyContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.fileModify"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFileModify([NotNull] KickAssemblerParser.FileModifyContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.assert"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAssert([NotNull] KickAssemblerParser.AssertContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.assert"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAssert([NotNull] KickAssemblerParser.AssertContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.assertError"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAssertError([NotNull] KickAssemblerParser.AssertErrorContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.assertError"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAssertError([NotNull] KickAssemblerParser.AssertErrorContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.pseudopc"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPseudopc([NotNull] KickAssemblerParser.PseudopcContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.pseudopc"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPseudopc([NotNull] KickAssemblerParser.PseudopcContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.fileName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFileName([NotNull] KickAssemblerParser.FileNameContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.fileName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFileName([NotNull] KickAssemblerParser.FileNameContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorDirective([NotNull] KickAssemblerParser.PreprocessorDirectiveContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorDirective"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorDirective([NotNull] KickAssemblerParser.PreprocessorDirectiveContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorDefine([NotNull] KickAssemblerParser.PreprocessorDefineContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorDefine([NotNull] KickAssemblerParser.PreprocessorDefineContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorUndef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorUndef([NotNull] KickAssemblerParser.PreprocessorUndefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorUndef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorUndef([NotNull] KickAssemblerParser.PreprocessorUndefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorImport"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorImport([NotNull] KickAssemblerParser.PreprocessorImportContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorImport"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorImport([NotNull] KickAssemblerParser.PreprocessorImportContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorImportIf"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorImportIf([NotNull] KickAssemblerParser.PreprocessorImportIfContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorImportIf"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorImportIf([NotNull] KickAssemblerParser.PreprocessorImportIfContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorImportOnce"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorImportOnce([NotNull] KickAssemblerParser.PreprocessorImportOnceContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorImportOnce"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorImportOnce([NotNull] KickAssemblerParser.PreprocessorImportOnceContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorIf"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorIf([NotNull] KickAssemblerParser.PreprocessorIfContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorIf"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorIf([NotNull] KickAssemblerParser.PreprocessorIfContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.preprocessorCondition"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPreprocessorCondition([NotNull] KickAssemblerParser.PreprocessorConditionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.preprocessorCondition"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPreprocessorCondition([NotNull] KickAssemblerParser.PreprocessorConditionContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.directive"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -552,18 +984,6 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitEncodingDirectiveValue([NotNull] KickAssemblerParser.EncodingDirectiveValueContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.importFileDirective"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterImportFileDirective([NotNull] KickAssemblerParser.ImportFileDirectiveContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.importFileDirective"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitImportFileDirective([NotNull] KickAssemblerParser.ImportFileDirectiveContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.importDataDirective"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -588,17 +1008,17 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitLabelName([NotNull] KickAssemblerParser.LabelNameContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.define"/>.
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.atName"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterDefine([NotNull] KickAssemblerParser.DefineContext context) { }
+	public virtual void EnterAtName([NotNull] KickAssemblerParser.AtNameContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.define"/>.
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.atName"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitDefine([NotNull] KickAssemblerParser.DefineContext context) { }
+	public virtual void ExitAtName([NotNull] KickAssemblerParser.AtNameContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.file"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -755,6 +1175,30 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitOpcode([NotNull] KickAssemblerParser.OpcodeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.color"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterColor([NotNull] KickAssemblerParser.ColorContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.color"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitColor([NotNull] KickAssemblerParser.ColorContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.opcodeConstant"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterOpcodeConstant([NotNull] KickAssemblerParser.OpcodeConstantContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.opcodeConstant"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitOpcodeConstant([NotNull] KickAssemblerParser.OpcodeConstantContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>
