@@ -85,6 +85,7 @@ PC: 'pc';
 
 BREAK: 'break';
 WATCH: 'watch';
+ZP: 'zp';
 
 // COLORS
 BLACK: 'BLACK';
@@ -161,20 +162,20 @@ OP_RANGE                 : '..';
 TRUE                     : 'true';
 FALSE                    : 'false';
 
+ZERO: '0';
 DEC_NUMBER: DEC_DIGIT+; 
 HEX_NUMBER: '$' HEX_DIGIT+ ;
 BIN_NUMBER: '%' BIN_DIGIT+ ;
 MARG_INDEX: [12345];
 fragment INPUT_CHAR: ~[\r\n]; // everything except newline
-fragment DEC_DIGIT: [0-9] ;
-fragment HEX_DIGIT: [0-9a-fA-F] ;
-fragment BIN_DIGIT: [01];
+fragment DEC_DIGIT: ZERO | [1-9] ;
+fragment HEX_DIGIT: ZERO | [1-9a-fA-F] ;
+fragment BIN_DIGIT: ZERO | '1';
 CHAR: '\'' . '\'' ;
 STRING:  '"' .*? '"' ;
 HASH: '#';
 DOUBLE_QUOTE: '"';
-UNQUOTED_STRING: [a-zA-Z0-9]+ ;
-SYMBOL: '.'? [a-zA-Z0-9_]+ ;
+//SYMBOL: '.'? [a-zA-Z0-9_]+ ;
 SINGLE_LINE_COMMENT : '//' .*? EOL  -> channel(COMMENTS_CHANNEL);
 MULTI_LINE_COMMENT  : '/*' .*? '*/' -> channel(COMMENTS_CHANNEL);
 
@@ -541,6 +542,8 @@ TRB_ABS_CONST: 'TRB_ABS';
 TSB_ZP_CONST: 'TSB_ZP';
 TSB_ABS_CONST: 'TSB_ABS';
 WAI_CONST: 'WAI';
+
+UNQUOTED_STRING: [a-zA-Z0-9]+ ;
 
 
 // chars

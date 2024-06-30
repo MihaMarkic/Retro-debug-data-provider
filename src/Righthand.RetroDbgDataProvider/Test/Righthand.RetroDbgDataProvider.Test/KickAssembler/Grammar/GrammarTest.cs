@@ -3,10 +3,10 @@
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
 [TestFixture]
-public class GrammarTest: Bootstrap
+public class GrammarTest: Bootstrap<GrammarTest>
 {
     [TestFixture]
-    public class DecNumber: Bootstrap
+    public class DecNumber: GrammarTest
     {
         [TestCase("55")]
         [TestCase("100")]
@@ -27,7 +27,7 @@ public class GrammarTest: Bootstrap
     }
 
     [TestFixture]
-    public class LabelName : Bootstrap
+    public class LabelName : GrammarTest
     {
         [TestCase("!")]
         [TestCase("!tubo")]
@@ -38,13 +38,26 @@ public class GrammarTest: Bootstrap
         }
     }
     [TestFixture]
-    public class CpuDirectiveName : Bootstrap
+    public class CpuDirectiveName : GrammarTest
     {
         [TestCase("cpu _65c02")]
         [TestCase("cpu _6502NoIllegals")]
         public void TestValid(string input)
         {
             Assert.DoesNotThrow(() => Run(input, p => p.cpuDirective()));
+        }
+    }
+
+    [TestFixture]
+    public class TestAllSamples : GrammarTest
+    {
+        [TestCase("Sample1")]
+        [TestCase("Sample2")]
+        [TestCase("Sample3")]
+        public void TestValid(string input)
+        {
+            var content = LoadKickAssSample($"{input}.asm");
+            Assert.DoesNotThrow(() => Run(content, p => p.program()));
         }
     }
 }

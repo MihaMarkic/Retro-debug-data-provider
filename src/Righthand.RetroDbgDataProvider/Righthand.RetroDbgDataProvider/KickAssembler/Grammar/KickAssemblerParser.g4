@@ -9,10 +9,10 @@ program: units;
 
 // needs a lot of love
 
-units: unit ((EOL | SEMICOLON) unit)*;
+units: unit ((EOL | SEMICOLON)* unit)*;
 
-unit:
-    | instruction
+unit
+    : instruction
     | label
     | directive
     | scope
@@ -38,8 +38,14 @@ argument
 	| HASH numeric
 	| OPEN_PARENS argumentList CLOSE_PARENS
 	| OPEN_BRACKET argumentList CLOSE_BRACKET
+	| labelOffsetReference
+	| STAR expression                                       // jmp *-6
 	| expression
+	| STAR                                                  // jmp *
 	;
+labelOffsetReference
+    : labelName MINUS
+    | labelName PLUS;
 
 expression
     : OPEN_PARENS expression CLOSE_PARENS
@@ -49,15 +55,17 @@ expression
 	| expression DIV expression
 	| expression PLUS expression
 	| expression MINUS expression
+	| PLUS expression
+	| MINUS expression
 	| expression compareop expression
     | expression INTERR expression COLON expression	        // ternary: true ? "hello" : "goodbye"
 	| classFunction
 	| function
-	| STRING
 	| numeric
 	| opcodeConstant
 	| color
 	| boolean
+	| labelName
 	| STRING
 	;
 	
@@ -128,6 +136,7 @@ compiler_statement
         | assert
         | assertError
         | pseudopc
+        | zp
     );
 
 print: PRINT expression;
@@ -187,6 +196,9 @@ assert: ASSERT STRING unit COMMA unit;
 assertError: ASSERTERROR STRING unit;
 
 pseudopc: numeric scope;                            // or should use number?
+zp: ZP OPEN_BRACE EOL* zpArgumentList EOL* CLOSE_BRACE;
+zpArgumentList: zpArgument (EOL zpArgument)*;
+zpArgument: atName COLON DOT BYTE ZERO;
     
 //segmentOptions: segmentOption (COMMA segmentOption)*;
 //segmentOption
@@ -268,10 +280,7 @@ directive
     | memoryDirective
     ;
      
-memoryDirective
-    : STAR ASSIGNMENT number STRING
-    | PC  ASSIGNMENT number STRING
-    ;
+memoryDirective: (OP_MULT_ASSIGNMENT | PC) number STRING? UNQUOTED_STRING?;
     
 cpuDirective
     : CPU (CPU6502NOILLEGALS | CPU6502 | DTV | CPU65C02);

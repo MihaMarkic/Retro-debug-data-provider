@@ -8,31 +8,32 @@ namespace Righthand.RetroDbgDataProvider.Test;
 public abstract class BaseTest<T>
     where T : class
 {
-    protected Fixture fixture = default!;
-    T target = default!;
-    public T Target
+    protected Fixture Fixture = default!;
+    private T? _target;
+
+    protected T Target
     {
         [DebuggerStepThrough]
         get
         {
-            if (target is null)
+            if (_target is null)
             {
-                target = fixture.Build<T>().OmitAutoProperties().Create();
+                _target = Fixture.Build<T>().OmitAutoProperties().Create();
             }
-            return target;
+            return _target;
         }
     }
 
     [SetUp]
     public void SetUp()
     {
-        fixture = new Fixture();
-        fixture.Customize(new AutoNSubstituteCustomization());
+        Fixture = new Fixture();
+        Fixture.Customize(new AutoNSubstituteCustomization());
     }
     [TearDown]
     public void TearDown()
     {
-        target = null!;
+        _target = null!;
     }
     protected static string LoadKickAssSample(string name)
     {

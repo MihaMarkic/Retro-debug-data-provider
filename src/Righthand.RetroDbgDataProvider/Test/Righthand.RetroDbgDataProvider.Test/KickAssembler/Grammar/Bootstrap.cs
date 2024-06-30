@@ -3,9 +3,10 @@ using Antlr4.Runtime.Tree;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
-public abstract class Bootstrap
+public abstract class Bootstrap<T>: BaseTest<T>
+    where T : class
 {
-    public void Run<TContext>(string text, Func<KickAssemblerParser, TContext> run)
+    protected void Run<TContext>(string text, Func<KickAssemblerParser, TContext> run)
         where TContext : ParserRuleContext
     {
         Run<KickAssemblerParserBaseListener, TContext>(text, run);

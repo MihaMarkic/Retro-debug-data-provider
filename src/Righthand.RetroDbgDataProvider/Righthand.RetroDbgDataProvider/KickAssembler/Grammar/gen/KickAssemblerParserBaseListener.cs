@@ -132,6 +132,18 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitArgument([NotNull] KickAssemblerParser.ArgumentContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.labelOffsetReference"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLabelOffsetReference([NotNull] KickAssemblerParser.LabelOffsetReferenceContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.labelOffsetReference"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLabelOffsetReference([NotNull] KickAssemblerParser.LabelOffsetReferenceContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -731,6 +743,42 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitPseudopc([NotNull] KickAssemblerParser.PseudopcContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.zp"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterZp([NotNull] KickAssemblerParser.ZpContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.zp"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitZp([NotNull] KickAssemblerParser.ZpContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.zpArgumentList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterZpArgumentList([NotNull] KickAssemblerParser.ZpArgumentListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.zpArgumentList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitZpArgumentList([NotNull] KickAssemblerParser.ZpArgumentListContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.zpArgument"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterZpArgument([NotNull] KickAssemblerParser.ZpArgumentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.zpArgument"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitZpArgument([NotNull] KickAssemblerParser.ZpArgumentContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.fileName"/>.
 	/// <para>The default implementation does nothing.</para>

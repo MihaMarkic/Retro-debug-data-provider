@@ -80,6 +80,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitArgument([NotNull] KickAssemblerParser.ArgumentContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.labelOffsetReference"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLabelOffsetReference([NotNull] KickAssemblerParser.LabelOffsetReferenceContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -379,6 +385,24 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitPseudopc([NotNull] KickAssemblerParser.PseudopcContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.zp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitZp([NotNull] KickAssemblerParser.ZpContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.zpArgumentList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitZpArgumentList([NotNull] KickAssemblerParser.ZpArgumentListContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.zpArgument"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitZpArgument([NotNull] KickAssemblerParser.ZpArgumentContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.fileName"/>.
 	/// </summary>
