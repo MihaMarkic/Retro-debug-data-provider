@@ -2276,9 +2276,9 @@ opcodesBuilder.AppendLine("opcodeConstant");
 
 bool isFirstLine = true;
 
-foreach (var p in combinations)
+foreach (var p in combinations.OrderBy(c => c.Key))
 {
-	foreach (var s in p.Value)
+	foreach (var s in p.Value.OrderBy(s => s))
 	{
 		string c = p.Key;
 		string addressing = s != "" ? $"_{s}" : "";
