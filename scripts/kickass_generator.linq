@@ -2290,8 +2290,8 @@ foreach (var p in combinations.OrderBy(c => c.Key))
 }
 
 //Debug.WriteLine("// OpCodes constants");
-//Debug.WriteLine(constBuilder);
-Debug.WriteLine(opcodesBuilder);
+Debug.WriteLine(constBuilder);
+//Debug.WriteLine(opcodesBuilder);
 
 
 string[] colorsSource = new string[] { "BLACK", "WHITE", "RED", "CYAN", "PURPLE", "GREEN", "BLUE", "YELLOW", "ORANGE", "BROWN", "LIGHT_RED", "DARK_GRAY",

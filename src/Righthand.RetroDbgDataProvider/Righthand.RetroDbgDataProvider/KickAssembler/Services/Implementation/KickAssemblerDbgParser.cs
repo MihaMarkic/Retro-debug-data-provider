@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Web;
@@ -8,8 +9,9 @@ using System.Xml.Linq;
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
 public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
+: IKickAssemblerDbgParser
 {
-    public async Task<C64Debugger> LoadFileAsync(string path, CancellationToken ct = default)
+    public async ValueTask<C64Debugger> LoadFileAsync(string path, CancellationToken ct = default)
     {
         if (!File.Exists(path))
         {
@@ -30,7 +32,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
     }
 
     internal XElement GetElement(XElement root, string name) => root.Element(name) ?? new XElement(name);
-    internal async ValueTask<C64Debugger> LoadContentAsync(string content, string path, CancellationToken ct = default)
+    public async ValueTask<C64Debugger> LoadContentAsync(string content, string path, CancellationToken ct = default)
     {
         const string rootName = "C64debugger";
         try
@@ -94,7 +96,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
     {
         var blocks = segment.Elements("Block");
         return new Segment(
-            (string)(segment.Attribute("name") ?? throw new Exception("Segment missing a name attribute")), 
+            (string)(segment.Attribute("name") ?? throw new Exception("Segment missing a name attribute")),
             await ParseBlocks(blocks));
     }
 
@@ -170,7 +172,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
         return result;
     }
 
-    internal ValueTask<ImmutableArray<T>> ParseFromLines<T>(XElement sources, 
+    internal ValueTask<ImmutableArray<T>> ParseFromLines<T>(XElement sources,
         Func<string, T> parseLine,
         CancellationToken ct = default)
     {
@@ -249,7 +251,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
         return new Watchpoint(
             SegmentName: parts[0],
             Address1: ParseHexText(parts[1], 4),
-            Address2: parts[2] != string.Empty ? ParseHexText(parts[2], 4): null,
+            Address2: parts[2] != string.Empty ? ParseHexText(parts[2], 4) : null,
             Argument: parts[3]
         );
     }

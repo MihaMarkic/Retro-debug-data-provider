@@ -1,7 +1,8 @@
 using System.Collections.Frozen;
-using Righthand.RetroDbgDataProvider.KickAssembler.Models;
+using System.Collections.Immutable;
 
 namespace Righthand.RetroDbgDataProvider.Models.Program;
 
 public record SourceFile(SourceFilePath Path,
-    FrozenDictionary<TextRange, Label> Labels);
+    FrozenDictionary<string, Label> Labels,
+    ImmutableArray<BlockItem> BlockItems);
