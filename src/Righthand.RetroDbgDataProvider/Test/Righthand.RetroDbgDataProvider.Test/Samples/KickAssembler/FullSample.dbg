@@ -12,7 +12,7 @@
          $0805,$0805,0,58,5,58,9
          $0806,$080a,0,59,2,59,6
          $080b,$080b,0,60,2,60,6
-         $080c,$080d,0,62,5,62,9
+         $080c,$080d,0,62,5,62,9    
       </Block>
       <Block name="Default">
          $2000,$2001,1,2,5,2,7
@@ -25,7 +25,7 @@
          $c00a,$c00a,2,14,5,14,7
       </Block>
    </Segment>
-   <Segment name="AdditionalEmpty" dest="" values="START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
+<Segment name="AdditionalEmpty" dest="" values="START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
    </Segment>
 
    <Labels values="SEGMENT,ADDRESS,NAME,START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">

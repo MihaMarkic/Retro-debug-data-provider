@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
-public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
+public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
 {
     public async Task<C64Debugger> LoadFileAsync(string path, CancellationToken ct = default)
     {
@@ -22,15 +22,15 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"Failed to load KickAssembler debug files {path}");
+            _logger.LogError(ex, $"Failed to load KickAssembler debug files {path}");
             throw;
         }
-        var result = await LoadContentAsync(content, ct);
-        return result;
+        var result = await LoadContentAsync(content, path, ct);
+        return result with { Path = path };
     }
 
     internal XElement GetElement(XElement root, string name) => root.Element(name) ?? new XElement(name);
-    internal async ValueTask<C64Debugger> LoadContentAsync(string content, CancellationToken ct = default)
+    internal async ValueTask<C64Debugger> LoadContentAsync(string content, string path, CancellationToken ct = default)
     {
         const string rootName = "C64debugger";
         try
@@ -52,6 +52,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
             var watchpointsTask = ParseFromLines(watchpoints, ParseWatchpoint, ct);
             return new C64Debugger(
                 (string?)root.Attribute("Version") ?? "?",
+                path,
                 await sourcesTask.ConfigureAwait(false),
                 await segmentsTask.ConfigureAwait(false),
                 await labelsTask.ConfigureAwait(false),
@@ -61,7 +62,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"Failed to parser KickAssembler debug content");
+            _logger.LogError(ex, $"Failed to parser KickAssembler debug content");
             throw;
         }
     }

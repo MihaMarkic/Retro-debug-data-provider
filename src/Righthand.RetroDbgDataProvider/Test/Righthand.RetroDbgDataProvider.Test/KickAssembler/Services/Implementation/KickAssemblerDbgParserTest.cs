@@ -92,7 +92,7 @@ public class KickAssemblerDbgParserTest : BaseTest<KickAssemblerDbgParser>
         public async Task GivenSampleFile_ParsesCorrectly()
         {
             var sample = LoadKickAssSample("FullSample.dbg");
-            var actual = await Target.LoadContentAsync(sample);
+            var actual = await Target.LoadContentAsync(sample,"path");
 
             Assert.That(actual.Sources.Length, Is.EqualTo(3));
             Assert.That(actual.Segments.Length, Is.EqualTo(2));

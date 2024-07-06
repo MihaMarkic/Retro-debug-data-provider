@@ -3,12 +3,13 @@
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
 public record C64Debugger(
-string Version,
-ImmutableArray<Source> Sources,
-ImmutableArray<Segment> Segments,
-ImmutableArray<Label> Labels,
-ImmutableArray<Breakpoint> Breakpoints,
-ImmutableArray<Watchpoint> Watchpoints);
+    string Version,
+    string Path,
+    ImmutableArray<Source> Sources,
+    ImmutableArray<Segment> Segments,
+    ImmutableArray<Label> Labels,
+    ImmutableArray<Breakpoint> Breakpoints,
+    ImmutableArray<Watchpoint> Watchpoints);
 
 public enum SourceOrigin
 {

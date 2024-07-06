@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Righthand.RetroDbgDataProvider.KickAssembler.Models.Program;
+namespace Righthand.RetroDbgDataProvider.KickAssembler.Models.Program.XXX;
 
 public record Pdb(ImmutableDictionary<PdbPath, PdbFile> Files, 
         ImmutableDictionary<string, PdbLabel> Labels,

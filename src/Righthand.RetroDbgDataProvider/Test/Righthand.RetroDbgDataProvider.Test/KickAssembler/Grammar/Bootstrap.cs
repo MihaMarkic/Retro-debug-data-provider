@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
