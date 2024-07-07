@@ -8,14 +8,11 @@ using KickAss = Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
-/// <summary>
-/// Creates a new instance.
-/// </summary>
-/// <param name="_logger"></param>
+/// <inheritdoc/>
 public class KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBuilder> _logger)
 : IKickAssemblerProgramInfoBuilder
 {
-    public async ValueTask<AssemblerAppInfo> BuildAppInfoAsync(KickAss.C64Debugger dbgData, CancellationToken ct = default)
+    public async ValueTask<AssemblerAppInfo> BuildAppInfoAsync(KickAss.DbgData dbgData, CancellationToken ct = default)
     {
         var labels = CreateLabels(dbgData.Labels);
         // maps labels by file index

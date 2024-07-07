@@ -2,7 +2,7 @@
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
-public record C64Debugger(
+public record DbgData(
     string Version,
     string Path,
     ImmutableArray<Source> Sources,

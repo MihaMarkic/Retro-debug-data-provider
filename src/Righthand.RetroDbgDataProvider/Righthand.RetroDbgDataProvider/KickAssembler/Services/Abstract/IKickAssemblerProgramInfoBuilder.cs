@@ -3,7 +3,10 @@ using KickAss = Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 
+/// <summary>
+/// Creates a new instance.
+/// </summary>
 public interface IKickAssemblerProgramInfoBuilder
 {
-    ValueTask<AssemblerAppInfo> BuildAppInfoAsync(KickAss.C64Debugger dbgData, CancellationToken ct = default);
+    ValueTask<AssemblerAppInfo> BuildAppInfoAsync(KickAss.DbgData dbgData, CancellationToken ct = default);
 }

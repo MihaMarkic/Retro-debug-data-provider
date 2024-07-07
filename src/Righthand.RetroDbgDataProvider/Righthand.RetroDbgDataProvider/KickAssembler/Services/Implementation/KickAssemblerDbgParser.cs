@@ -8,10 +8,11 @@ using System.Xml.Linq;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
+/// <inheritdoc/>
 public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
 : IKickAssemblerDbgParser
 {
-    public async ValueTask<C64Debugger> LoadFileAsync(string path, CancellationToken ct = default)
+    public async ValueTask<DbgData> LoadFileAsync(string path, CancellationToken ct = default)
     {
         if (!File.Exists(path))
         {
@@ -32,7 +33,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
     }
 
     internal XElement GetElement(XElement root, string name) => root.Element(name) ?? new XElement(name);
-    public async ValueTask<C64Debugger> LoadContentAsync(string content, string path, CancellationToken ct = default)
+    public async ValueTask<DbgData> LoadContentAsync(string content, string path, CancellationToken ct = default)
     {
         const string rootName = "C64debugger";
         try
@@ -52,7 +53,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
             var breakpointsTask = ParseFromLines(breakpoints, ParseBreakpoint, ct);
             var watchpoints = GetElement(root, "Watchpoints");
             var watchpointsTask = ParseFromLines(watchpoints, ParseWatchpoint, ct);
-            return new C64Debugger(
+            return new DbgData(
                 (string?)root.Attribute("Version") ?? "?",
                 path,
                 await sourcesTask.ConfigureAwait(false),

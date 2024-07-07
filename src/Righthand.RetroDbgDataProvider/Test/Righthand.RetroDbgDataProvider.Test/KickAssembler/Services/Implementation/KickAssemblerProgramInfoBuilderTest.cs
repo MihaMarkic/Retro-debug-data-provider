@@ -16,7 +16,7 @@ internal class KickAssemblerProgramInfoBuilderTest: BaseTest<KickAssemblerProgra
         public class SampleFile : BuildAppInfo
         {
             IKickAssemblerDbgParser parser = default!;
-            KickAss.C64Debugger dbg = default!;
+            KickAss.DbgData dbg = default!;
 
             [SetUp]
             public async Task SetupAsync()
