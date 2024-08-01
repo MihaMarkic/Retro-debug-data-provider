@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
 /// <inheritdoc/>
-public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _logger)
+public partial class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _logger)
 : IKickAssemblerByteDumpParser
 {
     public enum State
@@ -51,13 +51,12 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
     {
         var state = State.WaitingForSegment;
         var reader = new StringReader(content);
-        string? line;
         string? segmentName = null;
         string? blockName = null;
         var segments = new List<AssemblySegment>();
         var blocks = new List<AssemblyBlock>();
         var blockLines = new List<AssemblyLine>();
-        while ((line = reader.ReadLine()) is not null)
+        while (reader.ReadLine() is { } line)
         {
             var (headerName, lineType) = GetLineType(line);
             if (headerName is null && (lineType == LineType.SegmentHeader || lineType == LineType.BlockHeader))
@@ -96,7 +95,7 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
                             {
                                 throw new Exception($"Block name is missing name when got new block {headerName}");
                             }
-                            blocks.Add(new AssemblyBlock(blockName, blockLines.ToImmutableArray()));
+                            blocks.Add(new AssemblyBlock(blockName, [..blockLines]));
                             StartNewBlock(headerName!);
                             break;
                         default:
@@ -107,14 +106,14 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
         }
         if (segmentName is not null && blockName is not null)
         {
-            blocks.Add(new AssemblyBlock(blockName, blockLines.ToImmutableArray()));
+            blocks.Add(new AssemblyBlock(blockName, [..blockLines]));
             AddSegment();
         }
         else
         {
             throw new Exception("Couldn't collect last segment");
         }
-        return segments.ToImmutableArray();
+        return [..segments];
 
         void AddSegment()
         {
@@ -122,7 +121,7 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
             {
                 throw new Exception($"Segment name is missing name when got new segment");
             }
-            segments.Add(new AssemblySegment(segmentName!, blocks.ToImmutableArray()));
+            segments.Add(new AssemblySegment(segmentName!, [..blocks]));
         }
 
         void StartNewSegment(string newName)
@@ -173,7 +172,25 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
             }
             bytes[i] = b;
         }
-        return new AssemblyLine(address, bytes.ToImmutableArray(), description.ToString());
+
+        int colonIndex = description.IndexOf(':');
+        var labels = ImmutableArray<string>.Empty;
+        if (colonIndex > 0)
+        {
+            string[] parts = description[..colonIndex].ToString().Split(',', StringSplitOptions.TrimEntries);
+            if (parts.All(p => IsValidLabelName(p)))
+            {
+                labels = [..parts];
+            }
+        }
+        return new AssemblyLine(address, [..bytes], labels, description.ToString());
+    }
+
+    [GeneratedRegex(@"^(?<Label>[a-zA-Z0-9_]+)$", RegexOptions.Singleline)]
+    private static partial Regex LabelRegex();
+    internal bool IsValidLabelName(ReadOnlySpan<char> part)
+    {
+        return LabelRegex().Match(part.ToString()).Success;
     }
 
     internal ref struct SplitAssemblyLineResult
@@ -188,8 +205,6 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
     }
     internal SplitAssemblyLineResult SplitAssemblyLine(ReadOnlySpan<char> line)
     {
-        ReadOnlySpan<char> data;
-
         int index = line.IndexOf('-');
         if (index < 0)
         {
@@ -197,7 +212,7 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
         }
         else
         {
-            data = line[0..index].TrimEnd();
+            var data = line[0..index].TrimEnd();
             var rest = line[(index + 1)..].TrimStart();
             return new(data, rest);
         }
@@ -232,12 +247,11 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
         return (null, LineType.Error);
     }
 
-    readonly Regex segmentName = new Regex("""
-        ^\*+\s+Segment:\s+(?<name>\w+)\s+\*+$
-        """, RegexOptions.Singleline | RegexOptions.Compiled);
+    [GeneratedRegex(@"^\*+\s+Segment:\s+(?<name>\w+)\s+\*+$", RegexOptions.Singleline)]
+    private static partial Regex SegmentNameRegex();
     internal string? GetSegmentName(string line)
     {
-        var match = segmentName.Match(line);
+        var match = SegmentNameRegex().Match(line);
         if (match.Success)
         {
             return match.Groups["name"].Value;
@@ -245,12 +259,11 @@ public class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _l
         return null;
     }
 
-    readonly Regex blockName = new Regex("""
-        ^\[(?<name>\w+)\]$
-        """, RegexOptions.Singleline | RegexOptions.Compiled);
+    [GeneratedRegex(@"^\[(?<name>\w+)\]$", RegexOptions.Singleline)]
+    private static partial Regex BlockNameRegex();
     internal string? GetBlockName(string line)
     {
-        var match = blockName.Match(line);
+        var match = BlockNameRegex().Match(line);
         if (match.Success)
         {
             return match.Groups["name"].Value;

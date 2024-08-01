@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
 /// <inheritdoc/>
-public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
+public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
 : IKickAssemblerDbgParser
 {
     public async ValueTask<DbgData> LoadFileAsync(string path, CancellationToken ct = default)
@@ -25,7 +25,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Failed to load KickAssembler debug files {path}");
+            logger.LogError(ex, $"Failed to load KickAssembler debug files {path}");
             throw;
         }
         var result = await LoadContentAsync(content, path, ct);
@@ -65,7 +65,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> _logger)
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Failed to parser KickAssembler debug content");
+            logger.LogError(ex, $"Failed to parser KickAssembler debug content");
             throw;
         }
     }

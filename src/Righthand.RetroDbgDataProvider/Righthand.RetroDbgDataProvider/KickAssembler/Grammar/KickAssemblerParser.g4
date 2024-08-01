@@ -198,7 +198,7 @@ assertError: ASSERTERROR STRING unit;
 pseudopc: numeric scope;                            // or should use number?
 zp: ZP OPEN_BRACE EOL* zpArgumentList EOL* CLOSE_BRACE;
 zpArgumentList: zpArgument (EOL zpArgument)*;
-zpArgument: atName COLON DOT BYTE ZERO;
+zpArgument: atName COLON DOT BYTE DEC_NUMBER; // DEC_NUMBER is really just 0
     
 //segmentOptions: segmentOption (COMMA segmentOption)*;
 //segmentOption
@@ -305,16 +305,9 @@ fillExpression:
     ;
     
 encodingDirective
-    : ENCODING DOUBLE_QUOTE encodingDirectiveValue DOUBLE_QUOTE
+    : ENCODING STRING
     ;
-encodingDirectiveValue
-    : ASCII
-    | PETSCII_MIXED
-    | PETSCII_UPPER
-    | SCREENCODE_MIXED
-    | SCREENCODE_UPPER
-    ;
-       
+    
 importDataDirective
     : (BINARY_TEXT | C64_TEXT | TEXT_TEXT) file (COMMA number (COMMA number)?)?
     ;

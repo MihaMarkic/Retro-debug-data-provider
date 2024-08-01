@@ -8,5 +8,5 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 /// </summary>
 public interface IKickAssemblerProgramInfoBuilder
 {
-    ValueTask<AssemblerAppInfo> BuildAppInfoAsync(KickAss.DbgData dbgData, CancellationToken ct = default);
+    ValueTask<AssemblerAppInfo> BuildAppInfoAsync(string projectDirectory, KickAss.DbgData dbgData, CancellationToken ct = default);
 }

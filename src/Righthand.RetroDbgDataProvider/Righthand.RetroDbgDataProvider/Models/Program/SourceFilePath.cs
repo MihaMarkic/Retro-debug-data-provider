@@ -15,6 +15,7 @@ public sealed record SourceFilePath(string Path, bool IsRelative)
     public static SourceFilePath CreateAbsolute(string absolutePath) => new SourceFilePath(absolutePath, false);
     public static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     public string FileName => System.IO.Path.GetFileName(Path);
+    public string? Directory => System.IO.Path.GetDirectoryName(Path);
     public static SourceFilePath Create(string directory, string path)
     {
         StringComparison comparison = IsWindows ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;

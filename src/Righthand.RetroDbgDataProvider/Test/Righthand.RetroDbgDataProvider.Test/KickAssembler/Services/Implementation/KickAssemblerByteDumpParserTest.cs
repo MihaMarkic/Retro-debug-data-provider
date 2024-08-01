@@ -59,6 +59,21 @@ public class KickAssemblerByteDumpParserTest: BaseTest<KickAssemblerByteDumpPars
 
             Assert.That(actual.Description, Is.EqualTo("main:   ldy #0"));
         }
+
+        [Test]
+        public void GivenSampleLineWithLabel_ExtractsLabel()
+        {
+            var actual = Target.ReadAssemblyLine("081f: a0 00", "main:   ldy #0");
+            
+            Assert.That(actual.Labels, Is.EquivalentTo(new []{ "main" }));
+        }
+        [Test]
+        public void GivenSampleLineWithTwoLabels_ExtractsBothLabel()
+        {
+            var actual = Target.ReadAssemblyLine("081f: a0 00", "main,another:   ldy #0");
+            
+            Assert.That(actual.Labels, Is.EquivalentTo(new []{ "main", "another" }));
+        }
     }
     [TestFixture]
     public class ParseContent : KickAssemblerByteDumpParserTest

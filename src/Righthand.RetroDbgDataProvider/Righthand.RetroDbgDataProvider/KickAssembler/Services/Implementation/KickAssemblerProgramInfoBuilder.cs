@@ -12,7 +12,7 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 public class KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBuilder> _logger)
 : IKickAssemblerProgramInfoBuilder
 {
-    public async ValueTask<AssemblerAppInfo> BuildAppInfoAsync(KickAss.DbgData dbgData, CancellationToken ct = default)
+    public async ValueTask<AssemblerAppInfo> BuildAppInfoAsync(string projectDirectory, KickAss.DbgData dbgData, CancellationToken ct = default)
     {
         var labels = CreateLabels(dbgData.Labels);
         // maps labels by file index
@@ -41,7 +41,7 @@ public class KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBui
                 li => li.Original.FileLocation.SourceIndex,
                 li => li.New)
             .ToFrozenDictionary(g => g.Key, g => g.ToImmutableArray());
-        var sourceFiles = await BuildSourceFilesAsync(dbgData.Sources, labelsMap, blockItemsMap, dbgData.Path, ct);
+        var sourceFiles = await BuildSourceFilesAsync(dbgData.Sources, labelsMap, blockItemsMap, projectDirectory, ct);
         return new AssemblerAppInfo(
             sourceFiles.ToFrozenDictionary(f => f.Path),
             allSegments.Select(ls => ls.Segment)
@@ -78,22 +78,24 @@ public class KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBui
 
     internal ImmutableArray<LinkedOriginal<Label, KickAss.Label>> CreateLabels(ImmutableArray<KickAss.Label> source)
     {
-        return source.Select(l =>
+        return [
+            ..source.Select(l =>
                 LinkedOriginalBuilder.Create(CreateLabel(l), l))
-            .ToImmutableArray();
+        ];
     }
     internal async ValueTask<ImmutableArray<SourceFile>> BuildSourceFilesAsync(ImmutableArray<KickAss.Source> sourceFiles,
         FrozenDictionary<int, ImmutableArray<Label>> labelsMap, FrozenDictionary<int, ImmutableArray<BlockItem>> blockItemsMap,
         string rootDirectory,
         CancellationToken ct)
     {
-        return sourceFiles
-            .Select((s, i) => BuildSourceFile(
-                s, 
-                labelsMap.GetArrayOrEmpty(i), 
-                blockItemsMap.GetArrayOrEmpty(i),
-                rootDirectory))
-            .ToImmutableArray();
+        return [
+            ..sourceFiles
+                .Select((s, i) => BuildSourceFile(
+                    s, 
+                    labelsMap.GetArrayOrEmpty(i), 
+                    blockItemsMap.GetArrayOrEmpty(i),
+                    rootDirectory))
+        ];
     }
     internal LinkedOriginal<Breakpoint, KickAss.Breakpoint> CreateBreakpoint(KickAss.Breakpoint source)
         => new(new Breakpoint(source.Address, source.Argument), source);
@@ -121,7 +123,7 @@ public class KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBui
         string rootDirectory)
     {
         return new SourceFile(
-            SourceFilePath.Create(rootDirectory, source.Path),
+            SourceFilePath.Create(rootDirectory, source.FullPath),
             labels.ToFrozenDictionary(l => l.Name),
             blockItems
             );

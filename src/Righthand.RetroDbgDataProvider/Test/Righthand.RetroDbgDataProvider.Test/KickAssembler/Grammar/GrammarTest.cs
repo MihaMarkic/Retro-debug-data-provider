@@ -49,6 +49,25 @@ public class GrammarTest: Bootstrap<GrammarTest>
     }
 
     [TestFixture]
+    public class EncodingDirective : GrammarTest
+    {
+        [TestCase("encoding \"screencode_mixed\"")]
+        public void TestValid(string input)
+        {
+            Assert.DoesNotThrow(() => Run(input, p => p.encodingDirective()));
+        }   
+    }
+    [TestFixture]
+    public class Instruction : GrammarTest
+    {
+        [TestCase("ldy #0")]
+        public void TestValid(string input)
+        {
+            Assert.DoesNotThrow(() => Run(input, p => p.instruction()));
+        }   
+    }
+
+    [TestFixture]
     public class TestAllSamples : GrammarTest
     {
         [TestCase("Sample1")]

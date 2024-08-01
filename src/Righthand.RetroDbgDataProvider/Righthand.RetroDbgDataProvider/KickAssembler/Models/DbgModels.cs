@@ -16,7 +16,30 @@ public enum SourceOrigin
     KickAss,
     User
 }
-public record Source(int Index, SourceOrigin Origin, string Path);
+
+/// <summary>
+/// Represents source file.
+/// </summary>
+/// <param name="Index"></param>
+/// <param name="Origin">File origin - it can be user or internal KickAssembler</param>
+/// <param name="FullPath">Full path to file when <param name="Origin"></param> is <see cref="SourceOrigin.User"/> otherwise relative</param>
+public record Source(int Index, SourceOrigin Origin, string FullPath)
+{
+    /// <summary>
+    /// Returns relative path to <paramref name="projectDirectory"/>.
+    /// </summary>
+    /// <param name="projectDirectory"></param>
+    /// <returns></returns>
+    public string? GetRelativePath(string projectDirectory)
+    {
+        if (FullPath.StartsWith(projectDirectory))
+        {
+            return FullPath.Substring(projectDirectory.Length).TrimStart(Path.DirectorySeparatorChar);
+        }
+
+        return null;
+    }
+}
 public record Segment(string Name, ImmutableArray<Block> Blocks);
 public record Block(string Name, ImmutableArray<BlockItem> Items);
 public record BlockItem(ushort Start, ushort End, FileLocation FileLocation);
