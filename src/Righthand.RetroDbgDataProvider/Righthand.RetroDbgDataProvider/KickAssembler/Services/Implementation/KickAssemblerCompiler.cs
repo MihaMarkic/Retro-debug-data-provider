@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
@@ -33,7 +34,10 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
     {
         const string bytedump = "bytedump.dmp";
 
-        string javaExe = settings.JavaPath is not null ? Path.Combine(settings.JavaPath, "java.exe") : "java.exe";
+        string javaExeName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "java.exe"
+            : "java";
+        string javaExe = settings.JavaPath is not null ? Path.Combine(settings.JavaPath, javaExeName) : javaExeName;
         var processInfo = new ProcessStartInfo(javaExe,
             $"-jar {settings.KickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}")
         {
