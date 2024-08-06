@@ -29,7 +29,7 @@ internal class KickAssemblerProgramInfoBuilderTest: BaseTest<KickAssemblerProgra
             [Test]
             public async Task GivenSampleFile_DefaultSegmentHasBreakpoint()
             {
-                var actual = await Target.BuildAppInfoAsync(dbg, default);
+                var actual = await Target.BuildAppInfoAsync("dir", dbg, default);
 
                 var defaultSegment = actual.Segments["Default"];
                 var breakpoints = defaultSegment.Breakpoints;
@@ -43,7 +43,7 @@ internal class KickAssemblerProgramInfoBuilderTest: BaseTest<KickAssemblerProgra
             [Test]
             public async Task GivenSampleFile_AdditionalEmptySegmentHasNoBreakpoints()
             {
-                var actual = await Target.BuildAppInfoAsync(dbg, default);
+                var actual = await Target.BuildAppInfoAsync("dir", dbg, default);
 
                 var defaultSegment = actual.Segments["AdditionalEmpty"];
 

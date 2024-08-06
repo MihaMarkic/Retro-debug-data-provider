@@ -10,12 +10,39 @@ namespace Righthand.RetroDbgDataProvider.Models.Program;
 /// <remarks>On Windows path casing shouldn't matter.</remarks>
 public sealed record SourceFilePath(string Path, bool IsRelative)
 {
+    /// <summary>
+    /// An empty file path.
+    /// </summary>
     public static readonly SourceFilePath Empty = new SourceFilePath(string.Empty, IsRelative: true);
+    /// <summary>
+    /// Creates an instance of <see cref="SourceFilePath"/> with relative file path.
+    /// </summary>
+    /// <param name="relativePath">Relative path.</param>
+    /// <returns>An instance of <see cref="SourceFilePath"/></returns>
     public static SourceFilePath CreateRelative(string relativePath) => new SourceFilePath(relativePath, true);
+    /// <summary>
+    /// Creates an instance of <see cref="SourceFilePath"/> with absolute file path.
+    /// </summary>
+    /// <param name="absolutePath">Absolute path.</param>
+    /// <returns>An instance of <see cref="SourceFilePath"/></returns>
     public static SourceFilePath CreateAbsolute(string absolutePath) => new SourceFilePath(absolutePath, false);
-    public static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    /// <summary>
+    /// File name part.
+    /// </summary>
     public string FileName => System.IO.Path.GetFileName(Path);
+    /// <summary>
+    /// Directory part.
+    /// </summary>
     public string? Directory => System.IO.Path.GetDirectoryName(Path);
+    /// <summary>
+    /// Creats an instance of <see cref="SourceFilePath"/>. If <paramref name="path"/> starts with <paramref name="directory"/>,
+    /// then it assumes relative, absolute path otherwise.
+    /// </summary>
+    /// <param name="directory"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public static SourceFilePath Create(string directory, string path)
     {
         StringComparison comparison = IsWindows ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
@@ -39,6 +66,11 @@ public sealed record SourceFilePath(string Path, bool IsRelative)
             return CreateAbsolute(path);
         }
     }
+    /// <summary>
+    /// Compares two instances by value.
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
     public bool Equals(SourceFilePath? other)
     {
         if (other is null)
