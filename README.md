@@ -46,4 +46,10 @@ Convert Kick Assembler specific debug model to universal one by calling
 ```csharp
 var universalModel = await IKickAssemblerProgramInfoBuilder.BuildAppInfoAsync("PROJECT_DIRECTORY", debugData, ct)
 ``` 
-where `debugData` argument is output from [Debug file parser](#debug-file-parser). 
+where `debugData` argument is output from [Debug file parser](#debug-file-parser).
+
+## Build from sources
+
+Clone repository.
+
+Since Kick Assembler binaries are not included in this repository, it's required to download them and manual install them: in `src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider` subdirectory create directory `binaries/KickAss` and place inside Kick Assembler files `KickAss.cfg` and `KickAss.jar`. 

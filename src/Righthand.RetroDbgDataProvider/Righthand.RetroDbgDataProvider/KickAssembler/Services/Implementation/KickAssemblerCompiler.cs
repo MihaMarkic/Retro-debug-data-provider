@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Models;
@@ -24,10 +25,12 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
     private static partial Regex LastCompilerErrorLocationRegex();
 
     private readonly ILogger<KickAssemblerCompiler> _logger;
+    private readonly IHostEnvironment _hostEnvironment;
 
-    public KickAssemblerCompiler(ILogger<KickAssemblerCompiler> logger)
+    public KickAssemblerCompiler(ILogger<KickAssemblerCompiler> logger, IHostEnvironment hostEnvironment)
     {
         _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
     /// <inheritdoc />
     public async Task<(int ExitCode, ImmutableArray<CompilerError> Errors)> CompileAsync(string file,
@@ -40,8 +43,11 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
             ? "java.exe"
             : "java";
         string javaExe = settings.JavaPath is not null ? Path.Combine(settings.JavaPath, javaExeName) : javaExeName;
+        // specific path to kick assembler binaries to overrides bundled ones 
+        string kickAssemblerDirectory = settings.KickAssemblerPath ?? Path.Combine(Path.GetDirectoryName(typeof(KickAssemblerCompiler).Assembly.Location)!, "binaries", "KickAss");
+        string kickAssemblerPath = Path.Combine(kickAssemblerDirectory, "KickAss.jar");
         var processInfo = new ProcessStartInfo(javaExe,
-            $"-jar {settings.KickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}")
+            $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}")
         {
             RedirectStandardOutput = true,
             CreateNoWindow = true,
@@ -118,4 +124,4 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public record KickAssemblerCompilerSettings(string KickAssemblerPath, string? JavaPath = null);
+public record KickAssemblerCompilerSettings(string? KickAssemblerPath, string? JavaPath = null);
