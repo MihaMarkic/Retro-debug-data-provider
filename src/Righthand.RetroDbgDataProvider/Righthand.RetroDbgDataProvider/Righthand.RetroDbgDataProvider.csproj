@@ -5,6 +5,32 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>Retro.Debug.Data.Provider</PackageId>
+    <Title>Retro Debug Data Provider</Title>
+    <Description>This project goal is to provide as much debugging support as possible for retro assembler starting with Kick Assembler.</Description>
+    <PackageTags>KickAssembler;retro</PackageTags>
+    <Authors>Miha Markic</Authors>
+    <Owners>Miha Markic</Owners>
+    <Version>0.1.0</Version>
+    <RepositoryUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)'=='Release' ">
+      <PropertyGroup>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <ItemGroup>
+    <None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>$(AssemblyName).Test</_Parameter1>

@@ -12,6 +12,7 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
 : IKickAssemblerDbgParser
 {
+    /// <inheritdoc/>
     public async ValueTask<DbgData> LoadFileAsync(string path, CancellationToken ct = default)
     {
         if (!File.Exists(path))
@@ -33,6 +34,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
     }
 
     internal XElement GetElement(XElement root, string name) => root.Element(name) ?? new XElement(name);
+    /// <inheritdoc/>
     public async ValueTask<DbgData> LoadContentAsync(string content, string path, CancellationToken ct = default)
     {
         const string rootName = "C64debugger";

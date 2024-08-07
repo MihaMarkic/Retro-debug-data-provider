@@ -8,6 +8,7 @@ using Righthand.RetroDbgDataProvider.Models;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
+/// <inheritdoc />
 public partial class KickAssemblerCompiler : IKickAssemblerCompiler
 {
     [GeneratedRegex(
@@ -28,6 +29,7 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
     {
         _logger = logger;
     }
+    /// <inheritdoc />
     public async Task<(int ExitCode, ImmutableArray<CompilerError> Errors)> CompileAsync(string file,
         string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
         Action<string> outputLine)
@@ -115,4 +117,5 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
     }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public record KickAssemblerCompilerSettings(string KickAssemblerPath, string? JavaPath = null);

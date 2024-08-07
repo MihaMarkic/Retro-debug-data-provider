@@ -9,9 +9,15 @@ using KickAss = Righthand.RetroDbgDataProvider.KickAssembler.Models;
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
 /// <inheritdoc/>
-public class KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBuilder> _logger)
-: IKickAssemblerProgramInfoBuilder
+public class KickAssemblerProgramInfoBuilder : IKickAssemblerProgramInfoBuilder
 {
+    private readonly ILogger<KickAssemblerProgramInfoBuilder> _logger;
+
+    public KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBuilder> logger)
+    {
+        _logger = logger;
+    }
+    /// <inheritdoc/>
     public async ValueTask<AssemblerAppInfo> BuildAppInfoAsync(string projectDirectory, KickAss.DbgData dbgData, CancellationToken ct = default)
     {
         var labels = CreateLabels(dbgData.Labels);
@@ -83,19 +89,19 @@ public class KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBui
                 LinkedOriginalBuilder.Create(CreateLabel(l), l))
         ];
     }
-    internal async ValueTask<ImmutableArray<SourceFile>> BuildSourceFilesAsync(ImmutableArray<KickAss.Source> sourceFiles,
+    internal ValueTask<ImmutableArray<SourceFile>> BuildSourceFilesAsync(ImmutableArray<KickAss.Source> sourceFiles,
         FrozenDictionary<int, ImmutableArray<Label>> labelsMap, FrozenDictionary<int, ImmutableArray<BlockItem>> blockItemsMap,
         string rootDirectory,
         CancellationToken ct)
     {
-        return [
+        return new ValueTask<ImmutableArray<SourceFile>>([
             ..sourceFiles
                 .Select((s, i) => BuildSourceFile(
                     s, 
                     labelsMap.GetArrayOrEmpty(i), 
                     blockItemsMap.GetArrayOrEmpty(i),
                     rootDirectory))
-        ];
+        ]);
     }
     internal LinkedOriginal<Breakpoint, KickAss.Breakpoint> CreateBreakpoint(KickAss.Breakpoint source)
         => new(new Breakpoint(source.Address, source.Argument), source);

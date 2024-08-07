@@ -26,6 +26,7 @@ public partial class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpPa
         Empty,
         Error
     }
+    /// <inheritdoc/>
     public async ValueTask<FrozenDictionary<string, AssemblySegment>> LoadFileAsync(string path, CancellationToken ct = default)
     {
         if (!File.Exists(path))
