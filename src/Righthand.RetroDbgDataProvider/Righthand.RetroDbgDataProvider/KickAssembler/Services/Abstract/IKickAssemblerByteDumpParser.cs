@@ -9,7 +9,7 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract
     public interface IKickAssemblerByteDumpParser
     {
         /// <summary>
-        /// Loads and parses byte dump file given by <param name="path">.</param>
+        /// Loads and parses byte dump file given by <paramref name="path" />.
         /// </summary>
         /// <param name="path">Path of the byte dump file.</param>
         /// <param name="ct">A cancellation token to observe while waiting for the task to complete.</param>

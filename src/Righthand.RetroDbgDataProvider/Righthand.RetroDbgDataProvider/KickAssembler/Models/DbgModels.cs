@@ -21,9 +21,18 @@ public record DbgData(
     ImmutableArray<Breakpoint> Breakpoints,
     ImmutableArray<Watchpoint> Watchpoints);
 
+/// <summary>
+/// Source file origin.
+/// </summary>
 public enum SourceOrigin
 {
+    /// <summary>
+    /// This is a Kick Assembler .asm file.
+    /// </summary>
     KickAss,
+    /// <summary>
+    /// Unknown file.
+    /// </summary>
     User
 }
 
@@ -32,7 +41,7 @@ public enum SourceOrigin
 /// </summary>
 /// <param name="Index"></param>
 /// <param name="Origin">File origin - it can be user or internal KickAssembler</param>
-/// <param name="FullPath">Full path to file when <param name="Origin"></param> is <see cref="SourceOrigin.User"/> otherwise relative</param>
+/// <param name="FullPath">Full path to file when <paramref name="Origin" /> is <see cref="SourceOrigin.User"/> otherwise relative</param>
 public record Source(int Index, SourceOrigin Origin, string FullPath)
 {
     /// <summary>

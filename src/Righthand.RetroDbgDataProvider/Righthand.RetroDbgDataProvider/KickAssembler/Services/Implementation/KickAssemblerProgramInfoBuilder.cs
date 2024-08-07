@@ -13,6 +13,10 @@ public class KickAssemblerProgramInfoBuilder : IKickAssemblerProgramInfoBuilder
 {
     private readonly ILogger<KickAssemblerProgramInfoBuilder> _logger;
 
+    /// <summary>
+    /// Initializes instance of <see cref="KickAssemblerProgramInfoBuilder"/>.
+    /// </summary>
+    /// <param name="logger"></param>
     public KickAssemblerProgramInfoBuilder(ILogger<KickAssemblerProgramInfoBuilder> logger)
     {
         _logger = logger;

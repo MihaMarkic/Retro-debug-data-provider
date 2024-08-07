@@ -12,13 +12,13 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 public partial class KickAssemblerByteDumpParser(ILogger<KickAssemblerByteDumpParser> _logger)
 : IKickAssemblerByteDumpParser
 {
-    public enum State
+    internal enum State
     {
         WaitingForSegment,
         ReadingBlockName,
         ReadingLine,
     }
-    public enum LineType
+    internal enum LineType
     {
         SegmentHeader,
         BlockHeader,

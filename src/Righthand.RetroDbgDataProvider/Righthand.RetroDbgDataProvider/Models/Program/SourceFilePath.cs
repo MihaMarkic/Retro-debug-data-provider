@@ -80,10 +80,12 @@ public sealed record SourceFilePath(string Path, bool IsRelative)
         var comparision = IsWindows ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         return other.IsRelative == IsRelative && string.Equals(other.Path, Path, comparision);
     }
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         return HashCode.Combine(IsRelative, IsWindows ? Path.ToLowerInvariant() : Path);
     }
+    /// <inheritdoc />
     public override string ToString()
     {
         string prefix = IsRelative ? "RELATIVE": "ABSOLUTE";

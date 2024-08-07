@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Models;
@@ -25,12 +24,14 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
     private static partial Regex LastCompilerErrorLocationRegex();
 
     private readonly ILogger<KickAssemblerCompiler> _logger;
-    private readonly IHostEnvironment _hostEnvironment;
 
-    public KickAssemblerCompiler(ILogger<KickAssemblerCompiler> logger, IHostEnvironment hostEnvironment)
+    /// <summary>
+    /// Initializes instance of <see cref="KickAssemblerCompiler"/>.
+    /// </summary>
+    /// <param name="logger"></param>
+    public KickAssemblerCompiler(ILogger<KickAssemblerCompiler> logger)
     {
         _logger = logger;
-        _hostEnvironment = hostEnvironment;
     }
     /// <inheritdoc />
     public async Task<(int ExitCode, ImmutableArray<CompilerError> Errors)> CompileAsync(string file,
@@ -124,4 +125,9 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
+/// <summary>
+/// <see cref="KickAssemblerCompiler"/> specific settings.
+/// </summary>
+/// <param name="KickAssemblerPath">Explicit directory where KickAss.jar resides. When null, bundled binaries are used.</param>
+/// <param name="JavaPath">Path to Java directory. If null, default environment path is used.</param>
 public record KickAssemblerCompilerSettings(string? KickAssemblerPath, string? JavaPath = null);

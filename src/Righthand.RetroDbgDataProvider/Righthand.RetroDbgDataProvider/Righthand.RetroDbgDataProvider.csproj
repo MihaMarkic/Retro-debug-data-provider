@@ -19,6 +19,11 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWarn>CS1658,CS1584</NoWarn>
   </PropertyGroup>
   <Choose>
     <When Condition=" '$(Configuration)'=='Release' ">
@@ -30,10 +35,10 @@
   </Choose>
   <ItemGroup>
     <None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
-    <None Update="binaries\KickAss\KickAss.cfg">
+    <None Update="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="\lib\net8.0">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="binaries\KickAss\KickAss.jar">
+    <None Update="binaries\KickAss\KickAss.jar" Pack="true" PackagePath="\lib\net8.0">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 <!--    <None Include="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="\KickAssembler" />-->
@@ -48,7 +53,6 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
   </ItemGroup>
   <ItemGroup>
