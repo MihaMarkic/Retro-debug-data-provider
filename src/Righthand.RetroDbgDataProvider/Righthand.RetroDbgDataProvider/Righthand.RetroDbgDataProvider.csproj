@@ -12,7 +12,7 @@
     <PackageTags>KickAssembler;retro</PackageTags>
     <Authors>Miha Markic</Authors>
     <Owners>Miha Markic</Owners>
-    <Version>0.1.0</Version>
+    <Version>0.1.1-alpha</Version>
     <RepositoryUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</PackageProjectUrl>
@@ -35,10 +35,10 @@
   </Choose>
   <ItemGroup>
     <None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
-    <None Update="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="\lib\net8.0">
+    <None Update="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="contentFiles\any\any">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="binaries\KickAss\KickAss.jar" Pack="true" PackagePath="\lib\net8.0">
+    <None Update="binaries\KickAss\KickAss.jar" Pack="true" PackagePath="contentFiles\any\any">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 <!--    <None Include="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="\KickAssembler" />-->
