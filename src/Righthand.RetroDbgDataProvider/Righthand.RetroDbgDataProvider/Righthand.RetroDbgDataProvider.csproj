@@ -12,7 +12,7 @@
     <PackageTags>KickAssembler;retro</PackageTags>
     <Authors>Miha Markic</Authors>
     <Owners>Miha Markic</Owners>
-    <Version>0.1.1-alpha</Version>
+    <Version>0.1.2-alpha</Version>
     <RepositoryUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</PackageProjectUrl>
@@ -31,14 +31,21 @@
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
       </PropertyGroup>
+      <ItemGroup>
+        <None Include="..\..\..\README.md" Pack="true" PackagePath="\">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Retro.Debug.Data.Provider.props" Pack="true" PackagePath="\build">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+      </ItemGroup>
     </When>
   </Choose>
   <ItemGroup>
-    <None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
-    <None Update="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="contentFiles\any\any">
+    <None Update="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="\content">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="binaries\KickAss\KickAss.jar" Pack="true" PackagePath="contentFiles\any\any">
+    <None Update="binaries\KickAss\KickAss.jar" Pack="true" PackagePath="\content">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 <!--    <None Include="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="\KickAssembler" />-->
