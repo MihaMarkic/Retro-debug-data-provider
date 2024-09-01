@@ -46,7 +46,7 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         string javaExe = settings.JavaPath is not null ? Path.Combine(settings.JavaPath, javaExeName) : javaExeName;
         // specific path to kick assembler binaries to overrides bundled ones 
         string kickAssemblerDirectory = settings.KickAssemblerPath ?? Path.Combine(Path.GetDirectoryName(typeof(KickAssemblerCompiler).Assembly.Location)!, "binaries", "KickAss");
-        string kickAssemblerPath = Path.Combine(kickAssemblerDirectory, "KickAss.jar");
+        string kickAssemblerPath = Path.Combine($"\"{kickAssemblerDirectory}\"", "KickAss.jar");
         var processInfo = new ProcessStartInfo(javaExe,
             $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}")
         {
