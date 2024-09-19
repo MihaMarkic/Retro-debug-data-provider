@@ -114,14 +114,18 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
                     }
                 }
             }
-
             await p.WaitForExitAsync();
-            var errorOutput = await p.StandardError.ReadToEndAsync();
-            if (string.IsNullOrEmpty(errorOutput))
+            if (p.ExitCode != 0)
             {
-                return (p.ExitCode, errorsBuilder.ToImmutable());
+                // when process returns an error, check whether there is output in StandardError stream
+                // (failure to launch process stuff)
+                var errorOutput = await p.StandardError.ReadToEndAsync();
+                if (!string.IsNullOrEmpty(errorOutput))
+                {
+                    throw new Exception(errorOutput);
+                }
             }
-            throw new Exception(errorOutput);
+            return (p.ExitCode, errorsBuilder.ToImmutable());
         }
         else
         {
