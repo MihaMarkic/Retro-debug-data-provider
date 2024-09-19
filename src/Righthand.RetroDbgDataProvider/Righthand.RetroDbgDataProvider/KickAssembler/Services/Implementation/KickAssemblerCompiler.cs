@@ -51,6 +51,7 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
             $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}")
         {
             RedirectStandardOutput = true,
+            RedirectStandardError = true,
             CreateNoWindow = true,
             UseShellExecute = false,
             WorkingDirectory = projectDirectory,
@@ -115,7 +116,12 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
             }
 
             await p.WaitForExitAsync();
-            return (p.ExitCode, errorsBuilder.ToImmutable());
+            var errorOutput = await p.StandardError.ReadToEndAsync();
+            if (string.IsNullOrEmpty(errorOutput))
+            {
+                return (p.ExitCode, errorsBuilder.ToImmutable());
+            }
+            throw new Exception(errorOutput);
         }
         else
         {
