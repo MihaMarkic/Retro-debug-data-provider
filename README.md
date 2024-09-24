@@ -2,6 +2,8 @@
 
 This project goal is to provide as much debugging support as possible for retro assemblers and possibly compilers starting with [KickAssembler](https://www.theweb.dk/KickAssembler/Main.html#frontpage).
 
+[![NuGet](https://img.shields.io/nuget/v/Retro.Debug.Data.Provider.svg)](https://www.nuget.org/packages/Retro.Debug.Data.Provider)
+
 ## Current services
 * Debug file (.dbg) parsing provided by `IKickAssemblerDbgParser`.
 * Byte dump file (.dmp) parsing provided by `IKickAssemblerByteDumpParser`.
