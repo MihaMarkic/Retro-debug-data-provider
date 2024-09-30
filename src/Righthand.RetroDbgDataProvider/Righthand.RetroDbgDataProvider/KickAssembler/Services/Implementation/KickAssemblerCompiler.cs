@@ -33,12 +33,22 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
     {
         _logger = logger;
     }
+
+    internal static string CreateProcessArguments(string file,string outputDir, KickAssemblerCompilerSettings settings)
+    {
+        const string bytedump = "bytedump.dmp";
+        // specific path to kick assembler binaries to overrides bundled ones 
+        string kickAssemblerDirectory = settings.KickAssemblerPath ?? Path.Combine(Path.GetDirectoryName(typeof(KickAssemblerCompiler).Assembly.Location)!, "binaries", "KickAss");
+        string kickAssemblerPath = Path.Combine($"\"{kickAssemblerDirectory}\"", "KickAss.jar");
+        string? libDirs = !settings.LibDirs.IsDefaultOrEmpty ? $" {string.Join(' ', settings.LibDirs.Select(d => $"-libdir \"{d}\""))}"
+            : null;
+        return $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}{libDirs}";
+    }
     /// <inheritdoc />
     public async Task<(int ExitCode, ImmutableArray<CompilerError> Errors)> CompileAsync(string file,
         string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
         Action<string> outputLine)
     {
-        const string bytedump = "bytedump.dmp";
 
         string javaExeName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "java.exe"
@@ -47,8 +57,10 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         // specific path to kick assembler binaries to overrides bundled ones 
         string kickAssemblerDirectory = settings.KickAssemblerPath ?? Path.Combine(Path.GetDirectoryName(typeof(KickAssemblerCompiler).Assembly.Location)!, "binaries", "KickAss");
         string kickAssemblerPath = Path.Combine($"\"{kickAssemblerDirectory}\"", "KickAss.jar");
-        var processInfo = new ProcessStartInfo(javaExe,
-            $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}")
+        string? libDirs = !settings.LibDirs.IsDefaultOrEmpty ? $" {string.Join(' ', settings.LibDirs.Select(d => $"-libdir {d}"))}"
+            : null;
+        var arguments = CreateProcessArguments(file, outputDir, settings);
+        var processInfo = new ProcessStartInfo(javaExe, arguments)
         {
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -133,11 +145,3 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         }
     }
 }
-
-// ReSharper disable once ClassNeverInstantiated.Global
-/// <summary>
-/// <see cref="KickAssemblerCompiler"/> specific settings.
-/// </summary>
-/// <param name="KickAssemblerPath">Explicit directory where KickAss.jar resides. When null, bundled binaries are used.</param>
-/// <param name="JavaPath">Path to Java directory. If null, default environment path is used.</param>
-public record KickAssemblerCompilerSettings(string? KickAssemblerPath, string? JavaPath = null);

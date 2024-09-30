@@ -21,3 +21,12 @@ public interface IKickAssemblerCompiler
     Task<(int ExitCode, ImmutableArray<CompilerError> Errors)> CompileAsync(string file, string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
         Action<string> outputLine);
 }
+
+// ReSharper disable once ClassNeverInstantiated.Global
+/// <summary>
+/// <see cref="KickAssemblerCompiler"/> specific settings.
+/// </summary>
+/// <param name="KickAssemblerPath">Explicit directory where KickAss.jar resides. When null, bundled binaries are used.</param>
+/// <param name="LibDirs">An optional array or LibDir texts.</param>
+/// <param name="JavaPath">Path to Java directory. If null, default environment path is used.</param>
+public record KickAssemblerCompilerSettings(string? KickAssemblerPath, ImmutableArray<string> LibDirs, string? JavaPath = null);
