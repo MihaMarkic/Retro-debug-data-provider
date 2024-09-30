@@ -60,6 +60,7 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         string? libDirs = !settings.LibDirs.IsDefaultOrEmpty ? $" {string.Join(' ', settings.LibDirs.Select(d => $"-libdir {d}"))}"
             : null;
         var arguments = CreateProcessArguments(file, outputDir, settings);
+        _logger.LogDebug("KickAssembler invoked as java {Java} and with arguments {Arguments}", javaExe, arguments);
         var processInfo = new ProcessStartInfo(javaExe, arguments)
         {
             RedirectStandardOutput = true,
