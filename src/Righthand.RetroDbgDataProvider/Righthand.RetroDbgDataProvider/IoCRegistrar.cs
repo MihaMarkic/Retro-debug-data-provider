@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
+using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider;
 
@@ -20,7 +21,8 @@ public static class IoCRegistrar
             .AddSingleton<IKickAssemblerCompiler, KickAssemblerCompiler>()
             .AddSingleton<IKickAssemblerByteDumpParser, KickAssemblerByteDumpParser>()
             .AddSingleton<IKickAssemblerDbgParser, KickAssemblerDbgParser>()
-            .AddSingleton<IKickAssemblerProgramInfoBuilder, KickAssemblerProgramInfoBuilder>();
+            .AddSingleton<IKickAssemblerProgramInfoBuilder, KickAssemblerProgramInfoBuilder>()
+            .AddSingleton<IFileService, IFileService>();
 
     }
 }

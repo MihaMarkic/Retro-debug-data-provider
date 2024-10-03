@@ -536,7 +536,7 @@ TYA_CONST: 'TYA';
 WAI_CONST: 'WAI';
 XAA_IMM_CONST: 'XAA_IMM';
 
-UNQUOTED_STRING: [a-zA-Z0-9]+ ;
+UNQUOTED_STRING: [a-zA-Z0-9_]+ ;
 
 
 // chars
