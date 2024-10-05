@@ -1,3 +1,11 @@
-﻿namespace Righthand.RetroDbgDataProvider.Models;
+﻿using System.Collections.Frozen;
 
-public record ParsedSourceFile(string FileName, ImmutableHashSet<string> ReferencedFiles);
+namespace Righthand.RetroDbgDataProvider.Models;
+
+public record ParsedSourceFile(
+    string FileName, 
+    FrozenSet<string> ReferencedFiles,
+    FrozenSet<string> InDefines,
+    FrozenSet<string> OutDefines,
+    DateTimeOffset LastModified,
+    string? LiveContent);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
 {
     private readonly ILogger<KickAssemblerSourceCodeParser> _logger;
     private readonly IFileService _fileService;
+    private readonly KickAssemblerPreprocessor _preprocessor;
     private CancellationTokenSource? _parsingCts;
     // file with files that reference it
     private ImmutableDictionary<string, ParsedSourceFile> _allFiles;
@@ -23,10 +25,12 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="fileService"></param>
-    public KickAssemblerSourceCodeParser(ILogger<KickAssemblerSourceCodeParser> logger, IFileService fileService)
+    public KickAssemblerSourceCodeParser(ILogger<KickAssemblerSourceCodeParser> logger, IFileService fileService,
+        KickAssemblerPreprocessor preprocessor)
     {
         _logger = logger;
         _fileService = fileService;
+        _preprocessor = preprocessor;
         _allFiles = ImmutableDictionary<string, ParsedSourceFile>.Empty;
     }
     /// <inheritdoc cref="ISourcecodeParser"/>
@@ -68,19 +72,25 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         }
     }
 
-    internal ParsedSourceFile ParseFile(string fileName, ImmutableArray<string> libraryDirectories)
+    internal ParsedSourceFile ParseFile(string fileName, FrozenSet<string> inDefines, ImmutableArray<string> libraryDirectories)
     {
+        var lastWrite = _fileService.GetLastWriteTime(fileName);
         using (var content = _fileService.OpenRead(fileName))
         {
-            return ParseStream(fileName, content, libraryDirectories);
+            return ParseStream(fileName, content, lastWrite, inDefines, libraryDirectories);
         }
     }
-    internal ParsedSourceFile ParseStream(string fileName, Stream content, ImmutableArray<string> libraryDirectories)
+
+    internal ParsedSourceFile ParseStream(string fileName, Stream content, DateTimeOffset lastModified,
+        FrozenSet<string> inDefines,
+        ImmutableArray<string> libraryDirectories)
     {
         _logger.LogInformation("Parsing file {FileName}", fileName);
         var input = new AntlrInputStream(content);
         var lexer = new KickAssemblerLexer(input);
         var tokenStream = new CommonTokenStream(lexer);
+        tokenStream.Fill();
+        _preprocessor.FilterUndefined(tokenStream, inDefines);
         var parser = new KickAssemblerParser(tokenStream)
         {
             BuildParseTree = true
@@ -94,13 +104,16 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         _logger.LogInformation("Parsed file {FileName} has these relative references {References}", fileName,
             listener.ReferencedFiles);
         var absoluteReferencePaths = GetAbsolutePaths(Path.GetDirectoryName(fileName)!, listener.ReferencedFiles, libraryDirectories);
-        return new ParsedSourceFile(fileName, absoluteReferencePaths);
+        return new ParsedSourceFile(fileName, absoluteReferencePaths, 
+            InDefines:FrozenSet<string>.Empty, OutDefines:FrozenSet<string>.Empty, LastModified: lastModified, LiveContent: null);
     }
 
-    internal ImmutableHashSet<string> GetAbsolutePaths(string filePath, ImmutableHashSet<string> relativeReferences,
+    
+
+    internal FrozenSet<string> GetAbsolutePaths(string filePath, ImmutableHashSet<string> relativeReferences,
         ImmutableArray<string> libraryDirectories)
     {
-        ImmutableHashSet<string> result = ImmutableHashSet<string>.Empty;
+        HashSet<string> result = new();
         // makes sure filePath is first directory to look in
         var allDirectories = libraryDirectories.Insert(0, filePath);
         foreach (var reference in relativeReferences)
@@ -108,14 +121,14 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
             var directory = allDirectories.FirstOrDefault(d => _fileService.FileExists(Path.Combine(d, reference)));
             if (directory is not null)
             {
-                result = result.Add(Path.Combine(directory, reference));
+                result.Add(Path.Combine(directory, reference));
             }
             else
             {
                 _logger.LogWarning("Could not find referenced source file {File}", reference);
             }
         }
-        return result;
+        return result.ToFrozenSet();
     }
     
     //

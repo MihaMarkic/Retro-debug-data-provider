@@ -2,6 +2,7 @@
 
 public interface IFileService
 {
-    bool FileExists(string path) => File.Exists(path);
-    Stream OpenRead(string path) => File.OpenRead(path);
+    bool FileExists(string path);
+    Stream OpenRead(string path);
+    DateTimeOffset GetLastWriteTime(string path);
 }
