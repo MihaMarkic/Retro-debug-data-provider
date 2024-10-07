@@ -2,8 +2,35 @@ lexer grammar KickAssemblerLexer;
 
 channels {
     COMMENTS_CHANNEL,
-    DIRECTIVE
+    DIRECTIVE,
+    // #if undefined stuff goes here
+    IGNORED
 }
+
+WS : [ \t]+ -> skip ; // skip spaces, tabs, newlines
+EOL: '\r\n' | '\r' | '\n' ;
+
+HASH: '#';
+
+HASHDEFINE
+    : HASH 'define'
+    ->pushMode(HASHDEFINE_MODE)
+    ;
+
+HASHUNDEF
+    : HASH [uU] [nN] [dD] [eE] [fF]
+    ->pushMode(HASHUNDEF_MODE)
+    ;
+
+HASHIF
+    : HASH [iI] [fF]
+    -> pushMode(HASHIF_MODE)
+    ;
+
+HASHENDIF
+    : HASH [eE] [nN] [dD] [iI] [fF]
+    ;
+
 
 ONLYA: 'a' ;
 ABS: 'abs';
@@ -166,14 +193,10 @@ fragment HEX_DIGIT: [0-9a-fA-F] ;
 fragment BIN_DIGIT: '0' | '1';
 CHAR: '\'' . '\'' ;
 STRING:  '"' .*? '"' ;
-HASH: '#';
 DOUBLE_QUOTE: '"';
 //SYMBOL: '.'? [a-zA-Z0-9_]+ ;
 SINGLE_LINE_COMMENT : '//' .*? EOL  -> channel(COMMENTS_CHANNEL);
 MULTI_LINE_COMMENT  : '/*' .*? '*/' -> channel(COMMENTS_CHANNEL);
-
-EOL: '\r\n' | '\r' | '\n' ;
-WS : [ \t]+ -> skip ; // skip spaces, tabs, newlines
 
 // OpCodes
 ADC: 'adc';
@@ -538,7 +561,84 @@ XAA_IMM_CONST: 'XAA_IMM';
 
 UNQUOTED_STRING: [a-zA-Z0-9_]+ ;
 
+mode HASHDEFINE_MODE;
 
+DEFINED_TOKEN
+    : ~[ \n\r\t]+ //add other characters as needed
+    {
+        DefinedSymbols.Add(Text);
+    }
+    ;
+
+HD_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+
+HD_NEWLINE
+    : EOL
+    ->channel(HIDDEN),PopMode
+    ;
+
+mode HASHUNDEF_MODE;
+
+UNDEFINED_TOKEN
+    : DEFINED_TOKEN
+    {
+        DefinedSymbols.Remove(Text);
+    }
+    ;
+
+HU_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+
+HU_NEWLINE
+    : EOL
+    ->channel(HIDDEN),PopMode
+    ;
+
+mode HASHIF_MODE;
+
+HI_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+
+IF_TOKEN
+    : DEFINED_TOKEN
+    {
+        if (DefinedSymbols.Contains(Text)) {
+            /*
+            In this case DEFINED_TOKEN is in fact defined so we get
+            back into the mode we were in before the pushMode that 
+            brought us here.
+            */
+            PopMode();
+        } else {
+            PushMode(IGNORE_MODE);
+        }
+    }
+    ;
+
+mode IGNORE_MODE;
+
+I_HASHIF
+    : HASHIF
+    -> PushMode(HASHIF_MODE),type(HASHIF)
+    ;
+
+I_HASHENDIF
+    : HASHENDIF
+    ->type(HASHENDIF),PopMode,PopMode
+    ;
+
+INTENTIONALLY_IGNORED
+    : .+?
+    ->channel(IGNORED)
+    ;
+    
 // chars
 //fragment A
 //   : ('a' | 'A')

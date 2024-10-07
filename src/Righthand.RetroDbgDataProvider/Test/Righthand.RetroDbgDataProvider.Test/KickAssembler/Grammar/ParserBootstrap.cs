@@ -1,10 +1,11 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
-public abstract class Bootstrap<T>: BaseTest<T>
+public abstract class ParserBootstrap<T>: BaseTest<T>
     where T : class
 {
     protected void Run<TContext>(string text, Func<KickAssemblerParser, TContext> run)

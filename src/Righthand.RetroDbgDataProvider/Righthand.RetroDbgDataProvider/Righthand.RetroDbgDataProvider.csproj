@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="KickAssembler\Grammar\gen\" />
+    <Folder Include="KickAssembler\Grammar\gen\Righthand\RetroDbgDataProvider\KickAssembler\" />
   </ItemGroup>
 
 </Project>

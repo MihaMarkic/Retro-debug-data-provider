@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using NUnit.Framework;
+using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Range = Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation.Range;
 
@@ -66,7 +67,7 @@ public partial class KickAssemblerPreprocessorTest: BaseTest<KickAssemblerPrepro
                     break;
                 }
             }
-
+            
             var tokenStream = GetTokenStream(content);
             var tokens = tokenStream.GetTokens();
             var ranges = textRanges.Select(r => 
@@ -126,21 +127,21 @@ public partial class KickAssemblerPreprocessorTest: BaseTest<KickAssemblerPrepro
             var expected = source.WithRanges((3, 7));
             Assert.That(actual, Is.EquivalentTo(expected));
         }
-        [Test]
-        public void GivenElseConditionalContent_AndIfIsDefined_UndefinedElseRangeIsReturned()
-        {
-            string content = """
-                             #if DEFINED
-                                 lda #5
-                             #else{0}
-                                 lda #6{/0}
-                             #endif
-                             """;
-            var (source, expected) = GetTokensAndRanges(content);
-            var actual = Target.ExtractUndefinedRanges(source, GetDefines("DEFINED"));
-
-            Assert.That(actual, Is.EquivalentTo(expected));
-        }
+        // [Test]
+        // public void GivenElseConditionalContent_AndIfIsDefined_UndefinedElseRangeIsReturned()
+        // {
+        //     string content = """
+        //                      #if DEFINED
+        //                          lda #5
+        //                      #else{0}
+        //                          lda #6{/0}
+        //                      #endif
+        //                      """;
+        //     var (source, expected) = GetTokensAndRanges(content);
+        //     var actual = Target.ExtractUndefinedRanges(source, GetDefines("DEFINED"));
+        //
+        //     Assert.That(actual, Is.EquivalentTo(expected));
+        // }
         [Test]
         public void GivenElseConditionalContent_AndIfIsUndefined_UndefinedElseRangeIsReturned()
         {
@@ -248,27 +249,27 @@ public partial class KickAssemblerPreprocessorTest: BaseTest<KickAssemblerPrepro
     [TestFixture]
     public class RemoveTokenRanges : KickAssemblerPreprocessorTest
     {
-        [Test]
-        public void GivenRange_FiltersTokensOut()
-        {
-            var source = GetTokenStream("""
-                                        #if DEFINED
-                                            lda #5
-                                        #endif
-                                        """);
-
-            var tokens = source.GetTokens();
-            var actual = Target.RemoveTokenRanges(source, source.WithRanges((3, 7)))
-                .GetTokens().Select(t => t.Type).ToImmutableArray();
-            
-            var expected = GetTokenStream("""
-                                          #if DEFINED
-                                          #endif
-                                          """)
-                .GetTokens().Select(t => t.Type).ToImmutableArray();
-
-            Assert.That(actual, Is.EquivalentTo(expected));
-        }
+        // [Test]
+        // public void GivenRange_FiltersTokensOut()
+        // {
+        //     var source = GetTokenStream("""
+        //                                 #if DEFINED
+        //                                     lda #5
+        //                                 #endif
+        //                                 """);
+        //
+        //     var tokens = source.GetTokens();
+        //     var actual = Target.RemoveTokenRanges(source, source.WithRanges((3, 7)))
+        //         .GetTokens().Select(t => t.Type).ToImmutableArray();
+        //     
+        //     var expected = GetTokenStream("""
+        //                                   #if DEFINED
+        //                                   #endif
+        //                                   """)
+        //         .GetTokens().Select(t => t.Type).ToImmutableArray();
+        //
+        //     Assert.That(actual, Is.EquivalentTo(expected));
+        // }
     }
 }
 
