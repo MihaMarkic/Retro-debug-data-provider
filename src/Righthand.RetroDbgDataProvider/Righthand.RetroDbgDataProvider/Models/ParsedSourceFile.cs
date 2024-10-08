@@ -3,7 +3,7 @@
 namespace Righthand.RetroDbgDataProvider.Models;
 
 public record ParsedSourceFile(
-    string FileName, 
+    string FileName,
     FrozenSet<string> ReferencedFiles,
     FrozenSet<string> InDefines,
     FrozenSet<string> OutDefines,

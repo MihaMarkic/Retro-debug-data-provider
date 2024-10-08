@@ -15,7 +15,6 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
 {
     private readonly ILogger<KickAssemblerSourceCodeParser> _logger;
     private readonly IFileService _fileService;
-    private readonly KickAssemblerPreprocessor _preprocessor;
     private CancellationTokenSource? _parsingCts;
     // file with files that reference it
     private ImmutableDictionary<string, ParsedSourceFile> _allFiles;
@@ -25,12 +24,10 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="fileService"></param>
-    public KickAssemblerSourceCodeParser(ILogger<KickAssemblerSourceCodeParser> logger, IFileService fileService,
-        KickAssemblerPreprocessor preprocessor)
+    public KickAssemblerSourceCodeParser(ILogger<KickAssemblerSourceCodeParser> logger, IFileService fileService)
     {
         _logger = logger;
         _fileService = fileService;
-        _preprocessor = preprocessor;
         _allFiles = ImmutableDictionary<string, ParsedSourceFile>.Empty;
     }
     /// <inheritdoc cref="ISourcecodeParser"/>
@@ -87,10 +84,22 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
     {
         _logger.LogInformation("Parsing file {FileName}", fileName);
         var input = new AntlrInputStream(content);
-        var lexer = new KickAssemblerLexer(input);
+        var lexer = new KickAssemblerLexer(input)
+        {
+            DefinedSymbols = inDefines.ToHashSet(),
+        };
         var tokenStream = new CommonTokenStream(lexer);
-        tokenStream.Fill();
-        _preprocessor.FilterUndefined(tokenStream, inDefines);
+        try
+        {
+            // InvalidOperationException as a consequence of invalid PopMode can be throws;
+            tokenStream.Fill();
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning("Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif", fileName);
+            return new ParsedSourceFile(fileName, FrozenSet<string>.Empty,
+                InDefines:inDefines, OutDefines:inDefines, LastModified: lastModified, LiveContent: null);
+        }
         var parser = new KickAssemblerParser(tokenStream)
         {
             BuildParseTree = true
@@ -105,7 +114,7 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
             listener.ReferencedFiles);
         var absoluteReferencePaths = GetAbsolutePaths(Path.GetDirectoryName(fileName)!, listener.ReferencedFiles, libraryDirectories);
         return new ParsedSourceFile(fileName, absoluteReferencePaths, 
-            InDefines:FrozenSet<string>.Empty, OutDefines:FrozenSet<string>.Empty, LastModified: lastModified, LiveContent: null);
+            InDefines:inDefines, OutDefines:lexer.DefinedSymbols.ToFrozenSet(), LastModified: lastModified, LiveContent: null);
     }
 
     

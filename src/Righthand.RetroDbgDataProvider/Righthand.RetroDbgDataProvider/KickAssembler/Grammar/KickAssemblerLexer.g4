@@ -35,7 +35,12 @@ HASHENDIF
 // at this point in time, #else has to be ignored
 HASHELSE
     : HASH 'else'
-    -> PopMode,PushMode(IGNORE_MODE)
+    -> PopMode,PushMode(IGNOREALL_MODE)
+    ;
+    
+HASHELIF
+    : HASH 'elif'
+    -> PopMode, PushMode(IGNOREALL_MODE)
     ;
 
 ONLYA: 'a' ;
@@ -648,8 +653,36 @@ I_HASHELSE
     }
     ->type(HASHELSE)
     ;
+    
+I_HASHELIF
+    : HASHELIF
+    {
+        PopMode();
+        PopMode();
+        PushMode(HASHIF_MODE);
+    }
+    ->type(HASHELIF)
+    ;
 
-INTENTIONALLY_IGNORED
+I_INTENTIONALLY_IGNORED
+    : .+?
+    ->channel(IGNORED)
+    ;
+    
+// ignores right until #endif
+mode IGNOREALL_MODE;
+
+IA_HASHIF
+    : HASHIF
+    -> PushMode(HASHIF_MODE),type(HASHIF)
+    ;
+
+IA_HASHENDIF
+    : HASHENDIF
+    ->type(HASHENDIF),PopMode,PopMode
+    ;
+
+IA_INTENTIONALLY_IGNORED
     : .+?
     ->channel(IGNORED)
     ;
