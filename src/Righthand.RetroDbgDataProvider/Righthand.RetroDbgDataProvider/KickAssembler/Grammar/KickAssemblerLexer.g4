@@ -18,19 +18,25 @@ HASHDEFINE
     ;
 
 HASHUNDEF
-    : HASH [uU] [nN] [dD] [eE] [fF]
+    : HASH 'undef'
     ->pushMode(HASHUNDEF_MODE)
     ;
 
 HASHIF
-    : HASH [iI] [fF]
+    : HASH 'if'
     -> pushMode(HASHIF_MODE)
     ;
 
 HASHENDIF
-    : HASH [eE] [nN] [dD] [iI] [fF]
+    : HASH 'endif'
+    -> PopMode, PopMode
     ;
 
+// at this point in time, #else has to be ignored
+HASHELSE
+    : HASH 'else'
+    -> PopMode,PushMode(IGNORE_MODE)
+    ;
 
 ONLYA: 'a' ;
 ABS: 'abs';
@@ -577,7 +583,7 @@ HD_WS
 
 HD_NEWLINE
     : EOL
-    ->channel(HIDDEN),PopMode
+    -> PopMode
     ;
 
 mode HASHUNDEF_MODE;
@@ -596,7 +602,7 @@ HU_WS
 
 HU_NEWLINE
     : EOL
-    ->channel(HIDDEN),PopMode
+    -> PopMode
     ;
 
 mode HASHIF_MODE;
@@ -615,7 +621,7 @@ IF_TOKEN
             back into the mode we were in before the pushMode that 
             brought us here.
             */
-            PopMode();
+            PushMode(DEFAULT_MODE);
         } else {
             PushMode(IGNORE_MODE);
         }
@@ -633,137 +639,17 @@ I_HASHENDIF
     : HASHENDIF
     ->type(HASHENDIF),PopMode,PopMode
     ;
+    
+I_HASHELSE
+    : HASHELSE
+    {
+        PopMode();
+        PushMode(DEFAULT_MODE);
+    }
+    ->type(HASHELSE)
+    ;
 
 INTENTIONALLY_IGNORED
     : .+?
     ->channel(IGNORED)
     ;
-    
-// chars
-//fragment A
-//   : ('a' | 'A')
-//   ;
-//
-//
-//fragment B
-//   : ('b' | 'B')
-//   ;
-//
-//
-//fragment C
-//   : ('c' | 'C')
-//   ;
-//
-//
-//fragment D
-//   : ('d' | 'D')
-//   ;
-//
-//
-//fragment E
-//   : ('e' | 'E')
-//   ;
-//
-//
-//fragment F
-//   : 'f'
-//   ;
-//
-//
-//fragment G
-//   : ('g' | 'G')
-//   ;
-//
-//
-//fragment H
-//   : ('h' | 'H')
-//   ;
-//
-//
-//fragment I
-//   : ('i' | 'I')
-//   ;
-//
-//
-//fragment J
-//   : ('j' | 'J')
-//   ;
-//
-//
-//fragment K
-//   : ('k' | 'K')
-//   ;
-//
-//
-//fragment L
-//   : ('l' | 'L')
-//   ;
-//
-//
-//fragment M
-//   : ('m' | 'M')
-//   ;
-//
-//
-//fragment N
-//   : ('n' | 'N')
-//   ;
-//
-//
-//fragment O
-//   : ('o' | 'O')
-//   ;
-//
-//
-//fragment P
-//   : ('p' | 'P')
-//   ;
-//
-//
-//fragment Q
-//   : ('q' | 'Q')
-//   ;
-//
-//
-//fragment R
-//   : ('r' | 'R')
-//   ;
-//
-//
-//fragment S
-//   : ('s' | 'S')
-//   ;
-//
-//
-//fragment T
-//   : ('t' | 'T')
-//   ;
-//
-//
-//fragment U
-//   : ('u' | 'U')
-//   ;
-//
-//
-//fragment V
-//   : ('v' | 'V')
-//   ;
-//
-//
-//fragment W
-//   : ('w' | 'W')
-//   ;
-//
-//
-//fragment X
-//   : ('x' | 'X')
-//   ;
-//
-//
-//fragment Y
-//   : ('y' | 'Y')
-//   ;
-//
-//fragment Z
-//   : ('z' | 'Z')
-//   ;
