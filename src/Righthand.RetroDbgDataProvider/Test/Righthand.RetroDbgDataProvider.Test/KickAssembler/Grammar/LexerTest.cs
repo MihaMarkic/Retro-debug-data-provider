@@ -40,11 +40,50 @@ public class LexerTest
             var actual  = GetTokens(input, "DEFINED");
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.LDA, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
                 KickAssemblerLexer.Eof
                 );
+
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenComplexValidIfCondition_ReturnsAllTokens()
+        {
+            const string input = """
+                                 #if DEFINED && OTHERDEFINED
+                                    lda #5
+                                 #endif
+                                 """;
+            
+            var actual  = GetTokens(input, "DEFINED", "OTHERDEFINED");
+
+            var expected = GetTokenTypes(
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
+                KickAssemblerLexer.LDA, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
+                KickAssemblerLexer.HASHENDIF,
+                KickAssemblerLexer.Eof
+            );
+
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenComplexInvalidIfCondition_ReturnsAllTokens()
+        {
+            const string input = """
+                                 #if DEFINED && OTHERUNDEFINED
+                                    lda #5
+                                 #endif
+                                 """;
+            
+            var actual  = GetTokens(input, "DEFINED");
+
+            var expected = GetTokenTypes(
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
+                KickAssemblerLexer.HASHENDIF,
+                KickAssemblerLexer.Eof
+            );
 
             Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
         }
@@ -62,7 +101,7 @@ public class LexerTest
             var actual  = GetTokens(input, "DEFINED");
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
                     KickAssemblerLexer.LDA, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHELSE,
                 KickAssemblerLexer.HASHENDIF,
@@ -85,7 +124,7 @@ public class LexerTest
             var actual  = GetTokens(input);
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
                 KickAssemblerLexer.HASHELSE, KickAssemblerLexer.EOL,
                     KickAssemblerLexer.LDY, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
@@ -108,8 +147,8 @@ public class LexerTest
             var actual  = GetTokens(input);
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN,
-                KickAssemblerLexer.HASHELIF, KickAssemblerLexer.IF_TOKEN,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
+                KickAssemblerLexer.HASHELIF, KickAssemblerLexer.IF_CONDITION,
                 KickAssemblerLexer.HASHENDIF,
                 KickAssemblerLexer.Eof
             );
@@ -132,8 +171,8 @@ public class LexerTest
             var actual  = GetTokens(input);
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN,
-                KickAssemblerLexer.HASHELIF, KickAssemblerLexer.IF_TOKEN,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
+                KickAssemblerLexer.HASHELIF, KickAssemblerLexer.IF_CONDITION,
                 KickAssemblerLexer.HASHELSE, KickAssemblerLexer.EOL,
                     KickAssemblerLexer.LDX, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
@@ -158,9 +197,9 @@ public class LexerTest
             var actual = GetTokens(input, "DEFINED2");
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
                 KickAssemblerLexer.HASHELSE, KickAssemblerLexer.EOL,
-                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
+                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
                         KickAssemblerLexer.LDY, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                     KickAssemblerLexer.HASHENDIF, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
@@ -186,10 +225,10 @@ public class LexerTest
             var actual = GetTokens(input);
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHELSE,
                     KickAssemblerLexer.HASHDEFINE, KickAssemblerLexer.DEFINED_TOKEN, KickAssemblerLexer.HD_NEWLINE,
-                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
+                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
                         KickAssemblerLexer.LDY, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                     KickAssemblerLexer.HASHENDIF, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
@@ -212,7 +251,7 @@ public class LexerTest
 
             var expected = GetTokenTypes(
                 KickAssemblerLexer.HASHDEFINE, KickAssemblerLexer.DEFINED_TOKEN, KickAssemblerLexer.HD_NEWLINE,
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
                     KickAssemblerLexer.LDA, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
                 KickAssemblerLexer.Eof
@@ -234,7 +273,7 @@ public class LexerTest
 
             var expected = GetTokenTypes(
                 KickAssemblerLexer.HASHUNDEF, KickAssemblerLexer.UNDEFINED_TOKEN, KickAssemblerLexer.HU_NEWLINE,
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
                     //KickAssemblerLexer.LDA, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
                 KickAssemblerLexer.Eof
@@ -254,7 +293,7 @@ public class LexerTest
             var actual  = GetTokens(input);
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
                 KickAssemblerLexer.HASHENDIF,
                 KickAssemblerLexer.Eof
             );
@@ -275,8 +314,8 @@ public class LexerTest
             var actual  = GetTokens(input, "DEFINED");
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
-                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
+                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION,
                     KickAssemblerLexer.HASHENDIF, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,
                 KickAssemblerLexer.Eof
@@ -298,8 +337,8 @@ public class LexerTest
             var actual  = GetTokens(input, "DEFINED", "UNDEFINED");
 
             var expected = GetTokenTypes(
-                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
-                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_TOKEN, KickAssemblerLexer.EOL,
+                KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
+                    KickAssemblerLexer.HASHIF, KickAssemblerLexer.IF_CONDITION, KickAssemblerLexer.EOL,
                         KickAssemblerLexer.LDA, KickAssemblerLexer.HASH, KickAssemblerLexer.DEC_NUMBER, KickAssemblerLexer.EOL,
                     KickAssemblerLexer.HASHENDIF, KickAssemblerLexer.EOL,
                 KickAssemblerLexer.HASHENDIF,

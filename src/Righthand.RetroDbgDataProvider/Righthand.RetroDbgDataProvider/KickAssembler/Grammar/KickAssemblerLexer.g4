@@ -7,7 +7,7 @@ channels {
     IGNORED
 }
 
-WS : [ \t]+ -> skip ; // skip spaces, tabs, newlines
+WS : [ \t]+ -> channel(HIDDEN) ; // skip spaces, tabs, newlines
 EOL: '\r\n' | '\r' | '\n' ;
 
 HASH: '#';
@@ -612,15 +612,10 @@ HU_NEWLINE
 
 mode HASHIF_MODE;
 
-HI_WS
-    : WS
-    -> channel(HIDDEN)
-    ;
-
-IF_TOKEN
-    : DEFINED_TOKEN
+IF_CONDITION
+    : ~[\n\r]+ //add other characters as needed
     {
-        if (DefinedSymbols.Contains(Text)) {
+        if (IsDefined(Text)) {
             /*
             In this case DEFINED_TOKEN is in fact defined so we get
             back into the mode we were in before the pushMode that 
@@ -631,6 +626,11 @@ IF_TOKEN
             PushMode(IGNORE_MODE);
         }
     }
+    ;
+
+HI_WS
+    : WS
+    -> channel(HIDDEN)
     ;
 
 mode IGNORE_MODE;

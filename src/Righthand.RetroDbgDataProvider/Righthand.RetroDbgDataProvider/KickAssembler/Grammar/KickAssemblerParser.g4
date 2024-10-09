@@ -243,21 +243,21 @@ zpArgument: atName COLON DOT BYTE DEC_NUMBER; // DEC_NUMBER is really just 0
 fileName: UNQUOTED_STRING;
     
 preprocessorDirective
-    : HASH (
+    : (
         preprocessorDefine
         | preprocessorUndef
-        | preprocessorImport
-        | preprocessorImportIf
-        | preprocessorImportOnce
+        | HASH preprocessorImport
+        | HASH preprocessorImportIf
+        | HASH preprocessorImportOnce
         | preprocessorIf
     );
     
-preprocessorDefine: DEFINE UNQUOTED_STRING;
-preprocessorUndef: UNDEF UNQUOTED_STRING;
+preprocessorDefine: HASHDEFINE DEFINED_TOKEN;
+preprocessorUndef: HASHUNDEF DEFINED_TOKEN;
 preprocessorImport: IMPORT STRING;
 preprocessorImportIf: IMPORTIF preprocessorCondition STRING;
 preprocessorImportOnce: IMPORTONCE STRING;
-preprocessorIf: IF preprocessorCondition unit (HASH ELIF unit)* (HASH ELSE unit)? HASH ENDIF;
+preprocessorIf: HASHIF preprocessorCondition unit (HASHELIF unit)* (HASHELSE unit)? HASHENDIF;
 preprocessorCondition
     : OPEN_PARENS preprocessorCondition CLOSE_PARENS
     | BANG preprocessorCondition

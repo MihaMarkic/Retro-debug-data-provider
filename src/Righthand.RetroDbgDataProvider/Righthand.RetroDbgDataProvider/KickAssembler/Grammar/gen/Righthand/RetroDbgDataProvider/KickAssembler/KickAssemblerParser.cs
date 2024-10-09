@@ -142,7 +142,7 @@ public partial class KickAssemblerParser : Parser {
 		TSB_ZP_CONST=494, TSX_CONST=495, TXA_CONST=496, TXS_CONST=497, TYA_CONST=498, 
 		WAI_CONST=499, XAA_IMM_CONST=500, UNQUOTED_STRING=501, DEFINED_TOKEN=502, 
 		HD_WS=503, HD_NEWLINE=504, UNDEFINED_TOKEN=505, HU_WS=506, HU_NEWLINE=507, 
-		HI_WS=508, IF_TOKEN=509, I_INTENTIONALLY_IGNORED=510, IA_INTENTIONALLY_IGNORED=511;
+		IF_CONDITION=508, HI_WS=509, I_INTENTIONALLY_IGNORED=510, IA_INTENTIONALLY_IGNORED=511;
 	public const int
 		RULE_program = 0, RULE_units = 1, RULE_unit = 2, RULE_label = 3, RULE_instruction = 4, 
 		RULE_scope = 5, RULE_argumentList = 6, RULE_argument = 7, RULE_labelOffsetReference = 8, 
@@ -363,7 +363,7 @@ public partial class KickAssemblerParser : Parser {
 		"TAY_CONST", "TRB_ABS_CONST", "TRB_ZP_CONST", "TSB_ABS_CONST", "TSB_ZP_CONST", 
 		"TSX_CONST", "TXA_CONST", "TXS_CONST", "TYA_CONST", "WAI_CONST", "XAA_IMM_CONST", 
 		"UNQUOTED_STRING", "DEFINED_TOKEN", "HD_WS", "HD_NEWLINE", "UNDEFINED_TOKEN", 
-		"HU_WS", "HU_NEWLINE", "HI_WS", "IF_TOKEN", "I_INTENTIONALLY_IGNORED", 
+		"HU_WS", "HU_NEWLINE", "IF_CONDITION", "HI_WS", "I_INTENTIONALLY_IGNORED", 
 		"IA_INTENTIONALLY_IGNORED"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
@@ -527,7 +527,7 @@ public partial class KickAssemblerParser : Parser {
 				State = 211;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 4611686018427387916L) != 0) || ((((_la - 85)) & ~0x3f) == 0 && ((1L << (_la - 85)) & -576460477424204991L) != 0) || ((((_la - 149)) & ~0x3f) == 0 && ((1L << (_la - 149)) & 72057594037927935L) != 0) || _la==UNQUOTED_STRING );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 4611686018427388028L) != 0) || ((((_la - 85)) & ~0x3f) == 0 && ((1L << (_la - 85)) & -576460477424204991L) != 0) || ((((_la - 149)) & ~0x3f) == 0 && ((1L << (_la - 149)) & 72057594037927935L) != 0) || _la==UNQUOTED_STRING );
 			}
 		}
 		catch (RecognitionException re) {
@@ -5171,13 +5171,13 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class PreprocessorDirectiveContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASH() { return GetToken(KickAssemblerParser.HASH, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public PreprocessorDefineContext preprocessorDefine() {
 			return GetRuleContext<PreprocessorDefineContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public PreprocessorUndefContext preprocessorUndef() {
 			return GetRuleContext<PreprocessorUndefContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASH() { return GetToken(KickAssemblerParser.HASH, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public PreprocessorImportContext preprocessorImport() {
 			return GetRuleContext<PreprocessorImportContext>(0);
 		}
@@ -5220,49 +5220,51 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 687;
-			Match(HASH);
-			State = 694;
+			State = 696;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case DEFINE:
+			switch ( Interpreter.AdaptivePredict(TokenStream,37,Context) ) {
+			case 1:
 				{
-				State = 688;
+				State = 687;
 				preprocessorDefine();
 				}
 				break;
-			case UNDEF:
+			case 2:
 				{
-				State = 689;
+				State = 688;
 				preprocessorUndef();
 				}
 				break;
-			case IMPORT:
+			case 3:
 				{
+				State = 689;
+				Match(HASH);
 				State = 690;
 				preprocessorImport();
 				}
 				break;
-			case IMPORTIF:
+			case 4:
 				{
 				State = 691;
+				Match(HASH);
+				State = 692;
 				preprocessorImportIf();
 				}
 				break;
-			case IMPORTONCE:
+			case 5:
 				{
-				State = 692;
+				State = 693;
+				Match(HASH);
+				State = 694;
 				preprocessorImportOnce();
 				}
 				break;
-			case IF:
+			case 6:
 				{
-				State = 693;
+				State = 695;
 				preprocessorIf();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 			}
 		}
@@ -5278,8 +5280,8 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class PreprocessorDefineContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DEFINE() { return GetToken(KickAssemblerParser.DEFINE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHDEFINE() { return GetToken(KickAssemblerParser.HASHDEFINE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DEFINED_TOKEN() { return GetToken(KickAssemblerParser.DEFINED_TOKEN, 0); }
 		public PreprocessorDefineContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -5310,10 +5312,10 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 696;
-			Match(DEFINE);
-			State = 697;
-			Match(UNQUOTED_STRING);
+			State = 698;
+			Match(HASHDEFINE);
+			State = 699;
+			Match(DEFINED_TOKEN);
 			}
 		}
 		catch (RecognitionException re) {
@@ -5328,8 +5330,8 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class PreprocessorUndefContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNDEF() { return GetToken(KickAssemblerParser.UNDEF, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHUNDEF() { return GetToken(KickAssemblerParser.HASHUNDEF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DEFINED_TOKEN() { return GetToken(KickAssemblerParser.DEFINED_TOKEN, 0); }
 		public PreprocessorUndefContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -5360,10 +5362,10 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 699;
-			Match(UNDEF);
-			State = 700;
-			Match(UNQUOTED_STRING);
+			State = 701;
+			Match(HASHUNDEF);
+			State = 702;
+			Match(DEFINED_TOKEN);
 			}
 		}
 		catch (RecognitionException re) {
@@ -5410,9 +5412,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 702;
+			State = 704;
 			Match(IMPORT);
-			State = 703;
+			State = 705;
 			Match(STRING);
 			}
 		}
@@ -5463,11 +5465,11 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 705;
-			Match(IMPORTIF);
-			State = 706;
-			preprocessorCondition(0);
 			State = 707;
+			Match(IMPORTIF);
+			State = 708;
+			preprocessorCondition(0);
+			State = 709;
 			Match(STRING);
 			}
 		}
@@ -5515,9 +5517,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 709;
+			State = 711;
 			Match(IMPORTONCE);
-			State = 710;
+			State = 712;
 			Match(STRING);
 			}
 		}
@@ -5533,7 +5535,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class PreprocessorIfContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IF() { return GetToken(KickAssemblerParser.IF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHIF() { return GetToken(KickAssemblerParser.HASHIF, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public PreprocessorConditionContext preprocessorCondition() {
 			return GetRuleContext<PreprocessorConditionContext>(0);
 		}
@@ -5543,16 +5545,12 @@ public partial class KickAssemblerParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public UnitContext unit(int i) {
 			return GetRuleContext<UnitContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] HASH() { return GetTokens(KickAssemblerParser.HASH); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASH(int i) {
-			return GetToken(KickAssemblerParser.HASH, i);
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHENDIF() { return GetToken(KickAssemblerParser.HASHENDIF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] HASHELIF() { return GetTokens(KickAssemblerParser.HASHELIF); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHELIF(int i) {
+			return GetToken(KickAssemblerParser.HASHELIF, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ENDIF() { return GetToken(KickAssemblerParser.ENDIF, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ELIF() { return GetTokens(KickAssemblerParser.ELIF); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELIF(int i) {
-			return GetToken(KickAssemblerParser.ELIF, i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELSE() { return GetToken(KickAssemblerParser.ELSE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHELSE() { return GetToken(KickAssemblerParser.HASHELSE, 0); }
 		public PreprocessorIfContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -5580,54 +5578,46 @@ public partial class KickAssemblerParser : Parser {
 	public PreprocessorIfContext preprocessorIf() {
 		PreprocessorIfContext _localctx = new PreprocessorIfContext(Context, State);
 		EnterRule(_localctx, 138, RULE_preprocessorIf);
+		int _la;
 		try {
-			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 712;
-			Match(IF);
-			State = 713;
-			preprocessorCondition(0);
 			State = 714;
+			Match(HASHIF);
+			State = 715;
+			preprocessorCondition(0);
+			State = 716;
 			unit();
-			State = 720;
+			State = 721;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,38,Context);
-			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1 ) {
-					{
-					{
-					State = 715;
-					Match(HASH);
-					State = 716;
-					Match(ELIF);
-					State = 717;
-					unit();
-					}
-					} 
+			_la = TokenStream.LA(1);
+			while (_la==HASHELIF) {
+				{
+				{
+				State = 717;
+				Match(HASHELIF);
+				State = 718;
+				unit();
 				}
-				State = 722;
+				}
+				State = 723;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,38,Context);
+				_la = TokenStream.LA(1);
 			}
 			State = 726;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,39,Context) ) {
-			case 1:
+			_la = TokenStream.LA(1);
+			if (_la==HASHELSE) {
 				{
-				State = 723;
-				Match(HASH);
 				State = 724;
-				Match(ELSE);
+				Match(HASHELSE);
 				State = 725;
 				unit();
 				}
-				break;
 			}
+
 			State = 728;
-			Match(HASH);
-			State = 729;
-			Match(ENDIF);
+			Match(HASHENDIF);
 			}
 		}
 		catch (RecognitionException re) {
@@ -5695,30 +5685,30 @@ public partial class KickAssemblerParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 739;
+			State = 738;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case OPEN_PARENS:
 				{
-				State = 732;
+				State = 731;
 				Match(OPEN_PARENS);
-				State = 733;
+				State = 732;
 				preprocessorCondition(0);
-				State = 734;
+				State = 733;
 				Match(CLOSE_PARENS);
 				}
 				break;
 			case BANG:
 				{
-				State = 736;
+				State = 735;
 				Match(BANG);
-				State = 737;
+				State = 736;
 				preprocessorCondition(6);
 				}
 				break;
 			case UNQUOTED_STRING:
 				{
-				State = 738;
+				State = 737;
 				Match(UNQUOTED_STRING);
 				}
 				break;
@@ -5726,7 +5716,7 @@ public partial class KickAssemblerParser : Parser {
 				throw new NoViableAltException(this);
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 755;
+			State = 754;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,42,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -5735,18 +5725,18 @@ public partial class KickAssemblerParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 753;
+					State = 752;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,41,Context) ) {
 					case 1:
 						{
 						_localctx = new PreprocessorConditionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_preprocessorCondition);
-						State = 741;
+						State = 740;
 						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 742;
+						State = 741;
 						Match(OP_AND);
-						State = 743;
+						State = 742;
 						preprocessorCondition(6);
 						}
 						break;
@@ -5754,11 +5744,11 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new PreprocessorConditionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_preprocessorCondition);
-						State = 744;
+						State = 743;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 745;
+						State = 744;
 						Match(OP_OR);
-						State = 746;
+						State = 745;
 						preprocessorCondition(5);
 						}
 						break;
@@ -5766,11 +5756,11 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new PreprocessorConditionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_preprocessorCondition);
-						State = 747;
+						State = 746;
 						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
-						State = 748;
+						State = 747;
 						Match(OP_EQ);
-						State = 749;
+						State = 748;
 						preprocessorCondition(4);
 						}
 						break;
@@ -5778,18 +5768,18 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new PreprocessorConditionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_preprocessorCondition);
-						State = 750;
+						State = 749;
 						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 751;
+						State = 750;
 						Match(OP_NE);
-						State = 752;
+						State = 751;
 						preprocessorCondition(3);
 						}
 						break;
 					}
 					} 
 				}
-				State = 757;
+				State = 756;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,42,Context);
 			}
@@ -5863,62 +5853,62 @@ public partial class KickAssemblerParser : Parser {
 		DirectiveContext _localctx = new DirectiveContext(Context, State);
 		EnterRule(_localctx, 142, RULE_directive);
 		try {
-			State = 770;
+			State = 769;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case DOT:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 758;
+				State = 757;
 				Match(DOT);
-				State = 767;
+				State = 766;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,43,Context) ) {
 				case 1:
 					{
-					State = 759;
+					State = 758;
 					cpuDirective();
 					}
 					break;
 				case 2:
 					{
-					State = 760;
+					State = 759;
 					byteDirective();
 					}
 					break;
 				case 3:
 					{
-					State = 761;
+					State = 760;
 					wordDirective();
 					}
 					break;
 				case 4:
 					{
-					State = 762;
+					State = 761;
 					dwordDirective();
 					}
 					break;
 				case 5:
 					{
-					State = 763;
+					State = 762;
 					textDirective();
 					}
 					break;
 				case 6:
 					{
-					State = 764;
+					State = 763;
 					fillDirective();
 					}
 					break;
 				case 7:
 					{
-					State = 765;
+					State = 764;
 					encodingDirective();
 					}
 					break;
 				case 8:
 					{
-					State = 766;
+					State = 765;
 					importDataDirective();
 					}
 					break;
@@ -5929,7 +5919,7 @@ public partial class KickAssemblerParser : Parser {
 			case OP_MULT_ASSIGNMENT:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 769;
+				State = 768;
 				memoryDirective();
 				}
 				break;
@@ -5987,7 +5977,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 772;
+			State = 771;
 			_la = TokenStream.LA(1);
 			if ( !(_la==PC || _la==OP_MULT_ASSIGNMENT) ) {
 			ErrorHandler.RecoverInline(this);
@@ -5996,24 +5986,24 @@ public partial class KickAssemblerParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 773;
+			State = 772;
 			number();
-			State = 775;
+			State = 774;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==STRING) {
 				{
-				State = 774;
+				State = 773;
 				Match(STRING);
 				}
 			}
 
-			State = 778;
+			State = 777;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,46,Context) ) {
 			case 1:
 				{
-				State = 777;
+				State = 776;
 				Match(UNQUOTED_STRING);
 				}
 				break;
@@ -6068,9 +6058,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 780;
+			State = 779;
 			Match(CPU);
-			State = 781;
+			State = 780;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 125829120L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -6127,9 +6117,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 783;
+			State = 782;
 			Match(BYTE);
-			State = 784;
+			State = 783;
 			numberList();
 			}
 		}
@@ -6179,9 +6169,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 786;
+			State = 785;
 			Match(WORD);
-			State = 787;
+			State = 786;
 			numberList();
 			}
 		}
@@ -6231,9 +6221,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 789;
+			State = 788;
 			Match(DWORD);
-			State = 790;
+			State = 789;
 			numberList();
 			}
 		}
@@ -6281,9 +6271,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 792;
+			State = 791;
 			Match(TEXT_TEXT);
-			State = 793;
+			State = 792;
 			Match(STRING);
 			}
 		}
@@ -6340,7 +6330,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 795;
+			State = 794;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 458752L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -6349,11 +6339,11 @@ public partial class KickAssemblerParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 796;
+			State = 795;
 			number();
-			State = 797;
+			State = 796;
 			Match(COMMA);
-			State = 798;
+			State = 797;
 			fillDirectiveArguments();
 			}
 		}
@@ -6408,7 +6398,7 @@ public partial class KickAssemblerParser : Parser {
 		FillDirectiveArgumentsContext _localctx = new FillDirectiveArgumentsContext(Context, State);
 		EnterRule(_localctx, 158, RULE_fillDirectiveArguments);
 		try {
-			State = 806;
+			State = 805;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case DEC_NUMBER:
@@ -6416,24 +6406,30 @@ public partial class KickAssemblerParser : Parser {
 			case BIN_NUMBER:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 800;
+				State = 799;
 				number();
 				}
 				break;
 			case OPEN_BRACKET:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 801;
+				State = 800;
 				Match(OPEN_BRACKET);
-				State = 802;
+				State = 801;
 				numberList();
-				State = 803;
+				State = 802;
 				Match(CLOSE_BRACKET);
 				}
 				break;
 			case Eof:
 			case EOL:
 			case HASH:
+			case HASHDEFINE:
+			case HASHUNDEF:
+			case HASHIF:
+			case HASHENDIF:
+			case HASHELSE:
+			case HASHELIF:
 			case ELSE:
 			case PC:
 			case OPEN_BRACE:
@@ -6509,7 +6505,7 @@ public partial class KickAssemblerParser : Parser {
 			case UNQUOTED_STRING:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 805;
+				State = 804;
 				fillExpression();
 				}
 				break;
@@ -6605,9 +6601,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 810;
+			State = 809;
 			Match(ENCODING);
-			State = 811;
+			State = 810;
 			Match(STRING);
 			}
 		}
@@ -6670,7 +6666,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 813;
+			State = 812;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 28672L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -6679,25 +6675,25 @@ public partial class KickAssemblerParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 814;
+			State = 813;
 			file();
-			State = 821;
+			State = 820;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,49,Context) ) {
 			case 1:
 				{
-				State = 815;
+				State = 814;
 				Match(COMMA);
-				State = 816;
+				State = 815;
 				number();
-				State = 819;
+				State = 818;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,48,Context) ) {
 				case 1:
 					{
-					State = 817;
+					State = 816;
 					Match(COMMA);
-					State = 818;
+					State = 817;
 					number();
 					}
 					break;
@@ -6752,29 +6748,29 @@ public partial class KickAssemblerParser : Parser {
 		LabelNameContext _localctx = new LabelNameContext(Context, State);
 		EnterRule(_localctx, 166, RULE_labelName);
 		try {
-			State = 827;
+			State = 826;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,50,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 823;
+				State = 822;
 				Match(BANG);
-				State = 824;
+				State = 823;
 				Match(UNQUOTED_STRING);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 825;
+				State = 824;
 				Match(BANG);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 826;
+				State = 825;
 				atName();
 				}
 				break;
@@ -6822,22 +6818,22 @@ public partial class KickAssemblerParser : Parser {
 		AtNameContext _localctx = new AtNameContext(Context, State);
 		EnterRule(_localctx, 168, RULE_atName);
 		try {
-			State = 832;
+			State = 831;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case AT:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 829;
+				State = 828;
 				Match(AT);
-				State = 830;
+				State = 829;
 				Match(UNQUOTED_STRING);
 				}
 				break;
 			case UNQUOTED_STRING:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 831;
+				State = 830;
 				Match(UNQUOTED_STRING);
 				}
 				break;
@@ -6888,7 +6884,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 834;
+			State = 833;
 			Match(STRING);
 			}
 		}
@@ -6945,23 +6941,23 @@ public partial class KickAssemblerParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 836;
+			State = 835;
 			number();
-			State = 841;
+			State = 840;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,52,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 837;
+					State = 836;
 					Match(COMMA);
-					State = 838;
+					State = 837;
 					number();
 					}
 					} 
 				}
-				State = 843;
+				State = 842;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,52,Context);
 			}
@@ -7020,21 +7016,21 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 844;
+			State = 843;
 			numeric();
-			State = 849;
+			State = 848;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 845;
+				State = 844;
 				Match(COMMA);
-				State = 846;
+				State = 845;
 				numeric();
 				}
 				}
-				State = 851;
+				State = 850;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -7088,13 +7084,13 @@ public partial class KickAssemblerParser : Parser {
 		EnterRule(_localctx, 176, RULE_numeric);
 		int _la;
 		try {
-			State = 857;
+			State = 856;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CHAR:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 852;
+				State = 851;
 				Match(CHAR);
 				}
 				break;
@@ -7105,17 +7101,17 @@ public partial class KickAssemblerParser : Parser {
 			case BIN_NUMBER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 854;
+				State = 853;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==LT || _la==GT) {
 					{
-					State = 853;
+					State = 852;
 					lohibyte();
 					}
 				}
 
-				State = 856;
+				State = 855;
 				number();
 				}
 				break;
@@ -7172,27 +7168,27 @@ public partial class KickAssemblerParser : Parser {
 		NumberContext _localctx = new NumberContext(Context, State);
 		EnterRule(_localctx, 178, RULE_number);
 		try {
-			State = 862;
+			State = 861;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case DEC_NUMBER:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 859;
+				State = 858;
 				decNumber();
 				}
 				break;
 			case HEX_NUMBER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 860;
+				State = 859;
 				hexNumber();
 				}
 				break;
 			case BIN_NUMBER:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 861;
+				State = 860;
 				binNumber();
 				}
 				break;
@@ -7245,7 +7241,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 864;
+			State = 863;
 			_la = TokenStream.LA(1);
 			if ( !(_la==LT || _la==GT) ) {
 			ErrorHandler.RecoverInline(this);
@@ -7299,7 +7295,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 866;
+			State = 865;
 			Match(DEC_NUMBER);
 			}
 		}
@@ -7346,7 +7342,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 868;
+			State = 867;
 			Match(HEX_NUMBER);
 			}
 		}
@@ -7393,7 +7389,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 870;
+			State = 869;
 			Match(BIN_NUMBER);
 			}
 		}
@@ -7442,7 +7438,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 872;
+			State = 871;
 			_la = TokenStream.LA(1);
 			if ( !(_la==TRUE || _la==FALSE) ) {
 			ErrorHandler.RecoverInline(this);
@@ -7498,7 +7494,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 874;
+			State = 873;
 			_la = TokenStream.LA(1);
 			if ( !(_la==ONLYA || _la==ABS) ) {
 			ErrorHandler.RecoverInline(this);
@@ -7556,24 +7552,24 @@ public partial class KickAssemblerParser : Parser {
 		FullOpcodeContext _localctx = new FullOpcodeContext(Context, State);
 		EnterRule(_localctx, 192, RULE_fullOpcode);
 		try {
-			State = 881;
+			State = 880;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,57,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 876;
+				State = 875;
 				opcode();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 877;
+				State = 876;
 				opcode();
-				State = 878;
+				State = 877;
 				Match(DOT);
-				State = 879;
+				State = 878;
 				opcodeExtension();
 				}
 				break;
@@ -7683,7 +7679,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 883;
+			State = 882;
 			_la = TokenStream.LA(1);
 			if ( !(((((_la - 144)) & ~0x3f) == 0 && ((1L << (_la - 144)) & 2305843009213693951L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -7756,7 +7752,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 885;
+			State = 884;
 			_la = TokenStream.LA(1);
 			if ( !(((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & 524287L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -8106,7 +8102,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 887;
+			State = 886;
 			_la = TokenStream.LA(1);
 			if ( !(((((_la - 205)) & ~0x3f) == 0 && ((1L << (_la - 205)) & -1L) != 0) || ((((_la - 269)) & ~0x3f) == 0 && ((1L << (_la - 269)) & -1L) != 0) || ((((_la - 333)) & ~0x3f) == 0 && ((1L << (_la - 333)) & -1L) != 0) || ((((_la - 397)) & ~0x3f) == 0 && ((1L << (_la - 397)) & -1L) != 0) || ((((_la - 461)) & ~0x3f) == 0 && ((1L << (_la - 461)) & 1099511627775L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -8158,7 +8154,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,511,890,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		4,1,511,889,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
 		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
@@ -8208,21 +8204,21 @@ public partial class KickAssemblerParser : Parser {
 		1,58,1,59,1,59,1,59,5,59,658,8,59,10,59,12,59,661,9,59,1,59,1,59,5,59,
 		665,8,59,10,59,12,59,668,9,59,1,59,1,59,1,60,1,60,1,60,5,60,675,8,60,10,
 		60,12,60,678,9,60,1,61,1,61,1,61,1,61,1,61,1,61,1,62,1,62,1,63,1,63,1,
-		63,1,63,1,63,1,63,1,63,3,63,695,8,63,1,64,1,64,1,64,1,65,1,65,1,65,1,66,
-		1,66,1,66,1,67,1,67,1,67,1,67,1,68,1,68,1,68,1,69,1,69,1,69,1,69,1,69,
-		1,69,5,69,719,8,69,10,69,12,69,722,9,69,1,69,1,69,1,69,3,69,727,8,69,1,
-		69,1,69,1,69,1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,3,70,740,8,70,1,70,
-		1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,5,70,754,8,70,10,
-		70,12,70,757,9,70,1,71,1,71,1,71,1,71,1,71,1,71,1,71,1,71,1,71,3,71,768,
-		8,71,1,71,3,71,771,8,71,1,72,1,72,1,72,3,72,776,8,72,1,72,3,72,779,8,72,
+		63,1,63,1,63,1,63,1,63,1,63,1,63,3,63,697,8,63,1,64,1,64,1,64,1,65,1,65,
+		1,65,1,66,1,66,1,66,1,67,1,67,1,67,1,67,1,68,1,68,1,68,1,69,1,69,1,69,
+		1,69,1,69,5,69,720,8,69,10,69,12,69,723,9,69,1,69,1,69,3,69,727,8,69,1,
+		69,1,69,1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,3,70,739,8,70,1,70,1,70,
+		1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,1,70,5,70,753,8,70,10,70,
+		12,70,756,9,70,1,71,1,71,1,71,1,71,1,71,1,71,1,71,1,71,1,71,3,71,767,8,
+		71,1,71,3,71,770,8,71,1,72,1,72,1,72,3,72,775,8,72,1,72,3,72,778,8,72,
 		1,73,1,73,1,73,1,74,1,74,1,74,1,75,1,75,1,75,1,76,1,76,1,76,1,77,1,77,
-		1,77,1,78,1,78,1,78,1,78,1,78,1,79,1,79,1,79,1,79,1,79,1,79,3,79,807,8,
-		79,1,80,1,80,1,81,1,81,1,81,1,82,1,82,1,82,1,82,1,82,1,82,3,82,820,8,82,
-		3,82,822,8,82,1,83,1,83,1,83,1,83,3,83,828,8,83,1,84,1,84,1,84,3,84,833,
-		8,84,1,85,1,85,1,86,1,86,1,86,5,86,840,8,86,10,86,12,86,843,9,86,1,87,
-		1,87,1,87,5,87,848,8,87,10,87,12,87,851,9,87,1,88,1,88,3,88,855,8,88,1,
-		88,3,88,858,8,88,1,89,1,89,1,89,3,89,863,8,89,1,90,1,90,1,91,1,91,1,92,
-		1,92,1,93,1,93,1,94,1,94,1,95,1,95,1,96,1,96,1,96,1,96,1,96,3,96,882,8,
+		1,77,1,78,1,78,1,78,1,78,1,78,1,79,1,79,1,79,1,79,1,79,1,79,3,79,806,8,
+		79,1,80,1,80,1,81,1,81,1,81,1,82,1,82,1,82,1,82,1,82,1,82,3,82,819,8,82,
+		3,82,821,8,82,1,83,1,83,1,83,1,83,3,83,827,8,83,1,84,1,84,1,84,3,84,832,
+		8,84,1,85,1,85,1,86,1,86,1,86,5,86,839,8,86,10,86,12,86,842,9,86,1,87,
+		1,87,1,87,5,87,847,8,87,10,87,12,87,850,9,87,1,88,1,88,3,88,854,8,88,1,
+		88,3,88,857,8,88,1,89,1,89,1,89,3,89,862,8,89,1,90,1,90,1,91,1,91,1,92,
+		1,92,1,93,1,93,1,94,1,94,1,95,1,95,1,96,1,96,1,96,1,96,1,96,3,96,881,8,
 		96,1,97,1,97,1,98,1,98,1,99,1,99,1,99,0,2,18,140,100,0,2,4,6,8,10,12,14,
 		16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,
 		64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,
@@ -8231,7 +8227,7 @@ public partial class KickAssemblerParser : Parser {
 		180,182,184,186,188,190,192,194,196,198,0,14,2,0,2,2,94,94,1,0,95,96,3,
 		0,100,102,104,104,129,130,2,0,107,108,117,120,2,0,62,62,123,123,1,0,23,
 		26,1,0,16,18,1,0,12,14,1,0,107,108,1,0,134,135,1,0,10,11,1,0,144,204,1,
-		0,66,84,1,0,205,500,926,0,200,1,0,0,0,2,209,1,0,0,0,4,219,1,0,0,0,6,228,
+		0,66,84,1,0,205,500,925,0,200,1,0,0,0,2,209,1,0,0,0,4,219,1,0,0,0,6,228,
 		1,0,0,0,8,231,1,0,0,0,10,247,1,0,0,0,12,249,1,0,0,0,14,279,1,0,0,0,16,
 		287,1,0,0,0,18,310,1,0,0,0,20,343,1,0,0,0,22,345,1,0,0,0,24,349,1,0,0,
 		0,26,364,1,0,0,0,28,366,1,0,0,0,30,368,1,0,0,0,32,377,1,0,0,0,34,384,1,
@@ -8244,16 +8240,16 @@ public partial class KickAssemblerParser : Parser {
 		577,1,0,0,0,94,581,1,0,0,0,96,585,1,0,0,0,98,588,1,0,0,0,100,597,1,0,0,
 		0,102,605,1,0,0,0,104,614,1,0,0,0,106,622,1,0,0,0,108,629,1,0,0,0,110,
 		635,1,0,0,0,112,641,1,0,0,0,114,647,1,0,0,0,116,651,1,0,0,0,118,654,1,
-		0,0,0,120,671,1,0,0,0,122,679,1,0,0,0,124,685,1,0,0,0,126,687,1,0,0,0,
-		128,696,1,0,0,0,130,699,1,0,0,0,132,702,1,0,0,0,134,705,1,0,0,0,136,709,
-		1,0,0,0,138,712,1,0,0,0,140,739,1,0,0,0,142,770,1,0,0,0,144,772,1,0,0,
-		0,146,780,1,0,0,0,148,783,1,0,0,0,150,786,1,0,0,0,152,789,1,0,0,0,154,
-		792,1,0,0,0,156,795,1,0,0,0,158,806,1,0,0,0,160,808,1,0,0,0,162,810,1,
-		0,0,0,164,813,1,0,0,0,166,827,1,0,0,0,168,832,1,0,0,0,170,834,1,0,0,0,
-		172,836,1,0,0,0,174,844,1,0,0,0,176,857,1,0,0,0,178,862,1,0,0,0,180,864,
-		1,0,0,0,182,866,1,0,0,0,184,868,1,0,0,0,186,870,1,0,0,0,188,872,1,0,0,
-		0,190,874,1,0,0,0,192,881,1,0,0,0,194,883,1,0,0,0,196,885,1,0,0,0,198,
-		887,1,0,0,0,200,201,3,2,1,0,201,1,1,0,0,0,202,204,7,0,0,0,203,202,1,0,
+		0,0,0,120,671,1,0,0,0,122,679,1,0,0,0,124,685,1,0,0,0,126,696,1,0,0,0,
+		128,698,1,0,0,0,130,701,1,0,0,0,132,704,1,0,0,0,134,707,1,0,0,0,136,711,
+		1,0,0,0,138,714,1,0,0,0,140,738,1,0,0,0,142,769,1,0,0,0,144,771,1,0,0,
+		0,146,779,1,0,0,0,148,782,1,0,0,0,150,785,1,0,0,0,152,788,1,0,0,0,154,
+		791,1,0,0,0,156,794,1,0,0,0,158,805,1,0,0,0,160,807,1,0,0,0,162,809,1,
+		0,0,0,164,812,1,0,0,0,166,826,1,0,0,0,168,831,1,0,0,0,170,833,1,0,0,0,
+		172,835,1,0,0,0,174,843,1,0,0,0,176,856,1,0,0,0,178,861,1,0,0,0,180,863,
+		1,0,0,0,182,865,1,0,0,0,184,867,1,0,0,0,186,869,1,0,0,0,188,871,1,0,0,
+		0,190,873,1,0,0,0,192,880,1,0,0,0,194,882,1,0,0,0,196,884,1,0,0,0,198,
+		886,1,0,0,0,200,201,3,2,1,0,201,1,1,0,0,0,202,204,7,0,0,0,203,202,1,0,
 		0,0,204,207,1,0,0,0,205,203,1,0,0,0,205,206,1,0,0,0,206,208,1,0,0,0,207,
 		205,1,0,0,0,208,210,3,4,2,0,209,205,1,0,0,0,210,211,1,0,0,0,211,209,1,
 		0,0,0,211,212,1,0,0,0,212,3,1,0,0,0,213,220,3,8,4,0,214,220,3,6,3,0,215,
@@ -8391,68 +8387,67 @@ public partial class KickAssemblerParser : Parser {
 		673,675,3,122,61,0,674,672,1,0,0,0,675,678,1,0,0,0,676,674,1,0,0,0,676,
 		677,1,0,0,0,677,121,1,0,0,0,678,676,1,0,0,0,679,680,3,168,84,0,680,681,
 		5,93,0,0,681,682,5,91,0,0,682,683,5,19,0,0,683,684,5,136,0,0,684,123,1,
-		0,0,0,685,686,5,501,0,0,686,125,1,0,0,0,687,694,5,3,0,0,688,695,3,128,
-		64,0,689,695,3,130,65,0,690,695,3,132,66,0,691,695,3,134,67,0,692,695,
-		3,136,68,0,693,695,3,138,69,0,694,688,1,0,0,0,694,689,1,0,0,0,694,690,
-		1,0,0,0,694,691,1,0,0,0,694,692,1,0,0,0,694,693,1,0,0,0,695,127,1,0,0,
-		0,696,697,5,40,0,0,697,698,5,501,0,0,698,129,1,0,0,0,699,700,5,46,0,0,
-		700,701,5,501,0,0,701,131,1,0,0,0,702,703,5,49,0,0,703,704,5,140,0,0,704,
-		133,1,0,0,0,705,706,5,51,0,0,706,707,3,140,70,0,707,708,5,140,0,0,708,
-		135,1,0,0,0,709,710,5,50,0,0,710,711,5,140,0,0,711,137,1,0,0,0,712,713,
-		5,33,0,0,713,714,3,140,70,0,714,720,3,4,2,0,715,716,5,3,0,0,716,717,5,
-		48,0,0,717,719,3,4,2,0,718,715,1,0,0,0,719,722,1,0,0,0,720,718,1,0,0,0,
-		720,721,1,0,0,0,721,726,1,0,0,0,722,720,1,0,0,0,723,724,5,3,0,0,724,725,
-		5,34,0,0,725,727,3,4,2,0,726,723,1,0,0,0,726,727,1,0,0,0,727,728,1,0,0,
-		0,728,729,5,3,0,0,729,730,5,47,0,0,730,139,1,0,0,0,731,732,6,70,-1,0,732,
-		733,5,89,0,0,733,734,3,140,70,0,734,735,5,90,0,0,735,740,1,0,0,0,736,737,
-		5,103,0,0,737,740,3,140,70,6,738,740,5,501,0,0,739,731,1,0,0,0,739,736,
-		1,0,0,0,739,738,1,0,0,0,740,755,1,0,0,0,741,742,10,5,0,0,742,743,5,114,
-		0,0,743,754,3,140,70,6,744,745,10,4,0,0,745,746,5,115,0,0,746,754,3,140,
-		70,5,747,748,10,3,0,0,748,749,5,117,0,0,749,754,3,140,70,4,750,751,10,
-		2,0,0,751,752,5,118,0,0,752,754,3,140,70,3,753,741,1,0,0,0,753,744,1,0,
-		0,0,753,747,1,0,0,0,753,750,1,0,0,0,754,757,1,0,0,0,755,753,1,0,0,0,755,
-		756,1,0,0,0,756,141,1,0,0,0,757,755,1,0,0,0,758,767,5,91,0,0,759,768,3,
-		146,73,0,760,768,3,148,74,0,761,768,3,150,75,0,762,768,3,152,76,0,763,
-		768,3,154,77,0,764,768,3,156,78,0,765,768,3,162,81,0,766,768,3,164,82,
-		0,767,759,1,0,0,0,767,760,1,0,0,0,767,761,1,0,0,0,767,762,1,0,0,0,767,
-		763,1,0,0,0,767,764,1,0,0,0,767,765,1,0,0,0,767,766,1,0,0,0,768,771,1,
-		0,0,0,769,771,3,144,72,0,770,758,1,0,0,0,770,769,1,0,0,0,771,143,1,0,0,
-		0,772,773,7,4,0,0,773,775,3,178,89,0,774,776,5,140,0,0,775,774,1,0,0,0,
-		775,776,1,0,0,0,776,778,1,0,0,0,777,779,5,501,0,0,778,777,1,0,0,0,778,
-		779,1,0,0,0,779,145,1,0,0,0,780,781,5,22,0,0,781,782,7,5,0,0,782,147,1,
-		0,0,0,783,784,5,19,0,0,784,785,3,172,86,0,785,149,1,0,0,0,786,787,5,20,
-		0,0,787,788,3,172,86,0,788,151,1,0,0,0,789,790,5,21,0,0,790,791,3,172,
-		86,0,791,153,1,0,0,0,792,793,5,14,0,0,793,794,5,140,0,0,794,155,1,0,0,
-		0,795,796,7,6,0,0,796,797,3,178,89,0,797,798,5,92,0,0,798,799,3,158,79,
-		0,799,157,1,0,0,0,800,807,3,178,89,0,801,802,5,87,0,0,802,803,3,172,86,
-		0,803,804,5,88,0,0,804,807,1,0,0,0,805,807,3,160,80,0,806,800,1,0,0,0,
-		806,801,1,0,0,0,806,805,1,0,0,0,807,159,1,0,0,0,808,809,1,0,0,0,809,161,
-		1,0,0,0,810,811,5,15,0,0,811,812,5,140,0,0,812,163,1,0,0,0,813,814,7,7,
-		0,0,814,821,3,170,85,0,815,816,5,92,0,0,816,819,3,178,89,0,817,818,5,92,
-		0,0,818,820,3,178,89,0,819,817,1,0,0,0,819,820,1,0,0,0,820,822,1,0,0,0,
-		821,815,1,0,0,0,821,822,1,0,0,0,822,165,1,0,0,0,823,824,5,103,0,0,824,
-		828,5,501,0,0,825,828,5,103,0,0,826,828,3,168,84,0,827,823,1,0,0,0,827,
-		825,1,0,0,0,827,826,1,0,0,0,828,167,1,0,0,0,829,830,5,105,0,0,830,833,
-		5,501,0,0,831,833,5,501,0,0,832,829,1,0,0,0,832,831,1,0,0,0,833,169,1,
-		0,0,0,834,835,5,140,0,0,835,171,1,0,0,0,836,841,3,178,89,0,837,838,5,92,
-		0,0,838,840,3,178,89,0,839,837,1,0,0,0,840,843,1,0,0,0,841,839,1,0,0,0,
-		841,842,1,0,0,0,842,173,1,0,0,0,843,841,1,0,0,0,844,849,3,176,88,0,845,
-		846,5,92,0,0,846,848,3,176,88,0,847,845,1,0,0,0,848,851,1,0,0,0,849,847,
-		1,0,0,0,849,850,1,0,0,0,850,175,1,0,0,0,851,849,1,0,0,0,852,858,5,139,
-		0,0,853,855,3,180,90,0,854,853,1,0,0,0,854,855,1,0,0,0,855,856,1,0,0,0,
-		856,858,3,178,89,0,857,852,1,0,0,0,857,854,1,0,0,0,858,177,1,0,0,0,859,
-		863,3,182,91,0,860,863,3,184,92,0,861,863,3,186,93,0,862,859,1,0,0,0,862,
-		860,1,0,0,0,862,861,1,0,0,0,863,179,1,0,0,0,864,865,7,8,0,0,865,181,1,
-		0,0,0,866,867,5,136,0,0,867,183,1,0,0,0,868,869,5,137,0,0,869,185,1,0,
-		0,0,870,871,5,138,0,0,871,187,1,0,0,0,872,873,7,9,0,0,873,189,1,0,0,0,
-		874,875,7,10,0,0,875,191,1,0,0,0,876,882,3,194,97,0,877,878,3,194,97,0,
-		878,879,5,91,0,0,879,880,3,190,95,0,880,882,1,0,0,0,881,876,1,0,0,0,881,
-		877,1,0,0,0,882,193,1,0,0,0,883,884,7,11,0,0,884,195,1,0,0,0,885,886,7,
-		12,0,0,886,197,1,0,0,0,887,888,7,13,0,0,888,199,1,0,0,0,58,205,211,219,
-		228,231,235,247,254,260,279,287,310,338,340,364,373,380,419,440,454,467,
-		472,483,489,494,520,552,558,575,590,602,609,619,627,659,666,676,694,720,
-		726,739,753,755,767,770,775,778,806,819,821,827,832,841,849,854,857,862,
-		881
+		0,0,0,685,686,5,501,0,0,686,125,1,0,0,0,687,697,3,128,64,0,688,697,3,130,
+		65,0,689,690,5,3,0,0,690,697,3,132,66,0,691,692,5,3,0,0,692,697,3,134,
+		67,0,693,694,5,3,0,0,694,697,3,136,68,0,695,697,3,138,69,0,696,687,1,0,
+		0,0,696,688,1,0,0,0,696,689,1,0,0,0,696,691,1,0,0,0,696,693,1,0,0,0,696,
+		695,1,0,0,0,697,127,1,0,0,0,698,699,5,4,0,0,699,700,5,502,0,0,700,129,
+		1,0,0,0,701,702,5,5,0,0,702,703,5,502,0,0,703,131,1,0,0,0,704,705,5,49,
+		0,0,705,706,5,140,0,0,706,133,1,0,0,0,707,708,5,51,0,0,708,709,3,140,70,
+		0,709,710,5,140,0,0,710,135,1,0,0,0,711,712,5,50,0,0,712,713,5,140,0,0,
+		713,137,1,0,0,0,714,715,5,6,0,0,715,716,3,140,70,0,716,721,3,4,2,0,717,
+		718,5,9,0,0,718,720,3,4,2,0,719,717,1,0,0,0,720,723,1,0,0,0,721,719,1,
+		0,0,0,721,722,1,0,0,0,722,726,1,0,0,0,723,721,1,0,0,0,724,725,5,8,0,0,
+		725,727,3,4,2,0,726,724,1,0,0,0,726,727,1,0,0,0,727,728,1,0,0,0,728,729,
+		5,7,0,0,729,139,1,0,0,0,730,731,6,70,-1,0,731,732,5,89,0,0,732,733,3,140,
+		70,0,733,734,5,90,0,0,734,739,1,0,0,0,735,736,5,103,0,0,736,739,3,140,
+		70,6,737,739,5,501,0,0,738,730,1,0,0,0,738,735,1,0,0,0,738,737,1,0,0,0,
+		739,754,1,0,0,0,740,741,10,5,0,0,741,742,5,114,0,0,742,753,3,140,70,6,
+		743,744,10,4,0,0,744,745,5,115,0,0,745,753,3,140,70,5,746,747,10,3,0,0,
+		747,748,5,117,0,0,748,753,3,140,70,4,749,750,10,2,0,0,750,751,5,118,0,
+		0,751,753,3,140,70,3,752,740,1,0,0,0,752,743,1,0,0,0,752,746,1,0,0,0,752,
+		749,1,0,0,0,753,756,1,0,0,0,754,752,1,0,0,0,754,755,1,0,0,0,755,141,1,
+		0,0,0,756,754,1,0,0,0,757,766,5,91,0,0,758,767,3,146,73,0,759,767,3,148,
+		74,0,760,767,3,150,75,0,761,767,3,152,76,0,762,767,3,154,77,0,763,767,
+		3,156,78,0,764,767,3,162,81,0,765,767,3,164,82,0,766,758,1,0,0,0,766,759,
+		1,0,0,0,766,760,1,0,0,0,766,761,1,0,0,0,766,762,1,0,0,0,766,763,1,0,0,
+		0,766,764,1,0,0,0,766,765,1,0,0,0,767,770,1,0,0,0,768,770,3,144,72,0,769,
+		757,1,0,0,0,769,768,1,0,0,0,770,143,1,0,0,0,771,772,7,4,0,0,772,774,3,
+		178,89,0,773,775,5,140,0,0,774,773,1,0,0,0,774,775,1,0,0,0,775,777,1,0,
+		0,0,776,778,5,501,0,0,777,776,1,0,0,0,777,778,1,0,0,0,778,145,1,0,0,0,
+		779,780,5,22,0,0,780,781,7,5,0,0,781,147,1,0,0,0,782,783,5,19,0,0,783,
+		784,3,172,86,0,784,149,1,0,0,0,785,786,5,20,0,0,786,787,3,172,86,0,787,
+		151,1,0,0,0,788,789,5,21,0,0,789,790,3,172,86,0,790,153,1,0,0,0,791,792,
+		5,14,0,0,792,793,5,140,0,0,793,155,1,0,0,0,794,795,7,6,0,0,795,796,3,178,
+		89,0,796,797,5,92,0,0,797,798,3,158,79,0,798,157,1,0,0,0,799,806,3,178,
+		89,0,800,801,5,87,0,0,801,802,3,172,86,0,802,803,5,88,0,0,803,806,1,0,
+		0,0,804,806,3,160,80,0,805,799,1,0,0,0,805,800,1,0,0,0,805,804,1,0,0,0,
+		806,159,1,0,0,0,807,808,1,0,0,0,808,161,1,0,0,0,809,810,5,15,0,0,810,811,
+		5,140,0,0,811,163,1,0,0,0,812,813,7,7,0,0,813,820,3,170,85,0,814,815,5,
+		92,0,0,815,818,3,178,89,0,816,817,5,92,0,0,817,819,3,178,89,0,818,816,
+		1,0,0,0,818,819,1,0,0,0,819,821,1,0,0,0,820,814,1,0,0,0,820,821,1,0,0,
+		0,821,165,1,0,0,0,822,823,5,103,0,0,823,827,5,501,0,0,824,827,5,103,0,
+		0,825,827,3,168,84,0,826,822,1,0,0,0,826,824,1,0,0,0,826,825,1,0,0,0,827,
+		167,1,0,0,0,828,829,5,105,0,0,829,832,5,501,0,0,830,832,5,501,0,0,831,
+		828,1,0,0,0,831,830,1,0,0,0,832,169,1,0,0,0,833,834,5,140,0,0,834,171,
+		1,0,0,0,835,840,3,178,89,0,836,837,5,92,0,0,837,839,3,178,89,0,838,836,
+		1,0,0,0,839,842,1,0,0,0,840,838,1,0,0,0,840,841,1,0,0,0,841,173,1,0,0,
+		0,842,840,1,0,0,0,843,848,3,176,88,0,844,845,5,92,0,0,845,847,3,176,88,
+		0,846,844,1,0,0,0,847,850,1,0,0,0,848,846,1,0,0,0,848,849,1,0,0,0,849,
+		175,1,0,0,0,850,848,1,0,0,0,851,857,5,139,0,0,852,854,3,180,90,0,853,852,
+		1,0,0,0,853,854,1,0,0,0,854,855,1,0,0,0,855,857,3,178,89,0,856,851,1,0,
+		0,0,856,853,1,0,0,0,857,177,1,0,0,0,858,862,3,182,91,0,859,862,3,184,92,
+		0,860,862,3,186,93,0,861,858,1,0,0,0,861,859,1,0,0,0,861,860,1,0,0,0,862,
+		179,1,0,0,0,863,864,7,8,0,0,864,181,1,0,0,0,865,866,5,136,0,0,866,183,
+		1,0,0,0,867,868,5,137,0,0,868,185,1,0,0,0,869,870,5,138,0,0,870,187,1,
+		0,0,0,871,872,7,9,0,0,872,189,1,0,0,0,873,874,7,10,0,0,874,191,1,0,0,0,
+		875,881,3,194,97,0,876,877,3,194,97,0,877,878,5,91,0,0,878,879,3,190,95,
+		0,879,881,1,0,0,0,880,875,1,0,0,0,880,876,1,0,0,0,881,193,1,0,0,0,882,
+		883,7,11,0,0,883,195,1,0,0,0,884,885,7,12,0,0,885,197,1,0,0,0,886,887,
+		7,13,0,0,887,199,1,0,0,0,58,205,211,219,228,231,235,247,254,260,279,287,
+		310,338,340,364,373,380,419,440,454,467,472,483,489,494,520,552,558,575,
+		590,602,609,619,627,659,666,676,696,721,726,738,752,754,766,769,774,777,
+		805,818,820,826,831,840,848,853,856,861,880
 	};
 
 	public static readonly ATN _ATN =
