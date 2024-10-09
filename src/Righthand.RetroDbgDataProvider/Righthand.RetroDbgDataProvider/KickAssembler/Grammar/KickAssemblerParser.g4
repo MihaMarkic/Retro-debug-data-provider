@@ -9,7 +9,7 @@ program: units;
 
 // needs a lot of love
 
-units: unit ((EOL | SEMICOLON)* unit)*;
+units: ((EOL | SEMICOLON)* unit)+;
 
 unit
     : instruction
