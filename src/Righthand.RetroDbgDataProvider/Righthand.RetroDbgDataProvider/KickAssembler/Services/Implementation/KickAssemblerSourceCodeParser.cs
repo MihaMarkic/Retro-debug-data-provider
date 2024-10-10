@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Microsoft.Extensions.Logging;
+using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Program;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
@@ -69,7 +70,7 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         }
     }
 
-    internal ParsedSourceFile ParseFile(string fileName, FrozenSet<string> inDefines, ImmutableArray<string> libraryDirectories)
+    internal KickAssemblerParsedSourceFile ParseFile(string fileName, FrozenSet<string> inDefines, ImmutableArray<string> libraryDirectories)
     {
         var lastWrite = _fileService.GetLastWriteTime(fileName);
         using (var content = _fileService.OpenRead(fileName))
@@ -78,7 +79,7 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         }
     }
 
-    internal ParsedSourceFile ParseStream(string fileName, Stream content, DateTimeOffset lastModified,
+    internal KickAssemblerParsedSourceFile ParseStream(string fileName, Stream content, DateTimeOffset lastModified,
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories)
     {
@@ -89,6 +90,10 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
             DefinedSymbols = inDefines.ToHashSet(),
         };
         var tokenStream = new CommonTokenStream(lexer);
+        var parser = new KickAssemblerParser(tokenStream)
+        {
+            BuildParseTree = true
+        };
         try
         {
             // InvalidOperationException as a consequence of invalid PopMode can be throws;
@@ -97,13 +102,9 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         catch (InvalidOperationException ex)
         {
             _logger.LogWarning("Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif", fileName);
-            return new ParsedSourceFile(fileName, FrozenSet<string>.Empty,
-                InDefines:inDefines, OutDefines:inDefines, LastModified: lastModified, LiveContent: null);
+            return new KickAssemblerParsedSourceFile(fileName, FrozenSet<string>.Empty,
+                inDefines, outDefines: inDefines, lastModified, liveContent: null, lexer, tokenStream, parser);
         }
-        var parser = new KickAssemblerParser(tokenStream)
-        {
-            BuildParseTree = true
-        };
         var tree = parser.program();
         var listener = new KickAssemblerSourceCodeListener();
         ParseTreeWalker.Default.Walk(listener, tree);
@@ -113,8 +114,9 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         _logger.LogInformation("Parsed file {FileName} has these relative references {References}", fileName,
             listener.ReferencedFiles);
         var absoluteReferencePaths = GetAbsolutePaths(Path.GetDirectoryName(fileName)!, listener.ReferencedFiles, libraryDirectories);
-        return new ParsedSourceFile(fileName, absoluteReferencePaths, 
-            InDefines:inDefines, OutDefines:lexer.DefinedSymbols.ToFrozenSet(), LastModified: lastModified, LiveContent: null);
+        return new KickAssemblerParsedSourceFile(fileName, absoluteReferencePaths, 
+            inDefines, lexer.DefinedSymbols.ToFrozenSet(), lastModified, liveContent: null,
+            lexer, tokenStream, parser);
     }
 
     
