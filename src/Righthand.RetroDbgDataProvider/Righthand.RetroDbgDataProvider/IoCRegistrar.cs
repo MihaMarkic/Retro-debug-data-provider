@@ -6,7 +6,7 @@ using Righthand.RetroDbgDataProvider.Services.Abstract;
 namespace Righthand.RetroDbgDataProvider;
 
 /// <summary>
-/// Registrator for DI.
+/// Registrar for DI.
 /// </summary>
 public static class IoCRegistrar
 {
@@ -22,6 +22,7 @@ public static class IoCRegistrar
             .AddSingleton<IKickAssemblerByteDumpParser, KickAssemblerByteDumpParser>()
             .AddSingleton<IKickAssemblerDbgParser, KickAssemblerDbgParser>()
             .AddSingleton<IKickAssemblerProgramInfoBuilder, KickAssemblerProgramInfoBuilder>()
+            .AddScoped<KickAssemblerSourceCodeParser>()
             .AddSingleton<IFileService, IFileService>();
 
     }

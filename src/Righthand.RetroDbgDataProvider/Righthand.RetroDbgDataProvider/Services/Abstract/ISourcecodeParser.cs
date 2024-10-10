@@ -1,4 +1,5 @@
 ﻿using System.Collections.Frozen;
+using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.Models;
 
 namespace Righthand.RetroDbgDataProvider.Services.Abstract;
@@ -7,6 +8,15 @@ namespace Righthand.RetroDbgDataProvider.Services.Abstract;
 /// </summary>
 public interface ISourcecodeParser
 {
+    /// <summary>
+    /// Notifies that <see cref="AllFiles"/> has changed.
+    /// </summary>
+    event EventHandler? AllFilesChanged;
+    /// <summary>
+    /// Parsed data for all files in current state.
+    /// </summary>
+    /// <remarks><see cref="AllFilesChanged"/> is triggered on each change.</remarks>
+    ImmutableDictionary<string, KickAssemblerParsedSourceFile> AllFiles { get; }
     /// <summary>
     /// Starts initial parsing of entire project.
     /// </summary>

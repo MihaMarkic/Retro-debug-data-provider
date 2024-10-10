@@ -13,12 +13,26 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 /// Provides parsing of the KickAssembler project's source code.
 /// </summary>
 /// <remarks>Not thread safe.</remarks>
-public class KickAssemblerSourceCodeParser: ISourcecodeParser
+public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
 {
     private readonly ILogger<KickAssemblerSourceCodeParser> _logger;
     private readonly IFileService _fileService;
+    /// <inheritdoc cref="ISourcecodeParser"/>
+    public event EventHandler? AllFilesChanged;
+    /// <inheritdoc cref="ISourcecodeParser"/>
+    public ImmutableDictionary<string, KickAssemblerParsedSourceFile> AllFiles
+    {
+        get => _allFiles;
+        private set
+        {
+            if (!ReferenceEquals(_allFiles, value))
+            {
+                _allFiles = value;
+                OnAllFilesChanged(EventArgs.Empty);
+            }
+        }
+    }
     private CancellationTokenSource? _parsingCts;
-    // file with files that reference it
     private ImmutableDictionary<string, KickAssemblerParsedSourceFile> _allFiles;
     private string? _projectDirectory;
     private string? _mainFile;
@@ -35,6 +49,7 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         _allFiles = ImmutableDictionary<string, KickAssemblerParsedSourceFile>.Empty;
     }
 
+    private void OnAllFilesChanged(EventArgs e) => AllFilesChanged?.Invoke(this, e);
     /// <inheritdoc cref="ISourcecodeParser"/>
     public async Task InitialParseAsync(string projectDirectory,
         FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
@@ -42,7 +57,7 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
     {
         _projectDirectory = projectDirectory;
-        _allFiles = ImmutableDictionary<string, KickAssemblerParsedSourceFile>.Empty;
+        AllFiles = ImmutableDictionary<string, KickAssemblerParsedSourceFile>.Empty;
         _mainFile = Path.Combine(_projectDirectory, "main.asm");
         await ParseAsync(inMemoryFilesContent, inDefines, libraryDirectories, ct).ConfigureAwait(false);
     }
@@ -77,8 +92,8 @@ public class KickAssemblerSourceCodeParser: ISourcecodeParser
 
                 Dictionary<string, KickAssemblerParsedSourceFile> parsed = new();
                 await ParseAllFilesAsync(parsed, _mainFile, inMemoryFilesContent, inDefines, libraryDirectories,
-                    _allFiles, linkedCancellationSource.Token).ConfigureAwait(false);
-                _allFiles = parsed.ToImmutableDictionary();
+                    AllFiles, linkedCancellationSource.Token).ConfigureAwait(false);
+                AllFiles = parsed.ToImmutableDictionary();
             }
         }
         catch (OperationCanceledException)
