@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using Righthand.RetroDbgDataProvider.Models;
 
 namespace Righthand.RetroDbgDataProvider.Services.Abstract;
 /// <summary>
@@ -10,14 +11,30 @@ public interface ISourcecodeParser
     /// Starts initial parsing of entire project.
     /// </summary>
     /// <param name="projectDirectory"></param>
+    /// <param name="inMemoryFilesContent"></param>
+    /// <param name="inDefines"></param>
+    /// <param name="libraryDirectories"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    Task InitialParseAsync(string projectDirectory, CancellationToken ct);
+    Task InitialParseAsync(string projectDirectory,
+        FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
+        FrozenSet<string> inDefines,
+        ImmutableArray<string> libraryDirectories, CancellationToken ct = default);
     /// <summary>
     /// Trigger reparsing of source code
     /// </summary>
-    /// <param name="changedFiles"></param>
+    /// <param name="inMemoryFilesContent"></param>
+    /// <param name="inDefines"></param>
+    /// <param name="libraryDirectories"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    Task ParseAsync(ImmutableArray<string> changedFiles, CancellationToken ct = default);
+    Task ParseAsync(FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
+        FrozenSet<string> inDefines,
+        ImmutableArray<string> libraryDirectories, CancellationToken ct = default);
+
+    /// <summary>
+    /// When parsing in progress, it stops it. Otherwise has no effect.
+    /// </summary>
+    /// <returns></returns>
+    Task StopAsync();
 }

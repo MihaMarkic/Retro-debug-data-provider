@@ -19,7 +19,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
         [Test]
         public void WhenEmptyContent_ResultWithCorrectNameAndNoReferencesIsReturned()
         {
-            var actual = Target.ParseStream("d:/root/test.asm", new MemoryStream(), DateTimeOffset.Now,
+            var actual = Target.ParseStream("d:/root/test.asm", new AntlrInputStream(), DateTimeOffset.Now,
                 FrozenSet<string>.Empty, []);
 
             Assert.That(actual.FileName, Is.EqualTo("d:/root/test.asm"));
@@ -32,7 +32,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             const string sample = """
                                   lda #5                            
                                   """;
-            var actual = Target.ParseStream("test.asm", new MemoryStream(Encoding.UTF8.GetBytes(sample)),
+            var actual = Target.ParseStream("test.asm", new AntlrInputStream(sample),
                 DateTimeOffset.Now, FrozenSet<string>.Empty, []);
 
             Assert.That(actual.ReferencedFiles, Is.Empty);
@@ -50,7 +50,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var myLibraryPath = Path.Combine("d:", "root", "MyLibrary.asm");
             fileService.FileExists(myLibraryPath).Returns(true);
             var rootFile = Path.Combine("d:", "root", "test.asm");
-            var actual = Target.ParseStream(rootFile, new MemoryStream(Encoding.UTF8.GetBytes(sample)),
+            var actual = Target.ParseStream(rootFile, new AntlrInputStream(sample),
                 DateTimeOffset.Now, FrozenSet<string>.Empty, []);
 
             Assert.That(actual.ReferencedFiles, Is.EquivalentTo(new[] { myLibraryPath }));
