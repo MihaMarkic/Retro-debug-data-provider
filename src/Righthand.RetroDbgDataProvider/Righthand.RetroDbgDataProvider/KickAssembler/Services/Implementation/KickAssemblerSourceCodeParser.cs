@@ -154,7 +154,7 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
             }
             else if (_fileService.FileExists(filePath))
             {
-                parsedFile = ParseFile(filePath, inDefines, libraryDirectories, oldParsedFile);
+                parsedFile = await ParseFileAsync(filePath, inDefines, libraryDirectories, oldParsedFile, ct);
             }
             else
             {
@@ -170,24 +170,15 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
             var referenceInDefines = parsedFile.OutDefines;
             foreach (var referencedFile in parsedFile.ReferencedFiles)
             {
-                var referencedFilePath = GetFilePathFromRelative(filePath, referencedFile, libraryDirectories);
-                if (referencedFilePath is not null)
+                if (!parsed.ContainsKey(referencedFile))
                 {
-                    if (!parsed.ContainsKey(referencedFilePath))
-                    {
-                       var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFilePath, inMemoryFilesContent, referenceInDefines,
-                            libraryDirectories, oldState, ct).ConfigureAwait(false);
-                       // takes updated define symbols
-                       if (referencedParsedFile is not null)
-                       {
-                           referenceInDefines = referencedParsedFile.OutDefines;
-                       }
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning("Couldn't find referenced file {Reference} from file {File}", referencedFile,
-                        filePath);
+                   var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFile, inMemoryFilesContent, referenceInDefines,
+                        libraryDirectories, oldState, ct).ConfigureAwait(false);
+                   // takes updated define symbols
+                   if (referencedParsedFile is not null)
+                   {
+                       referenceInDefines = referencedParsedFile.OutDefines;
+                   }
                 }
             }
 
@@ -226,8 +217,8 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
         return null;
     }
 
-    private KickAssemblerParsedSourceFile ParseFile(string fileName, FrozenSet<string> inDefines,
-        ImmutableArray<string> libraryDirectories, KickAssemblerParsedSourceFile? oldState)
+    private async Task<KickAssemblerParsedSourceFile> ParseFileAsync(string fileName, FrozenSet<string> inDefines,
+        ImmutableArray<string> libraryDirectories, KickAssemblerParsedSourceFile? oldState, CancellationToken ct)
     {
         var lastWrite = _fileService.GetLastWriteTime(fileName);
         if (oldState?.LastModified == lastWrite && oldState.LiveContent is null)
@@ -235,7 +226,8 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
             return oldState;
         }
 
-        return ParseStream(fileName, new AntlrFileStream(fileName), lastWrite, inDefines, libraryDirectories);
+        var content = await _fileService.ReadAllTextAsync(fileName, ct);
+        return ParseStream(fileName, new AntlrInputStream(content), lastWrite, inDefines, libraryDirectories);
     }
 
     private KickAssemblerParsedSourceFile ParseFile(string fileName, InMemoryFileContent inMemoryFileContent,
@@ -304,7 +296,7 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
             }
             else
             {
-                _logger.LogWarning("Could not find referenced source file {File}", reference);
+                _logger.LogWarning("Could not find referenced source file {File} from file {Source}", reference, filePath);
             }
         }
         return result.ToFrozenSet();

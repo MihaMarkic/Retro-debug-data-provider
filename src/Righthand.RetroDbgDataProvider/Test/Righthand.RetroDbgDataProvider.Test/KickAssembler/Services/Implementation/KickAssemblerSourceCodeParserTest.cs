@@ -6,6 +6,7 @@ using AutoFixture;
 using NSubstitute;
 using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
+using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.Implementation;
@@ -13,6 +14,7 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.Implementat
 [TestFixture]
 public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCodeParser>
 {
+    private Stream GetStream(string text) => new MemoryStream(Encoding.UTF8.GetBytes(text));
     [TestFixture]
     public class ParseStream : KickAssemblerSourceCodeParserTest
     {
@@ -70,6 +72,101 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var actual = Target.GetAbsolutePaths(rootPath, ["MyLibrary.asm"], []);
 
             Assert.That(actual, Is.EquivalentTo(ImmutableHashSet<string>.Empty.Add(myLibraryPath)));
+        }
+    }
+
+    [TestFixture]
+    public class InitialParseAsync : KickAssemblerSourceCodeParserTest
+    {
+        ImmutableDictionary<string, string> CreateStructure(params KeyValuePair<string, string>[] files)
+        {
+            var result = ImmutableDictionary<string, string>.Empty.AddRange(files);
+            var fileService = Fixture.Freeze<IFileService>();
+            fileService.FileExists(Arg.Any<string>()).Returns(x => result.ContainsKey((string)x[0]));
+            fileService.ReadAllTextAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(x => Task.FromResult(result[(string)x[0]]));
+            return result;
+        }
+
+        [Test]
+        public async Task GivenSampleWithSingleIncludedFile_ParseFilesContainsBothFiles()
+        {
+            var mainAsm = Path.Combine("project", "main.asm");
+            var includedAsm = Path.Combine("project", "included.asm");
+            var files = CreateStructure(
+                new(
+                    mainAsm, """
+                             #import "included.asm"
+                             """
+                ),
+                new(
+                    includedAsm, """
+                                 lda #5
+                                 """
+                )
+            );
+            
+            await Target.InitialParseAsync("project", FrozenDictionary<string, InMemoryFileContent>.Empty,
+                FrozenSet<string>.Empty, ImmutableArray<string>.Empty);
+            ImmutableArray<string> expected = [mainAsm, includedAsm];
+            
+            Assert.That(Target.AllFiles.Keys, Is.EquivalentTo(expected));
+        }
+        [Test]
+        public async Task GivenSampleWithSingleIncludedFile_AndFileExistsInProjectAndLibrary_ParsedFilesContainsIncludedFileFromProject()
+        {
+            var mainAsm = Path.Combine("project", "main.asm");
+            var includedAsm = Path.Combine("project", "included.asm");
+            var lib1Directory = "lib1";
+            var libraryIncludedAsm = Path.Combine(lib1Directory, "included.asm");
+            var files = CreateStructure(
+                new(
+                    mainAsm, """
+                             #import "included.asm"
+                             """
+                ),
+                new(
+                    includedAsm, """
+                                 lda #5
+                                 """
+                ),
+                new(
+                    libraryIncludedAsm, """
+                                        lda #1
+                                        """
+                )
+            );
+            
+            await Target.InitialParseAsync("project", FrozenDictionary<string, InMemoryFileContent>.Empty,
+                FrozenSet<string>.Empty, [lib1Directory]);
+            ImmutableArray<string> expected = [mainAsm, includedAsm];
+            
+            Assert.That(Target.AllFiles.Keys, Is.EquivalentTo(expected));
+        }
+        [Test]
+        public async Task GivenSampleWithSingleIncludedFile_AndFileExistsInLibrary_ParsedFilesContainsIncludedFileFromLibrary()
+        {
+            var mainAsm = Path.Combine("project", "main.asm");
+            var lib1Directory = "lib1";
+            var libraryIncludedAsm = Path.Combine(lib1Directory, "included.asm");
+            var files = CreateStructure(
+                new(
+                    mainAsm, """
+                             #import "included.asm"
+                             """
+                ),
+                new(
+                    libraryIncludedAsm, """
+                                        lda #1
+                                        """
+                )
+            );
+            
+            await Target.InitialParseAsync("project", FrozenDictionary<string, InMemoryFileContent>.Empty,
+                FrozenSet<string>.Empty, [lib1Directory]);
+            ImmutableArray<string> expected = [mainAsm, libraryIncludedAsm];
+            
+            Assert.That(Target.AllFiles.Keys, Is.EquivalentTo(expected));
         }
     }
 }

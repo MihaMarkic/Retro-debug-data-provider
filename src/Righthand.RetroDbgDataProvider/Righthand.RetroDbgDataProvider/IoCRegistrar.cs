@@ -2,6 +2,7 @@
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
+using Righthand.RetroDbgDataProvider.Services.Implementation;
 
 namespace Righthand.RetroDbgDataProvider;
 
@@ -23,7 +24,7 @@ public static class IoCRegistrar
             .AddSingleton<IKickAssemblerDbgParser, KickAssemblerDbgParser>()
             .AddSingleton<IKickAssemblerProgramInfoBuilder, KickAssemblerProgramInfoBuilder>()
             .AddScoped<KickAssemblerSourceCodeParser>()
-            .AddSingleton<IFileService, IFileService>();
+            .AddSingleton<IFileService, FileService>();
 
     }
 }
