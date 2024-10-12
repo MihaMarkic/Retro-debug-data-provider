@@ -42,21 +42,30 @@ HASHELIF
     : HASH 'elif'
     -> PopMode, PushMode(IGNOREALL_MODE)
     ;
+    
+HASHIMPORT: HASH 'import';
+HASHIMPORTONCE: HASH 'importonce';
+HASHIMPORTIF: HASH 'importif';
+
 
 ONLYA: 'a' ;
 ABS: 'abs';
 
-BINARY_TEXT: 'binary';
-C64_TEXT: 'c64';
-TEXT_TEXT: 'text';
-ENCODING: 'encoding';
-FILL: 'fill';
-FILLWORD: 'fillword'; 
-LOHIFILL: 'lohifill';
+DOTBINARY: 'binary';
+DOTC64: 'c64';
+DOTTEXT: '.text';
+DOTENCODING: '.encoding';
+DOTFILL: '.fill';
+DOTFILLWORD: '.fillword'; 
+DOTLOHIFILL: '.lohifill';
 BYTE: 'byte' | 'by';
 WORD: 'word' | 'wo';
 DWORD: 'dword' | 'dw';
-CPU: 'cpu';
+DOTCPU: '.cpu';
+DOTBYTE: '.byte';
+DOTWORD: '.word';
+DOTDWORD: '.dword';
+
 CPU6502NOILLEGALS: '_6502NoIllegals';
 CPU6502: '_6502';
 DTV: 'dtv';
@@ -64,44 +73,29 @@ CPU65C02: '_65c02';
 
 ASSERT: 'assert';
 ASSERTERROR: 'asserterror';
-PRINT: 'print';
-PRINTNOW: 'printnow';
-VAR: 'var';
-CONST: 'const';
-IF: 'if';
+PRINT: '.print';
+PRINTNOW: '.printnow';
+VAR: '.var';
+CONST: '.const';
+IF: '.if';
 ELSE: 'else';
-ERRORIF: 'errorif';
-EVAL: 'eval';
-FOR: 'for';
-WHILE: 'while';
-STRUCT: 'struct';
-DEFINE: 'define';
-FUNCTION: 'function';
-RETURN: 'return';
-MACRO: 'macro';
-PSEUDOCOMMAND: 'pseudocommand';
-PSEUDOPC: 'pseudopc';
-UNDEF: 'undef';
-ENDIF: 'endif';
-ELIF: 'elif';
-IMPORT: 'import';
-IMPORTONCE: 'importonce';
-IMPORTIF: 'importif';
-NAMESPACE: 'namespace'; 
-SEGMENT: 'segment';
-SEGMENTDEF: 'segmentdef';
-SEGMENTOUT: 'segmentout';
-// segments parameters
-//ALIGN: 'align';
-//ALLOW_OVERLAP: 'allowOverlap';
-//DEST: 'dest';
-//FILL_BYTE: 'fillByte';
-//HIDE: 'hide';
-//MARG: 'marg';
-//MAX: 'max';
-//MIN: 'min';
-MODIFY: 'modify';
-FILEMODIFY: 'fileModify';
+ERRORIF: '.errorif';
+EVAL: '.eval';
+FOR: '.for';
+WHILE: '.while';
+STRUCT: '.struct';
+DEFINE: '.define';
+FUNCTION: '.function';
+RETURN: '.return';
+MACRO: '.macro';
+PSEUDOCOMMAND: '.pseudocommand';
+PSEUDOPC: '.pseudopc';
+NAMESPACE: '.namespace'; 
+SEGMENT: '.segment';
+SEGMENTDEF: '.segmentdef';
+SEGMENTOUT : '.segmentout';
+MODIFY: '.modify';
+FILEMODIFY: '.fileModify';
 //OUT_BIN: 'outBin';
 //OUT_PRG: 'outPrg';
 //PRG_FILES: 'prgFiles';
@@ -110,15 +104,15 @@ FILEMODIFY: 'fileModify';
 //START: 'start';
 //START_AFTER: 'startAfter';
 //VIRTUAL: 'virtual';
-PLUGIN: 'plugin';
-LABEL: 'label';
-FILE: 'file';
-DISK: 'disk';
-PC: 'pc';
+PLUGIN: '.plugin';
+LABEL: '.label';
+FILE: '.file';
+DISK: '.disk';
+PC: '.pc';
 
-BREAK: 'break';
-WATCH: 'watch';
-ZP: 'zp';
+BREAK: '.break';
+WATCH: '.watch';
+ZP: '.zp';
 
 // COLORS
 BLACK: 'BLACK';

@@ -40,8 +40,8 @@ public class ParserTest: ParserBootstrap<ParserTest>
     [TestFixture]
     public class CpuDirectiveName : ParserTest
     {
-        [TestCase("cpu _65c02")]
-        [TestCase("cpu _6502NoIllegals")]
+        [TestCase(".cpu _65c02")]
+        [TestCase(".cpu _6502NoIllegals")]
         public void TestValid(string input)
         {
             Assert.DoesNotThrow(() => Run(input, p => p.cpuDirective()));
@@ -51,7 +51,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
     [TestFixture]
     public class EncodingDirective : ParserTest
     {
-        [TestCase("encoding \"screencode_mixed\"")]
+        [TestCase(".encoding \"screencode_mixed\"")]
         public void TestValid(string input)
         {
             Assert.DoesNotThrow(() => Run(input, p => p.encodingDirective()));
