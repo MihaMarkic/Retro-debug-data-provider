@@ -6,17 +6,17 @@ namespace Righthand.RetroDbgDataProvider.Services.Abstract;
 /// <summary>
 /// Provides parsing of the source code for the entire project.
 /// </summary>
-public interface ISourcecodeParser
+public interface ISourceCodeParser
 {
     /// <summary>
     /// Notifies that <see cref="AllFiles"/> has changed.
     /// </summary>
-    event EventHandler? AllFilesChanged;
+    event EventHandler<FilesChangedEventArgs>? FilesChanged;
     /// <summary>
     /// Parsed data for all files in current state.
     /// </summary>
     /// <remarks><see cref="AllFilesChanged"/> is triggered on each change.</remarks>
-    ImmutableDictionary<string, KickAssemblerParsedSourceFile> AllFiles { get; }
+    ImmutableDictionary<string, ParsedSourceFile> AllFiles { get; }
     /// <summary>
     /// Starts initial parsing of entire project.
     /// </summary>

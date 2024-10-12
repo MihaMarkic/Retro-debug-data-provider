@@ -7,19 +7,18 @@ using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Program;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
+using Righthand.RetroDbgDataProvider.Services.Implementation;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 /// <summary>
 /// Provides parsing of the KickAssembler project's source code.
 /// </summary>
 /// <remarks>Not thread safe.</remarks>
-public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
+public sealed class KickAssemblerSourceCodeParser: SourceCodeParser<KickAssemblerParsedSourceFile>, ISourceCodeParser
 {
     private readonly ILogger<KickAssemblerSourceCodeParser> _logger;
     private readonly IFileService _fileService;
-    /// <inheritdoc cref="ISourcecodeParser"/>
-    public event EventHandler? AllFilesChanged;
-    /// <inheritdoc cref="ISourcecodeParser"/>
+    /// <inheritdoc cref="ISourceCodeParser"/>
     public ImmutableDictionary<string, KickAssemblerParsedSourceFile> AllFiles
     {
         get => _allFiles;
@@ -28,7 +27,7 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
             if (!ReferenceEquals(_allFiles, value))
             {
                 _allFiles = value;
-                OnAllFilesChanged(EventArgs.Empty);
+                OnFilesChanged(FilesChangedEventArgs.Empty);
             }
         }
     }
@@ -48,9 +47,7 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
         _fileService = fileService;
         _allFiles = ImmutableDictionary<string, KickAssemblerParsedSourceFile>.Empty;
     }
-
-    private void OnAllFilesChanged(EventArgs e) => AllFilesChanged?.Invoke(this, e);
-    /// <inheritdoc cref="ISourcecodeParser"/>
+    /// <inheritdoc cref="ISourceCodeParser"/>
     public async Task InitialParseAsync(string projectDirectory,
         FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
         FrozenSet<string> inDefines,
@@ -62,7 +59,7 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
         await ParseAsync(inMemoryFilesContent, inDefines, libraryDirectories, ct).ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ISourcecodeParser"/>
+    /// <inheritdoc cref="ISourceCodeParser"/>
     public Task ParseAsync(FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
@@ -93,7 +90,8 @@ public sealed class KickAssemblerSourceCodeParser: ISourcecodeParser
                 Dictionary<string, KickAssemblerParsedSourceFile> parsed = new();
                 await ParseAllFilesAsync(parsed, _mainFile, inMemoryFilesContent, inDefines, libraryDirectories,
                     AllFiles, linkedCancellationSource.Token).ConfigureAwait(false);
-                AllFiles = parsed.ToImmutableDictionary();
+                var newAllFiles = parsed.ToImmutableDictionary();
+                AllFiles = newAllFiles;
             }
         }
         catch (OperationCanceledException)
