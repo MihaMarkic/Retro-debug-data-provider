@@ -8,6 +8,7 @@ partial class KickAssemblerLexer
 {
     public HashSet<string> DefinedSymbols { get; init; } = new();
     private int? ModeOnDefaultEol { get; set; }
+    public bool IsImportOnce { get; private set; }
     private bool IsDefined(string text) => PreprocessorConditionEvaluator.IsDefined(DefinedSymbols.ToFrozenSet(), text);
 
     public override void PushMode(int m)

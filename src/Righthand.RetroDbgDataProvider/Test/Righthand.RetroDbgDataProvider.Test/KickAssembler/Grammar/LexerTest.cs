@@ -20,6 +20,17 @@ public class LexerTest
         var tokens = stream.GetTokens();
         return [..tokens.Where(t => t.Channel == 0)];
     }
+    KickAssemblerLexer GetLexer(string text, params string[] definitons)
+    {
+        var input = new AntlrInputStream(text);
+        var lexer = new KickAssemblerLexer(input)
+        {
+            DefinedSymbols = definitons.ToHashSet(),
+        };
+        var stream = new CommonTokenStream(lexer);
+        stream.Fill();
+        return lexer;
+    }
 
     ImmutableArray<int> GetTokenTypes(params int[] tokens)
     {
@@ -346,6 +357,30 @@ public class LexerTest
             );
 
             Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenDoesNotHaveImportOnce_ImportOnceIsFalse()
+        {
+            const string input = """
+                                 #if DEFINED
+                                    lda #5
+                                 #endif
+                                 """;
+            
+            var actual  = GetLexer(input, "DEFINED").IsImportOnce;
+
+            Assert.That(actual, Is.False);
+        }
+        [Test]
+        public void WhenHasImportOnce_ImportOnceIsTrue()
+        {
+            const string input = """
+                                 #importonce
+                                 """;
+            
+            var actual  = GetLexer(input).IsImportOnce;
+
+            Assert.That(actual, Is.True);
         }
     }
 }

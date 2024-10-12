@@ -44,7 +44,12 @@ HASHELIF
     ;
     
 HASHIMPORT: HASH 'import';
-HASHIMPORTONCE: HASH 'importonce';
+HASHIMPORTONCE
+    : HASH 'importonce'
+    {
+        IsImportOnce = true;
+    }
+    ;
 HASHIMPORTIF: HASH 'importif';
 
 

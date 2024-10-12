@@ -10,6 +10,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     public KickAssemblerLexer Lexer { get; init; }
     public CommonTokenStream CommonTokenStream { get; init; }
     public KickAssemblerParser Parser { get; init; }
+    public bool IsImportOnce { get; }
     public override Lazy<ImmutableArray<TextRange>> IgnoredDefineContent { get; }
 
     public KickAssemblerParsedSourceFile(
@@ -21,12 +22,14 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         string? liveContent,
         KickAssemblerLexer lexer,
         CommonTokenStream commonTokenStream,
-        KickAssemblerParser parser
+        KickAssemblerParser parser,
+        bool isImportOnce
     ) : base(fileName, referencedFiles, inDefines, outDefines, lastModified, liveContent)
     {
         Lexer = lexer;
         CommonTokenStream = commonTokenStream;
         Parser = parser;
+        IsImportOnce = isImportOnce;
         IgnoredDefineContent = new(GetIgnoredDefineContent, LazyThreadSafetyMode.PublicationOnly);
     }
 

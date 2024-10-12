@@ -33,7 +33,7 @@ public class KickAssemblerParsedSourceFileTest
         {
             var input = GetParsed("");
             var target = new KickAssemblerParsedSourceFile("fileName", FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<string>.Empty, 
-                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser);
+                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, isImportOnce: false);
             
             var actual = target.GetIgnoredDefineContent();
             
@@ -48,11 +48,11 @@ public class KickAssemblerParsedSourceFileTest
                                   #endif
                                   """);
             var target = new KickAssemblerParsedSourceFile("fileName", FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<string>.Empty, 
-                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser);
+                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, isImportOnce: false);
             
             var actual = target.GetIgnoredDefineContent();
 
-            ImmutableArray<TextRange> expected = [new TextRange(new TextCursor(1, 13), new TextCursor(2, 11))];
+            ImmutableArray<TextRange> expected = [new(new TextCursor(1, 13), new TextCursor(2, 11))];
             Assert.That(actual, Is.EquivalentTo(expected));
         }
         [Test]
@@ -66,13 +66,13 @@ public class KickAssemblerParsedSourceFileTest
                                   #endif
                                   """);
             var target = new KickAssemblerParsedSourceFile("fileName", FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<string>.Empty, 
-                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser);
+                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, isImportOnce: false);
             
             var actual = target.GetIgnoredDefineContent();
 
             ImmutableArray<TextRange> expected = [
-                new TextRange(new TextCursor(1, 13), new TextCursor(2, 11)),
-                new TextRange(new TextCursor(3, 15), new TextCursor(4, 13))
+                new(new TextCursor(1, 13), new TextCursor(2, 11)),
+                new(new TextCursor(3, 15), new TextCursor(4, 13))
             ];
             Assert.That(actual, Is.EquivalentTo(expected));
         }

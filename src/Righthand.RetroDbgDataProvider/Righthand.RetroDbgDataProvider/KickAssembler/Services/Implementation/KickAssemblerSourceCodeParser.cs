@@ -251,7 +251,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         {
             _logger.LogWarning("Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif", fileName);
             return new KickAssemblerParsedSourceFile(fileName, FrozenSet<string>.Empty,
-                inDefines, outDefines: inDefines, lastModified, liveContent: null, lexer, tokenStream, parser);
+                inDefines, outDefines: inDefines, lastModified, liveContent: null, lexer, tokenStream, parser, lexer.IsImportOnce);
         }
         var tree = parser.program();
         var listener = new KickAssemblerSourceCodeListener();
@@ -262,7 +262,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         var absoluteReferencePaths = GetAbsolutePaths(Path.GetDirectoryName(fileName)!, listener.ReferencedFiles, libraryDirectories);
         return new KickAssemblerParsedSourceFile(fileName, absoluteReferencePaths, 
             inDefines, lexer.DefinedSymbols.ToFrozenSet(), lastModified, liveContent: null,
-            lexer, tokenStream, parser);
+            lexer, tokenStream, parser, lexer.IsImportOnce);
     }
 
     internal FrozenSet<string> GetAbsolutePaths(string filePath, ImmutableHashSet<string> relativeReferences,
