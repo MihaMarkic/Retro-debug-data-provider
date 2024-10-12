@@ -28,3 +28,22 @@ public abstract class ParsedSourceFile
         LiveContent = liveContent;
     }
 }
+
+public interface IParsedFilesIndex<out T>
+{
+    T? GetValueOrDefault(string name);
+    ImmutableArray<string> Keys { get; }
+}
+public class ParsedFilesIndex<T>: IParsedFilesIndex<T>
+    where T : ParsedSourceFile
+{
+    public static readonly ParsedFilesIndex<T> Empty = new ParsedFilesIndex<T>(FrozenDictionary<string, T>.Empty);
+    private readonly FrozenDictionary<string, T> _data;
+
+    public ParsedFilesIndex(FrozenDictionary<string, T> data)
+    {
+        _data = data;
+    }
+    public T? GetValueOrDefault(string name) => _data.GetValueOrDefault(name);
+    public ImmutableArray<string> Keys => _data.Keys;
+}

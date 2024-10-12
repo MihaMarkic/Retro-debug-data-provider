@@ -1,11 +1,9 @@
 ﻿using System.Collections.Frozen;
-using System.Collections.Immutable;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.Models;
-using Righthand.RetroDbgDataProvider.Models.Program;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Services.Implementation;
 
@@ -14,25 +12,13 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 /// Provides parsing of the KickAssembler project's source code.
 /// </summary>
 /// <remarks>Not thread safe.</remarks>
-public sealed class KickAssemblerSourceCodeParser: SourceCodeParser<KickAssemblerParsedSourceFile>, ISourceCodeParser
+public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssemblerParsedSourceFile>,
+    ISourceCodeParser<KickAssemblerParsedSourceFile>
 {
     private readonly ILogger<KickAssemblerSourceCodeParser> _logger;
     private readonly IFileService _fileService;
-    /// <inheritdoc cref="ISourceCodeParser"/>
-    public ImmutableDictionary<string, KickAssemblerParsedSourceFile> AllFiles
-    {
-        get => _allFiles;
-        private set
-        {
-            if (!ReferenceEquals(_allFiles, value))
-            {
-                _allFiles = value;
-                OnFilesChanged(FilesChangedEventArgs.Empty);
-            }
-        }
-    }
+
     private CancellationTokenSource? _parsingCts;
-    private ImmutableDictionary<string, KickAssemblerParsedSourceFile> _allFiles;
     private string? _projectDirectory;
     private string? _mainFile;
     private Task? _parsingTask;
@@ -42,10 +28,10 @@ public sealed class KickAssemblerSourceCodeParser: SourceCodeParser<KickAssemble
     /// <param name="logger"></param>
     /// <param name="fileService"></param>
     public KickAssemblerSourceCodeParser(ILogger<KickAssemblerSourceCodeParser> logger, IFileService fileService)
+        :base(ParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty)
     {
         _logger = logger;
         _fileService = fileService;
-        _allFiles = ImmutableDictionary<string, KickAssemblerParsedSourceFile>.Empty;
     }
     /// <inheritdoc cref="ISourceCodeParser"/>
     public async Task InitialParseAsync(string projectDirectory,
@@ -54,7 +40,7 @@ public sealed class KickAssemblerSourceCodeParser: SourceCodeParser<KickAssemble
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
     {
         _projectDirectory = projectDirectory;
-        AllFiles = ImmutableDictionary<string, KickAssemblerParsedSourceFile>.Empty;
+        _allFiles = ParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty;
         _mainFile = Path.Combine(_projectDirectory, "main.asm");
         await ParseAsync(inMemoryFilesContent, inDefines, libraryDirectories, ct).ConfigureAwait(false);
     }
@@ -90,8 +76,8 @@ public sealed class KickAssemblerSourceCodeParser: SourceCodeParser<KickAssemble
                 Dictionary<string, KickAssemblerParsedSourceFile> parsed = new();
                 await ParseAllFilesAsync(parsed, _mainFile, inMemoryFilesContent, inDefines, libraryDirectories,
                     AllFiles, linkedCancellationSource.Token).ConfigureAwait(false);
-                var newAllFiles = parsed.ToImmutableDictionary();
-                AllFiles = newAllFiles;
+                var newAllFiles = parsed.ToFrozenDictionary();
+                AllFiles = new ParsedFilesIndex<KickAssemblerParsedSourceFile>(newAllFiles);
             }
         }
         catch (OperationCanceledException)
@@ -138,7 +124,7 @@ public sealed class KickAssemblerSourceCodeParser: SourceCodeParser<KickAssemble
         FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories,
-        ImmutableDictionary<string, KickAssemblerParsedSourceFile> oldState,
+        IParsedFilesIndex<KickAssemblerParsedSourceFile> oldState,
         CancellationToken ct)
     {
         _logger.LogInformation("Parsing file {FilePath}", filePath);
