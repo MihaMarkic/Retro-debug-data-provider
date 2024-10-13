@@ -43,15 +43,20 @@ HASHELIF
     -> PopMode, PushMode(IGNOREALL_MODE)
     ;
     
-HASHIMPORT: HASH 'import';
+HASHIMPORT
+    : HASH 'import'
+    -> PushMode(IMPORT_MODE)
+    ;
 HASHIMPORTONCE
     : HASH 'importonce'
     {
         IsImportOnce = true;
     }
     ;
-HASHIMPORTIF: HASH 'importif';
-
+HASHIMPORTIF
+    : HASH 'importif'
+    -> PushMode(IMPORTIF_MODE)
+    ;
 
 ONLYA: 'a' ;
 ABS: 'abs';
@@ -684,4 +689,47 @@ IA_HASHENDIF
 IA_INTENTIONALLY_IGNORED
     : .+?
     ->channel(IGNORED)
+    ;
+    
+mode IMPORT_MODE;
+
+REFERENCED_FILEPATH
+    : STRING
+    {
+        AddReferencedFileInfo(TokenStartLine, TokenStartColumn, Text);
+    }
+    ->type(STRING),PopMode
+    ;
+    
+mode IMPORTIF_MODE;
+
+IIF_CONDITION
+    : ~[\n\r"]+ //add other characters as needed
+    {
+        if (IsDefined(Text)) {
+            /*
+            In this case DEFINED_TOKEN is in fact defined so we get
+            back into the mode we were in before the pushMode that 
+            brought us here.
+            */
+            PushMode(IMPORTIF_DEFINED_MODE);
+        } else {
+            PopMode();
+        }
+    }
+    ;
+
+IIF_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+    
+mode IMPORTIF_DEFINED_MODE;
+
+IFFILE
+    : STRING
+    {
+            AddReferencedFileInfo(TokenStartLine, TokenStartColumn, Text);
+    }
+    -> type(STRING),PopMode,PopMode
     ;

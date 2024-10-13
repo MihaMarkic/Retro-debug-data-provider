@@ -15,7 +15,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     public KickAssemblerParsedSourceFile(
         string fileName,
-        FrozenSet<string> referencedFiles,
+        ImmutableArray<ReferencedFileInfo> referencedFiles,
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
         DateTimeOffset lastModified,

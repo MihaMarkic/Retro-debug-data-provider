@@ -28,7 +28,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     /// <param name="logger"></param>
     /// <param name="fileService"></param>
     public KickAssemblerSourceCodeParser(ILogger<KickAssemblerSourceCodeParser> logger, IFileService fileService)
-        :base(ParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty)
+        :base(ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty)
     {
         _logger = logger;
         _fileService = fileService;
@@ -40,7 +40,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
     {
         _projectDirectory = projectDirectory;
-        _allFiles = ParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty;
+        _allFiles = ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty;
         _mainFile = Path.Combine(_projectDirectory, "main.asm");
         await ParseAsync(inMemoryFilesContent, inDefines, libraryDirectories, ct).ConfigureAwait(false);
     }
@@ -73,11 +73,10 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
                     throw new Exception("KickAssemblerSourceCodeParser has not been initialized");
                 }
 
-                Dictionary<string, KickAssemblerParsedSourceFile> parsed = new();
+                ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile> parsed = new();
                 await ParseAllFilesAsync(parsed, _mainFile, inMemoryFilesContent, inDefines, libraryDirectories,
                     AllFiles, linkedCancellationSource.Token).ConfigureAwait(false);
-                var newAllFiles = parsed.ToFrozenDictionary();
-                AllFiles = new ParsedFilesIndex<KickAssemblerParsedSourceFile>(newAllFiles);
+                AllFiles = parsed.ToImmutable();
             }
         }
         catch (OperationCanceledException)
@@ -119,7 +118,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     /// <param name="ct"></param>
     /// <returns></returns>
     private async Task<KickAssemblerParsedSourceFile?> ParseAllFilesAsync(
-        Dictionary<string, KickAssemblerParsedSourceFile> parsed,
+        ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile> parsed,
         string filePath,
         FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
         FrozenSet<string> inDefines,
@@ -131,7 +130,8 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         try
         {
             KickAssemblerParsedSourceFile parsedFile;
-            var oldParsedFile = oldState.GetValueOrDefault(filePath);
+            var fileIndex = oldState.GetValueOrDefault(filePath);
+            var oldParsedFile = fileIndex?.GetFile(inDefines);
             if (inMemoryFilesContent.TryGetValue(filePath, out var inMemoryContent))
             {
                 parsedFile = ParseFile(filePath, inMemoryContent, inDefines, libraryDirectories, oldParsedFile);
@@ -149,14 +149,18 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
 
             ct.ThrowIfCancellationRequested();
 
-            parsed.Add(filePath, parsedFile);
+            if (fileIndex is null)
+            {
+                
+            }
+            parsed.TryAdd(filePath, inDefines, parsedFile);
             // initial define symbols for parsing reference files
             var referenceInDefines = parsedFile.OutDefines;
             foreach (var referencedFile in parsedFile.ReferencedFiles)
             {
-                if (!parsed.ContainsKey(referencedFile))
+                if (!parsed.ContainsKey(referencedFile.FullFilePath!, inDefines))
                 {
-                   var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFile, inMemoryFilesContent, referenceInDefines,
+                   var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFile.FullFilePath!, inMemoryFilesContent, referenceInDefines,
                         libraryDirectories, oldState, ct).ConfigureAwait(false);
                    // takes updated define symbols
                    if (referencedParsedFile is not null)
@@ -249,40 +253,51 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning("Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif", fileName);
-            return new KickAssemblerParsedSourceFile(fileName, FrozenSet<string>.Empty,
-                inDefines, outDefines: inDefines, lastModified, liveContent: null, lexer, tokenStream, parser, lexer.IsImportOnce);
+            _logger.LogWarning(
+                "Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif",
+                fileName);
+            return new KickAssemblerParsedSourceFile(fileName, [..lexer.ReferencedFiles],
+                inDefines, outDefines: inDefines, lastModified, liveContent: null, lexer, tokenStream, parser,
+                lexer.IsImportOnce);
         }
+        finally
+        {
+            _logger.LogInformation("Lexed file {FileName} has these relative references {References}", fileName,
+                string.Join(",", lexer.ReferencedFiles.Select(l => l.RelativeFilePath)));
+        }
+
         var tree = parser.program();
         var listener = new KickAssemblerSourceCodeListener();
         ParseTreeWalker.Default.Walk(listener, tree);
 
-        _logger.LogInformation("Parsed file {FileName} has these relative references {References}", fileName,
-            listener.ReferencedFiles);
-        var absoluteReferencePaths = GetAbsolutePaths(Path.GetDirectoryName(fileName)!, listener.ReferencedFiles, libraryDirectories);
-        return new KickAssemblerParsedSourceFile(fileName, absoluteReferencePaths, 
+        var absoluteReferencePaths =
+            FillAbsolutePaths(Path.GetDirectoryName(fileName)!, [..lexer.ReferencedFiles], libraryDirectories);
+        return new KickAssemblerParsedSourceFile(fileName, absoluteReferencePaths,
             inDefines, lexer.DefinedSymbols.ToFrozenSet(), lastModified, liveContent: null,
             lexer, tokenStream, parser, lexer.IsImportOnce);
     }
 
-    internal FrozenSet<string> GetAbsolutePaths(string filePath, ImmutableHashSet<string> relativeReferences,
+    internal ImmutableArray<ReferencedFileInfo> FillAbsolutePaths(string filePath,
+        ImmutableArray<ReferencedFileInfo> relativeReferences,
         ImmutableArray<string> libraryDirectories)
     {
-        HashSet<string> result = new();
+        var builder = ImmutableArray.CreateBuilder<ReferencedFileInfo>(relativeReferences.Length);
         // makes sure filePath is first directory to look in
         var allDirectories = libraryDirectories.Insert(0, filePath);
         foreach (var reference in relativeReferences)
         {
-            var directory = allDirectories.FirstOrDefault(d => _fileService.FileExists(Path.Combine(d, reference)));
+            var directory = allDirectories.FirstOrDefault(d =>
+                _fileService.FileExists(Path.Combine(d, reference.RelativeFilePath)));
             if (directory is not null)
             {
-                result.Add(Path.Combine(directory, reference));
+                builder.Add(reference with { FullFilePath = Path.Combine(directory, reference.RelativeFilePath) });
             }
             else
             {
                 _logger.LogWarning("Could not find referenced source file {File} from file {Source}", reference, filePath);
             }
         }
-        return result.ToFrozenSet();
+
+        return builder.ToImmutableArray();
     }
 }

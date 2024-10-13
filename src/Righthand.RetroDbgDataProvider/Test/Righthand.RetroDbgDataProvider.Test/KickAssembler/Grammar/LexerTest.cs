@@ -8,27 +8,28 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 [TestFixture]
 public class LexerTest
 {
-    ImmutableArray<IToken> GetTokens(string text, params string[] definitons)
+    ImmutableArray<IToken> GetTokens(string text, params string[] definitions)
     {
         var input = new AntlrInputStream(text);
         var lexer = new KickAssemblerLexer(input)
         {
-            DefinedSymbols = definitons.ToHashSet(),
+            DefinedSymbols = definitions.ToHashSet(),
         };
         var stream = new CommonTokenStream(lexer);
         stream.Fill();
         var tokens = stream.GetTokens();
         return [..tokens.Where(t => t.Channel == 0)];
     }
-    KickAssemblerLexer GetLexer(string text, params string[] definitons)
+    KickAssemblerLexer GetLexer(string text, params string[] definitions)
     {
         var input = new AntlrInputStream(text);
         var lexer = new KickAssemblerLexer(input)
         {
-            DefinedSymbols = definitons.ToHashSet(),
+            DefinedSymbols = definitions.ToHashSet(),
         };
         var stream = new CommonTokenStream(lexer);
         stream.Fill();
+        var tokens = stream.GetTokens();
         return lexer;
     }
 
@@ -381,6 +382,59 @@ public class LexerTest
             var actual  = GetLexer(input).IsImportOnce;
 
             Assert.That(actual, Is.True);
+        }
+    }
+
+    [TestFixture]
+    public class HashImport : LexerTest
+    {
+        [Test]
+        public void WhenSimpleImport_ReturnsCorrectTokens()
+        {
+            const string input = """
+                                 #import "test.asm"
+                                 """;
+
+            var actual = GetTokens(input);
+
+            var expected = GetTokenTypes(
+                KickAssemblerLexer.HASHIMPORT, KickAssemblerLexer.STRING,
+                KickAssemblerLexer.Eof
+            );
+
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+    }
+    [TestFixture]
+    public class HashImportIf : LexerTest
+    {
+        [Test]
+        public void WhenConditionIsTrue_AddsReferencedFile()
+        {
+            const string input = """
+                                 #importif DEFINED "test.asm"
+                                 """;
+
+            var actual = GetLexer(input, "DEFINED")
+                .ReferencedFiles.Select(r => r.RelativeFilePath)
+                .ToImmutableArray();
+
+            ImmutableArray<string> expected = ["test.asm"];
+
+            Assert.That(actual, Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenConditionIsFalse_DoesNotAddReferencedFile()
+        {
+            const string input = """
+                                 #importif NOTDEFINED "test.asm"
+                                 """;
+
+            var actual = GetLexer(input)
+                .ReferencedFiles.Select(r => r.RelativeFilePath)
+                .ToImmutableArray();
+
+            Assert.That(actual, Is.Empty);
         }
     }
 }

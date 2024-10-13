@@ -53,14 +53,17 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             fileService.FileExists(myLibraryPath).Returns(true);
             var rootFile = Path.Combine("d:", "root", "test.asm");
             var actual = Target.ParseStream(rootFile, new AntlrInputStream(sample),
-                DateTimeOffset.Now, FrozenSet<string>.Empty, []);
+                DateTimeOffset.Now, FrozenSet<string>.Empty, [])
+                .ReferencedFiles
+                .Select(r => r.FullFilePath)
+                .ToImmutableArray();
 
-            Assert.That(actual.ReferencedFiles, Is.EquivalentTo(new[] { myLibraryPath }));
+            Assert.That(actual, Is.EquivalentTo(new[] { myLibraryPath }));
         }
     }
 
     [TestFixture]
-    public class GetAbsolutePaths : KickAssemblerSourceCodeParserTest
+    public class FillAbsolutePaths : KickAssemblerSourceCodeParserTest
     {
         [Test]
         public void WhenSingleLibraryExistsRelativeToFile_ReturnsAbsolutePath()
@@ -69,7 +72,11 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var rootPath = Path.Combine("d:", "root");
             var fileService = Fixture.Freeze<IFileService>();
             fileService.FileExists(myLibraryPath).Returns(true);
-            var actual = Target.GetAbsolutePaths(rootPath, ["MyLibrary.asm"], []);
+            
+            var actual = Target.FillAbsolutePaths(rootPath,
+                [new ReferencedFileInfo(0, 0, "MyLibrary.asm", FrozenSet<string>.Empty)], [])
+                .Select(r => r.FullFilePath)
+                .ToImmutableArray();
 
             Assert.That(actual, Is.EquivalentTo(ImmutableHashSet<string>.Empty.Add(myLibraryPath)));
         }
@@ -108,6 +115,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             
             await Target.InitialParseAsync("project", FrozenDictionary<string, InMemoryFileContent>.Empty,
                 FrozenSet<string>.Empty, ImmutableArray<string>.Empty);
+            
             ImmutableArray<string> expected = [mainAsm, includedAsm];
             
             Assert.That(Target.AllFiles.Keys, Is.EquivalentTo(expected));
