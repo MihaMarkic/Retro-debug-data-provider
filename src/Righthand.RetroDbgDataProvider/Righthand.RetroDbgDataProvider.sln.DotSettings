@@ -10,4 +10,5 @@
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=81BB3399C3AB7E4C8DE08ECBCCDD027C/Shortcut/@EntryValue">ctpm</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=81BB3399C3AB7E4C8DE08ECBCCDD027C/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=81BB3399C3AB7E4C8DE08ECBCCDD027C/Text/@EntryValue">A cancellation token to observe while waiting for the task to complete.</s:String>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=bytedump/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=bytedump/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=importonce/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

@@ -7,7 +7,7 @@ namespace Righthand.RetroDbgDataProvider.Models;
 public abstract class ParsedSourceFile
 {
     public string FileName { get; }
-    public ImmutableArray<ReferencedFileInfo> ReferencedFiles { get; }
+    public ImmutableArray<ReferencedFileInfo> ReferencedFiles { get; private set; }
     public FrozenSet<string> InDefines { get; }
     public FrozenSet<string> OutDefines { get; }
     public DateTimeOffset LastModified { get; }
@@ -27,5 +27,10 @@ public abstract class ParsedSourceFile
         OutDefines = outDefines;
         LastModified = lastModified;
         LiveContent = liveContent;
+    }
+
+    public void UpdateReferencedFileInfo(ReferencedFileInfo old, ReferencedFileInfo @new)
+    {
+        ReferencedFiles = ReferencedFiles.Replace(old, @new);
     }
 }

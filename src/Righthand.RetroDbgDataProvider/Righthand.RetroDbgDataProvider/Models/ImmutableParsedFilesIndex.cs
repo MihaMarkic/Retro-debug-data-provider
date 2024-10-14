@@ -13,6 +13,17 @@ public class ImmutableParsedFilesIndex<T> : IParsedFilesIndex<T>
         _data = data;
     }
 
+    public int Count => _data.Count;
+    public IImmutableParsedFileSet<T> Get(string fileName) => _data[fileName];
+
+    public IEnumerable<KeyValuePair<string, IImmutableParsedFileSet<T>>> GetEnumerator()
+    {
+        foreach (var p in _data)
+        {
+            yield return p;
+        }
+    }
+
     public IImmutableParsedFileSet<T>? GetValueOrDefault(string name) => _data.GetValueOrDefault(name);
 
     public T? GetFileOrDefault(string name, FrozenSet<string> defineSymbols)
@@ -24,6 +35,7 @@ public class ImmutableParsedFilesIndex<T> : IParsedFilesIndex<T>
 public interface IParsedFilesIndex<out T>
     where T : ParsedSourceFile
 {
+    int Count { get; }
     IImmutableParsedFileSet<T>? GetValueOrDefault(string name);
     T? GetFileOrDefault(string name, FrozenSet<string> defineSymbols);
     ImmutableArray<string> Keys { get; }

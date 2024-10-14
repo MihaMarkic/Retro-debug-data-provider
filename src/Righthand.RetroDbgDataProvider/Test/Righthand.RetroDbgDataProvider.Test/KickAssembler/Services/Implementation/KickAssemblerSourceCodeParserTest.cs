@@ -5,6 +5,8 @@ using Antlr4.Runtime;
 using AutoFixture;
 using NSubstitute;
 using NUnit.Framework;
+using Righthand.RetroDbgDataProvider.KickAssembler;
+using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
@@ -14,6 +16,7 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.Implementat
 [TestFixture]
 public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCodeParser>
 {
+    private readonly DateTimeOffset _now = new DateTimeOffset(2024, 10, 13, 18, 22, 15, TimeSpan.Zero);
     private Stream GetStream(string text) => new MemoryStream(Encoding.UTF8.GetBytes(text));
     [TestFixture]
     public class ParseStream : KickAssemblerSourceCodeParserTest
@@ -21,7 +24,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
         [Test]
         public void WhenEmptyContent_ResultWithCorrectNameAndNoReferencesIsReturned()
         {
-            var actual = Target.ParseStream("d:/root/test.asm", new AntlrInputStream(), DateTimeOffset.Now,
+            var actual = Target.ParseStream("d:/root/test.asm", new AntlrInputStream(), _now,
                 FrozenSet<string>.Empty, []);
 
             Assert.That(actual.FileName, Is.EqualTo("d:/root/test.asm"));
@@ -35,7 +38,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                                   lda #5                            
                                   """;
             var actual = Target.ParseStream("test.asm", new AntlrInputStream(sample),
-                DateTimeOffset.Now, FrozenSet<string>.Empty, []);
+                _now, FrozenSet<string>.Empty, []);
 
             Assert.That(actual.ReferencedFiles, Is.Empty);
         }
@@ -53,7 +56,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             fileService.FileExists(myLibraryPath).Returns(true);
             var rootFile = Path.Combine("d:", "root", "test.asm");
             var actual = Target.ParseStream(rootFile, new AntlrInputStream(sample),
-                DateTimeOffset.Now, FrozenSet<string>.Empty, [])
+                    _now, FrozenSet<string>.Empty, [])
                 .ReferencedFiles
                 .Select(r => r.FullFilePath)
                 .ToImmutableArray();
@@ -175,6 +178,46 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             ImmutableArray<string> expected = [mainAsm, libraryIncludedAsm];
             
             Assert.That(Target.AllFiles.Keys, Is.EquivalentTo(expected));
+        }
+    }
+
+    [TestFixture]
+    public class LoadReferencedFilesAsync : KickAssemblerSourceCodeParserTest
+    {
+        (KickAssemblerLexer Lexer, CommonTokenStream Stream, KickAssemblerParser Parser) GetParser(string text, params string[] definitions)
+        {
+            var input = new AntlrInputStream(text);
+            var lexer = new KickAssemblerLexer(input)
+            {
+                DefinedSymbols = definitions.ToHashSet(),
+            };
+            var stream = new CommonTokenStream(lexer);
+            var parser = new KickAssemblerParser(stream)
+            {
+                BuildParseTree = true,
+            };
+            var tokens = stream.GetTokens();
+            return (lexer, stream, parser);
+        }
+
+        [Test]
+        public async Task WhenNoReferences_DoesNotLoadAny()
+        {
+            var mainParsed = GetParser("""
+                                       lda #5
+                                       """);
+            var source = new KickAssemblerParsedSourceFile("main.asm", [], FrozenSet<string>.Empty,
+                FrozenSet<string>.Empty, _now,
+                liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, isImportOnce: false);
+            var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
+            var oldState =
+                new ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>(
+                    FrozenDictionary<string, IImmutableParsedFileSet<KickAssemblerParsedSourceFile>>.Empty);
+
+            await Target.LoadReferencedFilesAsync(parsed, source, FrozenDictionary<string, InMemoryFileContent>.Empty,
+                [], oldState, CancellationToken.None);
+            
+            Assert.That(parsed.Files.Count, Is.Zero);
         }
     }
 }

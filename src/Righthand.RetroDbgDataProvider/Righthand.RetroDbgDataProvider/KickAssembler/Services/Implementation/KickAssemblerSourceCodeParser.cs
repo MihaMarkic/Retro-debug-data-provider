@@ -138,7 +138,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             }
             else if (_fileService.FileExists(filePath))
             {
-                parsedFile = await ParseFileAsync(filePath, inDefines, libraryDirectories, oldParsedFile, ct);
+                parsedFile = await ParseFileAsync(filePath, inDefines, libraryDirectories, oldParsedFile, ct).ConfigureAwait(false);
             }
             else
             {
@@ -151,30 +151,17 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
 
             if (fileIndex is null)
             {
-                
             }
+
             parsed.TryAdd(filePath, inDefines, parsedFile);
-            // initial define symbols for parsing reference files
-            var referenceInDefines = parsedFile.OutDefines;
-            foreach (var referencedFile in parsedFile.ReferencedFiles)
-            {
-                if (!parsed.ContainsKey(referencedFile.FullFilePath!, inDefines))
-                {
-                   var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFile.FullFilePath!, inMemoryFilesContent, referenceInDefines,
-                        libraryDirectories, oldState, ct).ConfigureAwait(false);
-                   // takes updated define symbols
-                   if (referencedParsedFile is not null)
-                   {
-                       referenceInDefines = referencedParsedFile.OutDefines;
-                   }
-                }
-            }
+
+            await LoadReferencedFilesAsync(parsed, parsedFile, inMemoryFilesContent, libraryDirectories, oldState, ct)
+                .ConfigureAwait(false);
 
             return parsedFile;
         }
         catch (OperationCanceledException)
         {
-            
         }
         catch (Exception ex)
         {
@@ -183,6 +170,45 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         }
 
         return null;
+    }
+
+    internal async Task LoadReferencedFilesAsync(
+        ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile> parsed,
+        KickAssemblerParsedSourceFile parsedFile,
+        FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
+        ImmutableArray<string> libraryDirectories,
+        IParsedFilesIndex<KickAssemblerParsedSourceFile> oldState,
+        CancellationToken ct)
+    {
+        // initial define symbols for parsing reference files
+        var referenceInDefines = parsedFile.OutDefines;
+        // load all referenced files
+        foreach (var referencedFile in parsedFile.ReferencedFiles)
+        {
+            if (parsed.TryGetImportOnce(referencedFile.FullFilePath!, out var importOnceReference))
+            {
+                var updatedReference = referencedFile with
+                {
+                    InDefinesOverrideForImportOnce = importOnceReference.Value.DefineSymbols
+                };
+                parsedFile.UpdateReferencedFileInfo(referencedFile, updatedReference);
+            }
+            else if (!parsed.ContainsKey(referencedFile.FullFilePath!, referenceInDefines))
+            {
+                var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFile.FullFilePath!,
+                    inMemoryFilesContent, referenceInDefines,
+                    libraryDirectories, oldState, ct).ConfigureAwait(false);
+                // takes updated define symbols
+                if (referencedParsedFile is not null)
+                {
+                    referenceInDefines = referencedParsedFile.OutDefines;
+                    if (referencedParsedFile.IsImportOnce)
+                    {
+                        parsed.AddImportOnce(referencedFile.FullFilePath!, referenceInDefines, referencedParsedFile);
+                    }
+                }
+            }
+        }
     }
 
     private string? GetFilePathFromRelative(string source, string relative, ImmutableArray<string> libraryDirectories)
