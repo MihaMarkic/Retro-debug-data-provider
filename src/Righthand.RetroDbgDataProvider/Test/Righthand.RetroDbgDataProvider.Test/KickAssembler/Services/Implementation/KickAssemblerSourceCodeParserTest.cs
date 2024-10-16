@@ -245,6 +245,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                 [], oldState, CancellationToken.None);
             
             Assert.That(parsed.Files.Count, Is.EqualTo(1));
+            Assert.That(parsed.Files.Single().Key, Is.EqualTo("test.asm"));
         }
     }
 }

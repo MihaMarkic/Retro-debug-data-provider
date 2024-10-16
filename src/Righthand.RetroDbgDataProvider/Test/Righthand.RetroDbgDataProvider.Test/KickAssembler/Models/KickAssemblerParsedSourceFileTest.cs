@@ -49,7 +49,7 @@ public class KickAssemblerParsedSourceFileTest
                                   #if UNDEFINED
                                     bla bla
                                   #endif
-                                  """.Replace("\r\n", "\n"));
+                                  """.FixLineEndings());
             var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, isImportOnce: false);
@@ -69,7 +69,7 @@ public class KickAssemblerParsedSourceFileTest
                                   #elif UNDEFINED
                                     yada yada
                                   #endif
-                                  """.Replace("\r\n", "\n"));
+                                  """.FixLineEndings());
             var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, isImportOnce: false);
