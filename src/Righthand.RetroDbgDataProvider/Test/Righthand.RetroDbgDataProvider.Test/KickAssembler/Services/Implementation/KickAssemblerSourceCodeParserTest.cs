@@ -219,5 +219,32 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             
             Assert.That(parsed.Files.Count, Is.Zero);
         }
+        [Test]
+        public async Task WhenSimpleReferences_ItIsLoaded()
+        {
+            var mainParsed = GetParser("""
+                                       lda #5
+                                       #import "test.asm"
+                                       """);
+            var source = new KickAssemblerParsedSourceFile("main.asm", 
+                [new ReferencedFileInfo(2, 0, "test.asm", FrozenSet<string>.Empty, "test.asm")],
+                FrozenSet<string>.Empty,
+                FrozenSet<string>.Empty, _now,
+                liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, isImportOnce: false);
+            var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
+            var oldState =
+                new ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>(
+                    FrozenDictionary<string, IImmutableParsedFileSet<KickAssemblerParsedSourceFile>>.Empty);
+
+            var inMemoryContent =
+                new Dictionary<string, InMemoryFileContent>
+                {
+                    { "test.asm", new InMemoryFileContent("test.asm", "yolo", _now) }
+                }.ToFrozenDictionary();
+            await Target.LoadReferencedFilesAsync(parsed, source, inMemoryContent,
+                [], oldState, CancellationToken.None);
+            
+            Assert.That(parsed.Files.Count, Is.EqualTo(1));
+        }
     }
 }

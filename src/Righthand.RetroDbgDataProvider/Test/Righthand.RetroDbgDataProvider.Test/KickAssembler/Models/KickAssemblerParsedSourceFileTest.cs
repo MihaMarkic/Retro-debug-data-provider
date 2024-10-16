@@ -56,12 +56,12 @@ public class KickAssemblerParsedSourceFileTest
 
             var actual = target.GetIgnoredDefineContent();
 
-            ImmutableArray<TextRange> expected = [new(new TextCursor(1, 13), new TextCursor(2, 11))];
+            ImmutableArray<TextRange> expected = [new(new TextCursor(1, 13), new TextCursor(2, 10))];
             Assert.That(actual, Is.EquivalentTo(expected));
         }
 
         [Test]
-        public void WhenSourceWithTwoUndefinedContents_ReturnsArrayContainingBothRange()
+        public void WhenSourceWithTwoUndefinedContents_ReturnsArrayContainingBothRanges()
         {
             var input = GetParsed("""
                                   #if UNDEFINED
@@ -78,8 +78,8 @@ public class KickAssemblerParsedSourceFileTest
 
             ImmutableArray<TextRange> expected =
             [
-                new(new TextCursor(1, 13), new TextCursor(2, 11)),
-                new(new TextCursor(3, 15), new TextCursor(4, 13))
+                new(new TextCursor(1, 13), new TextCursor(2, 10)),
+                new(new TextCursor(3, 15), new TextCursor(4, 12))
             ];
             Assert.That(actual, Is.EquivalentTo(expected));
         }
