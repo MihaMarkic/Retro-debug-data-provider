@@ -45,7 +45,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         await ParseAsync(inMemoryFilesContent, inDefines, libraryDirectories, ct).ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ISourceCodeParser"/>
+    /// <inheritdoc cref="ISourceCodeParser{T}.ParseAsync"/>
     public Task ParseAsync(FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
@@ -54,6 +54,14 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         return _parsingTask;
     }
 
+    /// <summary>
+    /// Initial parsing point that prepares all objects for parsing.
+    /// </summary>
+    /// <param name="inMemoryFilesContent"></param>
+    /// <param name="inDefines"></param>
+    /// <param name="libraryDirectories"></param>
+    /// <param name="ct"></param>
+    /// <exception cref="Exception"></exception>
     private async Task ParseInternalAsync(FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
@@ -88,7 +96,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             _logger.LogError(ex, "Error while parsing");
         }
     }
-
+    /// <inheritdoc cref="ISourceCodeParser{T}.StopAsync"/>
     public async Task StopAsync()
     {
         if (_parsingCts is not null)
@@ -107,7 +115,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     }
 
     /// <summary>
-    /// 
+    /// Parse file given in <param name="filePath" /> argument and all referenced files.
     /// </summary>
     /// <param name="parsed"></param>
     /// <param name="filePath"></param>
@@ -172,6 +180,19 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         return null;
     }
 
+    /// <summary>
+    /// Loads referenced files and caches them to <param name="parsed"/>.
+    /// </summary>
+    /// <param name="parsed"></param>
+    /// <param name="parsedFile"></param>
+    /// <param name="inMemoryFilesContent"></param>
+    /// <param name="libraryDirectories"></param>
+    /// <param name="oldState"></param>
+    /// <param name="ct"></param>
+    /// <remarks>
+    /// It's a bit complex because it has to pay attention to #define, #undef, #if, #elif, #else and #importif
+    /// preprocessor directives.
+    /// </remarks>
     internal async Task LoadReferencedFilesAsync(
         ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile> parsed,
         KickAssemblerParsedSourceFile parsedFile,
@@ -182,17 +203,22 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     {
         // initial define symbols for parsing reference files
         var referenceInDefines = parsedFile.OutDefines;
-        // load all referenced files
+        // loads all referenced files
         foreach (var referencedFile in parsedFile.ReferencedFiles)
         {
+            // first check whether referenced file already declared #importonce
+            // and if, then just update reference to it, no need to parse it again
             if (parsed.TryGetImportOnce(referencedFile.FullFilePath!, out var importOnceReference))
             {
+                // updates reference to the file variation (filename, define symbols) that declared #importonce 
                 var updatedReference = referencedFile with
                 {
                     InDefinesOverrideForImportOnce = importOnceReference.Value.DefineSymbols
                 };
                 parsedFile.UpdateReferencedFileInfo(referencedFile, updatedReference);
             }
+            // then check whether same referenced file with same defined symbols has already been parsed
+            // when not, it has to be parsed
             else if (!parsed.ContainsKey(referencedFile.FullFilePath!, referenceInDefines))
             {
                 var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFile.FullFilePath!,
@@ -202,6 +228,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
                 if (referencedParsedFile is not null)
                 {
                     referenceInDefines = referencedParsedFile.OutDefines;
+                    // when file declared #importonce, store it to referencedParsedFile
                     if (referencedParsedFile.IsImportOnce)
                     {
                         parsed.AddImportOnce(referencedFile.FullFilePath!, referenceInDefines, referencedParsedFile);

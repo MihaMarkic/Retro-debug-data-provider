@@ -252,11 +252,11 @@ preprocessorDirective
     );
     
 preprocessorDefine: HASHDEFINE DEFINED_TOKEN;
-preprocessorUndef: HASHUNDEF DEFINED_TOKEN;
+preprocessorUndef: HASHUNDEF UNDEFINED_TOKEN;
 preprocessorImport: HASHIMPORT STRING;
-preprocessorImportIf: HASHIMPORTIF preprocessorCondition STRING;
+preprocessorImportIf: HASHIMPORTIF IIF_CONDITION STRING;
 preprocessorImportOnce: HASHIMPORTONCE STRING;
-preprocessorIf: HASHIF preprocessorCondition unit (HASHELIF unit)* (HASHELSE unit)? HASHENDIF;
+preprocessorIf: HASHIF IF_CONDITION unit (HASHELIF IF_CONDITION unit)* (HASHELSE unit)? HASHENDIF;
 preprocessorCondition
     : OPEN_PARENS preprocessorCondition CLOSE_PARENS
     | BANG preprocessorCondition
