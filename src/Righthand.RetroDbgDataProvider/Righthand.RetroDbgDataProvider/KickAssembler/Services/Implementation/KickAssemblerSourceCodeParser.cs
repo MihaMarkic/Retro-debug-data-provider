@@ -3,6 +3,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Services.Implementation;
@@ -13,7 +14,7 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 /// </summary>
 /// <remarks>Not thread safe.</remarks>
 public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssemblerParsedSourceFile>,
-    ISourceCodeParser<KickAssemblerParsedSourceFile>
+    IKickAssemblerSourceCodeParser
 {
     private readonly ILogger<KickAssemblerSourceCodeParser> _logger;
     private readonly IFileService _fileService;
@@ -39,10 +40,13 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
     {
+        _logger.LogInformation("Initialized in directory {ProjectDirectory} with libraries {Libraries} and symbols {DefineSymbols}", projectDirectory,
+            string.Join(",", libraryDirectories), string.Join(";", inDefines));
         _projectDirectory = projectDirectory;
         _allFiles = ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty;
         _mainFile = Path.Combine(_projectDirectory, "main.asm");
         await ParseAsync(inMemoryFilesContent, inDefines, libraryDirectories, ct).ConfigureAwait(false);
+        _logger.LogInformation("Initialial parsing done");
     }
 
     /// <inheritdoc cref="ISourceCodeParser{T}.ParseAsync"/>
@@ -193,7 +197,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     /// It's a bit complex because it has to pay attention to #define, #undef, #if, #elif, #else and #importif
     /// preprocessor directives.
     /// </remarks>
-    internal async Task LoadReferencedFilesAsync(
+    private async Task LoadReferencedFilesAsync(
         ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile> parsed,
         KickAssemblerParsedSourceFile parsedFile,
         FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
@@ -284,7 +288,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             inMemoryFileContent.LastModified, inDefines, libraryDirectories);
     }
 
-    internal KickAssemblerParsedSourceFile ParseStream(string fileName, AntlrInputStream inputStream,
+    private KickAssemblerParsedSourceFile ParseStream(string fileName, AntlrInputStream inputStream,
         DateTimeOffset lastModified,
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories)
@@ -330,7 +334,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             lexer, tokenStream, parser, lexer.IsImportOnce);
     }
 
-    internal ImmutableArray<ReferencedFileInfo> FillAbsolutePaths(string filePath,
+    private ImmutableArray<ReferencedFileInfo> FillAbsolutePaths(string filePath,
         ImmutableArray<ReferencedFileInfo> relativeReferences,
         ImmutableArray<string> libraryDirectories)
     {
@@ -352,5 +356,15 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         }
 
         return builder.ToImmutableArray();
+    }
+    
+
+    protected override async Task DisposeAsyncCore()
+    {
+        if (!IsDisposed)
+        {
+            await StopAsync();
+        }
+        await base.DisposeAsyncCore();
     }
 }

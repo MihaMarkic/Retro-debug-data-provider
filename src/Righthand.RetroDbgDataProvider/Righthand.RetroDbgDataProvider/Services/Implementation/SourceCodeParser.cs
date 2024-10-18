@@ -3,14 +3,15 @@ using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Services.Implementation;
 
-public abstract class SourceCodeParser<T>
+public abstract class SourceCodeParser<T>: DisposableObject
     where T: ParsedSourceFile
 {
     // ReSharper disable once InconsistentNaming
     protected IParsedFilesIndex<T> _allFiles;
     /// <inheritdoc cref="ISourcecodeParser"/>
     public event EventHandler<FilesChangedEventArgs>? FilesChanged;
-    protected void OnFilesChanged(FilesChangedEventArgs e) => FilesChanged?.Invoke(this, e);
+
+    private void OnFilesChanged(FilesChangedEventArgs e) => FilesChanged?.Invoke(this, e);
 
     protected SourceCodeParser(IParsedFilesIndex<T> allFiles)
     {
@@ -29,10 +30,5 @@ public abstract class SourceCodeParser<T>
                 OnFilesChanged(FilesChangedEventArgs.Empty);
             }
         }
-    }
-    private void CompareFilesStatus(ImmutableDictionary<string, T>  current, 
-        ImmutableDictionary<string, T> updated)
-    {
-        var newFiles = new Dictionary<string, T>();
     }
 }

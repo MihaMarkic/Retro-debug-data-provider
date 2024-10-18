@@ -23,7 +23,7 @@ public static class IoCRegistrar
             .AddSingleton<IKickAssemblerByteDumpParser, KickAssemblerByteDumpParser>()
             .AddSingleton<IKickAssemblerDbgParser, KickAssemblerDbgParser>()
             .AddSingleton<IKickAssemblerProgramInfoBuilder, KickAssemblerProgramInfoBuilder>()
-            .AddScoped<KickAssemblerSourceCodeParser>()
+            .AddScoped<IKickAssemblerSourceCodeParser, KickAssemblerSourceCodeParser>()
             .AddSingleton<IFileService, FileService>();
 
     }

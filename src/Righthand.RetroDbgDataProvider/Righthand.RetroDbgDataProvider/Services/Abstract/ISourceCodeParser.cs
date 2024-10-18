@@ -5,7 +5,7 @@ namespace Righthand.RetroDbgDataProvider.Services.Abstract;
 /// <summary>
 /// Provides parsing of the source code for the entire project.
 /// </summary>
-public interface ISourceCodeParser<T>
+public interface ISourceCodeParser<out T>: IDisposable, IAsyncDisposable
     where T: ParsedSourceFile
 {
     /// <summary>
