@@ -30,10 +30,10 @@ public abstract class ParsedSourceFile
     /// <returns>An array of <see cref="MultiLineTextRange"/> values.</returns>
     internal abstract ImmutableArray<MultiLineTextRange> GetIgnoredDefineContent(CancellationToken ct);
     private FrozenDictionary<int, SyntaxLine>? _syntaxLines;
-    internal abstract FrozenDictionary<int, SyntaxLine> GetSyntaxLines(CancellationToken ct);
+    protected abstract Task<FrozenDictionary<int, SyntaxLine>> GetSyntaxLinesAsync(CancellationToken ct);
     private Task<FileSyntaxInfo>? _syntaxInfoInitTask;
-    internal abstract FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct);
-    private FrozenDictionary<int, SyntaxErrorLine> _syntaxErrors;
+    protected abstract FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct);
+    private FrozenDictionary<int, SyntaxErrorLine>? _syntaxErrors;
     
     protected ParsedSourceFile(string fileName, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
         FrozenSet<string> outDefines, DateTimeOffset lastModified, string? liveContent)
@@ -76,7 +76,8 @@ public abstract class ParsedSourceFile
 
     private async Task<FileSyntaxInfo> InitForSyntaxInfoCoreAsync(CancellationToken ct)
     {
-        var syntaxLinesTask = Task.Run(() => GetSyntaxLines(ct), ct).ConfigureAwait(false);
+        var syntaxLinesTask = Task.Run(async () => await GetSyntaxLinesAsync(ct).ConfigureAwait(false), ct)
+            .ConfigureAwait(false);
         var ignoredDefineContent = await Task.Run(() => GetIgnoredDefineContent(ct), ct).ConfigureAwait(false);
         var syntaxErrors = await Task.Run(() => GetSyntaxErrors(ct), ct).ConfigureAwait(false);
         var syntaxLines = await syntaxLinesTask;
@@ -87,6 +88,6 @@ public abstract class ParsedSourceFile
     {
         ReferencedFiles = ReferencedFiles.Replace(old, @new);
     }
-    
+
     public abstract SingleLineTextRange? GetTokenRangeAt(int line, int column);
 }

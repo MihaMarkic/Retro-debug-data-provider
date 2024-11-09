@@ -266,8 +266,10 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
     [TestFixture]
     public class LoadReferencedFilesAsync : KickAssemblerSourceCodeParserTest
     {
-        (KickAssemblerLexer Lexer, CommonTokenStream Stream, KickAssemblerParser Parser, KickAssemblerLexerErrorListener
-            LexerErrorListener, KickAssemblerParserErrorListener ParserErrorListener) GetParser(string text,
+        (KickAssemblerLexer Lexer, CommonTokenStream Stream, KickAssemblerParser Parser, KickAssemblerParserListener
+            ParserListener,
+            KickAssemblerLexerErrorListener LexerErrorListener, KickAssemblerParserErrorListener ParserErrorListener)
+            GetParser(string text,
                 params string[] definitions)
         {
             var input = new AntlrInputStream(text);
@@ -279,13 +281,15 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             lexer.AddErrorListener(lexerErrorListener);
             var stream = new CommonTokenStream(lexer);
             var parserErrorListener = new KickAssemblerParserErrorListener();
+            var parserListener = new KickAssemblerParserListener();
             var parser = new KickAssemblerParser(stream)
             {
                 BuildParseTree = true,
             };
+            parser.AddParseListener(parserListener);
             parser.AddErrorListener(parserErrorListener);
             var tokens = stream.GetTokens();
-            return (lexer, stream, parser, lexerErrorListener, parserErrorListener);
+            return (lexer, stream, parser, parserListener, lexerErrorListener, parserErrorListener);
         }
 
         [Test]
@@ -296,7 +300,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                                        """);
             var source = new KickAssemblerParsedSourceFile("main.asm", [], FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, _now,
-                liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser,
+                liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, mainParsed.ParserListener,
                 mainParsed.LexerErrorListener, mainParsed.ParserErrorListener, isImportOnce: false);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
             var oldState =
@@ -320,7 +324,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                 [new ReferencedFileInfo(2, 0, "test.asm", FrozenSet<string>.Empty, "test.asm")],
                 FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, _now,
-                liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser,
+                liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, mainParsed.ParserListener,
                 mainParsed.LexerErrorListener, mainParsed.ParserErrorListener, isImportOnce: false);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
             var oldState =

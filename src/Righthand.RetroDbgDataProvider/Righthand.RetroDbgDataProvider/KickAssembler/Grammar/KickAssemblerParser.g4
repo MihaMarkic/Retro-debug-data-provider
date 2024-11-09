@@ -253,9 +253,9 @@ preprocessorDirective
     
 preprocessorDefine: HASHDEFINE DEFINED_TOKEN;
 preprocessorUndef: HASHUNDEF UNDEFINED_TOKEN;
-preprocessorImport: HASHIMPORT STRING;
-preprocessorImportIf: HASHIMPORTIF IIF_CONDITION STRING;
-preprocessorImportOnce: HASHIMPORTONCE STRING;
+preprocessorImport: HASHIMPORT fileReference=STRING;
+preprocessorImportIf: HASHIMPORTIF IIF_CONDITION fileReference=STRING;
+preprocessorImportOnce: HASHIMPORTONCE fileReference=STRING;
 preprocessorIf: HASHIF IF_CONDITION preprocessorBlock (HASHELIF IF_CONDITION preprocessorBlock)* (HASHELSE preprocessorBlock)? HASHENDIF;
 preprocessorBlock: EOL+ (unit EOL+)?;
 preprocessorCondition

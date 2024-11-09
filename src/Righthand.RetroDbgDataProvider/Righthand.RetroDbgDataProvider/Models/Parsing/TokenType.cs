@@ -12,5 +12,9 @@ public enum TokenType
     Color,
     InstructionExtension,
     Bracket,
-    Separator
+    Separator,
+    /// <summary>
+    /// References a file, typically from #import or #import if directive
+    /// </summary>
+    FileReference,
 }

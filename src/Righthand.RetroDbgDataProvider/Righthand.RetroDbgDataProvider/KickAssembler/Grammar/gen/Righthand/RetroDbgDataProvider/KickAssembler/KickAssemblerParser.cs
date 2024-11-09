@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from /Users/miha/Projects/rthand/c64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
+// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -5400,6 +5400,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class PreprocessorImportContext : ParserRuleContext {
+		public IToken fileReference;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHIMPORT() { return GetToken(KickAssemblerParser.HASHIMPORT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
 		public PreprocessorImportContext(ParserRuleContext parent, int invokingState)
@@ -5435,7 +5436,7 @@ public partial class KickAssemblerParser : Parser {
 			State = 701;
 			Match(HASHIMPORT);
 			State = 702;
-			Match(STRING);
+			_localctx.fileReference = Match(STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -5450,6 +5451,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class PreprocessorImportIfContext : ParserRuleContext {
+		public IToken fileReference;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHIMPORTIF() { return GetToken(KickAssemblerParser.HASHIMPORTIF, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IIF_CONDITION() { return GetToken(KickAssemblerParser.IIF_CONDITION, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
@@ -5488,7 +5490,7 @@ public partial class KickAssemblerParser : Parser {
 			State = 705;
 			Match(IIF_CONDITION);
 			State = 706;
-			Match(STRING);
+			_localctx.fileReference = Match(STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -5503,6 +5505,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class PreprocessorImportOnceContext : ParserRuleContext {
+		public IToken fileReference;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HASHIMPORTONCE() { return GetToken(KickAssemblerParser.HASHIMPORTONCE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
 		public PreprocessorImportOnceContext(ParserRuleContext parent, int invokingState)
@@ -5538,7 +5541,7 @@ public partial class KickAssemblerParser : Parser {
 			State = 708;
 			Match(HASHIMPORTONCE);
 			State = 709;
-			Match(STRING);
+			_localctx.fileReference = Match(STRING);
 			}
 		}
 		catch (RecognitionException re) {

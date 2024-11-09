@@ -305,10 +305,12 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         lexer.AddErrorListener(lexerErrorListener);
         var tokenStream = new CommonTokenStream(lexer);
         var parserErrorListener = new KickAssemblerParserErrorListener();
+        var parserListener = new KickAssemblerParserListener();
         var parser = new KickAssemblerParser(tokenStream)
         {
             BuildParseTree = true,
         };
+        parser.AddParseListener(parserListener);
         parser.AddErrorListener(parserErrorListener);
         try
         {
@@ -321,7 +323,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
                 "Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif",
                 fileName);
             return new KickAssemblerParsedSourceFile(fileName, [..lexer.ReferencedFiles],
-                inDefines, outDefines: inDefines, lastModified, liveContent, lexer, tokenStream, parser,
+                inDefines, outDefines: inDefines, lastModified, liveContent, lexer, tokenStream, parser, parserListener,
                 lexerErrorListener, parserErrorListener,
                 lexer.IsImportOnce);
         }
@@ -339,7 +341,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             FillAbsolutePaths(Path.GetDirectoryName(fileName)!, [..lexer.ReferencedFiles], libraryDirectories);
         return new KickAssemblerParsedSourceFile(fileName, absoluteReferencePaths,
             inDefines, lexer.DefinedSymbols.ToFrozenSet(), lastModified, liveContent,
-            lexer, tokenStream, parser, lexerErrorListener, parserErrorListener, lexer.IsImportOnce);
+            lexer, tokenStream, parser, parserListener, lexerErrorListener, parserErrorListener, lexer.IsImportOnce);
     }
 
     internal ImmutableArray<ReferencedFileInfo> FillAbsolutePaths(string filePath,

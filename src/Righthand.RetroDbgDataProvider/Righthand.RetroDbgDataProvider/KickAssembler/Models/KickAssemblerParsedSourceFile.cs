@@ -13,6 +13,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     public KickAssemblerLexer Lexer { get; init; }
     public CommonTokenStream CommonTokenStream { get; init; }
     public KickAssemblerParser Parser { get; init; }
+    public KickAssemblerParserListener ParserListener { get; init; }
     public KickAssemblerLexerErrorListener LexerErrorListener { get; init; }
     public KickAssemblerParserErrorListener ParserErrorListener { get; init; }
     public bool IsImportOnce { get; }
@@ -26,6 +27,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         KickAssemblerLexer lexer,
         CommonTokenStream commonTokenStream,
         KickAssemblerParser parser,
+        KickAssemblerParserListener parserListener,
         KickAssemblerLexerErrorListener lexerErrorListener,
         KickAssemblerParserErrorListener parserErrorListener,
         bool isImportOnce
@@ -34,6 +36,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         Lexer = lexer;
         CommonTokenStream = commonTokenStream;
         Parser = parser;
+        ParserListener = parserListener;
         LexerErrorListener = lexerErrorListener;
         ParserErrorListener = parserErrorListener;
         IsImportOnce = isImportOnce;
@@ -78,7 +81,41 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         return builder.ToImmutable();
     }
 
-    internal override FrozenDictionary<int, SyntaxLine> GetSyntaxLines(CancellationToken ct)
+    protected override async Task<FrozenDictionary<int, SyntaxLine>> GetSyntaxLinesAsync(CancellationToken ct)
+    {
+        var lexerBasedSyntaxLinesTask = Task.Run(() => GetLexerBasedSyntaxLines(ct), ct).ConfigureAwait(false);
+        var fileReferences = ParserListener.FileReferences;
+        var lexerBasedSyntaxLines = await lexerBasedSyntaxLinesTask;
+        var updatedLines = UpdateLexerAnalysisWithParserAnalysis(lexerBasedSyntaxLines, fileReferences);
+        return updatedLines.GroupBy(l => l.LineNumber)
+            .ToFrozenDictionary(
+                g => g.Key,
+                g => new SyntaxLine([..g.Select(i => i.Item)]));
+    }
+
+    internal static IEnumerable<LexerBasedSyntaxResult> UpdateLexerAnalysisWithParserAnalysis(
+        ImmutableArray<LexerBasedSyntaxResult> source, FrozenDictionary<IToken, string> fileReferences)
+    {
+        // updates lexer based results with parser based analysis
+        var updatedLines = source.Select(l =>
+        {
+            // if token matches file reference, then create FileReferenceSyntaxItem substitution for SyntaxItem 
+            if (fileReferences.TryGetValue(l.Token, out var replacementItem))
+            {
+                return l with
+                {
+                    Item = new FileReferenceSyntaxItem(l.Item.Start, l.Item.End, replacementItem)
+                };
+            }
+
+            //otherwise merely return existing item
+            return l;
+        });
+        return updatedLines;
+    }
+
+    internal record LexerBasedSyntaxResult(int LineNumber, IToken Token, SyntaxItem Item);
+    private ImmutableArray<LexerBasedSyntaxResult> GetLexerBasedSyntaxLines(CancellationToken ct)
     {
         var tokens = CommonTokenStream.GetTokens();
         var linesCount = tokens.Count(t => t.Type == KickAssemblerLexer.EOL) + 1;
@@ -86,11 +123,11 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         return lines;
     }
 
-    internal override FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct)
+    protected override FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct)
     {
         List<SyntaxError> builder = new(LexerErrorListener.Errors.Length + ParserErrorListener.Errors.Length);
-        builder.AddRange(LexerErrorListener.Errors.Select(error => ConvertLexerError(error)));
-        builder.AddRange(ParserErrorListener.Errors.Select(error => ConvertParserError(error)));
+        builder.AddRange(LexerErrorListener.Errors.Select(ConvertLexerError));
+        builder.AddRange(ParserErrorListener.Errors.Select(ConvertParserError));
 
         return builder.GroupBy(i => i.Line)
             .ToFrozenDictionary(
@@ -111,10 +148,10 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
             SyntaxErrorParserSource.Default);
     }
 
-    internal static FrozenDictionary<int, SyntaxLine> IterateTokens(int linesCount, IList<IToken> tokens,
+    internal static ImmutableArray<LexerBasedSyntaxResult> IterateTokens(int linesCount, IList<IToken> tokens,
         CancellationToken ct)
     {
-        var builder = new Dictionary<int, List<SyntaxItem>>();
+        var builder = ImmutableArray.CreateBuilder<LexerBasedSyntaxResult>();
     
         for (var i = 0; i < tokens.Count; i++)
         {
@@ -124,10 +161,6 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
             if (TokensMap.Map.TryGetValue(token.Type, out var tokenType))
             {
                 int lineNumber = token.Line - 1;
-                if (!builder.TryGetValue(lineNumber, out List<SyntaxItem>? line))
-                {
-                    builder[lineNumber] = line = new List<SyntaxItem>();
-                }
                 int startIndex = token.StartIndex;
                 switch (tokenType)
                 {
@@ -156,11 +189,11 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     
                 if (!ignore)
                 {
-                    line.Add(new SyntaxItem(startIndex, token.StopIndex, tokenType));
+                    builder.Add(new LexerBasedSyntaxResult(lineNumber, token, new SyntaxItem(startIndex, token.StopIndex, tokenType)));
                 }
             }
         }
-        return builder.ToFrozenDictionary(b => b.Key, b => new SyntaxLine([..b.Value]));
+        return builder.ToImmutable();
     }
 
     public override SingleLineTextRange? GetTokenRangeAt(int line, int column)
