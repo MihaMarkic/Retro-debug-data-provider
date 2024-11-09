@@ -46,7 +46,8 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
         public void WhenEmptySource_ReturnsEmptyArray()
         {
             var input = GetParsed("");
-            var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName",
+                FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -64,7 +65,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
                                     bla bla
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -85,7 +86,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
                                     yada yada
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);

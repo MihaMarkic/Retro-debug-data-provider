@@ -16,10 +16,11 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     public KickAssemblerParserListener ParserListener { get; init; }
     public KickAssemblerLexerErrorListener LexerErrorListener { get; init; }
     public KickAssemblerParserErrorListener ParserErrorListener { get; init; }
+    public FrozenDictionary<IToken, ReferencedFileInfo> FileReferences { get; init; }
     public bool IsImportOnce { get; }
     public KickAssemblerParsedSourceFile(
         string fileName,
-        ImmutableArray<ReferencedFileInfo> referencedFiles,
+        FrozenDictionary<IToken, ReferencedFileInfo> fileReferences,
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
         DateTimeOffset lastModified,
@@ -31,8 +32,9 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         KickAssemblerLexerErrorListener lexerErrorListener,
         KickAssemblerParserErrorListener parserErrorListener,
         bool isImportOnce
-    ) : base(fileName, referencedFiles, inDefines, outDefines, lastModified, liveContent)
+    ) : base(fileName, [..lexer.ReferencedFiles], inDefines, outDefines, lastModified, liveContent)
     {
+        FileReferences = fileReferences;
         Lexer = lexer;
         CommonTokenStream = commonTokenStream;
         Parser = parser;
@@ -100,13 +102,17 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         var updatedLines = source.Select(l =>
         {
             // if token matches file reference, then create FileReferenceSyntaxItem substitution for SyntaxItem 
-            if (fileReferences.TryGetValue(l.Token, out var replacementItem))
-            {
-                return l with
-                {
-                    Item = new FileReferenceSyntaxItem(l.Item.Start, l.Item.End, replacementItem)
-                };
-            }
+            // if (fileReferences.TryGetValue(l.Token, out var replacementItem))
+            // {
+            //     return l with
+            //     {
+            //         Item = new ReferencedFileInfo(l.Item.Start, l.Item.End, replacementItem)
+            //         {
+            //             LeftMargin = 1,
+            //             RightMargin = 1
+            //         }
+            //     };
+            // }
 
             //otherwise merely return existing item
             return l;

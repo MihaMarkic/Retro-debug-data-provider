@@ -9,6 +9,7 @@ using Righthand.RetroDbgDataProvider.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Services.Implementation;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
+
 /// <summary>
 /// Provides parsing of the KickAssembler project's source code.
 /// </summary>
@@ -23,17 +24,19 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     private string? _projectDirectory;
     private string? _mainFile;
     private Task? _parsingTask;
+
     /// <summary>
     /// Creates a new instance of <see cref="KickAssemblerSourceCodeParser"/>.
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="fileService"></param>
     public KickAssemblerSourceCodeParser(ILogger<KickAssemblerSourceCodeParser> logger, IFileService fileService)
-        :base(ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty)
+        : base(ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>.Empty)
     {
         _logger = logger;
         _fileService = fileService;
     }
+
     /// <inheritdoc cref="ISourceCodeParser"/>
     public async Task InitialParseAsync(string projectDirectory,
         FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
@@ -73,7 +76,8 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     /// <param name="libraryDirectories"></param>
     /// <param name="ct"></param>
     /// <exception cref="Exception"></exception>
-    internal async Task ParseInternalAsync(string mainFile, FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
+    internal async Task ParseInternalAsync(string mainFile,
+        FrozenDictionary<string, InMemoryFileContent> inMemoryFilesContent,
         FrozenSet<string> inDefines,
         ImmutableArray<string> libraryDirectories, CancellationToken ct = default)
     {
@@ -101,6 +105,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             _logger.LogError(ex, "Error while parsing");
         }
     }
+
     /// <inheritdoc cref="ISourceCodeParser{T}.StopAsync"/>
     public async Task StopAsync()
     {
@@ -149,11 +154,13 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             var oldParsedFile = fileIndex?.GetFile(inDefines);
             if (inMemoryFilesContent.TryGetValue(filePath, out var inMemoryContent))
             {
-                parsedFile = ParseFileFromMemoryContent(filePath, inMemoryContent, inDefines, libraryDirectories, oldParsedFile);
+                parsedFile = ParseFileFromMemoryContent(filePath, inMemoryContent, inDefines, libraryDirectories,
+                    oldParsedFile);
             }
             else if (_fileService.FileExists(filePath))
             {
-                parsedFile = await ParseFileAsync(filePath, inDefines, libraryDirectories, oldParsedFile, ct).ConfigureAwait(false);
+                parsedFile = await ParseFileAsync(filePath, inDefines, libraryDirectories, oldParsedFile, ct)
+                    .ConfigureAwait(false);
             }
             else
             {
@@ -235,7 +242,8 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
                     // when file declared #importonce, store it to referencedParsedFile
                     if (referencedParsedFile.IsImportOnce)
                     {
-                        parsed.AddImportOnce(referencedFile.FullFilePath!, referencedParsedFile.OutDefines, referencedParsedFile);
+                        parsed.AddImportOnce(referencedFile.FullFilePath!, referencedParsedFile.OutDefines,
+                            referencedParsedFile);
                     }
                 }
             }
@@ -322,8 +330,10 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             _logger.LogWarning(
                 "Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif",
                 fileName);
-            return new KickAssemblerParsedSourceFile(fileName, [..lexer.ReferencedFiles],
-                inDefines, outDefines: inDefines, lastModified, liveContent, lexer, tokenStream, parser, parserListener,
+            return new KickAssemblerParsedSourceFile(fileName, MapReferencedFilesToDictionary(lexer.ReferencedFiles, tokenStream.GetTokens()),
+                inDefines,
+                outDefines: inDefines, lastModified,
+                liveContent, lexer, tokenStream, parser, parserListener,
                 lexerErrorListener, parserErrorListener,
                 lexer.IsImportOnce);
         }
@@ -338,36 +348,48 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         ParseTreeWalker.Default.Walk(listener, tree);
 
         var absoluteReferencePaths =
-            FillAbsolutePaths(Path.GetDirectoryName(fileName)!, [..lexer.ReferencedFiles], libraryDirectories);
+            FillAbsolutePaths(Path.GetDirectoryName(fileName)!,
+                MapReferencedFilesToDictionary(lexer.ReferencedFiles, tokenStream.GetTokens()),
+                libraryDirectories);
         return new KickAssemblerParsedSourceFile(fileName, absoluteReferencePaths,
             inDefines, lexer.DefinedSymbols.ToFrozenSet(), lastModified, liveContent,
             lexer, tokenStream, parser, parserListener, lexerErrorListener, parserErrorListener, lexer.IsImportOnce);
     }
 
-    internal ImmutableArray<ReferencedFileInfo> FillAbsolutePaths(string filePath,
-        ImmutableArray<ReferencedFileInfo> relativeReferences,
+    internal FrozenDictionary<IToken, ReferencedFileInfo> MapReferencedFilesToDictionary(
+        IEnumerable<ReferencedFileInfo> source, IList<IToken> tokens)
+    {
+        var mapped = source.ToFrozenDictionary(
+            fr => tokens.Single(t => t.Line == fr.TokenStartLine && t.Column == fr.TokenStartColumn));
+        return mapped;
+    }
+
+    internal FrozenDictionary<IToken, ReferencedFileInfo> FillAbsolutePaths(string filePath,
+        FrozenDictionary<IToken, ReferencedFileInfo> relativeReferences,
         ImmutableArray<string> libraryDirectories)
     {
-        var builder = ImmutableArray.CreateBuilder<ReferencedFileInfo>(relativeReferences.Length);
+        var builder = new Dictionary<IToken, ReferencedFileInfo>();
         // makes sure filePath is first directory to look in
         var allDirectories = libraryDirectories.Insert(0, filePath);
-        foreach (var reference in relativeReferences)
+        foreach (var (token, fileReference) in relativeReferences)
         {
             var directory = allDirectories.FirstOrDefault(d =>
-                _fileService.FileExists(Path.Combine(d, reference.RelativeFilePath)));
+                _fileService.FileExists(Path.Combine(d, fileReference.RelativeFilePath)));
             if (directory is not null)
             {
-                builder.Add(reference with { FullFilePath = Path.Combine(directory, reference.RelativeFilePath) });
+                builder.Add(token,
+                    fileReference with { FullFilePath = Path.Combine(directory, fileReference.RelativeFilePath) });
             }
             else
             {
-                _logger.LogWarning("Could not find referenced source file {File} from file {Source}", reference, filePath);
+                _logger.LogWarning("Could not find referenced source file {File} from file {Source}", fileReference,
+                    filePath);
             }
         }
 
-        return builder.ToImmutableArray();
+        return builder.ToFrozenDictionary();
     }
-    
+
 
     protected override async Task DisposeAsyncCore()
     {
@@ -375,6 +397,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         {
             await StopAsync();
         }
+
         await base.DisposeAsyncCore();
     }
 }

@@ -7,13 +7,14 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
 {
    private readonly Dictionary<IToken, string> _fileReferences = new();
    public FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
-   public override void EnterPreprocessorImport(KickAssemblerParser.PreprocessorImportContext context)
+
+   public override void ExitPreprocessorImport(KickAssemblerParser.PreprocessorImportContext context)
    {
       var fileReference = context.fileReference;
       if (fileReference is not null)
       {
          _fileReferences.Add(fileReference, fileReference.Text);
       }
-      base.EnterPreprocessorImport(context);
+      base.ExitPreprocessorImport(context);
    }
 }

@@ -102,9 +102,14 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var rootPath = Path.Combine("d:", "root");
             var fileService = Fixture.Freeze<IFileService>();
             fileService.FileExists(myLibraryPath).Returns(true);
+            var token = Fixture.Create<IToken>();
 
+            var fileReferences = new Dictionary<IToken, ReferencedFileInfo>
+            {
+                { token, new ReferencedFileInfo(0, 0, "MyLibrary.asm", FrozenSet<string>.Empty)}
+            }.ToFrozenDictionary();
             var actual = Target.FillAbsolutePaths(rootPath,
-                    [new ReferencedFileInfo(0, 0, "MyLibrary.asm", FrozenSet<string>.Empty)], [])
+                fileReferences, []).Values
                 .Select(r => r.FullFilePath)
                 .ToImmutableArray();
 
@@ -298,7 +303,8 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var mainParsed = GetParser("""
                                        lda #5
                                        """);
-            var source = new KickAssemblerParsedSourceFile("main.asm", [], FrozenSet<string>.Empty,
+            var source = new KickAssemblerParsedSourceFile("main.asm",
+                FrozenDictionary<IToken, ReferencedFileInfo>.Empty, FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, _now,
                 liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, mainParsed.ParserListener,
                 mainParsed.LexerErrorListener, mainParsed.ParserErrorListener, isImportOnce: false);
@@ -320,8 +326,16 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                                        lda #5
                                        #import "test.asm"
                                        """);
+            var fileReferenceToken = mainParsed.Lexer.GetAllTokens().Single(t => t.Text == "\"test.asm\"");
+            var fileReferences = new Dictionary<IToken, ReferencedFileInfo>
+            {
+                {
+                    fileReferenceToken, 
+                    new ReferencedFileInfo(0,0,"test.asm", FrozenSet<string>.Empty, "test.asm")
+                },
+            };
             var source = new KickAssemblerParsedSourceFile("main.asm",
-                [new ReferencedFileInfo(2, 0, "test.asm", FrozenSet<string>.Empty, "test.asm")],
+                fileReferences.ToFrozenDictionary(),
                 FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, _now,
                 liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, mainParsed.ParserListener,
