@@ -209,7 +209,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         CancellationToken ct)
     {
         // loads all referenced files
-        foreach (var referencedFile in parsedFile.ReferencedFiles)
+        foreach (var referencedFile in parsedFile.ReferencedFiles.Where(rf => rf.FullFilePath is not null))
         {
             // first check whether referenced file already declared #importonce
             // and if, then just update reference to it, no need to parse it again
@@ -322,7 +322,8 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             _logger.LogWarning(
                 "Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif",
                 fileName);
-            return new KickAssemblerParsedSourceFile(fileName, [..lexer.ReferencedFiles],
+            return new KickAssemblerParsedSourceFile(fileName,
+                MapReferencedFilesToDictionary(lexer.ReferencedFiles, tokenStream.GetTokens()),
                 inDefines, outDefines: inDefines, lastModified, liveContent, lexer, tokenStream, parser, parserListener,
                 lexerErrorListener, parserErrorListener,
                 lexer.IsImportOnce);
@@ -339,9 +340,18 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
 
         var absoluteReferencePaths =
             FillAbsolutePaths(Path.GetDirectoryName(fileName)!, [..lexer.ReferencedFiles], libraryDirectories);
-        return new KickAssemblerParsedSourceFile(fileName, absoluteReferencePaths,
+        return new KickAssemblerParsedSourceFile(fileName,
+            MapReferencedFilesToDictionary(absoluteReferencePaths, tokenStream.GetTokens()),
             inDefines, lexer.DefinedSymbols.ToFrozenSet(), lastModified, liveContent,
             lexer, tokenStream, parser, parserListener, lexerErrorListener, parserErrorListener, lexer.IsImportOnce);
+    }
+
+    internal FrozenDictionary<IToken, ReferencedFileInfo> MapReferencedFilesToDictionary(
+        IEnumerable<ReferencedFileInfo> source, IList<IToken> tokens)
+    {
+        var mapped = source.ToFrozenDictionary(
+            fr => tokens.Single(t => t.Line == fr.TokenStartLine && t.Column == fr.TokenStartColumn));
+        return mapped;
     }
 
     internal ImmutableArray<ReferencedFileInfo> FillAbsolutePaths(string filePath,
@@ -361,6 +371,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             }
             else
             {
+                builder.Add(reference);
                 _logger.LogWarning("Could not find referenced source file {File} from file {Source}", reference, filePath);
             }
         }

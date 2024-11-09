@@ -46,7 +46,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
         public void WhenEmptySource_ReturnsEmptyArray()
         {
             var input = GetParsed("");
-            var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -64,7 +64,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
                                     bla bla
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -85,7 +85,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
                                     yada yada
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", ImmutableArray<ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -118,7 +118,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
 
             var actual =
                 KickAssemblerParsedSourceFile.UpdateLexerAnalysisWithParserAnalysis(source,
-                    FrozenDictionary<IToken, string>.Empty);
+                    FrozenDictionary<IToken, ReferencedFileInfo>.Empty);
             
             Assert.That(actual, Is.EquivalentTo(source));
         }
@@ -134,9 +134,9 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
                 new LexerBasedSyntaxResult(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
             ];
 
-            var fileReferences = new Dictionary<IToken, string>
+            var fileReferences = new Dictionary<IToken, ReferencedFileInfo>
             {
-                { secondToken, "file.asm" }
+                { secondToken, new ReferencedFileInfo(0, 0, "file.asm", FrozenSet<string>.Empty) }
             }.ToFrozenDictionary();
 
             var actual =
@@ -146,7 +146,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
             Assert.That(actual[0], Is.EqualTo(source[0]));
             var item = (FileReferenceSyntaxItem)actual[1].Item;
             Assert.That(item, Is.Not.EqualTo(source[1].Item));
-            Assert.That(item.Path, Is.EqualTo("file.asm"));
+            Assert.That(item.Reference.RelativeFilePath, Is.EqualTo("file.asm"));
         }
     }
 }

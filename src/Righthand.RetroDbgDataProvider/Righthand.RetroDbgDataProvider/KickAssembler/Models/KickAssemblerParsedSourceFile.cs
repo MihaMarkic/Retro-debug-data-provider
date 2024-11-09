@@ -16,10 +16,11 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     public KickAssemblerParserListener ParserListener { get; init; }
     public KickAssemblerLexerErrorListener LexerErrorListener { get; init; }
     public KickAssemblerParserErrorListener ParserErrorListener { get; init; }
+    public FrozenDictionary<IToken, ReferencedFileInfo> ReferencedFilesMap { get; init; }
     public bool IsImportOnce { get; }
     public KickAssemblerParsedSourceFile(
         string fileName,
-        ImmutableArray<ReferencedFileInfo> referencedFiles,
+        FrozenDictionary<IToken, ReferencedFileInfo> referencedFilesMap,
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
         DateTimeOffset lastModified,
@@ -31,7 +32,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         KickAssemblerLexerErrorListener lexerErrorListener,
         KickAssemblerParserErrorListener parserErrorListener,
         bool isImportOnce
-    ) : base(fileName, referencedFiles, inDefines, outDefines, lastModified, liveContent)
+    ) : base(fileName, referencedFilesMap.Values, inDefines, outDefines, lastModified, liveContent)
     {
         Lexer = lexer;
         CommonTokenStream = commonTokenStream;
@@ -40,6 +41,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         LexerErrorListener = lexerErrorListener;
         ParserErrorListener = parserErrorListener;
         IsImportOnce = isImportOnce;
+        ReferencedFilesMap = referencedFilesMap;
     }
 
     /// <inheritdoc cref="ParsedSourceFile"/>
@@ -84,9 +86,8 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     protected override async Task<FrozenDictionary<int, SyntaxLine>> GetSyntaxLinesAsync(CancellationToken ct)
     {
         var lexerBasedSyntaxLinesTask = Task.Run(() => GetLexerBasedSyntaxLines(ct), ct).ConfigureAwait(false);
-        var fileReferences = ParserListener.FileReferences;
         var lexerBasedSyntaxLines = await lexerBasedSyntaxLinesTask;
-        var updatedLines = UpdateLexerAnalysisWithParserAnalysis(lexerBasedSyntaxLines, fileReferences);
+        var updatedLines = UpdateLexerAnalysisWithParserAnalysis(lexerBasedSyntaxLines, ReferencedFilesMap);
         return updatedLines.GroupBy(l => l.LineNumber)
             .ToFrozenDictionary(
                 g => g.Key,
@@ -94,7 +95,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     }
 
     internal static IEnumerable<LexerBasedSyntaxResult> UpdateLexerAnalysisWithParserAnalysis(
-        ImmutableArray<LexerBasedSyntaxResult> source, FrozenDictionary<IToken, string> fileReferences)
+        ImmutableArray<LexerBasedSyntaxResult> source, FrozenDictionary<IToken, ReferencedFileInfo> fileReferences)
     {
         // updates lexer based results with parser based analysis
         var updatedLines = source.Select(l =>
@@ -105,6 +106,10 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                 return l with
                 {
                     Item = new FileReferenceSyntaxItem(l.Item.Start, l.Item.End, replacementItem)
+                    {
+                        LeftMargin = 1,
+                        RightMargin = 1,
+                    }
                 };
             }
 
@@ -128,11 +133,23 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         List<SyntaxError> builder = new(LexerErrorListener.Errors.Length + ParserErrorListener.Errors.Length);
         builder.AddRange(LexerErrorListener.Errors.Select(ConvertLexerError));
         builder.AddRange(ParserErrorListener.Errors.Select(ConvertParserError));
-
+        builder.AddRange(CreateMissingReferencedFilesErrors());
         return builder.GroupBy(i => i.Line)
             .ToFrozenDictionary(
                 g => g.Key,
                 g => new SyntaxErrorLine([..g]));
+    }
+
+    IEnumerable<SyntaxError> CreateMissingReferencedFilesErrors()
+    {
+        var errors = ReferencedFilesMap
+                .Where(m => m.Value.FullFilePath is null)
+                .Select(m =>
+                    new SyntaxError($"Missing referenced file {m.Value.RelativeFilePath}", m.Key.StartIndex,
+                        m.Key.Line - 1,
+                        new SingleLineTextRange(m.Key.Column, m.Key.EndColumn()), SyntaxErrorParserSource.Default))
+            ;
+        return errors;
     }
 
     private SyntaxError ConvertLexerError(KickAssemblerLexerError error)
