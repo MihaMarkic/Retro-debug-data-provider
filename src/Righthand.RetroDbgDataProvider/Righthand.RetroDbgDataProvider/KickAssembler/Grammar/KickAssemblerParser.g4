@@ -9,7 +9,7 @@ program: units;
 
 // needs a lot of love
 
-units: unit ((EOL | SEMICOLON)* unit)*;
+units: ((EOL | SEMICOLON)* unit)+;
 
 unit
     : instruction
@@ -104,40 +104,39 @@ function: STRING OPEN_PARENS argumentList? CLOSE_PARENS;
 condition: expression;
 	
 compiler_statement
-    : DOT (
-          print
-        | printnow
-        | var
-        | const
-        | if
-        | errorif
-        | eval
-        | break
-        | watch
-        | enum
-        | for
-        | while
-        | struct
-        | define
-        | functionDefine
-        | macroDefine
-        | pseudoCommandDefine
-        | namespace
-        | labelDirective
-        | segment
-        | segmentDef
-        | segmentOut
-        | plugin
-        | fileDirective
-        | diskDirective
-        | modify
-        | fileModify
-        | return                            // should be really constrained to function
-        | assert
-        | assertError
-        | pseudopc
-        | zp
-    );
+    :  print
+    | printnow
+    | var
+    | const
+    | if
+    | errorif
+    | eval
+    | break
+    | watch
+    | enum
+    | for
+    | while
+    | struct
+    | define
+    | functionDefine
+    | macroDefine
+    | pseudoCommandDefine
+    | namespace
+    | labelDirective
+    | segment
+    | segmentDef
+    | segmentOut
+    | plugin
+    | fileDirective
+    | diskDirective
+    | modify
+    | fileModify
+    | return                            // should be really constrained to function
+    | assert
+    | assertError
+    | pseudopc
+    | zp
+    ;
 
 print: PRINT expression;
 printnow: PRINTNOW expression;
@@ -173,9 +172,9 @@ namespace
 labelDirective: LABEL assignment_expression scope;
 plugin: PLUGIN STRING;
 segment
-    : SEGMENT UNQUOTED_STRING parameterMap                                  // .segment Code [start=$0900]
-    | SEGMENT UNQUOTED_STRING STRING                                        // .segment Code "My Code"
-    | SEGMENT UNQUOTED_STRING;                                              // .segment Code
+    : SEGMENT name=UNQUOTED_STRING parameterMap                                  // .segment Code [start=$0900]
+    | SEGMENT name=UNQUOTED_STRING STRING                                        // .segment Code "My Code"
+    | SEGMENT name=UNQUOTED_STRING;                                              // .segment Code
 segmentDef
     : SEGMENTDEF UNQUOTED_STRING parameterMap; // .segmentdef Combi1  [segments="Code, Data"]
 segmentOut
@@ -198,7 +197,7 @@ assertError: ASSERTERROR STRING unit;
 pseudopc: numeric scope;                            // or should use number?
 zp: ZP OPEN_BRACE EOL* zpArgumentList EOL* CLOSE_BRACE;
 zpArgumentList: zpArgument (EOL zpArgument)*;
-zpArgument: atName COLON DOT BYTE DEC_NUMBER; // DEC_NUMBER is really just 0
+zpArgument: atName COLON DOTBYTE DEC_NUMBER; // DEC_NUMBER is really just 0
     
 //segmentOptions: segmentOption (COMMA segmentOption)*;
 //segmentOption
@@ -243,7 +242,7 @@ zpArgument: atName COLON DOT BYTE DEC_NUMBER; // DEC_NUMBER is really just 0
 fileName: UNQUOTED_STRING;
     
 preprocessorDirective
-    : HASH (
+    : (
         preprocessorDefine
         | preprocessorUndef
         | preprocessorImport
@@ -252,12 +251,13 @@ preprocessorDirective
         | preprocessorIf
     );
     
-preprocessorDefine: DEFINE UNQUOTED_STRING;
-preprocessorUndef: UNDEF UNQUOTED_STRING;
-preprocessorImport: IMPORT STRING;
-preprocessorImportIf: IMPORTIF preprocessorCondition STRING;
-preprocessorImportOnce: IMPORTONCE STRING;
-preprocessorIf: IF preprocessorCondition unit (HASH ELIF unit)* (HASH ELSE unit)? HASH ENDIF;
+preprocessorDefine: HASHDEFINE DEFINED_TOKEN;
+preprocessorUndef: HASHUNDEF UNDEFINED_TOKEN;
+preprocessorImport: HASHIMPORT STRING;
+preprocessorImportIf: HASHIMPORTIF IIF_CONDITION STRING;
+preprocessorImportOnce: HASHIMPORTONCE STRING;
+preprocessorIf: HASHIF IF_CONDITION preprocessorBlock (HASHELIF IF_CONDITION preprocessorBlock)* (HASHELSE preprocessorBlock)? HASHENDIF;
+preprocessorBlock: EOL+ (unit EOL+)?;
 preprocessorCondition
     : OPEN_PARENS preprocessorCondition CLOSE_PARENS
     | BANG preprocessorCondition
@@ -268,31 +268,30 @@ preprocessorCondition
     | UNQUOTED_STRING;
 
 directive
-    : DOT (
-        cpuDirective 
-        | byteDirective 
-        | wordDirective 
-        | dwordDirective 
-        | textDirective 
-        | fillDirective
-        | encodingDirective
-        | importDataDirective)
+    : cpuDirective 
+    | byteDirective 
+    | wordDirective 
+    | dwordDirective 
+    | textDirective 
+    | fillDirective
+    | encodingDirective
+    | importDataDirective
     | memoryDirective
     ;
      
 memoryDirective: (OP_MULT_ASSIGNMENT | PC) number STRING? UNQUOTED_STRING?;
     
 cpuDirective
-    : CPU (CPU6502NOILLEGALS | CPU6502 | DTV | CPU65C02);
+    : DOTCPU (CPU6502NOILLEGALS | CPU6502 | DTV | CPU65C02);
     
-byteDirective: BYTE numberList;
-wordDirective: WORD numberList;
-dwordDirective: DWORD numberList;
+byteDirective: DOTBYTE numberList;
+wordDirective: DOTWORD numberList;
+dwordDirective: DOTDWORD numberList;
     
-textDirective: TEXT_TEXT STRING;
+textDirective: DOTTEXT STRING;
 // implement label in front    
 fillDirective
-    : (FILL | FILLWORD | LOHIFILL) number COMMA fillDirectiveArguments
+    : (DOTFILL | DOTFILLWORD | DOTLOHIFILL) number COMMA fillDirectiveArguments
     ;
     
 fillDirectiveArguments
@@ -305,11 +304,11 @@ fillExpression:
     ;
     
 encodingDirective
-    : ENCODING STRING
+    : DOTENCODING STRING
     ;
     
 importDataDirective
-    : (BINARY_TEXT | C64_TEXT | TEXT_TEXT) file (COMMA number (COMMA number)?)?
+    : (DOTBINARY | DOTC64 | DOTTEXT) file (COMMA number (COMMA number)?)?
     ;
 	
 labelName

@@ -3,7 +3,7 @@ using Righthand.RetroDbgDataProvider.Models.Program;
 
 namespace Righthand.RetroDbgDataProvider.Test.Models.Program;
 
-public class TextRangeTest: BaseTest<TextRange>
+public class TextRangeTest: BaseTest<MultiLineTextRange>
 {
     [TestFixture]
     public class Contains: TextRangeTest
@@ -14,7 +14,7 @@ public class TextRangeTest: BaseTest<TextRange>
         public bool GivenTestCases_ReturnsExpected(int rowStart, int colStart, int rowEnd, int colEnd,
             int row, int col)
         {
-            return new TextRange(new TextCursor(rowStart, colStart), new TextCursor(rowEnd, colEnd))
+            return new MultiLineTextRange(new TextCursor(rowStart, colStart), new TextCursor(rowEnd, colEnd))
                 .Contains(new TextCursor(row, col));
         }
     }

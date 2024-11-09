@@ -123,8 +123,8 @@ public class KickAssemblerProgramInfoBuilder : IKickAssemblerProgramInfoBuilder
             source.Name,
             source.Address);
 
-    internal TextRange FileLocationToTextRange(KickAss.FileLocation source)
-        => new TextRange(
+    internal MultiLineTextRange FileLocationToTextRange(KickAss.FileLocation source)
+        => new MultiLineTextRange(
             new TextCursor(source.Line1, source.Col1),
             new TextCursor(source.Line2, source.Col2));
 

@@ -2,23 +2,80 @@ lexer grammar KickAssemblerLexer;
 
 channels {
     COMMENTS_CHANNEL,
-    DIRECTIVE
+    DIRECTIVE,
+    // #if undefined stuff goes here
+    IGNORED
 }
+
+WS : [ \t]+ -> channel(HIDDEN) ; // skip spaces, tabs, newlines
+EOL: '\r\n' | '\r' | '\n';
+
+HASH: '#';
+
+HASHDEFINE
+    : HASH 'define'
+    ->pushMode(HASHDEFINE_MODE)
+    ;
+
+HASHUNDEF
+    : HASH 'undef'
+    ->pushMode(HASHUNDEF_MODE)
+    ;
+
+HASHIF
+    : HASH 'if'
+    -> pushMode(HASHIF_WAITSPACE_MODE)
+    ;
+
+HASHENDIF
+    : HASH 'endif'
+    -> PopMode, PopMode
+    ;
+
+// at this point in time, #else has to be ignored
+HASHELSE
+    : HASH 'else'
+    -> PopMode,PushMode(IGNOREALL_WAITNEWLINE_MODE)
+    ;
+    
+HASHELIF
+    : HASH 'elif'
+    -> PopMode, PushMode(IGNOREALL_CONDITION_WAITSPACE_MODE)
+    ;
+    
+HASHIMPORT
+    : HASH 'import'
+    -> PushMode(IMPORT_MODE)
+    ;
+HASHIMPORTONCE
+    : HASH 'importonce' (WS | EOL | EOF)
+    {
+        IsImportOnce = true;
+    }
+    ;
+HASHIMPORTIF
+    : HASH 'importif'
+    -> PushMode(IMPORTIF_MODE)
+    ;
 
 ONLYA: 'a' ;
 ABS: 'abs';
 
-BINARY_TEXT: 'binary';
-C64_TEXT: 'c64';
-TEXT_TEXT: 'text';
-ENCODING: 'encoding';
-FILL: 'fill';
-FILLWORD: 'fillword'; 
-LOHIFILL: 'lohifill';
+DOTBINARY: 'binary';
+DOTC64: 'c64';
+DOTTEXT: '.text';
+DOTENCODING: '.encoding';
+DOTFILL: '.fill';
+DOTFILLWORD: '.fillword'; 
+DOTLOHIFILL: '.lohifill';
 BYTE: 'byte' | 'by';
 WORD: 'word' | 'wo';
 DWORD: 'dword' | 'dw';
-CPU: 'cpu';
+DOTCPU: '.cpu';
+DOTBYTE: '.byte';
+DOTWORD: '.word';
+DOTDWORD: '.dword';
+
 CPU6502NOILLEGALS: '_6502NoIllegals';
 CPU6502: '_6502';
 DTV: 'dtv';
@@ -26,44 +83,29 @@ CPU65C02: '_65c02';
 
 ASSERT: 'assert';
 ASSERTERROR: 'asserterror';
-PRINT: 'print';
-PRINTNOW: 'printnow';
-VAR: 'var';
-CONST: 'const';
-IF: 'if';
+PRINT: '.print';
+PRINTNOW: '.printnow';
+VAR: '.var';
+CONST: '.const';
+IF: '.if';
 ELSE: 'else';
-ERRORIF: 'errorif';
-EVAL: 'eval';
-FOR: 'for';
-WHILE: 'while';
-STRUCT: 'struct';
-DEFINE: 'define';
-FUNCTION: 'function';
-RETURN: 'return';
-MACRO: 'macro';
-PSEUDOCOMMAND: 'pseudocommand';
-PSEUDOPC: 'pseudopc';
-UNDEF: 'undef';
-ENDIF: 'endif';
-ELIF: 'elif';
-IMPORT: 'import';
-IMPORTONCE: 'importonce';
-IMPORTIF: 'importif';
-NAMESPACE: 'namespace'; 
-SEGMENT: 'segment';
-SEGMENTDEF: 'segmentdef';
-SEGMENTOUT: 'segmentout';
-// segments parameters
-//ALIGN: 'align';
-//ALLOW_OVERLAP: 'allowOverlap';
-//DEST: 'dest';
-//FILL_BYTE: 'fillByte';
-//HIDE: 'hide';
-//MARG: 'marg';
-//MAX: 'max';
-//MIN: 'min';
-MODIFY: 'modify';
-FILEMODIFY: 'fileModify';
+ERRORIF: '.errorif';
+EVAL: '.eval';
+FOR: '.for';
+WHILE: '.while';
+STRUCT: '.struct';
+DEFINE: '.define';
+FUNCTION: '.function';
+RETURN: '.return';
+MACRO: '.macro';
+PSEUDOCOMMAND: '.pseudocommand';
+PSEUDOPC: '.pseudopc';
+NAMESPACE: '.namespace'; 
+SEGMENT: '.segment';
+SEGMENTDEF: '.segmentdef';
+SEGMENTOUT : '.segmentout';
+MODIFY: '.modify';
+FILEMODIFY: '.fileModify';
 //OUT_BIN: 'outBin';
 //OUT_PRG: 'outPrg';
 //PRG_FILES: 'prgFiles';
@@ -72,15 +114,15 @@ FILEMODIFY: 'fileModify';
 //START: 'start';
 //START_AFTER: 'startAfter';
 //VIRTUAL: 'virtual';
-PLUGIN: 'plugin';
-LABEL: 'label';
-FILE: 'file';
-DISK: 'disk';
-PC: 'pc';
+PLUGIN: '.plugin';
+LABEL: '.label';
+FILE: '.file';
+DISK: '.disk';
+PC: '.pc';
 
-BREAK: 'break';
-WATCH: 'watch';
-ZP: 'zp';
+BREAK: '.break';
+WATCH: '.watch';
+ZP: '.zp';
 
 // COLORS
 BLACK: 'BLACK';
@@ -166,14 +208,10 @@ fragment HEX_DIGIT: [0-9a-fA-F] ;
 fragment BIN_DIGIT: '0' | '1';
 CHAR: '\'' . '\'' ;
 STRING:  '"' .*? '"' ;
-HASH: '#';
 DOUBLE_QUOTE: '"';
 //SYMBOL: '.'? [a-zA-Z0-9_]+ ;
 SINGLE_LINE_COMMENT : '//' .*? EOL  -> channel(COMMENTS_CHANNEL);
 MULTI_LINE_COMMENT  : '/*' .*? '*/' -> channel(COMMENTS_CHANNEL);
-
-EOL: '\r\n' | '\r' | '\n' ;
-WS : [ \t]+ -> skip ; // skip spaces, tabs, newlines
 
 // OpCodes
 ADC: 'adc';
@@ -536,134 +574,233 @@ TYA_CONST: 'TYA';
 WAI_CONST: 'WAI';
 XAA_IMM_CONST: 'XAA_IMM';
 
-UNQUOTED_STRING: [a-zA-Z0-9]+ ;
+UNQUOTED_STRING: [a-zA-Z0-9_]+ ;
 
+mode HASHDEFINE_MODE;
 
-// chars
-//fragment A
-//   : ('a' | 'A')
-//   ;
-//
-//
-//fragment B
-//   : ('b' | 'B')
-//   ;
-//
-//
-//fragment C
-//   : ('c' | 'C')
-//   ;
-//
-//
-//fragment D
-//   : ('d' | 'D')
-//   ;
-//
-//
-//fragment E
-//   : ('e' | 'E')
-//   ;
-//
-//
-//fragment F
-//   : 'f'
-//   ;
-//
-//
-//fragment G
-//   : ('g' | 'G')
-//   ;
-//
-//
-//fragment H
-//   : ('h' | 'H')
-//   ;
-//
-//
-//fragment I
-//   : ('i' | 'I')
-//   ;
-//
-//
-//fragment J
-//   : ('j' | 'J')
-//   ;
-//
-//
-//fragment K
-//   : ('k' | 'K')
-//   ;
-//
-//
-//fragment L
-//   : ('l' | 'L')
-//   ;
-//
-//
-//fragment M
-//   : ('m' | 'M')
-//   ;
-//
-//
-//fragment N
-//   : ('n' | 'N')
-//   ;
-//
-//
-//fragment O
-//   : ('o' | 'O')
-//   ;
-//
-//
-//fragment P
-//   : ('p' | 'P')
-//   ;
-//
-//
-//fragment Q
-//   : ('q' | 'Q')
-//   ;
-//
-//
-//fragment R
-//   : ('r' | 'R')
-//   ;
-//
-//
-//fragment S
-//   : ('s' | 'S')
-//   ;
-//
-//
-//fragment T
-//   : ('t' | 'T')
-//   ;
-//
-//
-//fragment U
-//   : ('u' | 'U')
-//   ;
-//
-//
-//fragment V
-//   : ('v' | 'V')
-//   ;
-//
-//
-//fragment W
-//   : ('w' | 'W')
-//   ;
-//
-//
-//fragment X
-//   : ('x' | 'X')
-//   ;
-//
-//
-//fragment Y
-//   : ('y' | 'Y')
-//   ;
-//
-//fragment Z
-//   : ('z' | 'Z')
-//   ;
+DEFINED_TOKEN
+    : ~[ \n\r\t]+ //add other characters as needed
+    {
+        DefinedSymbols.Add(Text);
+    }
+    ;
+
+HD_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+
+HD_NEWLINE
+    : EOL
+    -> type(EOL),PopMode
+    ;
+
+mode HASHUNDEF_MODE;
+
+UNDEFINED_TOKEN
+    : DEFINED_TOKEN
+    {
+        DefinedSymbols.Remove(Text);
+    }
+    ;
+
+HU_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+
+HU_NEWLINE
+    : EOL
+    -> type(EOL),PopMode
+    ;
+
+mode HASHIF_WAITSPACE_MODE;
+
+HIWS_WS
+    : WS
+    -> type(WS),channel(HIDDEN),mode(HASHIF_MODE)  // here I use mode to avoid another push/pop pair
+    ;
+
+mode HASHIF_MODE;
+
+IF_CONDITION
+    : ~[\n\r]+ //add other characters as needed
+    {
+        if (IsDefined(Text)) {
+            /*
+            In this case DEFINED_TOKEN is in fact defined so we get
+            back into the mode we were in before the pushMode that 
+            brought us here.
+            */
+            PushMode(DEFAULT_MODE);
+        } else {
+            /*
+             Push to wait for NEWLINE and only then go to IGNORE_MODE
+             bacause parser would like to see EOL
+            */ 
+            PushMode(IGNORE_WAITNEWLINE_MODE);
+        }
+    }
+    ;
+
+HI_WS
+    : WS
+    -> channel(HIDDEN),type(WS)
+    ;
+    
+mode IGNORE_WAITNEWLINE_MODE;
+
+IWNL_NEWLINE
+    : EOL
+    -> type(EOL),mode(IGNORE_MODE)  // here I use mode to avoid another push/pop pair
+    ;
+    
+mode DEFAULT_WAITEOL_MODE;
+
+DWE_NEWLINE
+    : EOL
+    -> type(EOL),mode(DEFAULT_MODE)  // here I use mode to avoid another push/pop pair
+    ;
+    
+DWE_WS
+    : WS
+    -> type(WS),channel(HIDDEN)
+    ;
+
+mode IGNORE_MODE;
+
+I_HASHIF
+    : HASHIF
+    -> PushMode(HASHIF_MODE),type(HASHIF)
+    ;
+
+I_HASHENDIF
+    : HASHENDIF
+    ->type(HASHENDIF),PopMode,PopMode
+    ;
+    
+I_HASHELSE
+    : HASHELSE
+    {
+        PopMode();
+        PushMode(DEFAULT_WAITEOL_MODE);
+    }
+    ->type(HASHELSE)
+    ;
+    
+I_HASHELIF
+    : HASHELIF
+    {
+        PopMode();
+        PopMode();
+        PushMode(HASHIF_MODE);
+    }
+    ->type(HASHELIF)
+    ;
+
+I_INTENTIONALLY_IGNORED
+    : .+?
+    ->channel(IGNORED)
+    ;
+
+mode IGNOREALL_WAITNEWLINE_MODE;
+
+IAWNL_WS
+    : WS
+    -> type(WS),channel(HIDDEN)
+    ;
+    
+IAWNL_NEWLINE
+    : EOL
+    -> type(EOL),mode(IGNOREALL_MODE)  // here I use mode to avoid another push/pop pair
+    ;
+
+mode IGNOREALL_CONDITION_WAITSPACE_MODE;
+
+IA_CWS_SPACE
+    : WS
+    -> type(WS),channel(HIDDEN),mode(IGNOREALL_CONDITION_MODE)
+    ;
+
+mode IGNOREALL_CONDITION_MODE;
+
+IA_C_CONDITION
+    : ~[ \n\r]+
+    ->type(IF_CONDITION),mode(IGNOREALL_WAITNEWLINE_MODE)
+    ;
+
+// ignores right until #endif
+mode IGNOREALL_MODE;
+    
+IA_HASHELIF
+    : HASHELIF
+    -> type(HASHIF),mode(IGNOREALL_CONDITION_WAITSPACE_MODE)
+    ;
+    
+IA_HASHELSE
+    : HASHELSE
+    -> type(HASHELSE),mode(IGNOREALL_WAITNEWLINE_MODE)
+    ;
+
+IA_HASHENDIF
+    : HASHENDIF
+    ->type(HASHENDIF),PopMode,PopMode
+    ;
+
+IA_INTENTIONALLY_IGNORED
+    : ~[\n\r]+
+    ->channel(IGNORED)
+    ;
+IA_EOL
+    : EOL
+    ->type(EOL),channel(IGNORED)
+    ;
+    
+    
+mode IMPORT_MODE;
+
+REFERENCED_FILEPATH
+    : STRING
+    {
+        AddReferencedFileInfo(TokenStartLine, TokenStartColumn, Text);
+    }
+    ->type(STRING),PopMode
+    ;
+    
+IM_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+    
+mode IMPORTIF_MODE;
+
+IIF_CONDITION
+    : ~[\n\r"]+ //add other characters as needed
+    {
+        if (IsDefined(Text)) {
+            /*
+            In this case DEFINED_TOKEN is in fact defined so we get
+            back into the mode we were in before the pushMode that 
+            brought us here.
+            */
+            PushMode(IMPORTIF_DEFINED_MODE);
+        } else {
+            PopMode();
+        }
+    }
+    ;
+
+IIF_WS
+    : WS
+    -> channel(HIDDEN)
+    ;
+    
+mode IMPORTIF_DEFINED_MODE;
+
+IFFILE
+    : STRING
+    {
+            AddReferencedFileInfo(TokenStartLine, TokenStartColumn, Text);
+    }
+    -> type(STRING),PopMode,PopMode
+    ;

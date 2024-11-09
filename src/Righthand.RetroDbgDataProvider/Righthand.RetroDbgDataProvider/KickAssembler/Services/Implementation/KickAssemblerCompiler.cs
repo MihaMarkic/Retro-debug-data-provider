@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Models;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
+using Righthand.RetroDbgDataProvider.Models.Program;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
@@ -45,7 +47,7 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         return $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}{libDirs}";
     }
     /// <inheritdoc />
-    public async Task<(int ExitCode, ImmutableArray<CompilerError> Errors)> CompileAsync(string file,
+    public async Task<(int ExitCode, ImmutableArray<(string Path, SyntaxError Error)> Errors)> CompileAsync(string file,
         string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
         Action<string> outputLine)
     {
@@ -76,7 +78,7 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         };
         if (p.Start())
         {
-            var errorsBuilder = ImmutableArray.CreateBuilder<CompilerError>();
+            var errorsBuilder = ImmutableArray.CreateBuilder<(string Path, SyntaxError Error)>();
             // KickAssembler might show only error at the end of the output
             string? lastErrorText = null;
             while (!p.StandardOutput.EndOfStream)
@@ -93,11 +95,15 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
                             // in case of last error, path is relative
                             // thus it is necessary to add directory in front as client expectes full paths
                             string path = Path.Combine(projectDirectory, lastErrorLocationMatch.Groups["file"].Value);
-                            errorsBuilder.Add(new CompilerError(
-                                int.Parse(lastErrorLocationMatch.Groups["line"].Value),
-                                int.Parse(lastErrorLocationMatch.Groups["column"].Value),
-                                lastErrorText,
-                                path));
+                            int errorLine = int.Parse(lastErrorLocationMatch.Groups["line"].Value);
+                            int errorColumn = int.Parse(lastErrorLocationMatch.Groups["column"].Value);
+                            errorsBuilder.Add((
+                                path,
+                                new SyntaxError(
+                                    lastErrorText,
+                                    null, errorLine, new SingleLineTextRange(errorColumn, errorColumn + 1),
+                                    SyntaxErrorCompiledFileSource.Default)
+                                ));
                         }
                         else
                         {
@@ -110,11 +116,17 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
                         var errorMatch = CompilerErrorRegex().Match(line);
                         if (errorMatch.Success)
                         {
-                            errorsBuilder.Add(new CompilerError(
-                                int.Parse(errorMatch.Groups["line"].Value),
-                                int.Parse(errorMatch.Groups["row"].Value),
-                                errorMatch.Groups["error"].Value,
-                                errorMatch.Groups["path"].Value));
+                            int errorLine = int.Parse(errorMatch.Groups["line"].Value);
+                            int errorColumn = int.Parse(errorMatch.Groups["column"].Value);
+                            errorsBuilder.Add((
+                                errorMatch.Groups["path"].Value,
+                                new SyntaxError(
+                                    errorMatch.Groups["error"].Value,
+                                    null,
+                                    errorLine,
+                                    new SingleLineTextRange(errorColumn, errorColumn + 1),
+                                    SyntaxErrorCompiledFileSource.Default)
+                            ));
                         }
                         else
                         {

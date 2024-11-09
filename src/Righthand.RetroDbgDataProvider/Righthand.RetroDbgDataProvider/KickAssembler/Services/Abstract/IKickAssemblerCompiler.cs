@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 
@@ -18,7 +19,7 @@ public interface IKickAssemblerCompiler
     /// <param name="settings">Additional KickAssembler settings.</param>
     /// <param name="outputLine">Action that outputs compiler output.</param>
     /// <returns>A task that represents compiler result.</returns>
-    Task<(int ExitCode, ImmutableArray<CompilerError> Errors)> CompileAsync(string file, string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
+    Task<(int ExitCode, ImmutableArray<(string Path, SyntaxError Error)> Errors)> CompileAsync(string file, string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
         Action<string> outputLine);
 }
 

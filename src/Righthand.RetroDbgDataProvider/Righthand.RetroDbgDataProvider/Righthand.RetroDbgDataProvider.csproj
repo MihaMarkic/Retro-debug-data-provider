@@ -25,6 +25,9 @@
   <PropertyGroup>
     <NoWarn>CS1658,CS1584</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <Using Include="System.Collections.Immutable" />
+  </ItemGroup>
   <Choose>
     <When Condition=" '$(Configuration)'=='Release' ">
       <PropertyGroup>
@@ -59,11 +62,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="KickAssembler\Grammar\gen\" />
+    <Folder Include="KickAssembler\Grammar\gen\Righthand\RetroDbgDataProvider\KickAssembler\" />
   </ItemGroup>
 
 </Project>

@@ -13,4 +13,4 @@ public record Block(string Name, ImmutableArray<BlockItem> Items);
 /// <param name="Start">Start address</param>
 /// <param name="End">End address</param>
 /// <param name="FileLocation">Location in the source file.</param>
-public record BlockItem(ushort Start, ushort End, TextRange FileLocation);
+public record BlockItem(ushort Start, ushort End, MultiLineTextRange FileLocation);
