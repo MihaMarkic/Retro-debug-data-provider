@@ -146,7 +146,7 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
             Assert.That(actual[0], Is.EqualTo(source[0]));
             var item = (FileReferenceSyntaxItem)actual[1].Item;
             Assert.That(item, Is.Not.EqualTo(source[1].Item));
-            Assert.That(item.Reference.RelativeFilePath, Is.EqualTo("file.asm"));
+            Assert.That(item.ReferencedFile.RelativeFilePath, Is.EqualTo("file.asm"));
         }
     }
 }

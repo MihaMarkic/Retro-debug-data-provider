@@ -1,7 +1,7 @@
-﻿using Antlr4.Runtime;
+﻿using System.Diagnostics;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Righthand.RetroDbgDataProvider.KickAssembler;
-using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
@@ -16,7 +16,7 @@ public abstract class ParserBootstrap<T> : BaseTest<T>
         Run<KickAssemblerParserBaseListener, TParserErrorListener, TContext>(text, run, out errors);
     }
 
-    public TListener Run<TListener, TParserErrorListener, TContext>(string text,
+    protected TListener Run<TListener, TParserErrorListener, TContext>(string text,
         Func<KickAssemblerParser, TContext> run, out TParserErrorListener errors, params string[] defineSymbols)
         where TListener : KickAssemblerParserBaseListener, new()
         where TParserErrorListener : BaseErrorListener, new()
@@ -44,8 +44,9 @@ public abstract class ParserBootstrap<T> : BaseTest<T>
             ParseTreeWalker.Default.Walk(listener, tree);
             return listener;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
+            Debug.WriteLine(ex.Message);
             var tokens = lexer.GetAllTokens();
             throw;
         }

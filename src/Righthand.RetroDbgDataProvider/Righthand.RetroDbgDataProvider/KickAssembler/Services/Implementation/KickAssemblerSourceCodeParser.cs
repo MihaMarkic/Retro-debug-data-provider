@@ -319,7 +319,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(
+            _logger.LogWarning(ex,
                 "Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif",
                 fileName);
             return new KickAssemblerParsedSourceFile(fileName,

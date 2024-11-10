@@ -1,4 +1,6 @@
-﻿namespace System;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace System;
 public static class Extensions
 {
     /// <summary>
@@ -26,11 +28,12 @@ public static class Extensions
         return true;
     }
     /// <summary>
-    /// Makes new line chars cross platform.
+    /// Makes new line chars cross-platform.
     /// </summary>
     /// <param name="text"></param>
     /// <returns></returns>
-    public static string FixLineEndings(this string text)
+    [return: NotNullIfNotNull(nameof(text))]
+    public static string? FixLineEndings(this string? text)
     {
         return text?.Replace("\r\n", "\n");
     }

@@ -67,11 +67,13 @@ public abstract class ParsedSourceFile
                 Debug.WriteLine("Reusing old task");
             }
 
-            (_syntaxLines, _ignoredDefineContent, _syntaxErrors) = await _syntaxInfoInitTask;
+            (_syntaxLines, var ignoredDefineContent, _syntaxErrors) = await _syntaxInfoInitTask;
+            // since assigning a non-nullable value to nullable field results in warning, I'll do it through a variable instead
+            _ignoredDefineContent = ignoredDefineContent;
             Debug.WriteLine("Parsing done");
         }
 
-        return new FileSyntaxInfo(_syntaxLines, _ignoredDefineContent.Value, _syntaxErrors);
+        return new FileSyntaxInfo(_syntaxLines, _ignoredDefineContent.Value, _syntaxErrors ?? FrozenDictionary<int, SyntaxErrorLine>.Empty);
     }
 
     private async Task<FileSyntaxInfo> InitForSyntaxInfoCoreAsync(CancellationToken ct)
