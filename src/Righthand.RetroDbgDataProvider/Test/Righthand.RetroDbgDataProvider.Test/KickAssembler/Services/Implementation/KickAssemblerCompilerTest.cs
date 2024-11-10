@@ -38,4 +38,17 @@ public class KickAssemblerCompilerTest: BaseTest<KickAssemblerCompiler>
             Assert.That(actual, Does.Contain("-libdir \"dir2\""));
         }
     }
+
+    [TestFixture]
+    public class ExtrapolateErrorLength : KickAssemblerCompilerTest
+    {
+        [TestCase("_DEFAULT_", ExpectedResult = new int[] { 0, 1 })]
+        [TestCase("Can't open file: one_main.asmx", ExpectedResult = new int[] { 0, 13 })]
+        public int[] GivenErrorText_SetsOffsetAndLengthAccordingly(string errorText)
+        {
+            var actual = KickAssemblerCompiler.ExtrapolateErrorLength(errorText);
+
+            return [actual.Offset, actual.Length];
+        }
+    }
 }

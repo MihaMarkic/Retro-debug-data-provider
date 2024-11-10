@@ -9,5 +9,5 @@
 public record SingleLineTextRange(int? Start, int? End)
 {
     public bool IsClosed => Start.HasValue && End.HasValue;
-    public int Length => End!.Value - Start!.Value + 1;
+    public int Length => End!.Value - Start!.Value;
 }

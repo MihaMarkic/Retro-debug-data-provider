@@ -13,17 +13,6 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 /// <inheritdoc />
 public partial class KickAssemblerCompiler : IKickAssemblerCompiler
 {
-    [GeneratedRegex(
-        "^\\s*\\((?<path>[a-zA-Z0-9:\\s_\\-\\\\/\\.]+)\\s+(?<line>\\d+):(?<row>\\d+)\\)\\s+Error:\\s+(?<error>.+)$",
-        RegexOptions.Singleline)]
-    private static partial Regex CompilerErrorRegex();
-
-    [GeneratedRegex(@"^Error:\s*(?<text>.*)$", RegexOptions.Singleline)]
-    private static partial Regex LastCompilerErrorTextRegex();
-
-    [GeneratedRegex(@"^at\sline\s(?<line>\d+),\scolumn\s(?<column>\d+)\sin\s(?<file>[a-zA-Z0-9:\\s_\\-\\\\/\\.]+)$",
-        RegexOptions.Singleline)]
-    private static partial Regex LastCompilerErrorLocationRegex();
 
     private readonly ILogger<KickAssemblerCompiler> _logger;
 
@@ -46,6 +35,20 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
             : null;
         return $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}{libDirs}";
     }
+    [GeneratedRegex(
+        """
+        ^\s*\((?<path>[a-zA-Z0-9:\s_\-\\\/\.]+)\s+(?<line>\d+):(?<column>\d+)\)\s+Error:\s+(?<error>.+)$
+        """,
+    RegexOptions.Singleline)]
+    private static partial Regex CompilerErrorRegex();
+
+    [GeneratedRegex(@"^Error:\s*(?<text>.*)$", RegexOptions.Singleline)]
+    private static partial Regex LastCompilerErrorTextRegex();
+
+    [GeneratedRegex(@"^at\sline\s(?<line>\d+),\scolumn\s(?<column>\d+)\sin\s(?<file>[a-zA-Z0-9:\\s_\\-\\\\/\\.]+)$",
+        RegexOptions.Singleline)]
+    private static partial Regex LastCompilerErrorLocationRegex();
+
     /// <inheritdoc />
     public async Task<(int ExitCode, ImmutableArray<(string Path, SyntaxError Error)> Errors)> CompileAsync(string file,
         string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
@@ -93,15 +96,16 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
                         if (lastErrorLocationMatch.Success)
                         {
                             // in case of last error, path is relative
-                            // thus it is necessary to add directory in front as client expectes full paths
+                            // thus it is necessary to add directory in front as client expects full paths
                             string path = Path.Combine(projectDirectory, lastErrorLocationMatch.Groups["file"].Value);
                             int errorLine = int.Parse(lastErrorLocationMatch.Groups["line"].Value);
                             int errorColumn = int.Parse(lastErrorLocationMatch.Groups["column"].Value);
+                            (int offset, int errorTextLength) = ExtrapolateErrorLength(lastErrorText);
                             errorsBuilder.Add((
                                 path,
                                 new SyntaxError(
                                     lastErrorText,
-                                    null, errorLine, new SingleLineTextRange(errorColumn, errorColumn + 1),
+                                    null, errorLine-1, new SingleLineTextRange(errorColumn + offset, errorColumn + offset + errorTextLength),
                                     SyntaxErrorCompiledFileSource.Default)
                                 ));
                         }
@@ -118,13 +122,15 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
                         {
                             int errorLine = int.Parse(errorMatch.Groups["line"].Value);
                             int errorColumn = int.Parse(errorMatch.Groups["column"].Value);
+                            string errorText = errorMatch.Groups["error"].Value.Trim();
+                            (int offset, int errorTextLength) = ExtrapolateErrorLength(errorText);
                             errorsBuilder.Add((
                                 errorMatch.Groups["path"].Value,
                                 new SyntaxError(
-                                    errorMatch.Groups["error"].Value,
+                                    errorText,
                                     null,
                                     errorLine,
-                                    new SingleLineTextRange(errorColumn, errorColumn + 1),
+                                    new SingleLineTextRange(errorColumn + offset, errorColumn + offset + errorTextLength),
                                     SyntaxErrorCompiledFileSource.Default)
                             ));
                         }
@@ -156,5 +162,19 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         {
             throw new Exception("Failed to start process");
         }
+    }
+
+    [GeneratedRegex("""
+                    Can't\sopen\sfile:\s(?<fileName>[a-zA-Z0-9\._]+)
+                    """, RegexOptions.Singleline)]
+    private static partial Regex CanNotOpenFileRegex();
+    internal static (int Offset, int Length) ExtrapolateErrorLength(string errorText)
+    {
+        Match m;
+        if ((m = CanNotOpenFileRegex().Match(errorText)).Success)
+        {
+            return (0, m.Groups["fileName"].Length);
+        }
+        return (0, 1);
     }
 }
