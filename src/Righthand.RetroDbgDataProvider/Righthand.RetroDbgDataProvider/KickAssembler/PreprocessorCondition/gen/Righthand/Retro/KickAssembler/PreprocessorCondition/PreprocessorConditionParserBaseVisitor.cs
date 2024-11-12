@@ -19,7 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
-namespace Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition {
+namespace Righthand.Retro.KickAssembler.PreprocessorCondition {
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using IToken = Antlr4.Runtime.IToken;
@@ -80,4 +80,4 @@ public partial class PreprocessorConditionParserBaseVisitor<Result> : AbstractPa
 	/// <return>The visitor result.</return>
 	public virtual Result VisitConditionSymbol([NotNull] PreprocessorConditionParser.ConditionSymbolContext context) { return VisitChildren(context); }
 }
-} // namespace Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition
+} // namespace Righthand.Retro.KickAssembler.PreprocessorCondition

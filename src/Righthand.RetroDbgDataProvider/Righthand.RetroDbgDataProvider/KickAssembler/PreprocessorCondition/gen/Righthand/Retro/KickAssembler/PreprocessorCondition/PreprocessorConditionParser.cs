@@ -19,7 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
-namespace Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition {
+namespace Righthand.Retro.KickAssembler.PreprocessorCondition {
 using System;
 using System.IO;
 using System.Text;
@@ -327,4 +327,4 @@ public partial class PreprocessorConditionParser : Parser {
 
 
 }
-} // namespace Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition
+} // namespace Righthand.Retro.KickAssembler.PreprocessorCondition

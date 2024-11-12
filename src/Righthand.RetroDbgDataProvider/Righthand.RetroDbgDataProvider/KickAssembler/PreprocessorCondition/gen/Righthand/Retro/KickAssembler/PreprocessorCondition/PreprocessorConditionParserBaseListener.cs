@@ -19,65 +19,91 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
-namespace Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition {
+namespace Righthand.Retro.KickAssembler.PreprocessorCondition {
+
 using Antlr4.Runtime.Misc;
-using IParseTreeListener = Antlr4.Runtime.Tree.IParseTreeListener;
+using IErrorNode = Antlr4.Runtime.Tree.IErrorNode;
+using ITerminalNode = Antlr4.Runtime.Tree.ITerminalNode;
 using IToken = Antlr4.Runtime.IToken;
+using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 
 /// <summary>
-/// This interface defines a complete listener for a parse tree produced by
-/// <see cref="PreprocessorConditionParser"/>.
+/// This class provides an empty implementation of <see cref="IPreprocessorConditionParserListener"/>,
+/// which can be extended to create a listener which only needs to handle a subset
+/// of the available methods.
 /// </summary>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.13.2")]
+[System.Diagnostics.DebuggerNonUserCode]
 [System.CLSCompliant(false)]
-public interface IPreprocessorConditionParserListener : IParseTreeListener {
+public partial class PreprocessorConditionParserBaseListener : IPreprocessorConditionParserListener {
 	/// <summary>
 	/// Enter a parse tree produced by the <c>ConditionBang</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterConditionBang([NotNull] PreprocessorConditionParser.ConditionBangContext context);
+	public virtual void EnterConditionBang([NotNull] PreprocessorConditionParser.ConditionBangContext context) { }
 	/// <summary>
 	/// Exit a parse tree produced by the <c>ConditionBang</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitConditionBang([NotNull] PreprocessorConditionParser.ConditionBangContext context);
+	public virtual void ExitConditionBang([NotNull] PreprocessorConditionParser.ConditionBangContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>ConditionParens</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterConditionParens([NotNull] PreprocessorConditionParser.ConditionParensContext context);
+	public virtual void EnterConditionParens([NotNull] PreprocessorConditionParser.ConditionParensContext context) { }
 	/// <summary>
 	/// Exit a parse tree produced by the <c>ConditionParens</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitConditionParens([NotNull] PreprocessorConditionParser.ConditionParensContext context);
+	public virtual void ExitConditionParens([NotNull] PreprocessorConditionParser.ConditionParensContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>ConditionOperation</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterConditionOperation([NotNull] PreprocessorConditionParser.ConditionOperationContext context);
+	public virtual void EnterConditionOperation([NotNull] PreprocessorConditionParser.ConditionOperationContext context) { }
 	/// <summary>
 	/// Exit a parse tree produced by the <c>ConditionOperation</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitConditionOperation([NotNull] PreprocessorConditionParser.ConditionOperationContext context);
+	public virtual void ExitConditionOperation([NotNull] PreprocessorConditionParser.ConditionOperationContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>ConditionSymbol</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterConditionSymbol([NotNull] PreprocessorConditionParser.ConditionSymbolContext context);
+	public virtual void EnterConditionSymbol([NotNull] PreprocessorConditionParser.ConditionSymbolContext context) { }
 	/// <summary>
 	/// Exit a parse tree produced by the <c>ConditionSymbol</c>
 	/// labeled alternative in <see cref="PreprocessorConditionParser.condition"/>.
+	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitConditionSymbol([NotNull] PreprocessorConditionParser.ConditionSymbolContext context);
+	public virtual void ExitConditionSymbol([NotNull] PreprocessorConditionParser.ConditionSymbolContext context) { }
+
+	/// <inheritdoc/>
+	/// <remarks>The default implementation does nothing.</remarks>
+	public virtual void EnterEveryRule([NotNull] ParserRuleContext context) { }
+	/// <inheritdoc/>
+	/// <remarks>The default implementation does nothing.</remarks>
+	public virtual void ExitEveryRule([NotNull] ParserRuleContext context) { }
+	/// <inheritdoc/>
+	/// <remarks>The default implementation does nothing.</remarks>
+	public virtual void VisitTerminal([NotNull] ITerminalNode node) { }
+	/// <inheritdoc/>
+	/// <remarks>The default implementation does nothing.</remarks>
+	public virtual void VisitErrorNode([NotNull] IErrorNode node) { }
 }
-} // namespace Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition
+} // namespace Righthand.Retro.KickAssembler.PreprocessorCondition
