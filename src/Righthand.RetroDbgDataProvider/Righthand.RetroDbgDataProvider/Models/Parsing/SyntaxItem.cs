@@ -11,7 +11,5 @@ public record SyntaxItem(int Start, int End, TokenType TokenType)
     /// Right offset for coloring.
     /// </summary>
     public int RightMargin { get; init; }
+    public int Length => End-Start+1;
 }
-
-public record FileReferenceSyntaxItem(int Start, int End, ReferencedFileInfo ReferencedFile)
-    : SyntaxItem(Start, End, TokenType.FileReference);
