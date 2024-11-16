@@ -767,6 +767,16 @@ REFERENCED_FILEPATH
     ->type(STRING),PopMode
     ;
     
+IM_DOUBLE_QUOTE
+    : DOUBLE_QUOTE
+    -> type(DOUBLE_QUOTE)
+    ;
+    
+IM_UNQUOTED_STRING
+    : UNQUOTED_STRING
+    -> type(UNQUOTED_STRING)
+    ;
+    
 IM_WS
     : WS
     -> channel(HIDDEN)

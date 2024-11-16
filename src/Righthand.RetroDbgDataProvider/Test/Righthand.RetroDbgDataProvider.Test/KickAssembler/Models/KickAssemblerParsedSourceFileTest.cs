@@ -9,11 +9,10 @@ using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Models.Program;
-using static Righthand.RetroDbgDataProvider.KickAssembler.Models.KickAssemblerParsedSourceFile;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Models;
 
-public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSourceFile>
+public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSourceFile>
 {
     readonly DateTimeOffset _lastModified = new DateTimeOffset(2020, 09, 09, 09, 01, 05, TimeSpan.Zero);
 
@@ -38,15 +37,31 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
         return (lexer, stream, parser, parserListener, lexerErrorListener, parserErrorListener);
     }
     
+    /// <summary>
+    /// Returns all channel tokens.
+    /// </summary>
+    /// <param name="code"></param>
+    /// <returns></returns>
+    public ImmutableArray<IToken> GetAllChannelTokens(string code)
+    {
+        var input = new AntlrInputStream(code);
+        var lexer = new KickAssemblerLexer(input);
+        var stream = new BufferedTokenStream(lexer);
+        stream.Fill();
+
+        return [..stream.GetTokens()];
+    }
+
+
     [TestFixture]
     public class GetIgnoredDefineContent : KickAssemblerParsedSourceFileTest
     {
-
         [Test]
         public void WhenEmptySource_ReturnsEmptyArray()
         {
             var input = GetParsed("");
-            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName",
+                FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -64,7 +79,8 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
                                     bla bla
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName",
+                FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -85,7 +101,8 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
                                     yada yada
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
+            var target = new KickAssemblerParsedSourceFile("fileName",
+                FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
@@ -110,28 +127,29 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
             var firstToken = Fixture.Create<IToken>();
             var secondToken = Fixture.Create<IToken>();
 
-            ImmutableArray<LexerBasedSyntaxResult> source =
+            ImmutableArray<KickAssemblerParsedSourceFile.LexerBasedSyntaxResult> source =
             [
-                new LexerBasedSyntaxResult(0, firstToken, new SyntaxItem(0, 0, TokenType.Number)),
-                new LexerBasedSyntaxResult(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, firstToken, new SyntaxItem(0, 0, TokenType.Number)),
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
             ];
 
             var actual =
                 KickAssemblerParsedSourceFile.UpdateLexerAnalysisWithParserAnalysis(source,
                     FrozenDictionary<IToken, ReferencedFileInfo>.Empty);
-            
+
             Assert.That(actual, Is.EquivalentTo(source));
         }
+
         [Test]
         public void WhenFileReferencesFromParserMatchesSecondToken_SyntaxItemIsReplaced()
         {
             var firstToken = Fixture.Create<IToken>();
             var secondToken = Fixture.Create<IToken>();
 
-            ImmutableArray<LexerBasedSyntaxResult> source =
+            ImmutableArray<KickAssemblerParsedSourceFile.LexerBasedSyntaxResult> source =
             [
-                new LexerBasedSyntaxResult(0, firstToken, new SyntaxItem(0, 0, TokenType.Number)),
-                new LexerBasedSyntaxResult(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, firstToken, new SyntaxItem(0, 0, TokenType.Number)),
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
             ];
 
             var fileReferences = new Dictionary<IToken, ReferencedFileInfo>
@@ -147,6 +165,165 @@ public class KickAssemblerParsedSourceFileTest: BaseTest<KickAssemblerParsedSour
             var item = (FileReferenceSyntaxItem)actual[1].Item;
             Assert.That(item, Is.Not.EqualTo(source[1].Item));
             Assert.That(item.ReferencedFile.RelativeFilePath, Is.EqualTo("file.asm"));
+        }
+    }
+
+    // [TestFixture]
+    // public class GetCompletionOption : KickAssemblerParsedSourceFileTest
+    // {
+    //     [Test]
+    //     public void WhenNoTokens_ReturnsNull()
+    //     {
+    //         var input = GetParsed("");
+    //         
+    //         var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
+    //             FrozenSet<string>.Empty, FrozenSet<string>.Empty,
+    //             _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
+    //             input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
+    //
+    //         var actual = target.GetCompletionOption(TextChangeTrigger.CompletionRequested, 0);
+    //         
+    //         Assert.That(actual, Is.Null);
+    //     }
+    //     [Test]
+    //     public void WhenRequestedAndOnlyDoubleQuote_ReturnsNull()
+    //     {
+    //         var input = GetParsed("\"");
+    //         
+    //         var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
+    //             FrozenSet<string>.Empty, FrozenSet<string>.Empty,
+    //             _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
+    //             input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
+    //
+    //         var actual = target.GetCompletionOption(TextChangeTrigger.CompletionRequested, 1);
+    //
+    //         Assert.That(actual, Is.Null);
+    //     }
+    //
+    //     [Test]
+    //     public void WhenImportAndOnlyDoubleQuote_ReturnsValidOption()
+    //     {
+    //         var input = GetParsed("#import \"");
+    //
+    //         var target = new KickAssemblerParsedSourceFile("fileName",
+    //             FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
+    //             FrozenSet<string>.Empty, FrozenSet<string>.Empty,
+    //             _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
+    //             input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
+    //
+    //         var actual = target.GetCompletionOption(TextChangeTrigger.CompletionRequested, 9);
+    //
+    //         Assert.That(actual.Value,
+    //             Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "", EndsWithDoubleQuote: false)));
+    //     }
+    // }
+
+    [TestFixture]
+    public class GetTokenIndexAtLocation : KickAssemblerParsedSourceFileTest
+    {
+        [Test]
+        public void WhenNoSourceCode_ReturnsZero()
+        {
+            var tokens = GetAllChannelTokens("");
+
+            var actual = KickAssemblerParsedSourceFile.GetTokenIndexAtLocation(tokens, 0);
+
+            Assert.That(actual, Is.Zero);
+        }
+
+        [Test]
+        public void WhenOffseIsLessThanZero_ReturnsNull()
+        {
+            var tokens = GetAllChannelTokens("");
+
+            var actual = KickAssemblerParsedSourceFile.GetTokenIndexAtLocation(tokens, -1);
+
+            Assert.That(actual, Is.Null);
+        }
+
+        [Test]
+        public void WhenOffsetIsOutOfBounds_ReturnsNull()
+        {
+            var tokens = GetAllChannelTokens("");
+
+            var actual = KickAssemblerParsedSourceFile.GetTokenIndexAtLocation(tokens, 99);
+
+            Assert.That(actual, Is.Null);
+        }
+
+        [TestCase(" ")]
+        [TestCase("\t")]
+        public void WhenHiddenChar_ReturnsOne(string input)
+        {
+            var tokens = GetAllChannelTokens(input);
+
+            var actual = KickAssemblerParsedSourceFile.GetTokenIndexAtLocation(tokens, 1);
+
+            Assert.That(actual, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void WhenWithinDefaultToken_ReturnsItsIndex()
+        {
+            var tokens = GetAllChannelTokens("#import \"file.asm\"");
+
+            var actual = KickAssemblerParsedSourceFile.GetTokenIndexAtLocation(tokens, 11 - 1);
+
+            Assert.That(actual, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void WhenRightAfterDoubleQuote_ReturnsIndexOfDoubleQuote()
+        {
+            var tokens = GetAllChannelTokens("#import \"");
+
+            var actual = KickAssemblerParsedSourceFile.GetTokenIndexAtLocation(tokens, 9 - 1);
+
+            Assert.That(actual, Is.EqualTo(2));
+        }
+    }
+
+    [TestFixture]
+    public class IsFileReferenceCompletionOption : KickAssemblerParsedSourceFileTest
+    {
+        [Test]
+        public void GivenSampleMatchWithinStringAndCompletionRequested_ReturnsCorrectCompletionOption()
+        {
+            var tokens = GetAllChannelTokens("#import \"tubo.\"");
+
+            var actual =  KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens, TextChangeTrigger.CompletionRequested, 2, 12 - 1);
+
+            Assert.That(actual,
+                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: true)));
+        }
+        [Test]
+        public void GivenSampleMatchWithinStringNotEndingWithDoubleQuoteAndCompletionRequested_ReturnsCorrectCompletionOption()
+        {
+            var tokens = GetAllChannelTokens("#import \"tubo.");
+
+            var actual =  KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens, TextChangeTrigger.CompletionRequested, 3, 12 - 1);
+
+            Assert.That(actual,
+                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: false)));
+        }
+        [Test]
+        public void GivenDoubleQuoteAndCharacterTyped_ReturnsCorrectCompletionOption()
+        {
+            var tokens = GetAllChannelTokens("#import \"");
+
+            var actual =  KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens, TextChangeTrigger.CharacterTyped, 2, 9 - 1);
+
+            Assert.That(actual,
+                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, string.Empty, EndsWithDoubleQuote: false)));
+        }
+        [Test]
+        public void GivenSampleMatchWhenNoImport_ReturnsNull()
+        {
+            var tokens = GetAllChannelTokens("#if \"tubo.\"");
+
+            var actual =  KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens, TextChangeTrigger.CompletionRequested, 2, 12 - 1);
+
+            Assert.That(actual, Is.Null);
         }
     }
 }

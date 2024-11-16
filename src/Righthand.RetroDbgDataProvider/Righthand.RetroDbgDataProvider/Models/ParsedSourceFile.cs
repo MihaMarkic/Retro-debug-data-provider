@@ -47,6 +47,19 @@ public abstract class ParsedSourceFile
     }
 
     /// <summary>
+    /// Checks if there are completion options available.
+    /// </summary>
+    /// <param name="trigger">Trigger type that invoked completion check</param>
+    /// <param name="offset">Offset from text start</param>
+    /// <returns>Returns possible completion options, null otherwise</returns>
+    public virtual CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int offset) => null;
+
+    /// <summary>
+    /// Gives option to prepare stuff for client.
+    /// </summary>
+    protected virtual void InitializeForSyntaxParsing()
+    { }
+    /// <summary>
     /// Returns syntax parsing related data necessary for editor.
     /// </summary>
     /// <param name="ct"></param>
@@ -78,11 +91,13 @@ public abstract class ParsedSourceFile
 
     private async Task<FileSyntaxInfo> InitForSyntaxInfoCoreAsync(CancellationToken ct)
     {
+        var initializeForSyntaxParsingTask = Task.Run(InitializeForSyntaxParsing, ct);
         var syntaxLinesTask = Task.Run(async () => await GetSyntaxLinesAsync(ct).ConfigureAwait(false), ct)
             .ConfigureAwait(false);
         var ignoredDefineContent = await Task.Run(() => GetIgnoredDefineContent(ct), ct).ConfigureAwait(false);
         var syntaxErrors = await Task.Run(() => GetSyntaxErrors(ct), ct).ConfigureAwait(false);
         var syntaxLines = await syntaxLinesTask;
+        await initializeForSyntaxParsingTask;
         return new FileSyntaxInfo(syntaxLines, ignoredDefineContent, syntaxErrors);
     }
 
