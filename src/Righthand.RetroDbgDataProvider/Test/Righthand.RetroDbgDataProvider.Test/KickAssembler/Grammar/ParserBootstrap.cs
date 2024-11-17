@@ -83,9 +83,13 @@ public class ErrorListener : BaseErrorListener
 
 public class LexerErrorListener : IAntlrErrorListener<int>
 {
+    public bool ThrowOnError { get; init; } = true;
     public void SyntaxError(TextWriter output, IRecognizer recognizer, int offendingSymbol, int line,
         int charPositionInLine, string msg, RecognitionException e)
     {
-        throw new Exception(msg, e);
+        if (ThrowOnError)
+        {
+            throw new Exception(msg, e);
+        }
     }
 }

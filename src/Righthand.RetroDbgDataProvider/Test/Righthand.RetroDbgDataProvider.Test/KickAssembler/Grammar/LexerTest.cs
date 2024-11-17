@@ -25,6 +25,18 @@ public class LexerTest
         var tokens = stream.GetTokens();
         return [..tokens.Where(t => t.Channel == 0)];
     }
+    ImmutableArray<IToken> GetAllTokens(string text, params string[] definitions)
+    {
+        var input = new AntlrInputStream(text);
+        var lexer = new KickAssemblerLexer(input)
+        {
+            DefinedSymbols = definitions.ToHashSet(),
+        };
+        var stream = new BufferedTokenStream(lexer);
+        stream.Fill();
+        var tokens = stream.GetTokens();
+        return [..tokens];
+    }
     KickAssemblerLexer GetLexer<TLexer>(string text, params string[] definitions)
         where TLexer: IAntlrErrorListener<int>
     {
@@ -476,6 +488,43 @@ public class LexerTest
                 KickAssemblerLexer.Eof
             );
 
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+
+        [Test]
+        public void WhenMissingLastDoubleQuote_FinishesImportModeAtEOL()
+        {
+            const string input = """
+                                 #import "
+                                 #if
+                                 """;
+            
+            var actual = GetAllTokens(input);
+            
+            var expected = GetTokenTypes(
+                HASHIMPORT, WS, DOUBLE_QUOTE, EOL,
+                HASHIF,
+                KickAssemblerLexer.Eof
+            );
+            
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenMissingLastDoubleQuoteAndNextLineIsHashImport_FinishesImportModeAtEOL()
+        {
+            const string input = """
+                                 #import "
+                                 #import "tubo.asm"
+                                 """;
+            
+            var actual = GetAllTokens(input);
+            
+            var expected = GetTokenTypes(
+                HASHIMPORT, WS, DOUBLE_QUOTE, EOL,
+                HASHIMPORT, WS, STRING,
+                KickAssemblerLexer.Eof
+            );
+            
             Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
         }
     }

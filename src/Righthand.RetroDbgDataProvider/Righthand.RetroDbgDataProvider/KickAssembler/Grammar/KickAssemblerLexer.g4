@@ -207,7 +207,7 @@ fragment DEC_DIGIT: [0-9] ;
 fragment HEX_DIGIT: [0-9a-fA-F] ;
 fragment BIN_DIGIT: '0' | '1';
 CHAR: '\'' . '\'' ;
-STRING:  '"' .*? '"' ;
+STRING:  '"' ~[\n\r]* '"' ;
 DOUBLE_QUOTE: '"';
 //SYMBOL: '.'? [a-zA-Z0-9_]+ ;
 SINGLE_LINE_COMMENT : '//' .*? EOL  -> channel(COMMENTS_CHANNEL);
@@ -779,7 +779,12 @@ IM_UNQUOTED_STRING
     
 IM_WS
     : WS
-    -> channel(HIDDEN)
+    -> type(WS),channel(HIDDEN)
+    ;
+    
+IM_EOL
+    : EOL
+    ->type(EOL),channel(COMMENTS_CHANNEL),PopMode
     ;
     
 mode IMPORTIF_MODE;

@@ -12,7 +12,6 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
 {
     public KickAssemblerLexer Lexer { get; init; }
     public CommonTokenStream CommonTokenStream { get; init; }
-    public ImmutableArray<IToken> AllTokens { get; private set; }
     public KickAssemblerParser Parser { get; init; }
     public KickAssemblerParserListener ParserListener { get; init; }
     public KickAssemblerLexerErrorListener LexerErrorListener { get; init; }
@@ -44,29 +43,26 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         ParserErrorListener = parserErrorListener;
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;
-        AllTokens = ImmutableArray<IToken>.Empty;
     }
+    public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column) =>
+        GetCompletionOption(AllTokensByLineMap, trigger, line, column);
 
-    public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int offset) => GetCompletionOption(AllTokens, trigger, offset);
-
-    internal static CompletionOption? GetCompletionOption(ImmutableArray<IToken> allTokens, TextChangeTrigger trigger, int offset)
+    internal static CompletionOption? GetCompletionOption(
+        FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int line,
+        int column)
     {
         CompletionOption? result = null;
-        if (offset > 0)
+        var tokenIndex = GetTokenIndexAtLocation(allTokensByLineMap, line, column-1);
+        if (tokenIndex is not null)
         {
-            var tokens = allTokens;
-            var tokenIndex = GetTokenIndexAtLocation(tokens, offset - 1);
-            if (tokenIndex is not null)
-            {
-                result = IsFileReferenceCompletionOption(tokens, trigger, tokenIndex.Value, offset);
-            }
+            result = IsFileReferenceCompletionOption(allTokensByLineMap[line], trigger, tokenIndex.Value, column);
         }
 
         return result;
     }
 
     internal static CompletionOption? IsFileReferenceCompletionOption(
-        ImmutableArray<IToken> tokens, TextChangeTrigger trigger, int tokenIndex, int offset)
+        ImmutableArray<IToken> tokens, TextChangeTrigger trigger, int tokenIndex, int column)
     {
         int doubleQuoteTokenIndex;
         var token = tokens[tokenIndex];
@@ -112,8 +108,8 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                 string root = token.Type switch
                 {
                     KickAssemblerLexer.DOUBLE_QUOTE => string.Empty,
-                    KickAssemblerLexer.STRING => token.Text.Substring(1, offset - token.StartIndex - 1),
-                    KickAssemblerLexer.UNQUOTED_STRING => token.Text.Substring(0, offset - token.StartIndex),
+                    KickAssemblerLexer.STRING => token.Text.Substring(1, column - token.Column - 1),
+                    KickAssemblerLexer.UNQUOTED_STRING => token.Text.Substring(0, column - token.Column),
                     _ => string.Empty,
                 };
                 return new CompletionOption(CompletionOptionType.FileReference, root, token.Type == KickAssemblerLexer.STRING);
@@ -149,33 +145,71 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     }
 
     /// <summary>
-    /// Creates an array of <see cref="IToken"/> for tokens from all channels.
+    /// Creates an array of <see cref="IToken"/> and map by 0 based line index with tokens from all channels.
     /// </summary>
-    protected override void InitializeForSyntaxParsing()
+    protected override (ImmutableArray<IToken> AllTokens, FrozenDictionary<int, ImmutableArray<IToken>>
+        AllTokensByLineMap) GetAllTokens()
     {
+        Lexer.Reset();
         var stream = new BufferedTokenStream(Lexer);
         stream.Fill();
-        AllTokens = [..stream.GetTokens()];
+        ImmutableArray<IToken> allTokens = [..stream.GetTokens()];
+        var allTokensByLineMap = allTokens
+            .GroupBy(t => t.Line - 1)
+            .ToFrozenDictionary(g => g.Key, g => g.OrderBy(t => t.Column).ToImmutableArray());
+        return (allTokens, allTokensByLineMap);
     }
 
+    // /// <summary>
+    // /// Returns token at location defined by <param name="offset"/> or null.
+    // /// </summary>
+    // /// <param name="tokens">A collection of <see cref="IToken"/></param>
+    // /// <param name="offset">Offset from the start</param>
+    // /// <returns>A <see cref="IToken"/> at that location or null otherwise.</returns>
+    // internal static int? GetTokenIndexAtLocation(ImmutableArray<IToken> tokens, int offset)
+    // {
+    //     if (offset < 0)
+    //     {
+    //         return null;
+    //     }
+    //
+    //     for (int i = 0; i < tokens.Length; i++)
+    //     {
+    //         var token = tokens[i];
+    //         // EOF has -1, thus check start index+1
+    //         int stopIndex = token.Type != KickAssemblerLexer.Eof ? token.StopIndex : token.StartIndex + 1;
+    //         if (token.StartIndex <= offset && stopIndex >= offset)
+    //         {
+    //             return i;
+    //         }
+    //     }
+    //
+    //     return null;
+    // }
     /// <summary>
-    /// Returns token at that location or null.
+    /// Returns token at location defined by <param name="line"/> and <param name="column"/>.
     /// </summary>
-    /// <param name="tokens">A collection of <see cref="IToken"/></param>
-    /// <param name="offset">Offset from the start</param>
-    /// <returns>A <see cref="IToken"/> at that location or null otherwise.</returns>
-    internal static int? GetTokenIndexAtLocation(ImmutableArray<IToken> tokens, int offset)
+    /// <param name="tokensMap">0 based line map of tokens</param>
+    /// <param name="line">0 based line index</param>
+    /// <param name="column">0 based column index</param>
+    /// <returns></returns>
+    internal static int? GetTokenIndexAtLocation(FrozenDictionary<int, ImmutableArray<IToken>> tokensMap, int line, int column)
     {
-        if (offset < 0)
+        if (line < 0 || column < 0 || !tokensMap.TryGetValue(line, out ImmutableArray<IToken> tokensAtLine))
         {
             return null;
         }
-        for (int i=0; i<tokens.Length; i++)
+
+        for (int i = 0; i < tokensAtLine.Length; i++)
         {
-            var token = tokens[i];
+            var token = tokensAtLine[i];
+            if (token.Column > column)
+            {
+                break;
+            }
             // EOF has -1, thus check start index+1
-            int stopIndex = token.Type != KickAssemblerLexer.Eof ? token.StopIndex : token.StartIndex + 1;
-            if (token.StartIndex <= offset && stopIndex >= offset)
+            int stopColumn = token.Type != KickAssemblerLexer.Eof ? token.Column + token.Length() : token.Column + 1;
+            if (token.Column <= column && stopColumn > column)
             {
                 return i;
             }
