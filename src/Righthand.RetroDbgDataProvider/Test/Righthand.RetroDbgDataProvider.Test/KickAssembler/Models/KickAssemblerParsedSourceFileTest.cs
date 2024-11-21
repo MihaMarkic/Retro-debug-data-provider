@@ -332,6 +332,39 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                     EndsWithDoubleQuote: false)));
         }
 
+        private (int ZeroBasedColumnIndex, int TokenIndex, ImmutableArray<IToken> Tokens) GetColumnAndTokenIndex(string input)
+        {
+            int zeroBasedColumn = input.IndexOf('|')-1;
+
+            var tokens = GetAllChannelTokens(input.Replace("|", ""));
+            var token = tokens.FirstOrDefault(t => t.StartIndex <= zeroBasedColumn && t.StopIndex >= zeroBasedColumn) ??
+                        tokens[^1];
+            var tokenIndex = tokens.IndexOf(token);
+            return (zeroBasedColumn, tokenIndex, tokens);
+        }
+
+        /// <summary>
+        /// | signifies the caret position.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [TestCase("#import \"|", ExpectedResult = true)]
+        [TestCase("  #import \"|", ExpectedResult = true)]
+        [TestCase("#import |\"", ExpectedResult = false)]
+        [TestCase("#importonce \"|", ExpectedResult = true)]
+        [TestCase("  #importonce \"|", ExpectedResult = true)]
+        [TestCase("#importonce |\"", ExpectedResult = false)]
+        public bool CharacaterTypedCases(string input)
+        {
+            var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
+
+            var actual =
+                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens, TextChangeTrigger.CharacterTyped,
+                    tokenIndex, zeroBasedColumn);
+
+            return actual?.Type == CompletionOptionType.FileReference;
+        }
+
         [Test]
         public void GivenSampleMatchWhenNoImport_ReturnsNull()
         {

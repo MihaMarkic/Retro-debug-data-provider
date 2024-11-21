@@ -145,6 +145,32 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     }
 
     /// <summary>
+    /// Returns first token in line defined with to <param name="tokenIndex"> on default channel.</param> 
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <param name="tokenIndex"></param>
+    /// <param name="channel"></param>
+    /// <returns></returns>
+    internal static int? GetFirstDefaultTokenInLine(ImmutableArray<IToken> tokens, int tokenIndex, int channel = 0)
+    {
+        int? lastChannelToken = null;
+        if (tokenIndex > 0)
+        {
+            int currentIndex = tokenIndex - 1;
+            while (currentIndex >= 0 && tokens[currentIndex].Type != KickAssemblerLexer.EOL)
+            {
+                if (false)
+                {
+                    
+                }
+            }
+        }
+
+        return lastChannelToken;
+
+    }
+
+    /// <summary>
     /// Creates an array of <see cref="IToken"/> and map by 0 based line index with tokens from all channels.
     /// </summary>
     protected override (ImmutableArray<IToken> AllTokens, FrozenDictionary<int, ImmutableArray<IToken>>

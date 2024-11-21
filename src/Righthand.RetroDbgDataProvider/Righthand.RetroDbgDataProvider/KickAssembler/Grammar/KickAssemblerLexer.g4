@@ -48,10 +48,11 @@ HASHIMPORT
     -> PushMode(IMPORT_MODE)
     ;
 HASHIMPORTONCE
-    : HASH 'importonce' (WS | EOL | EOF)
+    : HASH 'importonce'
     {
         IsImportOnce = true;
     }
+    -> PushMode(IMPORT_MODE)
     ;
 HASHIMPORTIF
     : HASH 'importif'
