@@ -101,8 +101,11 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         {
             var previousTokenType = tokens[previousTokenIndex.Value].Type;
             bool isMatch =
-                previousTokenType is KickAssemblerLexer.HASHIMPORT or KickAssemblerLexer.HASHIMPORTIF
-                    or KickAssemblerLexer.HASHIMPORTONCE;
+                previousTokenType is KickAssemblerLexer.HASHIMPORT or KickAssemblerLexer.HASHIMPORTIF;
+            if (!isMatch)
+            {
+                isMatch = IsImportIfCommand(tokens, previousTokenIndex.Value);
+            }
             if (isMatch)
             {
                 string root = token.Type switch
@@ -147,27 +150,34 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <summary>
     /// Returns first token in line defined with to <param name="tokenIndex"> on default channel.</param> 
     /// </summary>
-    /// <param name="tokens"></param>
-    /// <param name="tokenIndex"></param>
-    /// <param name="channel"></param>
+    /// <param name="tokens">Tokens from all channels</param>
+    /// <param name="tokenIndex">First token to check</param>
     /// <returns></returns>
-    internal static int? GetFirstDefaultTokenInLine(ImmutableArray<IToken> tokens, int tokenIndex, int channel = 0)
+    internal static bool IsImportIfCommand(ImmutableArray<IToken> tokens, int tokenIndex)
     {
-        int? lastChannelToken = null;
         if (tokenIndex > 0)
         {
-            int currentIndex = tokenIndex - 1;
+            int currentIndex = tokenIndex;
             while (currentIndex >= 0 && tokens[currentIndex].Type != KickAssemblerLexer.EOL)
             {
-                if (false)
+                var token = tokens[currentIndex];
+                if (token.Channel == 0)
                 {
-                    
+                    switch (token.Type)
+                    {
+                        case KickAssemblerLexer.DOUBLE_QUOTE:
+                        case KickAssemblerLexer.STRING:
+                            return false;
+                        case KickAssemblerLexer.HASHIMPORTIF:
+                            return true;
+                    }
                 }
+
+                currentIndex--;
             }
         }
 
-        return lastChannelToken;
-
+        return false;
     }
 
     /// <summary>

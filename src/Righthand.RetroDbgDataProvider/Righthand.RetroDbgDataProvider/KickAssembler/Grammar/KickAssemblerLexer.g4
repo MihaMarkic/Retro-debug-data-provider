@@ -808,7 +808,7 @@ IIF_CONDITION
 
 IIF_WS
     : WS
-    -> channel(HIDDEN)
+    -> type(WS),channel(HIDDEN)
     ;
     
 mode IMPORTIF_DEFINED_MODE;

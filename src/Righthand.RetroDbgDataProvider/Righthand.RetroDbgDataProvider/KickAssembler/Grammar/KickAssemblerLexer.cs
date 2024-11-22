@@ -7,7 +7,7 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler;
 
 partial class KickAssemblerLexer
 {
-    public HashSet<string> DefinedSymbols { get; init; } = new();
+    public HashSet<string> DefinedSymbols { get; init; } = new();   
     private int? ModeOnDefaultEol { get; set; }
     public bool IsImportOnce { get; private set; }
     public List<ReferencedFileInfo> ReferencedFiles { get; } = new();

@@ -351,10 +351,12 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase("#import \"|", ExpectedResult = true)]
         [TestCase("  #import \"|", ExpectedResult = true)]
         [TestCase("#import |\"", ExpectedResult = false)]
-        [TestCase("#importonce \"|", ExpectedResult = true)]
-        [TestCase("  #importonce \"|", ExpectedResult = true)]
-        [TestCase("#importonce |\"", ExpectedResult = false)]
-        public bool CharacaterTypedCases(string input)
+        [TestCase("#import x \"|", ExpectedResult = false)]
+        [TestCase("#importif \"|", ExpectedResult = true)]
+        [TestCase("  #importif \"|", ExpectedResult = true)]
+        [TestCase("#importif |\"", ExpectedResult = false)]
+        [TestCase("#importif x \"|", ExpectedResult = true)]
+        public bool CharacterTypedCases(string input)
         {
             var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
 
@@ -375,6 +377,24 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                     TextChangeTrigger.CompletionRequested, 2, 12 - 1);
 
             Assert.That(actual, Is.Null);
+        }
+    }
+
+    [TestFixture]
+    public class IsImportIfCommand : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase("#importif ", ExpectedResult = true)]
+        [TestCase(" #importif ", ExpectedResult = true)]
+        [TestCase("\t#importif ", ExpectedResult = true)]
+        [TestCase("#importif dsfsd dfds > ", ExpectedResult = true)]
+        [TestCase("#importif dsfsd \" dfds > ", ExpectedResult = false)]
+        [TestCase("#importif \"", ExpectedResult = false)]
+        [TestCase("  #importif \"", ExpectedResult = false)]
+        public bool GivenSample_ReturnsCorrectValue(string input)
+        {
+            var tokens = GetAllChannelTokens(input);
+
+            return KickAssemblerParsedSourceFile.IsImportIfCommand(tokens, tokens.Length-1);
         }
     }
 }

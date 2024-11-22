@@ -142,7 +142,7 @@ public partial class KickAssemblerParser : Parser {
 		TSB_ZP_CONST=494, TSX_CONST=495, TXA_CONST=496, TXS_CONST=497, TYA_CONST=498, 
 		WAI_CONST=499, XAA_IMM_CONST=500, UNQUOTED_STRING=501, DEFINED_TOKEN=502, 
 		HD_WS=503, UNDEFINED_TOKEN=504, HU_WS=505, IF_CONDITION=506, I_INTENTIONALLY_IGNORED=507, 
-		IA_INTENTIONALLY_IGNORED=508, IIF_CONDITION=509, IIF_WS=510;
+		IA_INTENTIONALLY_IGNORED=508, IIF_CONDITION=509;
 	public const int
 		RULE_program = 0, RULE_units = 1, RULE_unit = 2, RULE_label = 3, RULE_instruction = 4, 
 		RULE_scope = 5, RULE_argumentList = 6, RULE_argument = 7, RULE_labelOffsetReference = 8, 
@@ -365,7 +365,7 @@ public partial class KickAssemblerParser : Parser {
 		"TSB_ABS_CONST", "TSB_ZP_CONST", "TSX_CONST", "TXA_CONST", "TXS_CONST", 
 		"TYA_CONST", "WAI_CONST", "XAA_IMM_CONST", "UNQUOTED_STRING", "DEFINED_TOKEN", 
 		"HD_WS", "UNDEFINED_TOKEN", "HU_WS", "IF_CONDITION", "I_INTENTIONALLY_IGNORED", 
-		"IA_INTENTIONALLY_IGNORED", "IIF_CONDITION", "IIF_WS"
+		"IA_INTENTIONALLY_IGNORED", "IIF_CONDITION"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -8176,7 +8176,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,510,897,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		4,1,509,897,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
 		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
