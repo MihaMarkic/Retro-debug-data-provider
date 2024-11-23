@@ -44,6 +44,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;
     }
+
     public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column) =>
         GetCompletionOption(AllTokensByLineMap, trigger, line, column);
 
@@ -52,17 +53,17 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         int column)
     {
         CompletionOption? result = null;
-        var tokenIndex = GetTokenIndexAtLocation(allTokensByLineMap, line, column-1);
+        var tokenIndex = GetTokenIndexAtLocation(allTokensByLineMap, line, column - 1);
         if (tokenIndex is not null)
         {
-            result = IsFileReferenceCompletionOption(allTokensByLineMap[line], trigger, tokenIndex.Value, column);
+            result = IsFileReferenceCompletionOption(allTokensByLineMap[line].AsSpan(), trigger, tokenIndex.Value, column);
         }
 
         return result;
     }
 
     internal static CompletionOption? IsFileReferenceCompletionOption(
-        ImmutableArray<IToken> tokens, TextChangeTrigger trigger, int tokenIndex, int column)
+        ReadOnlySpan<IToken> tokens, TextChangeTrigger trigger, int tokenIndex, int column)
     {
         int doubleQuoteTokenIndex;
         var token = tokens[tokenIndex];
@@ -77,7 +78,8 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                 doubleQuoteTokenIndex = tokenIndex;
                 break;
             case TextChangeTrigger.CompletionRequested:
-                if (token.Type is not (KickAssemblerLexer.STRING or KickAssemblerLexer.UNQUOTED_STRING or KickAssemblerLexer.DOUBLE_QUOTE))
+                if (token.Type is not (KickAssemblerLexer.STRING or KickAssemblerLexer.UNQUOTED_STRING
+                    or KickAssemblerLexer.DOUBLE_QUOTE))
                 {
                     return null;
                 }
@@ -91,6 +93,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                     // optimistically assume previous token is "
                     doubleQuoteTokenIndex = tokenIndex - 1;
                 }
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(trigger));
@@ -106,16 +109,19 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
             {
                 isMatch = IsImportIfCommand(tokens, previousTokenIndex.Value);
             }
+
             if (isMatch)
             {
                 string root = token.Type switch
                 {
                     KickAssemblerLexer.DOUBLE_QUOTE => string.Empty,
                     KickAssemblerLexer.STRING => token.Text.Substring(1, column - token.Column - 1),
-                    KickAssemblerLexer.UNQUOTED_STRING => token.Text.Substring(0, column - token.Column),
+                    KickAssemblerLexer.UNQUOTED_STRING => token.Text[..(column - token.Column)],
                     _ => string.Empty,
                 };
-                return new CompletionOption(CompletionOptionType.FileReference, root, token.Type == KickAssemblerLexer.STRING);
+                var (replaceableLength, endsWithDoubleQuote) = GetReplaceableTextLength(tokens[doubleQuoteTokenIndex..]);
+                return new CompletionOption(CompletionOptionType.FileReference, root,
+                    endsWithDoubleQuote, replaceableLength);
             }
         }
 
@@ -123,13 +129,47 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     }
 
     /// <summary>
+    /// Gets total length to replace and whether text ends with a double quote when intellisense choice is used.
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <returns></returns>
+    /// <remarks>First token might be DOUBLE_QUOTE or STRING</remarks>
+    internal static (int Length, bool EndsWithDoubleQuote) GetReplaceableTextLength(ReadOnlySpan<IToken> tokens)
+    {
+        var firstToken = tokens[0];
+        if (firstToken.Type == KickAssemblerLexer.STRING)
+        {
+            return (firstToken.Length() - 2, true);
+        }
+        int start = firstToken.Column;
+        int current = 1;
+        while (current < tokens.Length)
+        {
+            var token = tokens[current];
+            switch (token.Type)
+            {
+                case KickAssemblerLexer.DOUBLE_QUOTE:
+                    return (token.Column + token.Length() - start, true);
+                case KickAssemblerLexer.EOL:
+                case KickAssemblerLexer.Eof:
+                    return (token.Column - start - 1, false);
+                default:
+                    current++;
+                    break;
+            }
+        }
+
+        return (firstToken.Length(), false);
+    }
+
+/// <summary>
     /// Returns previous token to <param name="tokenIndex"> on default channel.</param>
     /// </summary>
     /// <param name="tokens"></param>
     /// <param name="tokenIndex"></param>
     /// <param name="channel">Channel to take token from</param>
     /// <returns></returns>
-    internal static int? GetPreviousDefaultChannelTokenIndex(ImmutableArray<IToken> tokens, int tokenIndex, int channel = 0)
+    internal static int? GetPreviousDefaultChannelTokenIndex(ReadOnlySpan<IToken> tokens, int tokenIndex, int channel = 0)
     {
         if (tokenIndex > 1 && tokenIndex <= tokens.Length)
         {
@@ -148,12 +188,12 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
     }
 
     /// <summary>
-    /// Returns first token in line defined with to <param name="tokenIndex"> on default channel.</param> 
+    /// Returns whether tokens are suitable for #importif command suggestion.
     /// </summary>
     /// <param name="tokens">Tokens from all channels</param>
     /// <param name="tokenIndex">First token to check</param>
     /// <returns></returns>
-    internal static bool IsImportIfCommand(ImmutableArray<IToken> tokens, int tokenIndex)
+    internal static bool IsImportIfCommand(ReadOnlySpan<IToken> tokens, int tokenIndex)
     {
         if (tokenIndex > 0)
         {

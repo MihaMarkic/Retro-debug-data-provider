@@ -11,4 +11,4 @@ public enum TextChangeTrigger
     CompletionRequested,
 }
 
-public record struct  CompletionOption(CompletionOptionType Type, string Root, bool EndsWithDoubleQuote);
+public record struct CompletionOption(CompletionOptionType Type, string Root, bool EndsWithDoubleQuote, int ReplacementLength);

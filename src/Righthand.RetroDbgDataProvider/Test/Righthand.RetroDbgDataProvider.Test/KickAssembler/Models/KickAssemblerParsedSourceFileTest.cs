@@ -297,11 +297,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var tokens = GetAllChannelTokens("#import \"tubo.\"");
 
             var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens,
+                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
                     TextChangeTrigger.CompletionRequested, 2, 12 - 1);
 
             Assert.That(actual,
-                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: true)));
+                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: true, 5)));
         }
 
         [Test]
@@ -311,11 +311,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var tokens = GetAllChannelTokens("#import \"tubo.");
 
             var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens,
+                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
                     TextChangeTrigger.CompletionRequested, 3, 12 - 1);
 
             Assert.That(actual,
-                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: false)));
+                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: false, 5)));
         }
 
         [Test]
@@ -324,12 +324,12 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var tokens = GetAllChannelTokens("#import \"");
 
             var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens, TextChangeTrigger.CharacterTyped,
+                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(), TextChangeTrigger.CharacterTyped,
                     2, 9 - 1);
 
             Assert.That(actual,
                 Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, string.Empty,
-                    EndsWithDoubleQuote: false)));
+                    EndsWithDoubleQuote: false, 0)));
         }
 
         private (int ZeroBasedColumnIndex, int TokenIndex, ImmutableArray<IToken> Tokens) GetColumnAndTokenIndex(string input)
@@ -361,7 +361,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
 
             var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens, TextChangeTrigger.CharacterTyped,
+                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(), TextChangeTrigger.CharacterTyped,
                     tokenIndex, zeroBasedColumn);
 
             return actual?.Type == CompletionOptionType.FileReference;
@@ -373,7 +373,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var tokens = GetAllChannelTokens("#if \"tubo.\"");
 
             var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens,
+                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
                     TextChangeTrigger.CompletionRequested, 2, 12 - 1);
 
             Assert.That(actual, Is.Null);
@@ -394,7 +394,32 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         {
             var tokens = GetAllChannelTokens(input);
 
-            return KickAssemblerParsedSourceFile.IsImportIfCommand(tokens, tokens.Length-1);
+            return KickAssemblerParsedSourceFile.IsImportIfCommand(tokens.AsSpan(), tokens.Length-1);
+        }
+    }
+
+    [TestFixture]
+    public class GetReplaceableTextLength : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase("#import \"tubo.\"", 2, ExpectedResult = 5)]
+        [TestCase("#import \"tubo.", 3, ExpectedResult = 5)]
+        public int GivenSample_ReturnsCorrectLength(string input, int startTokenIndex)
+        {
+            var tokens = GetAllChannelTokens(input);
+            
+            var actual = KickAssemblerParsedSourceFile.GetReplaceableTextLength(tokens.AsSpan()[startTokenIndex..]);
+
+            return actual.Length;
+        }
+        [TestCase("#import \"tubo.\"", 2, ExpectedResult = true)]
+        [TestCase("#import \"tubo.", 3, ExpectedResult = false)]
+        public bool GivenSample_ReturnsCorrectEndWithQuotes(string input, int startTokenIndex)
+        {
+            var tokens = GetAllChannelTokens(input);
+            
+            var actual = KickAssemblerParsedSourceFile.GetReplaceableTextLength(tokens.AsSpan()[startTokenIndex..]);
+
+            return actual.EndsWithDoubleQuote;
         }
     }
 }
