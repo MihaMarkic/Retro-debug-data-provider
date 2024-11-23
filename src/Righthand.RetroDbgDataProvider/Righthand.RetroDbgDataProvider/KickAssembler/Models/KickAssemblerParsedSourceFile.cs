@@ -170,7 +170,6 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                 case KickAssemblerLexer.DOUBLE_QUOTE:
                     return (token.Column + token.Length() - start, true);
                 case KickAssemblerLexer.EOL:
-                    return (token.Column - start - 1, false);
                 case KickAssemblerLexer.Eof:
                     return (token.Column - start, false);
                 default:

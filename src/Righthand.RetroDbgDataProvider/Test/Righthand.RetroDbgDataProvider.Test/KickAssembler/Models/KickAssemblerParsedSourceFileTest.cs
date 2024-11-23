@@ -410,6 +410,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                   lda 5
                   """, 
             3, ExpectedResult = 0)]
+        [TestCase("""
+                  #import "one_main.asm
+                  lda 5
+                  """, 
+            3, ExpectedResult = 12)]
         public int GivenSample_ReturnsCorrectLength(string input, int startTokenIndex)
         {
             var tokens = GetAllChannelTokens(input);
