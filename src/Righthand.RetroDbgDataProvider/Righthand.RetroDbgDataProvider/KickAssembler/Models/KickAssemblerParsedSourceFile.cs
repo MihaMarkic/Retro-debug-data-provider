@@ -66,15 +66,22 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         ReadOnlySpan<IToken> tokens, TextChangeTrigger trigger, int tokenIndex, int column)
     {
         int doubleQuoteTokenIndex;
+        int firstRootTextTokenIndex;
         var token = tokens[tokenIndex];
         switch (trigger)
         {
             case TextChangeTrigger.CharacterTyped:
-                if (token.Type != KickAssemblerLexer.DOUBLE_QUOTE)
+                switch (token.Type)
                 {
-                    return null;
+                    case KickAssemblerLexer.DOUBLE_QUOTE:
+                        firstRootTextTokenIndex = tokenIndex + 1;
+                        break;
+                    case KickAssemblerLexer.STRING:
+                        firstRootTextTokenIndex = tokenIndex;
+                        break;
+                    default:
+                        return null;
                 }
-
                 doubleQuoteTokenIndex = tokenIndex;
                 break;
             case TextChangeTrigger.CompletionRequested:
@@ -86,10 +93,17 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
 
                 if (token.Type is KickAssemblerLexer.DOUBLE_QUOTE or KickAssemblerLexer.STRING)
                 {
+                    firstRootTextTokenIndex = token.Type switch
+                    {
+                        KickAssemblerLexer.DOUBLE_QUOTE => tokenIndex + 1,
+                        KickAssemblerLexer.STRING => tokenIndex,
+                        _ => throw new NotImplementedException(),
+                    };
                     doubleQuoteTokenIndex = tokenIndex;
                 }
                 else
                 {
+                    firstRootTextTokenIndex = tokenIndex;
                     // optimistically assume previous token is "
                     doubleQuoteTokenIndex = tokenIndex - 1;
                 }
@@ -115,11 +129,12 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                 string root = token.Type switch
                 {
                     KickAssemblerLexer.DOUBLE_QUOTE => string.Empty,
-                    KickAssemblerLexer.STRING => token.Text.Substring(1, column - token.Column - 1),
+                    KickAssemblerLexer.STRING => token.Text.Substring(1, Math.Max(0, column - token.Column - 1)),
                     KickAssemblerLexer.UNQUOTED_STRING => token.Text[..(column - token.Column)],
                     _ => string.Empty,
                 };
-                var (replaceableLength, endsWithDoubleQuote) = GetReplaceableTextLength(tokens[doubleQuoteTokenIndex..]);
+                var (replaceableLength, endsWithDoubleQuote) =
+                    GetReplaceableTextLength(tokens[firstRootTextTokenIndex..]);
                 return new CompletionOption(CompletionOptionType.FileReference, root,
                     endsWithDoubleQuote, replaceableLength);
             }
@@ -141,6 +156,10 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         {
             return (firstToken.Length() - 2, true);
         }
+        else if (firstToken.Type is KickAssemblerLexer.EOL or KickAssemblerLexer.Eof)
+        {
+            return (0, false);
+        }
         int start = firstToken.Column;
         int current = 1;
         while (current < tokens.Length)
@@ -151,8 +170,9 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                 case KickAssemblerLexer.DOUBLE_QUOTE:
                     return (token.Column + token.Length() - start, true);
                 case KickAssemblerLexer.EOL:
-                case KickAssemblerLexer.Eof:
                     return (token.Column - start - 1, false);
+                case KickAssemblerLexer.Eof:
+                    return (token.Column - start, false);
                 default:
                     current++;
                     break;

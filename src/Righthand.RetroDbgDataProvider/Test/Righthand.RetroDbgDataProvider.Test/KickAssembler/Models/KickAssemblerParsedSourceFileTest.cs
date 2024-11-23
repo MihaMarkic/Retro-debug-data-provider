@@ -298,7 +298,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             var actual =
                 KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
-                    TextChangeTrigger.CompletionRequested, 2, 12 - 1);
+                    TextChangeTrigger.CompletionRequested, 2, 11);
 
             Assert.That(actual,
                 Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: true, 5)));
@@ -312,7 +312,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             var actual =
                 KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
-                    TextChangeTrigger.CompletionRequested, 3, 12 - 1);
+                    TextChangeTrigger.CompletionRequested, 3, 11);
 
             Assert.That(actual,
                 Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: false, 5)));
@@ -356,6 +356,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase("  #importif \"|", ExpectedResult = true)]
         [TestCase("#importif |\"", ExpectedResult = false)]
         [TestCase("#importif x \"|", ExpectedResult = true)]
+        [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
         public bool CharacterTypedCases(string input)
         {
             var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
@@ -403,6 +404,12 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
     {
         [TestCase("#import \"tubo.\"", 2, ExpectedResult = 5)]
         [TestCase("#import \"tubo.", 3, ExpectedResult = 5)]
+        [TestCase("#import \"", 3, ExpectedResult = 0)]
+        [TestCase("""
+                  #import "
+                  lda 5
+                  """, 
+            3, ExpectedResult = 0)]
         public int GivenSample_ReturnsCorrectLength(string input, int startTokenIndex)
         {
             var tokens = GetAllChannelTokens(input);
