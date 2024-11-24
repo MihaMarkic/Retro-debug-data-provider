@@ -15,7 +15,7 @@ partial class KickAssemblerLexer
 
     public override void PushMode(int m)
     {
-        Debug.WriteLine($"Push mode {modeNames[m]}");
+        //Debug.WriteLine($"Push mode {modeNames[m]}");
         base.PushMode(m);
     }
     private void AddReferencedFileInfo(int tokenStartLine, int tokenStartColumn, string text)
@@ -28,7 +28,7 @@ partial class KickAssemblerLexer
     public override int PopMode()
     {
         int oldMode = base.PopMode();
-        Debug.WriteLine($"Push mode {modeNames[oldMode]}");
+        //Debug.WriteLine($"Push mode {modeNames[oldMode]}");
         return oldMode;
     }
 }

@@ -45,144 +45,172 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         ReferencedFilesMap = referencedFilesMap;
     }
 
-    public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column) =>
-        GetCompletionOption(AllTokensByLineMap, trigger, line, column);
+    /// <inheritdoc />
+    public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column,
+        ReadOnlySpan<char> text) =>
+        GetCompletionOption(AllTokensByLineMap, trigger, line, column, text);
 
     internal static CompletionOption? GetCompletionOption(
         FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int line,
-        int column)
+        int column, ReadOnlySpan<char> text)
     {
-        CompletionOption? result = null;
-        var tokenIndex = GetTokenIndexAtLocation(allTokensByLineMap, line, column - 1);
-        if (tokenIndex is not null)
+        if (!allTokensByLineMap.TryGetValue(line, out var tokensAtLine))
         {
-            result = IsFileReferenceCompletionOption(allTokensByLineMap[line].AsSpan(), trigger, tokenIndex.Value, column);
+            return null;
         }
+
+        CompletionOption? result = GetFileReferenceCompletionOption(tokensAtLine.AsSpan(), text, trigger, column);
 
         return result;
     }
 
-    internal static CompletionOption? IsFileReferenceCompletionOption(
-        ReadOnlySpan<IToken> tokens, TextChangeTrigger trigger, int tokenIndex, int column)
+    internal static CompletionOption? GetFileReferenceCompletionOption(ReadOnlySpan<IToken> tokens,
+        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
     {
-        int doubleQuoteTokenIndex;
-        int firstRootTextTokenIndex;
-        var token = tokens[tokenIndex];
-        switch (trigger)
+        var leftLinePart = line[..(column+1)];
+        var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(tokens, leftLinePart, trigger);
+        if (isMatch)
         {
-            case TextChangeTrigger.CharacterTyped:
-                switch (token.Type)
-                {
-                    case KickAssemblerLexer.DOUBLE_QUOTE:
-                        firstRootTextTokenIndex = tokenIndex + 1;
-                        break;
-                    case KickAssemblerLexer.STRING:
-                        firstRootTextTokenIndex = tokenIndex;
-                        break;
-                    default:
-                        return null;
-                }
-                doubleQuoteTokenIndex = tokenIndex;
-                break;
-            case TextChangeTrigger.CompletionRequested:
-                if (token.Type is not (KickAssemblerLexer.STRING or KickAssemblerLexer.UNQUOTED_STRING
-                    or KickAssemblerLexer.DOUBLE_QUOTE))
-                {
-                    return null;
-                }
-
-                if (token.Type is KickAssemblerLexer.DOUBLE_QUOTE or KickAssemblerLexer.STRING)
-                {
-                    firstRootTextTokenIndex = token.Type switch
-                    {
-                        KickAssemblerLexer.DOUBLE_QUOTE => tokenIndex + 1,
-                        KickAssemblerLexer.STRING => tokenIndex,
-                        _ => throw new NotImplementedException(),
-                    };
-                    doubleQuoteTokenIndex = tokenIndex;
-                }
-                else
-                {
-                    firstRootTextTokenIndex = tokenIndex;
-                    // optimistically assume previous token is "
-                    doubleQuoteTokenIndex = tokenIndex - 1;
-                }
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(trigger));
-        }
-
-        var previousTokenIndex = GetPreviousDefaultChannelTokenIndex(tokens, doubleQuoteTokenIndex);
-        if (previousTokenIndex is not null)
-        {
-            var previousTokenType = tokens[previousTokenIndex.Value].Type;
-            bool isMatch =
-                previousTokenType is KickAssemblerLexer.HASHIMPORT or KickAssemblerLexer.HASHIMPORTIF;
-            if (!isMatch)
-            {
-                isMatch = IsImportIfCommand(tokens, previousTokenIndex.Value);
-            }
-
-            if (isMatch)
-            {
-                string root = token.Type switch
-                {
-                    KickAssemblerLexer.DOUBLE_QUOTE => string.Empty,
-                    KickAssemblerLexer.STRING => token.Text.Substring(1, Math.Max(0, column - token.Column - 1)),
-                    KickAssemblerLexer.UNQUOTED_STRING => token.Text[..(column - token.Column)],
-                    _ => string.Empty,
-                };
-                var (replaceableLength, endsWithDoubleQuote) =
-                    GetReplaceableTextLength(tokens[firstRootTextTokenIndex..]);
-                return new CompletionOption(CompletionOptionType.FileReference, root,
-                    endsWithDoubleQuote, replaceableLength);
-            }
+            var suggestionLine = line[(doubleQuoteColumn+1)..];
+            var (rootText, length, endsWithDoubleQuote) =
+                GetSuggestionTextInDoubleQuotes(suggestionLine, column - doubleQuoteColumn);
+            return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length);
         }
 
         return null;
     }
 
     /// <summary>
-    /// Gets total length to replace and whether text ends with a double quote when intellisense choice is used.
+    /// Extracts text of left caret, entire replaceable length and whether it ends with double quote or not
+    /// </summary>
+    /// <param name="line">Text right to first double quote</param>
+    /// <param name="caret">Caret position within line</param>
+    /// <returns></returns>
+    internal static (string RootText, int Length, bool EndsWithDoubleQuote) GetSuggestionTextInDoubleQuotes(
+        ReadOnlySpan<char> line, int caret)
+    {
+        if (caret > line.Length || caret < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(caret));
+        }
+        string root = line[..caret].ToString();
+        int indexOfDoubleQuote = line.IndexOf('"');
+        if (indexOfDoubleQuote < 0)
+        {
+            return (root, line.Length, false);
+        }
+        return (root, indexOfDoubleQuote, true);
+    }
+
+    /// <summary>
+    /// Returns status whether line is valid for file reference suggestions or not.
+    /// Also includes index of first double quotes to the left of the column.
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <param name="line"></param>
+    /// <param name="trigger"></param>
+    /// <returns></returns>
+    internal static (bool IsMatch, int DoubleQuoteColumn) GetFileReferenceSuggestion(
+        ReadOnlySpan<IToken> tokens, ReadOnlySpan<char> line, TextChangeTrigger trigger)
+    {
+        // check obvious conditions
+        if (line.Length == 0 || trigger == TextChangeTrigger.CharacterTyped && line[^1] != '\"')
+        {
+            return (false, -1);
+        }
+
+        int doubleQuoteIndex = line.Length - 1;
+        // finds first double quote on the left
+        while (doubleQuoteIndex >= 0 && line[doubleQuoteIndex] != '\"')
+        {
+            doubleQuoteIndex--;
+        }
+
+        if (doubleQuoteIndex < 0)
+        {
+            return (false, -1);
+        }
+        // there should be only one double quote on the left
+        if (line[..doubleQuoteIndex].Contains('\"'))
+        {
+            return (false, -1);
+        }
+        // check first token now
+        var trimmedLine = TrimWhitespaces(tokens);
+        if (trimmedLine.Length == 0)
+        {
+            return (false, -1);
+        }
+
+        var firstToken = trimmedLine[0]; 
+        if (firstToken.Type is not (KickAssemblerLexer.HASHIMPORT or KickAssemblerLexer.HASHIMPORTIF))
+        {
+            return (false, -1);
+        }
+        var secondToken = trimmedLine[1];
+        
+        switch (firstToken.Type)
+        {
+            // when #import tolerate only WS tokens between keyword and double quotes
+            case KickAssemblerLexer.HASHIMPORT:
+            {
+                if (secondToken.Type != KickAssemblerLexer.WS)
+                {
+                    return (false, -1);
+                }
+                int start = secondToken.Column + secondToken.Length();
+                int end = doubleQuoteIndex - 1;
+                if (end > start)
+                {
+                    foreach (char c in line[start..end])
+                    {
+                        if (c is not (' ' or '\t'))
+                        {
+                            return (false, -1);
+                        }
+                    }
+                }
+
+                break;
+            }
+            case KickAssemblerLexer.HASHIMPORTIF:
+                if (secondToken.Type != KickAssemblerLexer.IIF_CONDITION)
+                {
+                    return (false, -1);
+                }
+                break;
+        }
+        return (true, doubleQuoteIndex);
+    }
+
+    /// <summary>
+    /// Trims WS tokens at start and both WS and EOL at the end of the line. 
     /// </summary>
     /// <param name="tokens"></param>
     /// <returns></returns>
-    /// <remarks>First token might be DOUBLE_QUOTE or STRING</remarks>
-    internal static (int Length, bool EndsWithDoubleQuote) GetReplaceableTextLength(ReadOnlySpan<IToken> tokens)
+    internal static ReadOnlySpan<IToken> TrimWhitespaces(ReadOnlySpan<IToken> tokens)
     {
-        var firstToken = tokens[0];
-        if (firstToken.Type == KickAssemblerLexer.STRING)
+        int start = 0;
+        while (start < tokens.Length && (tokens[start].Type == KickAssemblerLexer.WS || tokens[start].Channel != 0))
         {
-            return (firstToken.Length() - 2, true);
-        }
-        else if (firstToken.Type is KickAssemblerLexer.EOL or KickAssemblerLexer.Eof)
-        {
-            return (0, false);
-        }
-        int start = firstToken.Column;
-        int current = 1;
-        while (current < tokens.Length)
-        {
-            var token = tokens[current];
-            switch (token.Type)
-            {
-                case KickAssemblerLexer.DOUBLE_QUOTE:
-                    return (token.Column + token.Length() - start, true);
-                case KickAssemblerLexer.EOL:
-                    return (token.Column - start - 1, false);
-                case KickAssemblerLexer.Eof:
-                    return (token.Column - start, false);
-                default:
-                    current++;
-                    break;
-            }
+            start++;
         }
 
-        return (firstToken.Length(), false);
+        if (start == tokens.Length)
+        {
+            return ReadOnlySpan<IToken>.Empty;
+        }
+        int end = tokens.Length - 1;
+        while (end >= start &&
+               tokens[end].Type is KickAssemblerLexer.WS or KickAssemblerLexer.EOL or KickAssemblerLexer.Eof)
+        {
+            end--;
+        }
+
+        return tokens[start..(end+1)];
     }
-
-/// <summary>
+    
+    /// <summary>
     /// Returns previous token to <param name="tokenIndex"> on default channel.</param>
     /// </summary>
     /// <param name="tokens"></param>
@@ -206,40 +234,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         return null;
     }
-
-    /// <summary>
-    /// Returns whether tokens are suitable for #importif command suggestion.
-    /// </summary>
-    /// <param name="tokens">Tokens from all channels</param>
-    /// <param name="tokenIndex">First token to check</param>
-    /// <returns></returns>
-    internal static bool IsImportIfCommand(ReadOnlySpan<IToken> tokens, int tokenIndex)
-    {
-        if (tokenIndex > 0)
-        {
-            int currentIndex = tokenIndex;
-            while (currentIndex >= 0 && tokens[currentIndex].Type != KickAssemblerLexer.EOL)
-            {
-                var token = tokens[currentIndex];
-                if (token.Channel == 0)
-                {
-                    switch (token.Type)
-                    {
-                        case KickAssemblerLexer.DOUBLE_QUOTE:
-                        case KickAssemblerLexer.STRING:
-                            return false;
-                        case KickAssemblerLexer.HASHIMPORTIF:
-                            return true;
-                    }
-                }
-
-                currentIndex--;
-            }
-        }
-
-        return false;
-    }
-
+    
     /// <summary>
     /// Creates an array of <see cref="IToken"/> and map by 0 based line index with tokens from all channels.
     /// </summary>

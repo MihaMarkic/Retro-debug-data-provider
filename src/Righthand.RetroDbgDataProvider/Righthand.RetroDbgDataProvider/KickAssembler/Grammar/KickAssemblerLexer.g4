@@ -778,6 +778,11 @@ IM_UNQUOTED_STRING
     -> type(UNQUOTED_STRING)
     ;
     
+IM_DOT
+    : DOT
+    -> type(DOT)
+    ;
+    
 IM_WS
     : WS
     -> type(WS),channel(HIDDEN)
@@ -799,7 +804,7 @@ IIF_CONDITION
             back into the mode we were in before the pushMode that 
             brought us here.
             */
-            PushMode(IMPORTIF_DEFINED_MODE);
+            PushMode(IMPORT_MODE);
         } else {
             PopMode();
         }
@@ -809,14 +814,4 @@ IIF_CONDITION
 IIF_WS
     : WS
     -> type(WS),channel(HIDDEN)
-    ;
-    
-mode IMPORTIF_DEFINED_MODE;
-
-IFFILE
-    : STRING
-    {
-            AddReferencedFileInfo(TokenStartLine, TokenStartColumn, Text);
-    }
-    -> type(STRING),PopMode,PopMode
     ;

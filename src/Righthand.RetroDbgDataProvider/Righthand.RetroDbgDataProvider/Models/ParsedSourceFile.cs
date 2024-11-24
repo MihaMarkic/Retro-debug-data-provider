@@ -73,8 +73,9 @@ public abstract class ParsedSourceFile
     /// <param name="trigger"></param>
     /// <param name="line">0 based line index</param>
     /// <param name="column">0 based column index</param>
+    /// <param name="text">Line text</param>
     /// <returns></returns>
-    public virtual CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column) => null;
+    public virtual CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column, ReadOnlySpan<char> text) => null;
 
     /// <summary>
     /// Returns all tokens regardless of channels.
