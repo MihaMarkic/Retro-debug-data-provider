@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
@@ -19,7 +20,8 @@ public interface IKickAssemblerCompiler
     /// <param name="settings">Additional KickAssembler settings.</param>
     /// <param name="outputLine">Action that outputs compiler output.</param>
     /// <returns>A task that represents compiler result.</returns>
-    Task<(int ExitCode, ImmutableArray<(string Path, SyntaxError Error)> Errors)> CompileAsync(string file, string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
+    Task<(int ExitCode, ImmutableArray<(string Path, SyntaxError Error)> Errors)> CompileAsync(string file,
+        string projectDirectory, string outputDir, KickAssemblerCompilerSettings settings,
         Action<string> outputLine);
 }
 
@@ -27,7 +29,9 @@ public interface IKickAssemblerCompiler
 /// <summary>
 /// <see cref="KickAssemblerCompiler"/> specific settings.
 /// </summary>
-/// <param name="KickAssemblerPath">Explicit directory where KickAss.jar resides. When null, bundled binaries are used.</param>
-/// <param name="LibDirs">An optional array or LibDir texts.</param>
-/// <param name="JavaPath">Path to Java directory. If null, default environment path is used.</param>
-public record KickAssemblerCompilerSettings(string? KickAssemblerPath, ImmutableArray<string> LibDirs, string? JavaPath = null);
+/// <param name="KickAssemblerPath">Explicit directory where KickAss.jar resides. When null, bundled binaries are used</param>
+/// <param name="LibDirs">An optional array or LibDir texts</param>
+/// <param name="DefineSymbols">Project based define symbols</param>
+/// <param name="JavaPath">Path to Java directory. If null, default environment path is used</param>
+public record KickAssemblerCompilerSettings(string? KickAssemblerPath, ImmutableArray<string> LibDirs,
+    FrozenSet<string> DefineSymbols, string? JavaPath = null);
