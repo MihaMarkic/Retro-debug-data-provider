@@ -33,7 +33,8 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
         string kickAssemblerPath = Path.Combine($"\"{kickAssemblerDirectory}\"", "KickAss.jar");
         string? libDirs = !settings.LibDirs.IsDefaultOrEmpty ? $" {string.Join(' ', settings.LibDirs.Select(d => $"-libdir \"{d}\""))}"
             : null;
-        return $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} -define DEBUG -symbolfile -odir {outputDir}{libDirs}";
+        string symbolsDefine = string.Join(" ", settings.DefineSymbols.Select(d => $"-define {d}"));
+        return $"-jar {kickAssemblerPath} {file} -debugdump -bytedumpfile {bytedump} {symbolsDefine} -symbolfile -odir {outputDir}{libDirs}";
     }
     [GeneratedRegex(
         """

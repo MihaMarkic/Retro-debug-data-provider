@@ -1,8 +1,14 @@
-﻿using System.Collections.Frozen;
+﻿using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using Antlr4.Runtime;
 using AutoFixture;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
@@ -289,60 +295,19 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
     }
 
     [TestFixture]
-    public class IsFileReferenceCompletionOption : KickAssemblerParsedSourceFileTest
+    public class GetFileReferenceCompletionOption : KickAssemblerParsedSourceFileTest
     {
-        [Test]
-        public void GivenSampleMatchWithinStringAndCompletionRequested_ReturnsCorrectCompletionOption()
-        {
-            var tokens = GetAllChannelTokens("#import \"tubo.\"");
-
-            var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
-                    TextChangeTrigger.CompletionRequested, 2, 11);
-
-            Assert.That(actual,
-                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: true, 5)));
-        }
-
-        [Test]
-        public void
-            GivenSampleMatchWithinStringNotEndingWithDoubleQuoteAndCompletionRequested_ReturnsCorrectCompletionOption()
-        {
-            var tokens = GetAllChannelTokens("#import \"tubo.");
-
-            var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
-                    TextChangeTrigger.CompletionRequested, 3, 11);
-
-            Assert.That(actual,
-                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "tu", EndsWithDoubleQuote: false, 5)));
-        }
-
-        [Test]
-        public void GivenDoubleQuoteAndCharacterTyped_ReturnsCorrectCompletionOption()
-        {
-            var tokens = GetAllChannelTokens("#import \"");
-
-            var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(), TextChangeTrigger.CharacterTyped,
-                    2, 9 - 1);
-
-            Assert.That(actual,
-                Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, string.Empty,
-                    EndsWithDoubleQuote: false, 0)));
-        }
-
         private (int ZeroBasedColumnIndex, int TokenIndex, ImmutableArray<IToken> Tokens) GetColumnAndTokenIndex(string input)
         {
             int zeroBasedColumn = input.IndexOf('|')-1;
-
+        
             var tokens = GetAllChannelTokens(input.Replace("|", ""));
             var token = tokens.FirstOrDefault(t => t.StartIndex <= zeroBasedColumn && t.StopIndex >= zeroBasedColumn) ??
                         tokens[^1];
             var tokenIndex = tokens.IndexOf(token);
             return (zeroBasedColumn, tokenIndex, tokens);
         }
-
+        
         /// <summary>
         /// | signifies the caret position.
         /// </summary>
@@ -359,79 +324,153 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
         public bool CharacterTypedCases(string input)
         {
-            var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
+            var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
 
             var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(), TextChangeTrigger.CharacterTyped,
-                    tokenIndex, zeroBasedColumn);
+                KickAssemblerParsedSourceFile.GetFileReferenceCompletionOption(tokens.AsSpan(), input.Replace("|", ""),
+                    TextChangeTrigger.CharacterTyped,
+                    zeroBasedColumn);
 
             return actual?.Type == CompletionOptionType.FileReference;
         }
-
-        [Test]
-        public void GivenSampleMatchWhenNoImport_ReturnsNull()
+        /// <summary>
+        /// | signifies the caret position.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [TestCase("#import \"|", ExpectedResult = true)]
+        [TestCase("  #import \"|", ExpectedResult = true)]
+        [TestCase("#import |\"", ExpectedResult = false)]
+        [TestCase("#import x \"|", ExpectedResult = false)]
+        [TestCase("#importif \"|", ExpectedResult = true)]
+        [TestCase("  #importif \"|", ExpectedResult = true)]
+        [TestCase("#importif |\"", ExpectedResult = false)]
+        [TestCase("#importif x \"|", ExpectedResult = true)]
+        [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
+        [TestCase("#import \"multi|_import.asm\"", ExpectedResult = true)]
+        [TestCase("#import \"multi_import.as|m\"", ExpectedResult = true)]
+        [TestCase("#import \"multi_import.as|", ExpectedResult = true)]
+        public bool CompletionRequestedTypedCases(string input)
         {
-            var tokens = GetAllChannelTokens("#if \"tubo.\"");
+            var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
 
             var actual =
-                KickAssemblerParsedSourceFile.IsFileReferenceCompletionOption(tokens.AsSpan(),
-                    TextChangeTrigger.CompletionRequested, 2, 12 - 1);
+                KickAssemblerParsedSourceFile.GetFileReferenceCompletionOption(tokens.AsSpan(), input,
+                    TextChangeTrigger.CompletionRequested,
+                    zeroBasedColumn);
 
-            Assert.That(actual, Is.Null);
+            return actual?.Type == CompletionOptionType.FileReference;
         }
     }
 
     [TestFixture]
-    public class IsImportIfCommand : KickAssemblerParsedSourceFileTest
+    public class GetFileReferenceSuggestion : KickAssemblerParsedSourceFileTest
     {
-        [TestCase("#importif ", ExpectedResult = true)]
-        [TestCase(" #importif ", ExpectedResult = true)]
-        [TestCase("\t#importif ", ExpectedResult = true)]
-        [TestCase("#importif dsfsd dfds > ", ExpectedResult = true)]
-        [TestCase("#importif dsfsd \" dfds > ", ExpectedResult = false)]
-        [TestCase("#importif \"", ExpectedResult = false)]
-        [TestCase("  #importif \"", ExpectedResult = false)]
-        public bool GivenSample_ReturnsCorrectValue(string input)
+        /// <summary>
+        /// | signifies the caret position.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="trigger"></param>
+        /// <returns></returns>
+        [TestCase("#import \"", TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
+        [TestCase("#import \"xxx", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
+        [TestCase("#import \" \"", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
+        [TestCase("#importx \"", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
+        [TestCase("#import x \"", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
+        [TestCase("#importif x \"", TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
+        public bool GivenSample_ReturnsCorrectMatchCriteria(string input, TextChangeTrigger trigger)
         {
             var tokens = GetAllChannelTokens(input);
 
-            return KickAssemblerParsedSourceFile.IsImportIfCommand(tokens.AsSpan(), tokens.Length-1);
+            var actual = KickAssemblerParsedSourceFile.GetFileReferenceSuggestion(tokens.AsSpan(), input, trigger);
+
+            return actual.IsMatch;
         }
     }
 
     [TestFixture]
-    public class GetReplaceableTextLength : KickAssemblerParsedSourceFileTest
+    public class TrimWhitespaces : KickAssemblerParsedSourceFileTest
     {
-        [TestCase("#import \"tubo.\"", 2, ExpectedResult = 5)]
-        [TestCase("#import \"tubo.", 3, ExpectedResult = 5)]
-        [TestCase("#import \"", 3, ExpectedResult = 0)]
-        [TestCase("""
-                  #import "
-                  lda 5
-                  """, 
-            3, ExpectedResult = 0)]
-        [TestCase("""
-                  #import "one_main.asm
-                  lda 5
-                  """, 
-            3, ExpectedResult = 12)]
-        public int GivenSample_ReturnsCorrectLength(string input, int startTokenIndex)
+        [TestCaseSource(typeof(GivenSampleTrimsProperlySource))]
+        public void GivenSample_TrimsProperly(ImmutableArray<IToken> data, ImmutableArray<IToken> expected)
         {
-            var tokens = GetAllChannelTokens(input);
+            var actual = KickAssemblerParsedSourceFile.TrimWhitespaces(data.AsSpan());
             
-            var actual = KickAssemblerParsedSourceFile.GetReplaceableTextLength(tokens.AsSpan()[startTokenIndex..]);
-
-            return actual.Length;
+            Assert.That(actual.ToImmutableArray(), Is.EquivalentTo(expected));
         }
-        [TestCase("#import \"tubo.\"", 2, ExpectedResult = true)]
-        [TestCase("#import \"tubo.", 3, ExpectedResult = false)]
-        public bool GivenSample_ReturnsCorrectEndWithQuotes(string input, int startTokenIndex)
-        {
-            var tokens = GetAllChannelTokens(input);
-            
-            var actual = KickAssemblerParsedSourceFile.GetReplaceableTextLength(tokens.AsSpan()[startTokenIndex..]);
 
-            return actual.EndsWithDoubleQuote;
+        public class GivenSampleTrimsProperlySource : IEnumerable
+        {
+            private static ImmutableArray<IToken> GetArray(
+                params (int TokenType, int Channel)[] tokens) =>
+                [..tokens.Select(t => new TrimWhitespacesToken(t.TokenType, t.Channel))];
+
+            public IEnumerator GetEnumerator()
+            {
+                yield return new TestCaseData(
+                    GetArray((KickAssemblerLexer.STRING, 0)), 
+                    GetArray((KickAssemblerLexer.STRING, 0)));
+                yield return new TestCaseData(
+                    GetArray((KickAssemblerLexer.WS, 0)), 
+                    GetArray());
+                yield return new TestCaseData(
+                    GetArray((KickAssemblerLexer.WS, 0), (KickAssemblerLexer.STRING, 0), (KickAssemblerLexer.EOL, 1)), 
+                    GetArray((KickAssemblerLexer.STRING, 0)));
+            }
+        }
+
+        [TestFixture]
+        public class GetSuggestionTextInDoubleQuotes : KickAssemblerParsedSourceFileTest
+        {
+            [TestCase("", 0, ExpectedResult = "")]
+            [TestCase("xys", 0, ExpectedResult = "")]
+            [TestCase("xys", 1, ExpectedResult = "x")]
+            [TestCase("xys", 2, ExpectedResult = "xy")]
+            [TestCase("xys", 3, ExpectedResult = "xys")]
+            [TestCase("xys\"", 3, ExpectedResult = "xys")]
+            public string GivenSample_ReturnsCorrectRoot(string input, int caret)
+            {
+                return KickAssemblerParsedSourceFile.GetSuggestionTextInDoubleQuotes(input, caret).RootText;
+            }
+
+            [TestCase("", 0, ExpectedResult = 0)]
+            [TestCase("xys", 0, ExpectedResult = 3)]
+            [TestCase("xys", 2, ExpectedResult = 3)]
+            [TestCase("xys", 3, ExpectedResult = 3)]
+            [TestCase("xys\"", 3, ExpectedResult = 3)]
+            public int GivenSample_ReturnsCorrectLength(string input, int caret)
+            {
+                return KickAssemblerParsedSourceFile.GetSuggestionTextInDoubleQuotes(input, caret).Length;
+            }
+            [TestCase("xys", 3, ExpectedResult = false)]
+            [TestCase("xys\"", 3, ExpectedResult = true)]
+            [TestCase("xys \t\"", 3, ExpectedResult = true)]
+            public bool GivenSample_ReturnsCorrectEndsWithDoubleQuote(string input, int caret)
+            {
+                return KickAssemblerParsedSourceFile.GetSuggestionTextInDoubleQuotes(input, caret).EndsWithDoubleQuote;
+            }
+        }
+        
+        public record TrimWhitespacesToken : IToken
+        {
+            public string Text => "N/A";
+            public int Type { get; }
+            public int Line => -1;
+            public int Column => -1;
+            public int Channel { get; }
+            public int TokenIndex  => -1;
+            public int StartIndex  => -1;
+            public int StopIndex  => -1;
+            public ITokenSource TokenSource  => null!;
+            public ICharStream InputStream  => null!;
+
+            public TrimWhitespacesToken(int type, int channel)
+            {
+                Type = type;
+                Channel = channel;
+            }
         }
     }
+
+    
 }

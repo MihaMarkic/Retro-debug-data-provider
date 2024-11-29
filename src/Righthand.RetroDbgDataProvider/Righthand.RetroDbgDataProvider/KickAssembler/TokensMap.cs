@@ -168,6 +168,7 @@ public static class TokensMap
           { KickAssemblerLexer.MACRO, TokenType.Directive },
           { KickAssemblerLexer.PSEUDOCOMMAND, TokenType.Directive },
           { KickAssemblerLexer.PSEUDOPC, TokenType.Directive },
+          { KickAssemblerLexer.HASHDEFINE, TokenType.Directive },
           { KickAssemblerLexer.HASHUNDEF, TokenType.Directive },
           { KickAssemblerLexer.HASHIF, TokenType.Directive },
           { KickAssemblerLexer.HASHENDIF, TokenType.Directive },
