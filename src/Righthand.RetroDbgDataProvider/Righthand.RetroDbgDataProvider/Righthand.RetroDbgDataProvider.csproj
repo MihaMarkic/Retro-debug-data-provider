@@ -9,13 +9,14 @@
     <PackageId>Retro.Debug.Data.Provider</PackageId>
     <Title>Retro Debug Data Provider</Title>
     <Description>This project goal is to provide as much debugging support as possible for retro assembler starting with Kick Assembler.</Description>
-    <PackageTags>KickAssembler;retro</PackageTags>
+    <PackageTags>KickAssembler;retro;c64</PackageTags>
     <Authors>Miha Markic</Authors>
     <Owners>Miha Markic</Owners>
-    <Version>0.1.5-alpha</Version>
+    <Version>0.2.0-alpha</Version>
     <RepositoryUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/MihaMarkic/Retro-debug-data-provider</PackageProjectUrl>
+    <PackageReleaseNotes>See https://github.com/MihaMarkic/Retro-debug-data-provider/blob/main/CHANGES.md</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <ImplicitUsings>enable</ImplicitUsings>
