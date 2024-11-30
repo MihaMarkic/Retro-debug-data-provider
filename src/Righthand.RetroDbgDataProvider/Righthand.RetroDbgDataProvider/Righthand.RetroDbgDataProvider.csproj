@@ -45,6 +45,13 @@
       </ItemGroup>
     </When>
   </Choose>
+
+  <Target Name="InjectPackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec" Condition=" '$(Configuration)'=='Release' ">
+    <PropertyGroup>
+      <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)../../../../CHANGELOG.md"))</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+
   <ItemGroup>
     <None Update="binaries\KickAss\KickAss.cfg" Pack="true" PackagePath="\content">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -70,5 +77,4 @@
     <Folder Include="KickAssembler\Grammar\gen\" />
     <Folder Include="KickAssembler\Grammar\gen\Righthand\RetroDbgDataProvider\KickAssembler\" />
   </ItemGroup>
-
 </Project>
