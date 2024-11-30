@@ -448,7 +448,7 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
                 int startIndex = token.StartIndex;
                 switch (tokenType)
                 {
-                    case TokenType.Directive:
+                    case TokenType.PreprocessorDirective:
                         if (i > 0)
                         {
                             var previous = tokens[i - 1];

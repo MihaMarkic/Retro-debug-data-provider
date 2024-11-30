@@ -9,6 +9,7 @@ public enum TokenType
     Unknown,
     Comment,
     Directive,
+    PreprocessorDirective,
     Color,
     InstructionExtension,
     Bracket,
