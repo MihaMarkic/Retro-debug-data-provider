@@ -5,12 +5,14 @@ using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using Antlr4.Runtime;
 using AutoFixture;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
@@ -472,5 +474,29 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         }
     }
 
-    
+    [TestFixture]
+    public class TestTrackImport : KickAssemblerParsedSourceFileTest
+    {
+        private KickAssemblerDbgParser _parser = default!;
+        private KickAssemblerProgramInfoBuilder _infoBuilder = default!;
+        private DbgData _dbg = default!;
+
+        [SetUp]
+        public void Setup()
+        {
+            _parser = new KickAssemblerDbgParser(Substitute.For<ILogger<KickAssemblerDbgParser>>());
+            _infoBuilder= new KickAssemblerProgramInfoBuilder(Substitute.For<ILogger<KickAssemblerProgramInfoBuilder>>());
+        }
+        [Test]
+        public async Task Test()
+        {
+            var sample = LoadKickAssSampleFile("SimpleImport", "main.dbg");
+            _dbg = await _parser.LoadContentAsync(sample, "path");
+            var assemblyInfo = await _infoBuilder.BuildAppInfoAsync("path", _dbg);
+        }
+    }
+}
+
+internal class KickAss
+{
 }

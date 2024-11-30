@@ -1,0 +1,25 @@
+<C64debugger version="1.0">
+   <Sources values="INDEX,FILE">
+      0,KickAss.jar:/include/autoinclude.asm
+      1,D:\Git\Righthand\C64\retro-dbg-data-provider\src\Righthand.RetroDbgDataProvider\Test\Righthand.RetroDbgDataProvider.Test\Samples\KickAssembler\SimpleImport\imported.asm
+      2,D:\Git\Righthand\C64\retro-dbg-data-provider\src\Righthand.RetroDbgDataProvider\Test\Righthand.RetroDbgDataProvider.Test\Samples\KickAssembler\SimpleImport\main.asm
+   </Sources>
+
+   <Segment name="Default" dest="" values="START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
+      <Block name="Unnamed">
+         $0801,$0802,2,3,1,3,3
+         $0803,$0804,1,1,1,1,3
+         $0805,$0806,2,5,1,5,3
+      </Block>
+   </Segment>
+
+   <Labels values="SEGMENT,ADDRESS,NAME,START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
+   </Labels>
+
+   <Breakpoints values="SEGMENT,ADDRESS,ARGUMENT">
+   </Breakpoints>
+
+   <Watchpoints values="SEGMENT,ADDRESS1,ADDRESS2,ARGUMENT">
+   </Watchpoints>
+
+</C64debugger>

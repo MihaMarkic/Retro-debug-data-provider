@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Frozen;
+using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
@@ -12,7 +13,7 @@ public class KickAssemblerCompilerTest: BaseTest<KickAssemblerCompiler>
         [Test]
         public void WhenNoLibDirPresentInSettings_LibDirIsNotInResult()
         {
-            var settings = new KickAssemblerCompilerSettings(KickAssemblerPath: null, LibDirs: []);
+            var settings = new KickAssemblerCompilerSettings(KickAssemblerPath: null, LibDirs: [], FrozenSet<string>.Empty);
 
             var actual = KickAssemblerCompiler.CreateProcessArguments("file.asm", "output_dir", settings);
             
@@ -21,7 +22,7 @@ public class KickAssemblerCompilerTest: BaseTest<KickAssemblerCompiler>
         [Test]
         public void WhenSingleLibDirIsPresentInSettings_LibDirIsInResult()
         {
-            var settings = new KickAssemblerCompilerSettings(KickAssemblerPath: null, LibDirs: ["dir1"]);
+            var settings = new KickAssemblerCompilerSettings(KickAssemblerPath: null, LibDirs: ["dir1"], FrozenSet<string>.Empty);
 
             var actual = KickAssemblerCompiler.CreateProcessArguments("file.asm", "output_dir", settings);
             
@@ -30,7 +31,7 @@ public class KickAssemblerCompilerTest: BaseTest<KickAssemblerCompiler>
         [Test]
         public void WhenTwoLibDirArePresentInSettings_BothLibDirAreInResult()
         {
-            var settings = new KickAssemblerCompilerSettings(KickAssemblerPath: null, LibDirs: ["dir1", "dir2"]);
+            var settings = new KickAssemblerCompilerSettings(KickAssemblerPath: null, LibDirs: ["dir1", "dir2"], FrozenSet<string>.Empty);
 
             var actual = KickAssemblerCompiler.CreateProcessArguments("file.asm", "output_dir", settings);
             

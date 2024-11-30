@@ -35,6 +35,10 @@ public abstract class BaseTest<T>
     {
         _target = null!;
     }
+    protected static string LoadKickAssSampleFile(string directory, string name)
+    {
+        return File.ReadAllText(Path.Combine("Samples", "KickAssembler", directory, "build", name));
+    }
     protected static string LoadKickAssSample(string name)
     {
         return File.ReadAllText(Path.Combine("Samples", "KickAssembler", name));

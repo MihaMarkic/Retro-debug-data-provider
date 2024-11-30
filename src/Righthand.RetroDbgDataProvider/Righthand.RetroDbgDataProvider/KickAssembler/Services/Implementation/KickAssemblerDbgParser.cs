@@ -72,7 +72,7 @@ public class KickAssemblerDbgParser(ILogger<KickAssemblerDbgParser> logger)
         }
     }
 
-    internal int CountChars(string text, char c)
+    internal static int CountChars(string text, char c)
     {
         int count = 0;
         foreach (var t in text)

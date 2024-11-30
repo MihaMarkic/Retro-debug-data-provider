@@ -15,21 +15,21 @@ internal class KickAssemblerProgramInfoBuilderTest: BaseTest<KickAssemblerProgra
     {
         public class SampleFile : BuildAppInfo
         {
-            IKickAssemblerDbgParser parser = default!;
-            KickAss.DbgData dbg = default!;
+            private IKickAssemblerDbgParser _parser = default!;
+            private KickAss.DbgData _dbg = default!;
 
             [SetUp]
             public async Task SetupAsync()
             {
-                parser = new KickAssemblerDbgParser(Substitute.For<ILogger<KickAssemblerDbgParser>>());
+                _parser = new KickAssemblerDbgParser(Substitute.For<ILogger<KickAssemblerDbgParser>>());
                 var sample = LoadKickAssSample("FullSample.dbg");
-                dbg = await parser.LoadContentAsync(sample, "path");
+                _dbg = await _parser.LoadContentAsync(sample, "path");
             }
 
             [Test]
             public async Task GivenSampleFile_DefaultSegmentHasBreakpoint()
             {
-                var actual = await Target.BuildAppInfoAsync("dir", dbg, default);
+                var actual = await Target.BuildAppInfoAsync("dir", _dbg, default);
 
                 var defaultSegment = actual.Segments["Default"];
                 var breakpoints = defaultSegment.Breakpoints;
@@ -43,7 +43,7 @@ internal class KickAssemblerProgramInfoBuilderTest: BaseTest<KickAssemblerProgra
             [Test]
             public async Task GivenSampleFile_AdditionalEmptySegmentHasNoBreakpoints()
             {
-                var actual = await Target.BuildAppInfoAsync("dir", dbg, default);
+                var actual = await Target.BuildAppInfoAsync("dir", _dbg, default);
 
                 var defaultSegment = actual.Segments["AdditionalEmpty"];
 
