@@ -3,6 +3,7 @@
 public enum CompletionOptionType
 {
     FileReference,
+    PreprocessorDirective,
 }
 
 public enum TextChangeTrigger

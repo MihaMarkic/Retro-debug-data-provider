@@ -495,6 +495,71 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var assemblyInfo = await _infoBuilder.BuildAppInfoAsync("path", _dbg);
         }
     }
+    
+    [TestFixture]
+    public class GetPreprocessorDirectiveSuggestion: KickAssemblerParsedSourceFileTest
+    {
+        [TestCase("#", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
+        [TestCase(" #", 1, TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
+        public bool GivenLine_ReturnsIsMatch(string line, int column, TextChangeTrigger trigger)
+        {
+            return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column).IsMatch;
+        }
+        [TestCase("#im", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = "")]
+        [TestCase("#im", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
+        [TestCase("#import", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
+        public string GivenLine_ReturnsRoot(string line, int column, TextChangeTrigger trigger)
+        {
+            return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column).Root;
+        }
+        [TestCase("#im", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = "")]
+        [TestCase("#im", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
+        [TestCase("#import", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "import")]
+        public string GivenLine_ReturnsReplaceableText(string line, int column, TextChangeTrigger trigger)
+        {
+            return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column).ReplaceableText;
+        }
+    }
+
+    [TestFixture]
+    public class GetMatches : KickAssemblerParsedSourceFileTest
+    {
+        [Test]
+        public void WhenEmptyList_FindsNoMatches()
+        {
+            var actual = KickAssemblerParsedSourceFile.GetMatches("ab", 1, ReadOnlySpan<string>.Empty);
+            
+            Assert.That(actual, Is.Empty);
+        }
+        [Test]
+        public void WhenValidRoot_FindsAllMatches()
+        {
+            ImmutableArray<string> list = ["#a", "#abb", "#abc", "#d"];
+
+            var actual = KickAssemblerParsedSourceFile.GetMatches("ab", 1, list.AsSpan());
+
+            ImmutableArray<string> expected = ["#abb", "#abc"];
+            Assert.That(actual, Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenRootHasNoMatched_ReturnsEmptyList()
+        {
+            ImmutableArray<string> list = ["#a", "#abb", "#abc", "#d"];
+
+            var actual = KickAssemblerParsedSourceFile.GetMatches("x", 1, list.AsSpan());
+
+            Assert.That(actual, Is.Empty);
+        }
+        [Test]
+        public void WhenRootDoesNotStartAfterHash_ReturnsEmptyList()
+        {
+            ImmutableArray<string> list = ["#a", "#abb", "#abc", "#d"];
+
+            var actual = KickAssemblerParsedSourceFile.GetMatches("b", 1, list.AsSpan());
+
+            Assert.That(actual, Is.Empty);
+        }
+    }
 }
 
 internal class KickAss

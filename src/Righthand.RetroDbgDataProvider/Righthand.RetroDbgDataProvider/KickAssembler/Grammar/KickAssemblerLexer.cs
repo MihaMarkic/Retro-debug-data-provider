@@ -13,6 +13,24 @@ partial class KickAssemblerLexer
     public List<ReferencedFileInfo> ReferencedFiles { get; } = new();
     private bool IsDefined(string text) => PreprocessorConditionEvaluator.IsDefined(DefinedSymbols.ToFrozenSet(), text);
 
+    /// <summary>
+    /// Ordered list of preprocessor directives.
+    /// </summary>
+    public static ImmutableArray<string> PreprocessorDirectives =
+        ["#define", "#elif", "#else", "#endif", "#if", "#import", "#importif", "#importonce", "#undef"];
+
+    
+    private static ImmutableArray<string> GenerateTokensSet(
+#if NET90
+        params ReadOnlySpan<int> tokens
+#else
+        params int[] tokens
+#endif
+    )
+    {
+        return [..tokens.Select(t => ruleNames[t])];
+    }
+
     public override void PushMode(int m)
     {
         //Debug.WriteLine($"Push mode {modeNames[m]}");

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Frozen;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
@@ -8,7 +9,7 @@ using Righthand.RetroDbgDataProvider.Models.Program;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
-public class KickAssemblerParsedSourceFile : ParsedSourceFile
+public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 {
     public KickAssemblerLexer Lexer { get; init; }
     public CommonTokenStream CommonTokenStream { get; init; }
@@ -60,10 +61,108 @@ public class KickAssemblerParsedSourceFile : ParsedSourceFile
         }
 
         CompletionOption? result = GetFileReferenceCompletionOption(tokensAtLine.AsSpan(), text, trigger, column);
+        if (result is null)
+        {
+            result = GetPreprocessorDirectiveCompletionOption(text, trigger, column);
+        }
 
         return result;
     }
 
+    
+    internal static CompletionOption? GetPreprocessorDirectiveCompletionOption(ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+    {
+        var (isMatch, root, replaceableText) = GetPreprocessorDirectiveSuggestion(line, trigger, column);
+        if (isMatch)
+        {
+            return new CompletionOption(CompletionOptionType.PreprocessorDirective, root, false, replaceableText.Length + 1);
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    public override ImmutableArray<string> GetPreprocessorDirectiveSuggestions(string root)
+    {
+        return GetMatches(root.AsSpan(), 1, KickAssemblerLexer.PreprocessorDirectives.AsSpan());
+    }
+    /// <summary>
+    /// Matches all those items from list that have same root.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="startIndex">Start index in list's item</param>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    internal static ImmutableArray<string> GetMatches(ReadOnlySpan<char> root, int startIndex, ReadOnlySpan<string> list)
+    {
+        var builder = ImmutableArray.CreateBuilder<string>();
+        bool hasFirstMatch = false;
+        foreach (var i in list)
+        {
+            bool isMatch = i.Length >= root.Length + startIndex;
+            if (isMatch)
+            {
+                var substring = i.AsSpan()[startIndex .. (startIndex + root.Length)];
+                isMatch = substring.SequenceEqual(root);
+            }
+
+            if (hasFirstMatch)
+            {
+                if (isMatch)
+                {
+                    builder.Add(i);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else if (isMatch)
+            {
+                builder.Add(i);
+                hasFirstMatch = true;
+            }
+        }
+        return builder.ToImmutable();
+    }
+    
+    [GeneratedRegex("""
+                    ^\s*#(?<import>[a-zA-Z]*)$
+                    """)]
+    internal static partial Regex PreprocessorDirectiveRegex();
+    /// <summary>
+    /// Returns possible completion for preprocessor directives.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="trigger"></param>
+    /// <param name="column">Caret column</param>
+    /// <returns></returns>
+    internal static (bool IsMatch, string Root, string ReplaceableText) GetPreprocessorDirectiveSuggestion(
+        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+    {
+        // check obvious conditions
+        if (line.Length == 0 || trigger == TextChangeTrigger.CharacterTyped && line[^1] != '#')
+        {
+            return (false, string.Empty, string.Empty);
+        }
+        var match = PreprocessorDirectiveRegex().Match(line.ToString());
+        if (match.Success)
+        {
+            int indexOfHash = line.IndexOf('#');
+            string root = line[(indexOfHash+1)..(column+1)].ToString();
+            return (true, root, match.Groups["import"].Value);
+        }
+        return (false, string.Empty, string.Empty);
+    }
+
+    /// <summary>
+    /// Returns possible completion for file references.
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <param name="line"></param>
+    /// <param name="trigger"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
     internal static CompletionOption? GetFileReferenceCompletionOption(ReadOnlySpan<IToken> tokens,
         ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
     {
