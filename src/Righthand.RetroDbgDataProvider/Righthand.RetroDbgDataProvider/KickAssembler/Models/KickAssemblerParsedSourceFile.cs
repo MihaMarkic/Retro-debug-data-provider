@@ -64,11 +64,14 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         if (result is null)
         {
             result = GetPreprocessorDirectiveCompletionOption(text, trigger, column);
+            if (result is null)
+            {
+                result = GetDirectiveCompletionOption(text, trigger, column);
+            }
         }
 
         return result;
     }
-
     
     internal static CompletionOption? GetPreprocessorDirectiveCompletionOption(ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
     {
@@ -80,11 +83,27 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         return null;
     }
+    
+    internal static CompletionOption? GetDirectiveCompletionOption(ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+    {
+        var (isMatch, root, replaceableText) = GetDirectiveSuggestion(line, trigger, column);
+        if (isMatch)
+        {
+            return new CompletionOption(CompletionOptionType.Directive, root, false, replaceableText.Length + 1);
+        }
+
+        return null;
+    }
 
     /// <inheritdoc />
     public override ImmutableArray<string> GetPreprocessorDirectiveSuggestions(string root)
     {
         return GetMatches(root.AsSpan(), 1, KickAssemblerLexer.PreprocessorDirectives.AsSpan());
+    }
+    /// <inheritdoc />
+    public override ImmutableArray<string> GetDirectiveSuggestions(string root)
+    {
+        return GetMatches(root.AsSpan(), 1, KickAssemblerLexer.Directives.AsSpan());
     }
     /// <summary>
     /// Matches all those items from list that have same root.
@@ -153,6 +172,48 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             return (true, root, match.Groups["import"].Value);
         }
         return (false, string.Empty, string.Empty);
+    }
+
+    /// <summary>
+    /// Gets whether text left of cursor matched criteria for completion
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="trigger"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
+    internal static (bool IsMatch, string Root, string ReplaceableText) GetDirectiveSuggestion(
+        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+    {
+        // check obvious conditions
+        if (line.Length == 0 || trigger == TextChangeTrigger.CharacterTyped && line[^1] != '.')
+        {
+            return (false, string.Empty, string.Empty);
+        }
+
+        int indexOfDot = column;
+        char c;
+        while (indexOfDot > 0 && IsValid(line[indexOfDot]))
+        {
+            indexOfDot--;
+        }
+
+        if (indexOfDot < 0 || line[indexOfDot] != '.')
+        {
+            return (false, string.Empty, string.Empty);
+        }
+        else
+        {
+            string root = line[(indexOfDot+1)..(column+1)].ToString();
+            int endTextIndex = column + 1;
+            while (endTextIndex < line.Length && IsValid(line[endTextIndex]))
+            {
+                endTextIndex++;
+            }
+            string entireText = line[(indexOfDot + 1)..endTextIndex].ToString();
+            return (true, root, entireText);
+        }
+
+        static bool IsValid(char c) => char.IsDigit(c) || char.IsLetter(c) || c is '_';
     }
 
     /// <summary>

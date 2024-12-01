@@ -18,8 +18,16 @@ partial class KickAssemblerLexer
     /// </summary>
     public static ImmutableArray<string> PreprocessorDirectives =
         ["#define", "#elif", "#else", "#endif", "#if", "#import", "#importif", "#importonce", "#undef"];
+    /// <summary>
+    /// Ordered list of directives.
+    /// </summary>
+    public static ImmutableArray<string> Directives = GenerateTokensSet(BREAK, BYTE, CONST,
+        DEFINE, DISK, DOTBINARY, DOTC64, DOTCPU, DOTENCODING, DOTFILL,
+        DOTFILLWORD, DOTLOHIFILL, DOTTEXT, DOTDWORD, ERRORIF, EVAL, FILE, FILEMODIFY, FOR, FUNCTION, IF, LABEL,
+        MACRO, MODIFY, NAMESPACE, PC, PLUGIN, PRINT, PRINTNOW, PSEUDOCOMMAND, PSEUDOPC, RETURN, SEGMENT, SEGMENTDEF,
+        SEGMENTOUT, STRUCT, VAR, WATCH, WHILE, DOTWORD, ZP);
 
-    
+
     private static ImmutableArray<string> GenerateTokensSet(
 #if NET90
         params ReadOnlySpan<int> tokens
@@ -28,7 +36,7 @@ partial class KickAssemblerLexer
 #endif
     )
     {
-        return [..tokens.Select(t => ruleNames[t])];
+        return [..tokens.Select(t => _LiteralNames[t]).Order()];
     }
 
     public override void PushMode(int m)

@@ -143,4 +143,10 @@ public abstract class ParsedSourceFile
     /// <param name="root">Root part</param>
     /// <returns>A list of matching preprocessor directives.</returns>
     public abstract ImmutableArray<string> GetPreprocessorDirectiveSuggestions(string root);
+    /// <summary>
+    /// Returns all suggestions for directives.
+    /// </summary>
+    /// <param name="root">Root part</param>
+    /// <returns>A list of matching directives.</returns>
+    public abstract ImmutableArray<string> GetDirectiveSuggestions(string root);
 }

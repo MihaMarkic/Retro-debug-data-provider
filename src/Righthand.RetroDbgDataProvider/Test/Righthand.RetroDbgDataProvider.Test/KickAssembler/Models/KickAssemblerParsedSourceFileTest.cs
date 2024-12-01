@@ -520,6 +520,30 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column).ReplaceableText;
         }
     }
+    [TestFixture]
+    public class GetDirectiveSuggestion: KickAssemblerParsedSourceFileTest
+    {
+        [TestCase(".", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
+        [TestCase(" .", 1, TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
+        public bool GivenLine_ReturnsIsMatch(string line, int column, TextChangeTrigger trigger)
+        {
+            return KickAssemblerParsedSourceFile.GetDirectiveSuggestion(line, trigger, column).IsMatch;
+        }
+        [TestCase(".im", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = "")]
+        [TestCase(".im", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
+        [TestCase(".import", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
+        public string GivenLine_ReturnsRoot(string line, int column, TextChangeTrigger trigger)
+        {
+            return KickAssemblerParsedSourceFile.GetDirectiveSuggestion(line, trigger, column).Root;
+        }
+        [TestCase(".im", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = "")]
+        [TestCase(".im", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
+        [TestCase(".import", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "import")]
+        public string GivenLine_ReturnsReplaceableText(string line, int column, TextChangeTrigger trigger)
+        {
+            return KickAssemblerParsedSourceFile.GetDirectiveSuggestion(line, trigger, column).ReplaceableText;
+        }
+    }
 
     [TestFixture]
     public class GetMatches : KickAssemblerParsedSourceFileTest
