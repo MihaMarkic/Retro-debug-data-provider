@@ -4,6 +4,8 @@ public enum CompletionOptionType
 {
     FileReference,
     PreprocessorDirective,
+    Program,
+    SidFile,
 }
 
 public enum TextChangeTrigger

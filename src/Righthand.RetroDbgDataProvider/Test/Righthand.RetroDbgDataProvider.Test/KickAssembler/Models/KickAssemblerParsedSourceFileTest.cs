@@ -560,8 +560,24 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             Assert.That(actual, Is.Empty);
         }
     }
-}
 
-internal class KickAss
-{
+    [TestFixture]
+    public class IsCursorWithinArray : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase(".file [name=\"", ExpectedResult = true)]
+        [TestCase(".file [segments=\"Code\",name=\"", ExpectedResult = true)]
+        [TestCase(".file [segments = \"Code\" , name = \"", ExpectedResult = true)]
+        public bool GivenSampleInput_AndTriggerCharacterTyped_ReturnsWhetherCursorIsWithinArray(string line)
+        {
+            return KickAssemblerParsedSourceFile.IsCursorWithinArray(line, TextChangeTrigger.CharacterTyped, out _);
+        }
+        [TestCase(".file [name=\"", ExpectedResult = 6)]
+        [TestCase(".file [segments=\"Code\",name=\"", ExpectedResult = 6)]
+        [TestCase(".file  [ segments = \"Code\" , name = \"", ExpectedResult = 7)]
+        public int GivenSampleInput_AndTriggerCharacterTyped_ReturnsOpenBracketColumnIndex(string line)
+        {
+            KickAssemblerParsedSourceFile.IsCursorWithinArray(line, TextChangeTrigger.CharacterTyped, out int column);
+            return column;
+        }
+    }
 }
