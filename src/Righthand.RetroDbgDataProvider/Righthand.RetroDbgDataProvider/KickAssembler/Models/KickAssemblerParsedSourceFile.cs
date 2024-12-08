@@ -48,22 +48,23 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     /// <inheritdoc />
     public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column,
-        ReadOnlySpan<char> text) =>
-        GetCompletionOption(AllTokensByLineMap, trigger, line, column, text);
+        string text, int textStart, int textLength) =>
+        GetCompletionOption(AllTokensByLineMap, trigger, line, column, text, textStart, textLength);
 
     internal static CompletionOption? GetCompletionOption(
         FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int line,
-        int column, ReadOnlySpan<char> text)
+        int column, string text, int textStart, int textLength)
     {
         if (!allTokensByLineMap.TryGetValue(line, out var tokensAtLine))
         {
             return null;
         }
 
-        CompletionOption? result = GetFileReferenceCompletionOption(tokensAtLine.AsSpan(), text, trigger, column);
+        var textSpan = text.AsSpan()[textStart..(textStart + textLength)];
+        CompletionOption? result = GetFileReferenceCompletionOption(tokensAtLine.AsSpan(), textSpan, trigger, column);
         if (result is null)
         {
-            result = GetPreprocessorDirectiveCompletionOption(text, trigger, column);
+            result = GetPreprocessorDirectiveCompletionOption(textSpan, trigger, column);
         }
 
         return result;
@@ -596,8 +597,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         return null;
     }
-
-    internal static ImmutableArray<int> DotFileFileSuggestionTemplate = [KickAssemblerLexer.FILE];
+    
     /// <summary>
     /// Generic file suggestion completion.
     /// </summary>
@@ -608,7 +608,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <returns></returns>
     /// <remarks>
     /// Handles such cases:
-    /// .file [name="test.prg", segments="Code"]
+    /// .file [name="test.prg", segments="Code", sidFiles="file.sid"]
     /// .segment Base [prgFiles="basefile.prg"]
     /// .segmentdef Misc1 [prgFiles="data/Music.prg, data/Charset2x2.prg"]
     /// *** .import c64 "data/Music.prg"
@@ -617,15 +617,37 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// Where files = "file(, file)*"
     /// </remarks>
     internal static CompletionOption? GetFileSuggestionInArrayCompletionOption(ReadOnlySpan<IToken> tokens,
-        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+        string text, int textStart, int textLength, TextChangeTrigger trigger, int column)
     {
+        var line = text.AsSpan()[textStart..(textStart + textLength)];
         var leftLinePart = line[..(column+1)];
         if (!PreCheckForFileSuggestion(leftLinePart, trigger))
         {
             return null;
         }
-        //var (isArray, openBracketColumn)
-        throw new NotImplementedException();
+
+        var cursorWithinArray = IsCursorWithinArray(text, textStart, textLength); 
+        if (cursorWithinArray is not null)
+        {
+            CompletionOptionType? completionOptionType = cursorWithinArray.Value.ArgumentName switch
+            {
+                "sidFiles" => CompletionOptionType.SidFile,
+                "prgFiles" or "name" => CompletionOptionType.ProgramFile,
+                _ => null,
+            };
+            if (completionOptionType is not null)
+            {
+                CompletionOption? completionOption = completionOptionType switch
+                {
+                    CompletionOptionType.SidFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef" or "file" => 
+                        new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root, false, 1),
+                    _ => null,
+                };
+                return completionOption;
+            }
+        }
+
+        return null;
     }
 
     internal static bool PreCheckForFileSuggestion(ReadOnlySpan<char> line, TextChangeTrigger trigger)
@@ -639,6 +661,10 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         return true;
     }
 
+    [GeneratedRegex("""
+                    ^\s*(?<KeyWord>(\.segmentdef|\.segment|\.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,\s*)*(?<ArgName>\w+)\s*=\s*"(?<Root>\w*)$
+                    """)]
+    private static partial Regex ArraySuggestionTemplateregex();
     /// <summary>
     /// Finds whether cursor is within array of options.
     /// </summary>
@@ -646,91 +672,25 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="trigger"></param>
     /// <param name="openBracketColumn"></param>
     /// <returns></returns>
-    internal static bool IsCursorWithinArray(ReadOnlySpan<char> line, TextChangeTrigger trigger, out int openBracketColumn)
+    internal static IsCursorWithinArrayResult? IsCursorWithinArray(string text, int start, int length)
     {
-        openBracketColumn = 0;
-        
-        int doubleQuoteIndex = line.Length - 1;
-        // finds first double quote on the left
-        while (doubleQuoteIndex >= 0 && line[doubleQuoteIndex] != '\"')
+        var match = ArraySuggestionTemplateregex().Match(text, start, length);
+        if (match.Success)
         {
-            doubleQuoteIndex--;
+            return new IsCursorWithinArrayResult(
+                match.Groups["KeyWord"].Value,
+                match.Groups["Parameter"]?.Value,
+                match.Groups["ArgName"].Value,
+                match.Groups["Root"].Value,
+                match.Groups["OpenBracket"].Index
+            );
         }
 
-        if (doubleQuoteIndex < 0)
-        {
-            return false;
-        }
-
-        int i = doubleQuoteIndex - 1;
-        var state = IsCursorWithinArrayState.ArgumentValueStart; 
-        while (i >= 0)
-        {
-            var c = line[i];
-            // simplified ignorance of spaces and tabs
-            if (c is not (' ' or '\t'))
-            {
-                switch (state)
-                {
-                    case IsCursorWithinArrayState.ArgumentValueStart:
-                        switch (c)
-                        {
-                            case '=':
-                                state = IsCursorWithinArrayState.ArgumentName;
-                                break;
-                            default:
-                                return false;
-                        }
-
-                        break;
-                    case IsCursorWithinArrayState.ArgumentName:
-                        switch (c)
-                        {
-                            case ',':
-                                state = IsCursorWithinArrayState.ArgumentValue;
-                                break;
-                            case '\"':
-                                return false;
-                            case '[':
-                                openBracketColumn = i;
-                                return true;
-                        }
-
-                        break;
-                    case IsCursorWithinArrayState.ArgumentValue:
-                        switch (c)
-                        {
-                            case '\"':
-                                state = IsCursorWithinArrayState.InQuotedString;
-                                break;
-                            case ',':
-                                state = IsCursorWithinArrayState.ArgumentValue;
-                                break;
-                            case '=':
-                                state = IsCursorWithinArrayState.ArgumentName;
-                                break;
-                            case '[':
-                                return false;
-                        }
-                        break;
-                    
-                    case IsCursorWithinArrayState.InQuotedString:
-                        switch (c)
-                        {
-                            case '\"':
-                                state = IsCursorWithinArrayState.ArgumentValueStart;
-                                break;
-                        }
-                        break;
-                }
-            }
-
-            i--;
-        }
-
-
-        return false;
+        return null;
     }
+
+    internal record struct IsCursorWithinArrayResult(string KeyWord, string? Parameter, string ArgumentName, 
+        string Root, int OpenBracketColumn);
 
     private enum IsCursorWithinArrayState
     {

@@ -4,7 +4,7 @@ public enum CompletionOptionType
 {
     FileReference,
     PreprocessorDirective,
-    Program,
+    ProgramFile,
     SidFile,
 }
 

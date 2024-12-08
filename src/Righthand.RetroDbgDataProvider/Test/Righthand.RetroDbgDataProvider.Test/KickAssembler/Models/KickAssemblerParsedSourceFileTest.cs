@@ -564,20 +564,30 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
     [TestFixture]
     public class IsCursorWithinArray : KickAssemblerParsedSourceFileTest
     {
-        [TestCase(".file [name=\"", ExpectedResult = true)]
-        [TestCase(".file [segments=\"Code\",name=\"", ExpectedResult = true)]
-        [TestCase(".file [segments = \"Code\" , name = \"", ExpectedResult = true)]
-        public bool GivenSampleInput_AndTriggerCharacterTyped_ReturnsWhetherCursorIsWithinArray(string line)
+        [TestCase(".file [name=\"")]
+        [TestCase(".file [segments=\"Code\",name=\"")]
+        [TestCase(".file [segments = \"Code\" , name = \"")]
+        public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
         {
-            return KickAssemblerParsedSourceFile.IsCursorWithinArray(line, TextChangeTrigger.CharacterTyped, out _);
+            var actual = KickAssemblerParsedSourceFile.IsCursorWithinArray(line, 0, line.Length);
+            
+            Assert.That(actual, Is.Not.Null);
+        }
+        [TestCase(".file [name=\"\"")]
+        [TestCase(".file [segments=\"Code\" name=\"")]
+        [TestCase(".file segments = \"Code\" , name = \"")]
+        public void GivenSampleInputThatDoesNotPutCursorWithinArray_ReturnsNullResult(string line)
+        {
+            var actual = KickAssemblerParsedSourceFile.IsCursorWithinArray(line, 0, line.Length);
+            
+            Assert.That(actual, Is.Null);
         }
         [TestCase(".file [name=\"", ExpectedResult = 6)]
         [TestCase(".file [segments=\"Code\",name=\"", ExpectedResult = 6)]
         [TestCase(".file  [ segments = \"Code\" , name = \"", ExpectedResult = 7)]
-        public int GivenSampleInput_AndTriggerCharacterTyped_ReturnsOpenBracketColumnIndex(string line)
+        public int? GivenSampleInput_ReturnsOpenBracketColumnIndex(string line)
         {
-            KickAssemblerParsedSourceFile.IsCursorWithinArray(line, TextChangeTrigger.CharacterTyped, out int column);
-            return column;
+            return KickAssemblerParsedSourceFile.IsCursorWithinArray(line, 0, line.Length)?.OpenBracketColumn;
         }
     }
 }
