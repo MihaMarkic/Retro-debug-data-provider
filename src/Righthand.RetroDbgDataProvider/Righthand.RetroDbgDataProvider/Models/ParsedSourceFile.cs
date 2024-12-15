@@ -13,6 +13,8 @@ public record FileSyntaxInfo(
     ImmutableArray<IToken> AllTokens, 
     FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap);
 
+public record SegmentDefinitionInfo(string Name, int Line);
+
 public abstract class ParsedSourceFile
 {
     public string FileName { get; }
@@ -20,6 +22,7 @@ public abstract class ParsedSourceFile
     public FrozenSet<string> InDefines { get; }
     public FrozenSet<string> OutDefines { get; }
     public DateTimeOffset LastModified { get; }
+    public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions { get; }
     public string? LiveContent { get; }
     /// <summary>
     /// All tokens regardless of channel.
@@ -47,12 +50,13 @@ public abstract class ParsedSourceFile
     private FrozenDictionary<int, SyntaxErrorLine>? _syntaxErrors;
     
     protected ParsedSourceFile(string fileName, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
-        FrozenSet<string> outDefines, DateTimeOffset lastModified, string? liveContent)
+        FrozenSet<string> outDefines, FrozenSet<SegmentDefinitionInfo> segmentDefinitions, DateTimeOffset lastModified, string? liveContent)
     {
         FileName = fileName;
         ReferencedFiles = referencedFiles;
         InDefines = inDefines;
         OutDefines = outDefines;
+        SegmentDefinitions = segmentDefinitions;
         LastModified = lastModified;
         LiveContent = liveContent;
         AllTokens = ImmutableArray<IToken>.Empty;
@@ -127,7 +131,8 @@ public abstract class ParsedSourceFile
         var syntaxLinesTask = Task.Run(async () => await GetSyntaxLinesAsync(ct).ConfigureAwait(false), ct)
             .ConfigureAwait(false);
         var ignoredDefineContent = await Task.Run(() => GetIgnoredDefineContent(ct), ct).ConfigureAwait(false);
-        var syntaxErrors = await Task.Run(() => GetSyntaxErrors(ct), ct).ConfigureAwait(false);
+        var syntaxErrorsTask = Task.Run(() => GetSyntaxErrors(ct), ct).ConfigureAwait(false);
+        var syntaxErrors = await syntaxErrorsTask;
         var syntaxLines = await syntaxLinesTask;
         var (allTokens, allTokensByLineMap) = await initializeForSyntaxParsingTask;
         return new FileSyntaxInfo(syntaxLines, ignoredDefineContent,

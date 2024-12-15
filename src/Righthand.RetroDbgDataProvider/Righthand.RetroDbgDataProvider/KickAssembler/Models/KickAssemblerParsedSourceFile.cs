@@ -29,6 +29,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         FrozenDictionary<IToken, ReferencedFileInfo> referencedFilesMap,
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
+        FrozenSet<SegmentDefinitionInfo> segmentDefinitions,
         DateTimeOffset lastModified,
         string? liveContent,
         KickAssemblerLexer lexer,
@@ -38,7 +39,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         KickAssemblerLexerErrorListener lexerErrorListener,
         KickAssemblerParserErrorListener parserErrorListener,
         bool isImportOnce
-    ) : base(fileName, referencedFilesMap.Values, inDefines, outDefines, lastModified, liveContent)
+    ) : base(fileName, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, lastModified, liveContent)
     {
         Lexer = lexer;
         CommonTokenStream = commonTokenStream;
@@ -355,33 +356,6 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             .ToFrozenDictionary(g => g.Key, g => g.OrderBy(t => t.Column).ToImmutableArray());
         return (allTokens, allTokensByLineMap);
     }
-
-    // /// <summary>
-    // /// Returns token at location defined by <param name="offset"/> or null.
-    // /// </summary>
-    // /// <param name="tokens">A collection of <see cref="IToken"/></param>
-    // /// <param name="offset">Offset from the start</param>
-    // /// <returns>A <see cref="IToken"/> at that location or null otherwise.</returns>
-    // internal static int? GetTokenIndexAtLocation(ImmutableArray<IToken> tokens, int offset)
-    // {
-    //     if (offset < 0)
-    //     {
-    //         return null;
-    //     }
-    //
-    //     for (int i = 0; i < tokens.Length; i++)
-    //     {
-    //         var token = tokens[i];
-    //         // EOF has -1, thus check start index+1
-    //         int stopIndex = token.Type != KickAssemblerLexer.Eof ? token.StopIndex : token.StartIndex + 1;
-    //         if (token.StartIndex <= offset && stopIndex >= offset)
-    //         {
-    //             return i;
-    //         }
-    //     }
-    //
-    //     return null;
-    // }
     /// <summary>
     /// Returns token at location defined by <param name="line"/> and <param name="column"/>.
     /// </summary>
@@ -603,7 +577,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         return null;
     }
-    
+
     /// <summary>
     /// Generic file suggestion completion.
     /// </summary>
@@ -625,6 +599,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     ///
     /// Where files = "file(, file)*"
     /// </remarks>
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     internal static CompletionOption? GetFileSuggestionInArrayCompletionOption(ReadOnlySpan<IToken> tokens,
         string text, int lineStart, int lineLength, TextChangeTrigger trigger, int column, ValuesCount valuesCountSupport)
     {
@@ -633,8 +608,8 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         {
             return null;
         }
-        //var leftLinePart = line[..(column+1)];
 
+        // TODO properly handle valuesCountSupport (to limit it to single value when required)
         var cursorWithinArray = IsCursorWithinArray(text, lineStart, lineLength, column, valuesCountSupport);
         if (cursorWithinArray is not null)
         {
@@ -642,6 +617,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             {
                 "sidFiles" => CompletionOptionType.SidFile,
                 "prgFiles" or "name" => CompletionOptionType.ProgramFile,
+                "segments" => CompletionOptionType.Segments,
                 _ => null,
             };
             if (completionOptionType is not null)
@@ -649,15 +625,21 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
                 CompletionOption? completionOption = completionOptionType switch
                 {
                     CompletionOptionType.SidFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
+                            or ".segmentout"
                             or "file" =>
                         new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
                             cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
                             cursorWithinArray.Value.ArrayValues),
                     CompletionOptionType.ProgramFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
+                            or ".segmentout"
                         =>
                         new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
                             cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
                             cursorWithinArray.Value.ArrayValues),
+                    CompletionOptionType.Segments when cursorWithinArray.Value.KeyWord is ".file" or ".segmentdef"
+                        or ".segmentout" => GetCompletionOptionForSegments(completionOptionType.Value,
+                        cursorWithinArray.Value),
+
                     _ => null,
                 };
                 return completionOption;
@@ -667,8 +649,26 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         return null;
     }
 
+    private static CompletionOption GetCompletionOptionForSegments(CompletionOptionType completionOptionType,
+        IsCursorWithinArrayResult data)
+    {
+        ImmutableArray<string> excludedValues;
+        if (data.KeyWord.Equals(".segmentdef", StringComparison.Ordinal) && data.Parameter is not null)
+        {
+            excludedValues = data.ArrayValues.Add(data.Parameter);
+        }
+        else
+        {
+            excludedValues = data.ArrayValues;
+        }
+
+        return new CompletionOption(completionOptionType, data.Root, data.HasEndDelimiter, data.ReplacementLength,
+            excludedValues);
+    }
+
+    // ReSharper disable once StringLiteralTypo
     [GeneratedRegex("""
-                    ^\s*(?<KeyWord>(\.segmentdef|\.segment|\.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,\s*)*(?<ArgName>\w+)\s*=\s*(?<StartDoubleQuote>")(\s*(?<PrevArrayItem>[^,"]*)\s*(?<ArgComma>,))*\s*(?<Root>[^,"]*)$
+                    ^\s*(?<KeyWord>(\.segmentdef|\.segment|.segmentout|\.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,\s*)*(?<ArgName>\w+)\s*=\s*(?<StartDoubleQuote>")(\s*(?<PrevArrayItem>[^,"]*)\s*(?<ArgComma>,))*\s*(?<Root>[^,"]*)$
                     """, RegexOptions.Singleline)]
     private static partial Regex ArraySuggestionTemplateRegex();
     /// <summary>

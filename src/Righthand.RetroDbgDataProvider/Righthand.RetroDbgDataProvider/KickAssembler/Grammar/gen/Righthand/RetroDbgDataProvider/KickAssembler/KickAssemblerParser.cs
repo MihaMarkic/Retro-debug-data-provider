@@ -4093,11 +4093,12 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class SegmentDefContext : ParserRuleContext {
+		public IToken Name;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SEGMENTDEF() { return GetToken(KickAssemblerParser.SEGMENTDEF, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ParameterMapContext parameterMap() {
 			return GetRuleContext<ParameterMapContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
 		public SegmentDefContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -4131,7 +4132,7 @@ public partial class KickAssemblerParser : Parser {
 			State = 578;
 			Match(SEGMENTDEF);
 			State = 579;
-			Match(UNQUOTED_STRING);
+			_localctx.Name = Match(UNQUOTED_STRING);
 			State = 580;
 			parameterMap();
 			}

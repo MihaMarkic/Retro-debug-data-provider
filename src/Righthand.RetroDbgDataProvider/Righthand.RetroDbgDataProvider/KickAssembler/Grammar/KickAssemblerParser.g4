@@ -176,7 +176,7 @@ segment
     | SEGMENT name=UNQUOTED_STRING STRING                                        // .segment Code "My Code"
     | SEGMENT name=UNQUOTED_STRING;                                              // .segment Code
 segmentDef
-    : SEGMENTDEF UNQUOTED_STRING parameterMap; // .segmentdef Combi1  [segments="Code, Data"]
+    : SEGMENTDEF Name=UNQUOTED_STRING parameterMap; // .segmentdef Combi1  [segments="Code, Data"]
 segmentOut
     : SEGMENTOUT UNQUOTED_STRING parameterMap; // .segmentout [segments="ZeroPage_Code"]
 fileDirective: FILE parameterMap;

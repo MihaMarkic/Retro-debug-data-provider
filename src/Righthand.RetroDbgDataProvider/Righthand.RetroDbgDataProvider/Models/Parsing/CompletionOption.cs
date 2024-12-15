@@ -6,6 +6,7 @@ public enum CompletionOptionType
     PreprocessorDirective,
     ProgramFile,
     SidFile,
+    Segments,
 }
 
 public enum TextChangeTrigger
