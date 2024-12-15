@@ -1,7 +1,9 @@
 ﻿using System.Collections.Frozen;
-using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
+using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
@@ -13,7 +15,9 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 {
     public KickAssemblerLexer Lexer { get; init; }
     public CommonTokenStream CommonTokenStream { get; init; }
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public KickAssemblerParser Parser { get; init; }
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public KickAssemblerParserListener ParserListener { get; init; }
     public KickAssemblerLexerErrorListener LexerErrorListener { get; init; }
     public KickAssemblerParserErrorListener ParserErrorListener { get; init; }
@@ -48,23 +52,25 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     /// <inheritdoc />
     public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column,
-        ReadOnlySpan<char> text) =>
-        GetCompletionOption(AllTokensByLineMap, trigger, line, column, text);
+        string text, int textStart, int textLength) =>
+        GetCompletionOption(AllTokensByLineMap, trigger, line, column, text, textStart, textLength);
 
     internal static CompletionOption? GetCompletionOption(
         FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int line,
-        int column, ReadOnlySpan<char> text)
+        int column, string text, int textStart, int textLength)
     {
         if (!allTokensByLineMap.TryGetValue(line, out var tokensAtLine))
         {
             return null;
         }
 
-        CompletionOption? result = GetFileReferenceCompletionOption(tokensAtLine.AsSpan(), text, trigger, column);
-        if (result is null)
-        {
-            result = GetPreprocessorDirectiveCompletionOption(text, trigger, column);
-        }
+        var textSpan = text.AsSpan()[textStart..(textStart + textLength)];
+        CompletionOption? result =
+            (GetFileReferenceCompletionOption(tokensAtLine.AsSpan(), textSpan, trigger, column) ??
+             GetPreprocessorDirectiveCompletionOption(textSpan, trigger, column)) ??
+            GetFileSuggestionInArrayCompletionOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger,
+                column,
+                ValuesCount.Multiple);
 
         return result;
     }
@@ -75,7 +81,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         var (isMatch, root, replaceableText) = GetPreprocessorDirectiveSuggestion(line, trigger, column);
         if (isMatch)
         {
-            return new CompletionOption(CompletionOptionType.PreprocessorDirective, root, false, replaceableText.Length + 1);
+            return new CompletionOption(CompletionOptionType.PreprocessorDirective, root, false, replaceableText.Length + 1, []);
         }
 
         return null;
@@ -128,7 +134,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     
     [GeneratedRegex("""
                     ^\s*#(?<import>[a-zA-Z]*)$
-                    """)]
+                    """, RegexOptions.Singleline)]
     internal static partial Regex PreprocessorDirectiveRegex();
     /// <summary>
     /// Returns possible completion for preprocessor directives.
@@ -173,7 +179,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             var suggestionLine = line[(doubleQuoteColumn+1)..];
             var (rootText, length, endsWithDoubleQuote) =
                 GetSuggestionTextInDoubleQuotes(suggestionLine, column - doubleQuoteColumn);
-            return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length);
+            return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length, []);
         }
 
         return null;
@@ -486,6 +492,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     internal record LexerBasedSyntaxResult(int LineNumber, IToken Token, SyntaxItem Item);
 
+    // ReSharper disable once UnusedParameter.Local
     private ImmutableArray<LexerBasedSyntaxResult> GetLexerBasedSyntaxLines(CancellationToken ct)
     {
         var tokens = CommonTokenStream.GetTokens();
@@ -595,5 +602,200 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         }
 
         return null;
+    }
+    
+    /// <summary>
+    /// Generic file suggestion completion.
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <param name="text"></param>
+    /// <param name="lineStart"></param>
+    /// <param name="lineLength"></param>
+    /// <param name="trigger"></param>
+    /// <param name="column"></param>
+    /// <param name="valuesCountSupport"></param>
+    /// <returns></returns>
+    /// <remarks>
+    /// Handles such cases:
+    /// .file [name="test.prg", segments="Code", sidFiles="file.sid"]
+    /// .segment Base [prgFiles="basefile.prg"]
+    /// .segmentdef Misc1 [prgFiles="data/Music.prg, data/Charset2x2.prg"]
+    /// *** .import c64 "data/Music.prg"
+    /// .segment Main [sidFiles="data/music.sid", outPrg="out.prg"]
+    ///
+    /// Where files = "file(, file)*"
+    /// </remarks>
+    internal static CompletionOption? GetFileSuggestionInArrayCompletionOption(ReadOnlySpan<IToken> tokens,
+        string text, int lineStart, int lineLength, TextChangeTrigger trigger, int column, ValuesCount valuesCountSupport)
+    {
+        var line = text.AsSpan()[lineStart..(lineStart + lineLength)];
+        if (line.Length == 0)
+        {
+            return null;
+        }
+        //var leftLinePart = line[..(column+1)];
+
+        var cursorWithinArray = IsCursorWithinArray(text, lineStart, lineLength, column, valuesCountSupport);
+        if (cursorWithinArray is not null)
+        {
+            CompletionOptionType? completionOptionType = cursorWithinArray.Value.ArgumentName switch
+            {
+                "sidFiles" => CompletionOptionType.SidFile,
+                "prgFiles" or "name" => CompletionOptionType.ProgramFile,
+                _ => null,
+            };
+            if (completionOptionType is not null)
+            {
+                CompletionOption? completionOption = completionOptionType switch
+                {
+                    CompletionOptionType.SidFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
+                            or "file" =>
+                        new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
+                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
+                            cursorWithinArray.Value.ArrayValues),
+                    CompletionOptionType.ProgramFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
+                        =>
+                        new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
+                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
+                            cursorWithinArray.Value.ArrayValues),
+                    _ => null,
+                };
+                return completionOption;
+            }
+        }
+
+        return null;
+    }
+
+    [GeneratedRegex("""
+                    ^\s*(?<KeyWord>(\.segmentdef|\.segment|\.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,\s*)*(?<ArgName>\w+)\s*=\s*(?<StartDoubleQuote>")(\s*(?<PrevArrayItem>[^,"]*)\s*(?<ArgComma>,))*\s*(?<Root>[^,"]*)$
+                    """, RegexOptions.Singleline)]
+    private static partial Regex ArraySuggestionTemplateRegex();
+    /// <summary>
+    /// Finds whether cursor is within array of options. KeyWord is limited to .segmentDef, .segment and .file
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="lineStart">Line start in absolute index</param>
+    /// <param name="lineLength"></param>
+    /// <param name="cursor">Cursor position in absolute index</param>
+    /// <param name="valuesCountSupport">When Multiple, multiple comma-delimited values are supported, only a single value otherwise</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// Groups:
+    /// - StartDoubleQuote is starting double quote of values
+    /// </remarks>
+    internal static IsCursorWithinArrayResult? IsCursorWithinArray(string text, int lineStart, int lineLength,
+        int cursor, ValuesCount valuesCountSupport)
+    { 
+        Debug.WriteLine($"Searching IsCursorWithinArrayResult in: '{text.Substring(lineStart, cursor+1)}'");
+        int lineEnd = lineStart + lineLength;
+        // tries to match against text left of cursor
+        var match = ArraySuggestionTemplateRegex().Match(text, lineStart, cursor+1);
+        if (match.Success)
+        {
+            // when supports only a single value, can't have comma-separated values in front 
+            if (valuesCountSupport == ValuesCount.Single && match.Groups["PrevArrayItem"].Success)
+            {
+                Debug.WriteLine("Doesn't support multiple values and comma was found");
+                return null;
+            }
+
+            var line = text.AsSpan()[lineStart..lineEnd];
+            int? firstDelimiterColumn = FindFirstArrayDelimiterPosition(line, cursor+1) + lineStart;
+            var rootGroup = match.Groups["Root"];
+            int startDoubleQuote = match.Groups["StartDoubleQuote"].Index;
+            var arrayValues = GetArrayValues(text, startDoubleQuote, lineEnd - startDoubleQuote);
+            var currentValue = GetCurrentArrayValue(text, rootGroup.Index, lineEnd);
+            Debug.WriteLine($"Found a match with current being '{currentValue}' and array values {string.Join(",", arrayValues.Select(a => $"'{a}'"))}");
+            
+            return new IsCursorWithinArrayResult(
+                match.Groups["KeyWord"].Value,
+                match.Groups["Parameter"].Value,
+                match.Groups["ArgName"].Value,
+                rootGroup.Value,
+                match.Groups["OpenBracket"].Index,
+                ReplacementLength: currentValue.Length,
+                HasEndDelimiter: firstDelimiterColumn is not null,
+                arrayValues
+            );
+        }
+        else
+        {
+            Debug.WriteLine("Doesn't match");
+        }
+
+        return null;
+    }
+
+    [GeneratedRegex("""
+                    ^\s*(?<Item>[^,"]*)
+                    """, RegexOptions.Singleline)]
+    private static partial Regex GetCurrentArrayValueRegex();
+    internal static string GetCurrentArrayValue(string text, int start, int end)
+    {
+        var match = GetCurrentArrayValueRegex().Match(text, start, end-start);
+        if (match.Success)
+        {
+            return match.Groups["Item"].Value;
+        }
+
+        throw new Exception("Shouldn't happen");
+    }
+
+    [GeneratedRegex("""
+                    ^"(\s*(?<ArrayItem>[^,"]*)\s*,)*\s*(?<LastItem>[^,"]*)"?
+                    """, RegexOptions.Singleline)]
+    private static partial Regex GetArrayValuesRegex();
+    internal static ImmutableArray<string> GetArrayValues(string text, int start, int length)
+    {
+        var m = GetArrayValuesRegex().Match(text, start, length);
+        if (m.Success)
+        {
+            var items = m.Groups["ArrayItem"].Captures
+                .Where(c => !string.IsNullOrWhiteSpace(c.Value))
+                .Select(c => c.Value)
+                .ToImmutableArray();
+            string? lastItem = m.Groups["LastItem"].Value;
+            if (!string.IsNullOrWhiteSpace(lastItem))
+            {
+                return items.Add(lastItem);
+            }
+
+            return items;
+        }
+
+        return [];
+    }
+
+    internal static int? FindFirstArrayDelimiterPosition(ReadOnlySpan<char> line, int cursor)
+    {
+        int delimiterPosition = cursor;
+        while (delimiterPosition < line.Length)
+        {
+            if (line[delimiterPosition] is ',' or '"')
+            {
+                return delimiterPosition;
+            }
+            delimiterPosition++;
+        }
+
+        return null;
+    }
+
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global")]
+    internal record struct IsCursorWithinArrayResult(
+        string KeyWord,
+        string? Parameter,
+        string ArgumentName,
+        string Root,
+        int OpenBracketColumn,
+        int ReplacementLength,
+        bool HasEndDelimiter,
+        ImmutableArray<string> ArrayValues);
+
+    public enum ValuesCount
+    {
+        Single,
+        Multiple,
     }
 }

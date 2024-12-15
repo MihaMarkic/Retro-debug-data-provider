@@ -1,22 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using Antlr4.Runtime;
 using AutoFixture;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
-using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Models.Program;
+using CommonTokenStream = Antlr4.Runtime.CommonTokenStream;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Models;
 
@@ -44,7 +40,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         stream.Fill();
         return (lexer, stream, parser, parserListener, lexerErrorListener, parserErrorListener);
     }
-    
+
     /// <summary>
     /// Returns all channel tokens.
     /// </summary>
@@ -142,8 +138,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             ImmutableArray<KickAssemblerParsedSourceFile.LexerBasedSyntaxResult> source =
             [
-                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, firstToken, new SyntaxItem(0, 0, TokenType.Number)),
-                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, firstToken,
+                    new SyntaxItem(0, 0, TokenType.Number)),
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, secondToken,
+                    new SyntaxItem(0, 0, TokenType.String))
             ];
 
             var actual =
@@ -161,8 +159,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             ImmutableArray<KickAssemblerParsedSourceFile.LexerBasedSyntaxResult> source =
             [
-                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, firstToken, new SyntaxItem(0, 0, TokenType.Number)),
-                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, firstToken,
+                    new SyntaxItem(0, 0, TokenType.Number)),
+                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, secondToken,
+                    new SyntaxItem(0, 0, TokenType.String))
             ];
 
             var fileReferences = new Dictionary<IToken, ReferencedFileInfo>
@@ -299,17 +299,18 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
     [TestFixture]
     public class GetFileReferenceCompletionOption : KickAssemblerParsedSourceFileTest
     {
-        private (int ZeroBasedColumnIndex, int TokenIndex, ImmutableArray<IToken> Tokens) GetColumnAndTokenIndex(string input)
+        private (int ZeroBasedColumnIndex, int TokenIndex, ImmutableArray<IToken> Tokens) GetColumnAndTokenIndex(
+            string input)
         {
-            int zeroBasedColumn = input.IndexOf('|')-1;
-        
+            int zeroBasedColumn = input.IndexOf('|') - 1;
+
             var tokens = GetAllChannelTokens(input.Replace("|", ""));
             var token = tokens.FirstOrDefault(t => t.StartIndex <= zeroBasedColumn && t.StopIndex >= zeroBasedColumn) ??
                         tokens[^1];
             var tokenIndex = tokens.IndexOf(token);
             return (zeroBasedColumn, tokenIndex, tokens);
         }
-        
+
         /// <summary>
         /// | signifies the caret position.
         /// </summary>
@@ -335,6 +336,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             return actual?.Type == CompletionOptionType.FileReference;
         }
+
         /// <summary>
         /// | signifies the caret position.
         /// </summary>
@@ -397,7 +399,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public void GivenSample_TrimsProperly(ImmutableArray<IToken> data, ImmutableArray<IToken> expected)
         {
             var actual = KickAssemblerParsedSourceFile.TrimWhitespaces(data.AsSpan());
-            
+
             Assert.That(actual.ToImmutableArray(), Is.EquivalentTo(expected));
         }
 
@@ -410,13 +412,13 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             public IEnumerator GetEnumerator()
             {
                 yield return new TestCaseData(
-                    GetArray((KickAssemblerLexer.STRING, 0)), 
+                    GetArray((KickAssemblerLexer.STRING, 0)),
                     GetArray((KickAssemblerLexer.STRING, 0)));
                 yield return new TestCaseData(
-                    GetArray((KickAssemblerLexer.WS, 0)), 
+                    GetArray((KickAssemblerLexer.WS, 0)),
                     GetArray());
                 yield return new TestCaseData(
-                    GetArray((KickAssemblerLexer.WS, 0), (KickAssemblerLexer.STRING, 0), (KickAssemblerLexer.EOL, 1)), 
+                    GetArray((KickAssemblerLexer.WS, 0), (KickAssemblerLexer.STRING, 0), (KickAssemblerLexer.EOL, 1)),
                     GetArray((KickAssemblerLexer.STRING, 0)));
             }
         }
@@ -444,6 +446,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             {
                 return KickAssemblerParsedSourceFile.GetSuggestionTextInDoubleQuotes(input, caret).Length;
             }
+
             [TestCase("xys", 3, ExpectedResult = false)]
             [TestCase("xys\"", 3, ExpectedResult = true)]
             [TestCase("xys \t\"", 3, ExpectedResult = true)]
@@ -452,7 +455,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 return KickAssemblerParsedSourceFile.GetSuggestionTextInDoubleQuotes(input, caret).EndsWithDoubleQuote;
             }
         }
-        
+
         public record TrimWhitespacesToken : IToken
         {
             public string Text => "N/A";
@@ -460,11 +463,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             public int Line => -1;
             public int Column => -1;
             public int Channel { get; }
-            public int TokenIndex  => -1;
-            public int StartIndex  => -1;
-            public int StopIndex  => -1;
-            public ITokenSource TokenSource  => null!;
-            public ICharStream InputStream  => null!;
+            public int TokenIndex => -1;
+            public int StartIndex => -1;
+            public int StopIndex => -1;
+            public ITokenSource TokenSource => null!;
+            public ICharStream InputStream => null!;
 
             public TrimWhitespacesToken(int type, int channel)
             {
@@ -485,8 +488,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public void Setup()
         {
             _parser = new KickAssemblerDbgParser(Substitute.For<ILogger<KickAssemblerDbgParser>>());
-            _infoBuilder= new KickAssemblerProgramInfoBuilder(Substitute.For<ILogger<KickAssemblerProgramInfoBuilder>>());
+            _infoBuilder =
+                new KickAssemblerProgramInfoBuilder(Substitute.For<ILogger<KickAssemblerProgramInfoBuilder>>());
         }
+
         [Test]
         public async Task Test()
         {
@@ -495,9 +500,9 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var assemblyInfo = await _infoBuilder.BuildAppInfoAsync("path", _dbg);
         }
     }
-    
+
     [TestFixture]
-    public class GetPreprocessorDirectiveSuggestion: KickAssemblerParsedSourceFileTest
+    public class GetPreprocessorDirectiveSuggestion : KickAssemblerParsedSourceFileTest
     {
         [TestCase("#", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
         [TestCase(" #", 1, TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
@@ -505,6 +510,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         {
             return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column).IsMatch;
         }
+
         [TestCase("#im", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = "")]
         [TestCase("#im", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
         [TestCase("#import", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
@@ -512,12 +518,14 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         {
             return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column).Root;
         }
+
         [TestCase("#im", 0, TextChangeTrigger.CharacterTyped, ExpectedResult = "")]
         [TestCase("#im", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "im")]
         [TestCase("#import", 2, TextChangeTrigger.CompletionRequested, ExpectedResult = "import")]
         public string GivenLine_ReturnsReplaceableText(string line, int column, TextChangeTrigger trigger)
         {
-            return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column).ReplaceableText;
+            return KickAssemblerParsedSourceFile.GetPreprocessorDirectiveSuggestion(line, trigger, column)
+                .ReplaceableText;
         }
     }
 
@@ -528,9 +536,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public void WhenEmptyList_FindsNoMatches()
         {
             var actual = KickAssemblerParsedSourceFile.GetMatches("ab", 1, ReadOnlySpan<string>.Empty);
-            
+
             Assert.That(actual, Is.Empty);
         }
+
         [Test]
         public void WhenValidRoot_FindsAllMatches()
         {
@@ -541,6 +550,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             ImmutableArray<string> expected = ["#abb", "#abc"];
             Assert.That(actual, Is.EquivalentTo(expected));
         }
+
         [Test]
         public void WhenRootHasNoMatched_ReturnsEmptyList()
         {
@@ -550,6 +560,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             Assert.That(actual, Is.Empty);
         }
+
         [Test]
         public void WhenRootDoesNotStartAfterHash_ReturnsEmptyList()
         {
@@ -560,8 +571,101 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             Assert.That(actual, Is.Empty);
         }
     }
-}
 
-internal class KickAss
-{
+    [TestFixture]
+    public class IsCursorWithinArray : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase(".file [name=\"")]
+        [TestCase(".file [segments=\"Code\",name=\"")]
+        [TestCase(".file [segments = \"Code\" , name = \"")]
+        [TestCase(".segment Base [prgFiles = \"")]
+        [TestCase(".segment Base [prgFiles=\"test.prg,")]
+        public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
+        {
+            var actual =
+                KickAssemblerParsedSourceFile.IsCursorWithinArray(line, 0, line.Length, line.Length-1,
+                    KickAssemblerParsedSourceFile.ValuesCount.Multiple);
+
+            Assert.That(actual, Is.Not.Null);
+        }
+
+        [TestCase(".file [name=\"\"")]
+        [TestCase(".file [segments=\"Code\" name=\"")]
+        [TestCase(".file segments = \"Code\" , name = \"")]
+        public void GivenSampleInputThatDoesNotPutCursorWithinArray_ReturnsNullResult(string line)
+        {
+            var actual =
+                KickAssemblerParsedSourceFile.IsCursorWithinArray(line, 0, line.Length, line.Length-1,
+                    KickAssemblerParsedSourceFile.ValuesCount.Multiple);
+
+            Assert.That(actual, Is.Null);
+        }
+
+        [TestCase(".file [name=\"", ExpectedResult = 6)]
+        [TestCase(".file [segments=\"Code\",name=\"", ExpectedResult = 6)]
+        [TestCase(".file  [ segments = \"Code\" , name = \"", ExpectedResult = 7)]
+        public int? GivenSampleInput_ReturnsOpenBracketColumnIndex(string line)
+        {
+            return KickAssemblerParsedSourceFile
+                .IsCursorWithinArray(line, 0, line.Length, line.Length-1,
+                    KickAssemblerParsedSourceFile.ValuesCount.Multiple)?.OpenBracketColumn;
+        }
+
+        [Test]
+        public void WhenNotSupportingMultipleValues_AndCommaDelimitedValueIsInFront_ReturnsNull()
+        {
+            string line = ".file [name=\"value,";
+            var actual =
+                KickAssemblerParsedSourceFile.IsCursorWithinArray(line, 0, line.Length, line.Length-1,
+                    KickAssemblerParsedSourceFile.ValuesCount.Single);
+
+            Assert.That(actual, Is.Null);
+        }
+    }
+
+    [TestFixture]
+    public class FindFirstArrayDelimiterPosition : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase("", 0, ExpectedResult = null)]
+        [TestCase("tubo,", 0, ExpectedResult = 4)]
+        [TestCase("tubo,", 2, ExpectedResult = 4)]
+        [TestCase("tubo , ", 2, ExpectedResult = 5)]
+        [TestCase("tubo , \"", 2, ExpectedResult = 5)]
+        [TestCase("tubo \" ,", 2, ExpectedResult = 5)]
+        [TestCase("tubo", 2, ExpectedResult = null)]
+        public int? GivenSampleInput_ReturnsCorrectResult(string line, int cursor)
+        {
+            return KickAssemblerParsedSourceFile.FindFirstArrayDelimiterPosition(line, cursor);
+        }
+    }
+
+    [TestFixture]
+    public class GetArrayValues : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase("", ExpectedResult = new string[0])]
+        [TestCase("\"alfa.prg", ExpectedResult = new string[] { "alfa.prg" })]
+        [TestCase("\"alfa.prg,", ExpectedResult = new string[] { "alfa.prg" })]
+        [TestCase("\"alfa.prg,a.prg", ExpectedResult = new string[] { "alfa.prg","a.prg" })]
+        [TestCase("\"alfa.prg,a.prg\"", ExpectedResult = new string[] { "alfa.prg","a.prg" })]
+        public string[] GivenSampleInput_ReturnsCorrectArray(string text)
+        {
+            return KickAssemblerParsedSourceFile.GetArrayValues(text, 0, text.Length)
+                .ToArray();
+        }
+    }
+
+    [TestFixture]
+    public class GetCurrentArrayValue : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase("", null, ExpectedResult = "")]
+        [TestCase("alfa", null, ExpectedResult = "alfa")]
+        [TestCase(" alfa", null, ExpectedResult = "alfa")]
+        [TestCase(" alfa, ", null, ExpectedResult = "alfa")]
+        [TestCase(" alfa\"", null, ExpectedResult = "alfa")]
+        [TestCase(" alfa\r\nx", 5, ExpectedResult = "alfa")]
+        public string? GivenSampleInput_ReturnsCurrentValue(string line, int? length)
+        {
+            return KickAssemblerParsedSourceFile.GetCurrentArrayValue(line, 0, length ?? line.Length);
+        }
+    }
 }
