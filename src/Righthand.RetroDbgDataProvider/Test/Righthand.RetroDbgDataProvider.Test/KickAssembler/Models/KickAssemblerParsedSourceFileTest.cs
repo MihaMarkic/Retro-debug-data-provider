@@ -578,6 +578,8 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase(".import c64 \"")]
         [TestCase(".import c64 \"xx/p")]
         [TestCase("label: .import c64 \"xx/p")]
+        [TestCase("\"\".import c64 \"")]
+        [TestCase("\"xxx\".import c64 \"")]
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
         {
             var actual =
@@ -588,6 +590,9 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase(".import c64 [\"")]
         [TestCase(".import c64 x \"xx/p")]
         [TestCase("label: .print c64 \"")]
+        [TestCase("\".import c64 \"")]
+        [TestCase("\"xxx\"\".import c64 \"")]
+        [TestCase("//\"\".import c64 \"")]
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNullResult(string line)
         {
             var actual =
@@ -625,6 +630,8 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase(".segment Base [prgFiles = \"")]
         [TestCase(".segment Base [prgFiles=\"test.prg,")]
         [TestCase("zpCode: .segment Base [prgFiles=\"test.prg,")]
+        [TestCase("\"\".file [name=\"")]
+        [TestCase("\"//\".file [name=\"")]
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
         {
             var actual =
@@ -638,6 +645,9 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase(".file [segments=\"Code\" name=\"")]
         [TestCase(".file segments = \"Code\" , name = \"")]
         [TestCase("zpCode: .file segments = \"Code\" , name = \"")]
+        [TestCase("//.file [name=\"")]
+        [TestCase("\"//.file [name=\"")]
+        [TestCase("\"xx\"\".file [name=\"")]
         public void GivenSampleInputThatDoesNotPutCursorWithinArray_ReturnsNullResult(string line)
         {
             var actual =
@@ -713,6 +723,31 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public string? GivenSampleInput_ReturnsCurrentValue(string line, int? length)
         {
             return KickAssemblerParsedSourceFile.GetCurrentArrayValue(line, 0, length ?? line.Length);
+        }
+    }
+
+    [TestFixture]
+    public class IsPrefixValidForSuggestions : KickAssemblerParsedSourceFileTest
+    {
+        [TestCase("")]
+        [TestCase("\"\"")]
+        [TestCase("\"//\"")]
+        [TestCase("\"xxx\"")]
+        [TestCase("\"\"\"xxx\"")]
+        public void GivenValidSample_ReturnsTrue(string text)
+        {
+            var actual = KickAssemblerParsedSourceFile.IsPrefixValidForSuggestions(text);
+            
+            Assert.That(actual, Is.True);
+        }
+        [TestCase("//\"")]
+        [TestCase("bla bla // kkkk")]
+        [TestCase("\"\"\"")]
+        public void GivenInvalidSample_ReturnsFalse(string text)
+        {
+            var actual = KickAssemblerParsedSourceFile.IsPrefixValidForSuggestions(text);
+            
+            Assert.That(actual, Is.False);
         }
     }
 }

@@ -667,6 +667,50 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         return new CompletionOption(completionOptionType, data.Root, data.HasEndDelimiter, data.ReplacementLength,
             excludedValues);
     }
+     /// <summary>
+     /// Checks whether suggestions happens within string or comment.
+     /// </summary>
+     /// <param name="text">Text before suggestions match</param>
+     /// <returns>True when prefix is not a string or comment, false otherwise.</returns>
+    internal static bool IsPrefixValidForSuggestions(ReadOnlySpan<char> text)
+    {
+        int doubleQuoteCount = 0;
+        IsPrefixValidForSuggestionsStatus status =  IsPrefixValidForSuggestionsStatus.None;
+        foreach (char c in text)
+        {
+            switch (c)
+            {
+                case '\"':
+                    status = status switch
+                    {
+                        IsPrefixValidForSuggestionsStatus.String => IsPrefixValidForSuggestionsStatus.None,
+                        _ => IsPrefixValidForSuggestionsStatus.String,
+                    };
+                    break;
+                case '/':
+                    switch (status)
+                    {
+                        case IsPrefixValidForSuggestionsStatus.FirstCommentChar:
+                            return false;
+                        case IsPrefixValidForSuggestionsStatus.String:
+                            break;
+                        default:
+                            status = IsPrefixValidForSuggestionsStatus.FirstCommentChar;
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        return status != IsPrefixValidForSuggestionsStatus.String;
+    }
+
+    public enum IsPrefixValidForSuggestionsStatus
+    {
+        None,
+        String,
+        FirstCommentChar
+    }
 
     // ReSharper disable once StringLiteralTypo
     [GeneratedRegex("""
@@ -703,6 +747,16 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             }
 
             var line = text.AsSpan()[lineStart..lineEnd];
+            int matchIndexWithinLine = match.Index - lineStart;
+            if (matchIndexWithinLine > 0)
+            {
+                var matchPrefix = line[..matchIndexWithinLine];
+                if (!IsPrefixValidForSuggestions(matchPrefix))
+                {
+                    return null;
+                }
+            }
+                
             int? firstDelimiterColumn = FindFirstArrayDelimiterPosition(line, cursor+1) + lineStart;
             var rootGroup = match.Groups["Root"];
             int startDoubleQuote = match.Groups["StartDoubleQuote"].Index;
@@ -799,6 +853,15 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         {
 
             var line = text.AsSpan()[lineStart..lineEnd];
+            int matchIndexWithinLine = match.Index - lineStart;
+            if (matchIndexWithinLine > 0)
+            {
+                var matchPrefix = line[..matchIndexWithinLine];
+                if (!IsPrefixValidForSuggestions(matchPrefix))
+                {
+                    return null;
+                }
+            }
             var rootGroup = match.Groups["Root"];
             int startDoubleQuote = match.Groups["StartDoubleQuote"].Index-lineStart;
             ReadOnlySpan<char> currentValue;
