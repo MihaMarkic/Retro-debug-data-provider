@@ -308,7 +308,7 @@ encodingDirective
     ;
     
 importDataDirective
-    : (DOTBINARY | DOTC64 | DOTTEXT) file (COMMA number (COMMA number)?)?
+    : DOTIMPORT (BINARY | C64 | TEXT) file (COMMA number (COMMA number)?)?
     ;
 	
 labelName

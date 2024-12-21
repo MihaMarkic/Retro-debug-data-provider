@@ -71,7 +71,9 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
              GetPreprocessorDirectiveCompletionOption(textSpan, trigger, column)) ??
             GetFileSuggestionInArrayCompletionOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger,
                 column,
-                ValuesCount.Multiple);
+                ValuesCount.Multiple) ??
+            GetFileSuggestionInNonArrayCompletionOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger,
+                column);
 
         return result;
     }
@@ -782,6 +784,93 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         return null;
     }
 
+    [GeneratedRegex("""
+                    (?<KeyWord>(\.import))\s*(?<Parameter>\w*)?\s*(?<StartDoubleQuote>")\s*(?<Root>[^"]+)?$
+                    """, RegexOptions.Singleline)]
+    private static partial Regex NonArraySuggestionTemplateRegex();
+    internal static IsCursorWithinNonArrayResult? IsCursorWithinNonArray(string text, int lineStart, int lineLength,
+        int cursor)
+    { 
+        Debug.WriteLine($"Searching IsCursorWithinNonArray in: '{text.Substring(lineStart, cursor+1)}'");
+        int lineEnd = lineStart + lineLength;
+        // tries to match against text left of cursor
+        var match = NonArraySuggestionTemplateRegex().Match(text, lineStart, cursor+1);
+        if (match.Success)
+        {
+
+            var line = text.AsSpan()[lineStart..lineEnd];
+            var rootGroup = match.Groups["Root"];
+            int startDoubleQuote = match.Groups["StartDoubleQuote"].Index-lineStart;
+            ReadOnlySpan<char> currentValue;
+            int endDoubleQuote;
+            if (line.Length > startDoubleQuote)
+            {
+                int firstCharAfterQuotes = startDoubleQuote + 1;
+                endDoubleQuote = line.Length > startDoubleQuote ? line[firstCharAfterQuotes..].IndexOf('"') : -1;
+                currentValue = endDoubleQuote < 0
+                    ? line[firstCharAfterQuotes..]
+                    : line.Slice(firstCharAfterQuotes, endDoubleQuote);
+            }
+            else
+            {
+                currentValue = [];
+                endDoubleQuote = 0;
+            }
+
+            Debug.WriteLine($"Found a match with current being '{currentValue}'");
+            
+            return new IsCursorWithinNonArrayResult(
+                match.Groups["KeyWord"].Value,
+                match.Groups["Parameter"].Value,
+                rootGroup.Value,
+                ReplacementLength: currentValue.Length,
+                HasEndDelimiter: endDoubleQuote >= 0
+            );
+        }
+        else
+        {
+            Debug.WriteLine("Doesn't match");
+        }
+
+        return null;
+    }
+    internal static CompletionOption? GetFileSuggestionInNonArrayCompletionOption(ReadOnlySpan<IToken> tokens,
+        string text, int lineStart, int lineLength, TextChangeTrigger trigger, int column)
+    {
+        var line = text.AsSpan()[lineStart..(lineStart + lineLength)];
+        if (line.Length == 0)
+        {
+            return null;
+        }
+
+        // TODO properly handle valuesCountSupport (to limit it to single value when required)
+        var cursorWithinArray = IsCursorWithinNonArray(text, lineStart, lineLength, column);
+        if (cursorWithinArray is not null)
+        {
+            CompletionOptionType? completionOptionType = cursorWithinArray.Value.KeyWord switch
+            {
+                ".import" when cursorWithinArray.Value.Parameter is "c64" => CompletionOptionType.ProgramFile,
+                ".import" when cursorWithinArray.Value.Parameter is "text" => CompletionOptionType.TextFile,
+                ".import" when cursorWithinArray.Value.Parameter is "binary" => CompletionOptionType.BinaryFile,
+                _ => null,
+            };
+            if (completionOptionType is not null)
+            {
+                CompletionOption? completionOption = completionOptionType switch
+                {
+                    CompletionOptionType.ProgramFile or CompletionOptionType.BinaryFile or CompletionOptionType.TextFile
+                        =>
+                        new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
+                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength, []),
+                    _ => null,
+                };
+                return completionOption;
+            }
+        }
+
+        return null;
+    }
+
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global")]
     internal record struct IsCursorWithinArrayResult(
         string KeyWord,
@@ -792,6 +881,12 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         int ReplacementLength,
         bool HasEndDelimiter,
         ImmutableArray<string> ArrayValues);
+    internal record struct IsCursorWithinNonArrayResult(
+        string KeyWord,
+        string? Parameter,
+        string Root,
+        int ReplacementLength,
+        bool HasEndDelimiter);
 
     public enum ValuesCount
     {

@@ -144,9 +144,8 @@ public static class TokensMap
           { KickAssemblerLexer.HASHIMPORTONCE, TokenType.PreprocessorDirective },
           { KickAssemblerLexer.HASHIMPORTIF, TokenType.PreprocessorDirective },
           // Directives
-          { KickAssemblerLexer.DOTBINARY, TokenType.Directive },
-          { KickAssemblerLexer.DOTC64, TokenType.Directive },
           { KickAssemblerLexer.DOTTEXT, TokenType.Directive },
+          { KickAssemblerLexer.DOTIMPORT, TokenType.Directive },
           { KickAssemblerLexer.DOTENCODING, TokenType.Directive },
           { KickAssemblerLexer.DOTFILL, TokenType.Directive },
           { KickAssemblerLexer.DOTFILLWORD, TokenType.Directive },

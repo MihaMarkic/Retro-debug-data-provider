@@ -39,110 +39,111 @@ public partial class KickAssemblerParser : Parser {
 	public const int
 		WS=1, EOL=2, HASH=3, HASHDEFINE=4, HASHUNDEF=5, HASHIF=6, HASHENDIF=7, 
 		HASHELSE=8, HASHELIF=9, HASHIMPORT=10, HASHIMPORTONCE=11, HASHIMPORTIF=12, 
-		ONLYA=13, ABS=14, DOTBINARY=15, DOTC64=16, DOTTEXT=17, DOTENCODING=18, 
-		DOTFILL=19, DOTFILLWORD=20, DOTLOHIFILL=21, BYTE=22, WORD=23, DWORD=24, 
-		DOTCPU=25, DOTBYTE=26, DOTWORD=27, DOTDWORD=28, CPU6502NOILLEGALS=29, 
-		CPU6502=30, DTV=31, CPU65C02=32, ASSERT=33, ASSERTERROR=34, PRINT=35, 
-		PRINTNOW=36, VAR=37, CONST=38, IF=39, ELSE=40, ERRORIF=41, EVAL=42, FOR=43, 
-		WHILE=44, STRUCT=45, DEFINE=46, FUNCTION=47, RETURN=48, MACRO=49, PSEUDOCOMMAND=50, 
-		PSEUDOPC=51, NAMESPACE=52, SEGMENT=53, SEGMENTDEF=54, SEGMENTOUT=55, MODIFY=56, 
-		FILEMODIFY=57, PLUGIN=58, LABEL=59, FILE=60, DISK=61, PC=62, BREAK=63, 
-		WATCH=64, ZP=65, BLACK=66, WHITE=67, RED=68, CYAN=69, PURPLE=70, GREEN=71, 
-		BLUE=72, YELLOW=73, ORANGE=74, BROWN=75, LIGHT_RED=76, DARK_GRAY=77, DARK_GREY=78, 
-		GRAY=79, GREY=80, LIGHT_GREEN=81, LIGHT_BLUE=82, LIGHT_GRAY=83, LIGHT_GREY=84, 
-		OPEN_BRACE=85, CLOSE_BRACE=86, OPEN_BRACKET=87, CLOSE_BRACKET=88, OPEN_PARENS=89, 
-		CLOSE_PARENS=90, DOT=91, COMMA=92, COLON=93, SEMICOLON=94, PLUS=95, MINUS=96, 
-		STAR=97, DIV=98, PERCENT=99, AMP=100, BITWISE_OR=101, CARET=102, BANG=103, 
-		TILDE=104, AT=105, ASSIGNMENT=106, LT=107, GT=108, INTERR=109, DOUBLE_COLON=110, 
-		OP_COALESCING=111, OP_INC=112, OP_DEC=113, OP_AND=114, OP_OR=115, OP_PTR=116, 
-		OP_EQ=117, OP_NE=118, OP_LE=119, OP_GE=120, OP_ADD_ASSIGNMENT=121, OP_SUB_ASSIGNMENT=122, 
-		OP_MULT_ASSIGNMENT=123, OP_DIV_ASSIGNMENT=124, OP_MOD_ASSIGNMENT=125, 
-		OP_AND_ASSIGNMENT=126, OP_OR_ASSIGNMENT=127, OP_XOR_ASSIGNMENT=128, OP_LEFT_SHIFT=129, 
-		OP_RIGHT_SHIFT=130, OP_LEFT_SHIFT_ASSIGNMENT=131, OP_COALESCING_ASSIGNMENT=132, 
-		OP_RANGE=133, TRUE=134, FALSE=135, DEC_NUMBER=136, HEX_NUMBER=137, BIN_NUMBER=138, 
-		CHAR=139, STRING=140, DOUBLE_QUOTE=141, SINGLE_LINE_COMMENT=142, MULTI_LINE_COMMENT=143, 
-		ADC=144, AND=145, ASL=146, BCC=147, BCS=148, BEQ=149, BIT=150, BMI=151, 
-		BNE=152, BPL=153, BRA=154, BRK=155, BVC=156, BVS=157, CLC=158, CLD=159, 
-		CLI=160, CLV=161, CMP=162, CPX=163, CPY=164, DEC=165, DEX=166, DEY=167, 
-		EOR=168, INC=169, INX=170, INY=171, JMP=172, JSR=173, LDA=174, LDY=175, 
-		LDX=176, LSR=177, NOP=178, ORA=179, PHA=180, PHX=181, PHY=182, PHP=183, 
-		PLA=184, PLP=185, PLY=186, ROL=187, ROR=188, RTI=189, RTS=190, SBC=191, 
-		SEC=192, SED=193, SEI=194, STA=195, STX=196, STY=197, STZ=198, TAX=199, 
-		TAY=200, TSX=201, TXA=202, TXS=203, TYA=204, ADC_ABS_CONST=205, ADC_ABSX_CONST=206, 
-		ADC_ABSY_CONST=207, ADC_IMM_CONST=208, ADC_IZPX_CONST=209, ADC_IZPY_CONST=210, 
-		ADC_ZP_CONST=211, ADC_ZPX_CONST=212, AHX_ABSY_CONST=213, AHX_IZPY_CONST=214, 
-		ALR_IMM_CONST=215, ANC_IMM_CONST=216, ANC2_IMM_CONST=217, AND_ABS_CONST=218, 
-		AND_ABSX_CONST=219, AND_ABSY_CONST=220, AND_IMM_CONST=221, AND_IZPX_CONST=222, 
-		AND_IZPY_CONST=223, AND_ZP_CONST=224, AND_ZPX_CONST=225, ANE_IMM_CONST=226, 
-		ARR_IMM_CONST=227, ASL_CONST=228, ASL_ABS_CONST=229, ASL_ABSX_CONST=230, 
-		ASL_ZP_CONST=231, ASL_ZPX_CONST=232, ASR_IMM_CONST=233, AXS_IMM_CONST=234, 
-		BCC_REL_CONST=235, BCS_REL_CONST=236, BEQ_REL_CONST=237, BIT_ABS_CONST=238, 
-		BIT_ABSX_CONST=239, BIT_IMM_CONST=240, BIT_ZP_CONST=241, BIT_ZPX_CONST=242, 
-		BMI_REL_CONST=243, BNE_REL_CONST=244, BPL_REL_CONST=245, BRA_REL_CONST=246, 
-		BRK_CONST=247, BVC_REL_CONST=248, BVS_REL_CONST=249, CLC_CONST=250, CLD_CONST=251, 
-		CLI_CONST=252, CLV_CONST=253, CMP_ABS_CONST=254, CMP_ABSX_CONST=255, CMP_ABSY_CONST=256, 
-		CMP_IMM_CONST=257, CMP_IZPX_CONST=258, CMP_IZPY_CONST=259, CMP_ZP_CONST=260, 
-		CMP_ZPX_CONST=261, CPX_ABS_CONST=262, CPX_IMM_CONST=263, CPX_ZP_CONST=264, 
-		CPY_ABS_CONST=265, CPY_IMM_CONST=266, CPY_ZP_CONST=267, DCM_ABS_CONST=268, 
-		DCM_ABSX_CONST=269, DCM_ABSY_CONST=270, DCM_IZPX_CONST=271, DCM_IZPY_CONST=272, 
-		DCM_ZP_CONST=273, DCM_ZPX_CONST=274, DCP_ABS_CONST=275, DCP_ABSX_CONST=276, 
-		DCP_ABSY_CONST=277, DCP_IZPX_CONST=278, DCP_IZPY_CONST=279, DCP_ZP_CONST=280, 
-		DCP_ZPX_CONST=281, DEC_CONST=282, DEC_ABS_CONST=283, DEC_ABSX_CONST=284, 
-		DEC_ZP_CONST=285, DEC_ZPX_CONST=286, DEX_CONST=287, DEY_CONST=288, EOR_ABS_CONST=289, 
-		EOR_ABSX_CONST=290, EOR_ABSY_CONST=291, EOR_IMM_CONST=292, EOR_IZPX_CONST=293, 
-		EOR_IZPY_CONST=294, EOR_ZP_CONST=295, EOR_ZPX_CONST=296, INC_CONST=297, 
-		INC_ABS_CONST=298, INC_ABSX_CONST=299, INC_ZP_CONST=300, INC_ZPX_CONST=301, 
-		INS_ABS_CONST=302, INS_ABSX_CONST=303, INS_ABSY_CONST=304, INS_IZPX_CONST=305, 
-		INS_IZPY_CONST=306, INS_ZP_CONST=307, INS_ZPX_CONST=308, INX_CONST=309, 
-		INY_CONST=310, ISB_ABS_CONST=311, ISB_ABSX_CONST=312, ISB_ABSY_CONST=313, 
-		ISB_IZPX_CONST=314, ISB_IZPY_CONST=315, ISB_ZP_CONST=316, ISB_ZPX_CONST=317, 
-		ISC_ABS_CONST=318, ISC_ABSX_CONST=319, ISC_ABSY_CONST=320, ISC_IZPX_CONST=321, 
-		ISC_IZPY_CONST=322, ISC_ZP_CONST=323, ISC_ZPX_CONST=324, JMP_ABS_CONST=325, 
-		JMP_IND_CONST=326, JSR_ABS_CONST=327, LAE_ABSY_CONST=328, LAS_ABSY_CONST=329, 
-		LAX_ABS_CONST=330, LAX_ABSY_CONST=331, LAX_IMM_CONST=332, LAX_IZPX_CONST=333, 
-		LAX_IZPY_CONST=334, LAX_ZP_CONST=335, LAX_ZPY_CONST=336, LDA_ABS_CONST=337, 
-		LDA_ABSX_CONST=338, LDA_ABSY_CONST=339, LDA_IMM_CONST=340, LDA_IZPX_CONST=341, 
-		LDA_IZPY_CONST=342, LDA_ZP_CONST=343, LDA_ZPX_CONST=344, LDS_ABSY_CONST=345, 
-		LDX_ABS_CONST=346, LDX_ABSY_CONST=347, LDX_IMM_CONST=348, LDX_ZP_CONST=349, 
-		LDX_ZPY_CONST=350, LDY_ABS_CONST=351, LDY_ABSX_CONST=352, LDY_IMM_CONST=353, 
-		LDY_ZP_CONST=354, LDY_ZPX_CONST=355, LSR_CONST=356, LSR_ABS_CONST=357, 
-		LSR_ABSX_CONST=358, LSR_ZP_CONST=359, LSR_ZPX_CONST=360, LXA_ABS_CONST=361, 
-		LXA_ABSY_CONST=362, LXA_IMM_CONST=363, LXA_IZPX_CONST=364, LXA_IZPY_CONST=365, 
-		LXA_ZP_CONST=366, LXA_ZPY_CONST=367, NOP_CONST=368, NOP_ABS_CONST=369, 
-		NOP_ABSX_CONST=370, NOP_IMM_CONST=371, NOP_ZP_CONST=372, NOP_ZPX_CONST=373, 
-		ORA_ABS_CONST=374, ORA_ABSX_CONST=375, ORA_ABSY_CONST=376, ORA_IMM_CONST=377, 
-		ORA_IZPX_CONST=378, ORA_IZPY_CONST=379, ORA_ZP_CONST=380, ORA_ZPX_CONST=381, 
-		PHA_CONST=382, PHP_CONST=383, PHX_CONST=384, PHY_CONST=385, PLA_CONST=386, 
-		PLP_CONST=387, PLX_CONST=388, PLY_CONST=389, RLA_ABS_CONST=390, RLA_ABSX_CONST=391, 
-		RLA_ABSY_CONST=392, RLA_IZPX_CONST=393, RLA_IZPY_CONST=394, RLA_ZP_CONST=395, 
-		RLA_ZPX_CONST=396, RMB0_ZP_CONST=397, RMB1_ZP_CONST=398, RMB2_ZP_CONST=399, 
-		RMB3_ZP_CONST=400, RMB4_ZP_CONST=401, RMB5_ZP_CONST=402, RMB6_ZP_CONST=403, 
-		RMB7_ZP_CONST=404, ROL_CONST=405, ROL_ABS_CONST=406, ROL_ABSX_CONST=407, 
-		ROL_ZP_CONST=408, ROL_ZPX_CONST=409, ROR_CONST=410, ROR_ABS_CONST=411, 
-		ROR_ABSX_CONST=412, ROR_ZP_CONST=413, ROR_ZPX_CONST=414, RRA_ABS_CONST=415, 
-		RRA_ABSX_CONST=416, RRA_ABSY_CONST=417, RRA_IZPX_CONST=418, RRA_IZPY_CONST=419, 
-		RRA_ZP_CONST=420, RRA_ZPX_CONST=421, RTI_CONST=422, RTS_CONST=423, SAC_IMM_CONST=424, 
-		SAX_ABS_CONST=425, SAX_IZPX_CONST=426, SAX_ZP_CONST=427, SAX_ZPY_CONST=428, 
-		SBC_ABS_CONST=429, SBC_ABSX_CONST=430, SBC_ABSY_CONST=431, SBC_IMM_CONST=432, 
-		SBC_IZPX_CONST=433, SBC_IZPY_CONST=434, SBC_ZP_CONST=435, SBC_ZPX_CONST=436, 
-		SBC2_IMM_CONST=437, SBX_IMM_CONST=438, SEC_CONST=439, SED_CONST=440, SEI_CONST=441, 
-		SHA_ABSY_CONST=442, SHA_IZPY_CONST=443, SHS_ABSY_CONST=444, SHX_ABSY_CONST=445, 
-		SHY_ABSX_CONST=446, SIR_IMM_CONST=447, SLO_ABS_CONST=448, SLO_ABSX_CONST=449, 
-		SLO_ABSY_CONST=450, SLO_IZPX_CONST=451, SLO_IZPY_CONST=452, SLO_ZP_CONST=453, 
-		SLO_ZPX_CONST=454, SMB0_ZP_CONST=455, SMB1_ZP_CONST=456, SMB2_ZP_CONST=457, 
-		SMB3_ZP_CONST=458, SMB4_ZP_CONST=459, SMB5_ZP_CONST=460, SMB6_ZP_CONST=461, 
-		SMB7_ZP_CONST=462, SRE_ABS_CONST=463, SRE_ABSX_CONST=464, SRE_ABSY_CONST=465, 
-		SRE_IZPX_CONST=466, SRE_IZPY_CONST=467, SRE_ZP_CONST=468, SRE_ZPX_CONST=469, 
-		STA_ABS_CONST=470, STA_ABSX_CONST=471, STA_ABSY_CONST=472, STA_IZPX_CONST=473, 
-		STA_IZPY_CONST=474, STA_ZP_CONST=475, STA_ZPX_CONST=476, STP_CONST=477, 
-		STX_ABS_CONST=478, STX_ZP_CONST=479, STX_ZPY_CONST=480, STY_ABS_CONST=481, 
-		STY_ZP_CONST=482, STY_ZPX_CONST=483, STZ_ABS_CONST=484, STZ_ABSX_CONST=485, 
-		STZ_ZP_CONST=486, STZ_ZPX_CONST=487, TAS_ABSY_CONST=488, TAX_CONST=489, 
-		TAY_CONST=490, TRB_ABS_CONST=491, TRB_ZP_CONST=492, TSB_ABS_CONST=493, 
-		TSB_ZP_CONST=494, TSX_CONST=495, TXA_CONST=496, TXS_CONST=497, TYA_CONST=498, 
-		WAI_CONST=499, XAA_IMM_CONST=500, UNQUOTED_STRING=501, DEFINED_TOKEN=502, 
-		HD_WS=503, UNDEFINED_TOKEN=504, HU_WS=505, IF_CONDITION=506, I_INTENTIONALLY_IGNORED=507, 
-		IA_INTENTIONALLY_IGNORED=508, IIF_CONDITION=509;
+		ONLYA=13, ABS=14, BINARY=15, C64=16, DOTTEXT=17, TEXT=18, DOTENCODING=19, 
+		DOTFILL=20, DOTFILLWORD=21, DOTLOHIFILL=22, BYTE=23, WORD=24, DWORD=25, 
+		DOTCPU=26, DOTBYTE=27, DOTWORD=28, DOTDWORD=29, CPU6502NOILLEGALS=30, 
+		CPU6502=31, DTV=32, CPU65C02=33, ASSERT=34, ASSERTERROR=35, PRINT=36, 
+		PRINTNOW=37, VAR=38, DOTIMPORT=39, CONST=40, IF=41, ELSE=42, ERRORIF=43, 
+		EVAL=44, FOR=45, WHILE=46, STRUCT=47, DEFINE=48, FUNCTION=49, RETURN=50, 
+		MACRO=51, PSEUDOCOMMAND=52, PSEUDOPC=53, NAMESPACE=54, SEGMENT=55, SEGMENTDEF=56, 
+		SEGMENTOUT=57, MODIFY=58, FILEMODIFY=59, PLUGIN=60, LABEL=61, FILE=62, 
+		DISK=63, PC=64, BREAK=65, WATCH=66, ZP=67, BLACK=68, WHITE=69, RED=70, 
+		CYAN=71, PURPLE=72, GREEN=73, BLUE=74, YELLOW=75, ORANGE=76, BROWN=77, 
+		LIGHT_RED=78, DARK_GRAY=79, DARK_GREY=80, GRAY=81, GREY=82, LIGHT_GREEN=83, 
+		LIGHT_BLUE=84, LIGHT_GRAY=85, LIGHT_GREY=86, OPEN_BRACE=87, CLOSE_BRACE=88, 
+		OPEN_BRACKET=89, CLOSE_BRACKET=90, OPEN_PARENS=91, CLOSE_PARENS=92, DOT=93, 
+		COMMA=94, COLON=95, SEMICOLON=96, PLUS=97, MINUS=98, STAR=99, DIV=100, 
+		PERCENT=101, AMP=102, BITWISE_OR=103, CARET=104, BANG=105, TILDE=106, 
+		AT=107, ASSIGNMENT=108, LT=109, GT=110, INTERR=111, DOUBLE_COLON=112, 
+		OP_COALESCING=113, OP_INC=114, OP_DEC=115, OP_AND=116, OP_OR=117, OP_PTR=118, 
+		OP_EQ=119, OP_NE=120, OP_LE=121, OP_GE=122, OP_ADD_ASSIGNMENT=123, OP_SUB_ASSIGNMENT=124, 
+		OP_MULT_ASSIGNMENT=125, OP_DIV_ASSIGNMENT=126, OP_MOD_ASSIGNMENT=127, 
+		OP_AND_ASSIGNMENT=128, OP_OR_ASSIGNMENT=129, OP_XOR_ASSIGNMENT=130, OP_LEFT_SHIFT=131, 
+		OP_RIGHT_SHIFT=132, OP_LEFT_SHIFT_ASSIGNMENT=133, OP_COALESCING_ASSIGNMENT=134, 
+		OP_RANGE=135, TRUE=136, FALSE=137, DEC_NUMBER=138, HEX_NUMBER=139, BIN_NUMBER=140, 
+		CHAR=141, STRING=142, DOUBLE_QUOTE=143, SINGLE_LINE_COMMENT=144, MULTI_LINE_COMMENT=145, 
+		ADC=146, AND=147, ASL=148, BCC=149, BCS=150, BEQ=151, BIT=152, BMI=153, 
+		BNE=154, BPL=155, BRA=156, BRK=157, BVC=158, BVS=159, CLC=160, CLD=161, 
+		CLI=162, CLV=163, CMP=164, CPX=165, CPY=166, DEC=167, DEX=168, DEY=169, 
+		EOR=170, INC=171, INX=172, INY=173, JMP=174, JSR=175, LDA=176, LDY=177, 
+		LDX=178, LSR=179, NOP=180, ORA=181, PHA=182, PHX=183, PHY=184, PHP=185, 
+		PLA=186, PLP=187, PLY=188, ROL=189, ROR=190, RTI=191, RTS=192, SBC=193, 
+		SEC=194, SED=195, SEI=196, STA=197, STX=198, STY=199, STZ=200, TAX=201, 
+		TAY=202, TSX=203, TXA=204, TXS=205, TYA=206, ADC_ABS_CONST=207, ADC_ABSX_CONST=208, 
+		ADC_ABSY_CONST=209, ADC_IMM_CONST=210, ADC_IZPX_CONST=211, ADC_IZPY_CONST=212, 
+		ADC_ZP_CONST=213, ADC_ZPX_CONST=214, AHX_ABSY_CONST=215, AHX_IZPY_CONST=216, 
+		ALR_IMM_CONST=217, ANC_IMM_CONST=218, ANC2_IMM_CONST=219, AND_ABS_CONST=220, 
+		AND_ABSX_CONST=221, AND_ABSY_CONST=222, AND_IMM_CONST=223, AND_IZPX_CONST=224, 
+		AND_IZPY_CONST=225, AND_ZP_CONST=226, AND_ZPX_CONST=227, ANE_IMM_CONST=228, 
+		ARR_IMM_CONST=229, ASL_CONST=230, ASL_ABS_CONST=231, ASL_ABSX_CONST=232, 
+		ASL_ZP_CONST=233, ASL_ZPX_CONST=234, ASR_IMM_CONST=235, AXS_IMM_CONST=236, 
+		BCC_REL_CONST=237, BCS_REL_CONST=238, BEQ_REL_CONST=239, BIT_ABS_CONST=240, 
+		BIT_ABSX_CONST=241, BIT_IMM_CONST=242, BIT_ZP_CONST=243, BIT_ZPX_CONST=244, 
+		BMI_REL_CONST=245, BNE_REL_CONST=246, BPL_REL_CONST=247, BRA_REL_CONST=248, 
+		BRK_CONST=249, BVC_REL_CONST=250, BVS_REL_CONST=251, CLC_CONST=252, CLD_CONST=253, 
+		CLI_CONST=254, CLV_CONST=255, CMP_ABS_CONST=256, CMP_ABSX_CONST=257, CMP_ABSY_CONST=258, 
+		CMP_IMM_CONST=259, CMP_IZPX_CONST=260, CMP_IZPY_CONST=261, CMP_ZP_CONST=262, 
+		CMP_ZPX_CONST=263, CPX_ABS_CONST=264, CPX_IMM_CONST=265, CPX_ZP_CONST=266, 
+		CPY_ABS_CONST=267, CPY_IMM_CONST=268, CPY_ZP_CONST=269, DCM_ABS_CONST=270, 
+		DCM_ABSX_CONST=271, DCM_ABSY_CONST=272, DCM_IZPX_CONST=273, DCM_IZPY_CONST=274, 
+		DCM_ZP_CONST=275, DCM_ZPX_CONST=276, DCP_ABS_CONST=277, DCP_ABSX_CONST=278, 
+		DCP_ABSY_CONST=279, DCP_IZPX_CONST=280, DCP_IZPY_CONST=281, DCP_ZP_CONST=282, 
+		DCP_ZPX_CONST=283, DEC_CONST=284, DEC_ABS_CONST=285, DEC_ABSX_CONST=286, 
+		DEC_ZP_CONST=287, DEC_ZPX_CONST=288, DEX_CONST=289, DEY_CONST=290, EOR_ABS_CONST=291, 
+		EOR_ABSX_CONST=292, EOR_ABSY_CONST=293, EOR_IMM_CONST=294, EOR_IZPX_CONST=295, 
+		EOR_IZPY_CONST=296, EOR_ZP_CONST=297, EOR_ZPX_CONST=298, INC_CONST=299, 
+		INC_ABS_CONST=300, INC_ABSX_CONST=301, INC_ZP_CONST=302, INC_ZPX_CONST=303, 
+		INS_ABS_CONST=304, INS_ABSX_CONST=305, INS_ABSY_CONST=306, INS_IZPX_CONST=307, 
+		INS_IZPY_CONST=308, INS_ZP_CONST=309, INS_ZPX_CONST=310, INX_CONST=311, 
+		INY_CONST=312, ISB_ABS_CONST=313, ISB_ABSX_CONST=314, ISB_ABSY_CONST=315, 
+		ISB_IZPX_CONST=316, ISB_IZPY_CONST=317, ISB_ZP_CONST=318, ISB_ZPX_CONST=319, 
+		ISC_ABS_CONST=320, ISC_ABSX_CONST=321, ISC_ABSY_CONST=322, ISC_IZPX_CONST=323, 
+		ISC_IZPY_CONST=324, ISC_ZP_CONST=325, ISC_ZPX_CONST=326, JMP_ABS_CONST=327, 
+		JMP_IND_CONST=328, JSR_ABS_CONST=329, LAE_ABSY_CONST=330, LAS_ABSY_CONST=331, 
+		LAX_ABS_CONST=332, LAX_ABSY_CONST=333, LAX_IMM_CONST=334, LAX_IZPX_CONST=335, 
+		LAX_IZPY_CONST=336, LAX_ZP_CONST=337, LAX_ZPY_CONST=338, LDA_ABS_CONST=339, 
+		LDA_ABSX_CONST=340, LDA_ABSY_CONST=341, LDA_IMM_CONST=342, LDA_IZPX_CONST=343, 
+		LDA_IZPY_CONST=344, LDA_ZP_CONST=345, LDA_ZPX_CONST=346, LDS_ABSY_CONST=347, 
+		LDX_ABS_CONST=348, LDX_ABSY_CONST=349, LDX_IMM_CONST=350, LDX_ZP_CONST=351, 
+		LDX_ZPY_CONST=352, LDY_ABS_CONST=353, LDY_ABSX_CONST=354, LDY_IMM_CONST=355, 
+		LDY_ZP_CONST=356, LDY_ZPX_CONST=357, LSR_CONST=358, LSR_ABS_CONST=359, 
+		LSR_ABSX_CONST=360, LSR_ZP_CONST=361, LSR_ZPX_CONST=362, LXA_ABS_CONST=363, 
+		LXA_ABSY_CONST=364, LXA_IMM_CONST=365, LXA_IZPX_CONST=366, LXA_IZPY_CONST=367, 
+		LXA_ZP_CONST=368, LXA_ZPY_CONST=369, NOP_CONST=370, NOP_ABS_CONST=371, 
+		NOP_ABSX_CONST=372, NOP_IMM_CONST=373, NOP_ZP_CONST=374, NOP_ZPX_CONST=375, 
+		ORA_ABS_CONST=376, ORA_ABSX_CONST=377, ORA_ABSY_CONST=378, ORA_IMM_CONST=379, 
+		ORA_IZPX_CONST=380, ORA_IZPY_CONST=381, ORA_ZP_CONST=382, ORA_ZPX_CONST=383, 
+		PHA_CONST=384, PHP_CONST=385, PHX_CONST=386, PHY_CONST=387, PLA_CONST=388, 
+		PLP_CONST=389, PLX_CONST=390, PLY_CONST=391, RLA_ABS_CONST=392, RLA_ABSX_CONST=393, 
+		RLA_ABSY_CONST=394, RLA_IZPX_CONST=395, RLA_IZPY_CONST=396, RLA_ZP_CONST=397, 
+		RLA_ZPX_CONST=398, RMB0_ZP_CONST=399, RMB1_ZP_CONST=400, RMB2_ZP_CONST=401, 
+		RMB3_ZP_CONST=402, RMB4_ZP_CONST=403, RMB5_ZP_CONST=404, RMB6_ZP_CONST=405, 
+		RMB7_ZP_CONST=406, ROL_CONST=407, ROL_ABS_CONST=408, ROL_ABSX_CONST=409, 
+		ROL_ZP_CONST=410, ROL_ZPX_CONST=411, ROR_CONST=412, ROR_ABS_CONST=413, 
+		ROR_ABSX_CONST=414, ROR_ZP_CONST=415, ROR_ZPX_CONST=416, RRA_ABS_CONST=417, 
+		RRA_ABSX_CONST=418, RRA_ABSY_CONST=419, RRA_IZPX_CONST=420, RRA_IZPY_CONST=421, 
+		RRA_ZP_CONST=422, RRA_ZPX_CONST=423, RTI_CONST=424, RTS_CONST=425, SAC_IMM_CONST=426, 
+		SAX_ABS_CONST=427, SAX_IZPX_CONST=428, SAX_ZP_CONST=429, SAX_ZPY_CONST=430, 
+		SBC_ABS_CONST=431, SBC_ABSX_CONST=432, SBC_ABSY_CONST=433, SBC_IMM_CONST=434, 
+		SBC_IZPX_CONST=435, SBC_IZPY_CONST=436, SBC_ZP_CONST=437, SBC_ZPX_CONST=438, 
+		SBC2_IMM_CONST=439, SBX_IMM_CONST=440, SEC_CONST=441, SED_CONST=442, SEI_CONST=443, 
+		SHA_ABSY_CONST=444, SHA_IZPY_CONST=445, SHS_ABSY_CONST=446, SHX_ABSY_CONST=447, 
+		SHY_ABSX_CONST=448, SIR_IMM_CONST=449, SLO_ABS_CONST=450, SLO_ABSX_CONST=451, 
+		SLO_ABSY_CONST=452, SLO_IZPX_CONST=453, SLO_IZPY_CONST=454, SLO_ZP_CONST=455, 
+		SLO_ZPX_CONST=456, SMB0_ZP_CONST=457, SMB1_ZP_CONST=458, SMB2_ZP_CONST=459, 
+		SMB3_ZP_CONST=460, SMB4_ZP_CONST=461, SMB5_ZP_CONST=462, SMB6_ZP_CONST=463, 
+		SMB7_ZP_CONST=464, SRE_ABS_CONST=465, SRE_ABSX_CONST=466, SRE_ABSY_CONST=467, 
+		SRE_IZPX_CONST=468, SRE_IZPY_CONST=469, SRE_ZP_CONST=470, SRE_ZPX_CONST=471, 
+		STA_ABS_CONST=472, STA_ABSX_CONST=473, STA_ABSY_CONST=474, STA_IZPX_CONST=475, 
+		STA_IZPY_CONST=476, STA_ZP_CONST=477, STA_ZPX_CONST=478, STP_CONST=479, 
+		STX_ABS_CONST=480, STX_ZP_CONST=481, STX_ZPY_CONST=482, STY_ABS_CONST=483, 
+		STY_ZP_CONST=484, STY_ZPX_CONST=485, STZ_ABS_CONST=486, STZ_ABSX_CONST=487, 
+		STZ_ZP_CONST=488, STZ_ZPX_CONST=489, TAS_ABSY_CONST=490, TAX_CONST=491, 
+		TAY_CONST=492, TRB_ABS_CONST=493, TRB_ZP_CONST=494, TSB_ABS_CONST=495, 
+		TSB_ZP_CONST=496, TSX_CONST=497, TXA_CONST=498, TXS_CONST=499, TYA_CONST=500, 
+		WAI_CONST=501, XAA_IMM_CONST=502, UNQUOTED_STRING=503, DEFINED_TOKEN=504, 
+		HD_WS=505, UNDEFINED_TOKEN=506, HU_WS=507, IF_CONDITION=508, I_INTENTIONALLY_IGNORED=509, 
+		IA_INTENTIONALLY_IGNORED=510, IIF_CONDITION=511;
 	public const int
 		RULE_program = 0, RULE_units = 1, RULE_unit = 2, RULE_label = 3, RULE_instruction = 4, 
 		RULE_scope = 5, RULE_argumentList = 6, RULE_argument = 7, RULE_labelOffsetReference = 8, 
@@ -197,12 +198,12 @@ public partial class KickAssemblerParser : Parser {
 
 	private static readonly string[] _LiteralNames = {
 		null, null, null, "'#'", null, null, null, null, null, null, null, null, 
-		null, "'a'", "'abs'", "'binary'", "'c64'", "'.text'", "'.encoding'", "'.fill'", 
-		"'.fillword'", "'.lohifill'", null, null, null, "'.cpu'", "'.byte'", "'.word'", 
-		"'.dword'", "'_6502NoIllegals'", "'_6502'", "'dtv'", "'_65c02'", "'assert'", 
-		"'asserterror'", "'.print'", "'.printnow'", "'.var'", "'.const'", "'.if'", 
-		"'else'", "'.errorif'", "'.eval'", "'.for'", "'.while'", "'.struct'", 
-		"'.define'", "'.function'", "'.return'", "'.macro'", "'.pseudocommand'", 
+		null, "'a'", "'abs'", "'binary'", "'c64'", "'.text'", "'text'", "'.encoding'", 
+		"'.fill'", "'.fillword'", "'.lohifill'", null, null, null, "'.cpu'", "'.byte'", 
+		"'.word'", "'.dword'", "'_6502NoIllegals'", "'_6502'", "'dtv'", "'_65c02'", 
+		"'assert'", "'asserterror'", "'.print'", "'.printnow'", "'.var'", "'.import'", 
+		"'.const'", "'.if'", "'else'", "'.errorif'", "'.eval'", "'.for'", "'.while'", 
+		"'.struct'", "'.define'", "'.function'", "'.return'", "'.macro'", "'.pseudocommand'", 
 		"'.pseudopc'", "'.namespace'", "'.segment'", "'.segmentdef'", "'.segmentout'", 
 		"'.modify'", "'.fileModify'", "'.plugin'", "'.label'", "'.file'", "'.disk'", 
 		"'.pc'", "'.break'", "'.watch'", "'.zp'", "'BLACK'", "'WHITE'", "'RED'", 
@@ -275,22 +276,22 @@ public partial class KickAssemblerParser : Parser {
 	private static readonly string[] _SymbolicNames = {
 		null, "WS", "EOL", "HASH", "HASHDEFINE", "HASHUNDEF", "HASHIF", "HASHENDIF", 
 		"HASHELSE", "HASHELIF", "HASHIMPORT", "HASHIMPORTONCE", "HASHIMPORTIF", 
-		"ONLYA", "ABS", "DOTBINARY", "DOTC64", "DOTTEXT", "DOTENCODING", "DOTFILL", 
+		"ONLYA", "ABS", "BINARY", "C64", "DOTTEXT", "TEXT", "DOTENCODING", "DOTFILL", 
 		"DOTFILLWORD", "DOTLOHIFILL", "BYTE", "WORD", "DWORD", "DOTCPU", "DOTBYTE", 
 		"DOTWORD", "DOTDWORD", "CPU6502NOILLEGALS", "CPU6502", "DTV", "CPU65C02", 
-		"ASSERT", "ASSERTERROR", "PRINT", "PRINTNOW", "VAR", "CONST", "IF", "ELSE", 
-		"ERRORIF", "EVAL", "FOR", "WHILE", "STRUCT", "DEFINE", "FUNCTION", "RETURN", 
-		"MACRO", "PSEUDOCOMMAND", "PSEUDOPC", "NAMESPACE", "SEGMENT", "SEGMENTDEF", 
-		"SEGMENTOUT", "MODIFY", "FILEMODIFY", "PLUGIN", "LABEL", "FILE", "DISK", 
-		"PC", "BREAK", "WATCH", "ZP", "BLACK", "WHITE", "RED", "CYAN", "PURPLE", 
-		"GREEN", "BLUE", "YELLOW", "ORANGE", "BROWN", "LIGHT_RED", "DARK_GRAY", 
-		"DARK_GREY", "GRAY", "GREY", "LIGHT_GREEN", "LIGHT_BLUE", "LIGHT_GRAY", 
-		"LIGHT_GREY", "OPEN_BRACE", "CLOSE_BRACE", "OPEN_BRACKET", "CLOSE_BRACKET", 
-		"OPEN_PARENS", "CLOSE_PARENS", "DOT", "COMMA", "COLON", "SEMICOLON", "PLUS", 
-		"MINUS", "STAR", "DIV", "PERCENT", "AMP", "BITWISE_OR", "CARET", "BANG", 
-		"TILDE", "AT", "ASSIGNMENT", "LT", "GT", "INTERR", "DOUBLE_COLON", "OP_COALESCING", 
-		"OP_INC", "OP_DEC", "OP_AND", "OP_OR", "OP_PTR", "OP_EQ", "OP_NE", "OP_LE", 
-		"OP_GE", "OP_ADD_ASSIGNMENT", "OP_SUB_ASSIGNMENT", "OP_MULT_ASSIGNMENT", 
+		"ASSERT", "ASSERTERROR", "PRINT", "PRINTNOW", "VAR", "DOTIMPORT", "CONST", 
+		"IF", "ELSE", "ERRORIF", "EVAL", "FOR", "WHILE", "STRUCT", "DEFINE", "FUNCTION", 
+		"RETURN", "MACRO", "PSEUDOCOMMAND", "PSEUDOPC", "NAMESPACE", "SEGMENT", 
+		"SEGMENTDEF", "SEGMENTOUT", "MODIFY", "FILEMODIFY", "PLUGIN", "LABEL", 
+		"FILE", "DISK", "PC", "BREAK", "WATCH", "ZP", "BLACK", "WHITE", "RED", 
+		"CYAN", "PURPLE", "GREEN", "BLUE", "YELLOW", "ORANGE", "BROWN", "LIGHT_RED", 
+		"DARK_GRAY", "DARK_GREY", "GRAY", "GREY", "LIGHT_GREEN", "LIGHT_BLUE", 
+		"LIGHT_GRAY", "LIGHT_GREY", "OPEN_BRACE", "CLOSE_BRACE", "OPEN_BRACKET", 
+		"CLOSE_BRACKET", "OPEN_PARENS", "CLOSE_PARENS", "DOT", "COMMA", "COLON", 
+		"SEMICOLON", "PLUS", "MINUS", "STAR", "DIV", "PERCENT", "AMP", "BITWISE_OR", 
+		"CARET", "BANG", "TILDE", "AT", "ASSIGNMENT", "LT", "GT", "INTERR", "DOUBLE_COLON", 
+		"OP_COALESCING", "OP_INC", "OP_DEC", "OP_AND", "OP_OR", "OP_PTR", "OP_EQ", 
+		"OP_NE", "OP_LE", "OP_GE", "OP_ADD_ASSIGNMENT", "OP_SUB_ASSIGNMENT", "OP_MULT_ASSIGNMENT", 
 		"OP_DIV_ASSIGNMENT", "OP_MOD_ASSIGNMENT", "OP_AND_ASSIGNMENT", "OP_OR_ASSIGNMENT", 
 		"OP_XOR_ASSIGNMENT", "OP_LEFT_SHIFT", "OP_RIGHT_SHIFT", "OP_LEFT_SHIFT_ASSIGNMENT", 
 		"OP_COALESCING_ASSIGNMENT", "OP_RANGE", "TRUE", "FALSE", "DEC_NUMBER", 
@@ -528,7 +529,7 @@ public partial class KickAssemblerParser : Parser {
 				State = 213;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( ((((_la - 2)) & ~0x3f) == 0 && ((1L << (_la - 2)) & -580819037984995L) != 0) || ((((_la - 85)) & ~0x3f) == 0 && ((1L << (_la - 85)) & -542683480206343423L) != 0) || ((((_la - 149)) & ~0x3f) == 0 && ((1L << (_la - 149)) & 72057594037927935L) != 0) || _la==UNQUOTED_STRING );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & -9293088443196300L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305959563897077775L) != 0) || ((((_la - 138)) & ~0x3f) == 0 && ((1L << (_la - 138)) & -241L) != 0) || ((((_la - 202)) & ~0x3f) == 0 && ((1L << (_la - 202)) & 31L) != 0) || _la==UNQUOTED_STRING );
 			}
 		}
 		catch (RecognitionException re) {
@@ -1520,7 +1521,7 @@ public partial class KickAssemblerParser : Parser {
 			{
 			State = 345;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 100)) & ~0x3f) == 0 && ((1L << (_la - 100)) & 1610612759L) != 0)) ) {
+			if ( !(((((_la - 102)) & ~0x3f) == 0 && ((1L << (_la - 102)) & 1610612759L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -1797,7 +1798,7 @@ public partial class KickAssemblerParser : Parser {
 			{
 			State = 368;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 107)) & ~0x3f) == 0 && ((1L << (_la - 107)) & 15363L) != 0)) ) {
+			if ( !(((((_la - 109)) & ~0x3f) == 0 && ((1L << (_la - 109)) & 15363L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -1870,7 +1871,7 @@ public partial class KickAssemblerParser : Parser {
 			State = 375;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==HASH || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & 7288033640447L) != 0) || ((((_la - 134)) & ~0x3f) == 0 && ((1L << (_la - 134)) & 127L) != 0) || ((((_la - 205)) & ~0x3f) == 0 && ((1L << (_la - 205)) & -1L) != 0) || ((((_la - 269)) & ~0x3f) == 0 && ((1L << (_la - 269)) & -1L) != 0) || ((((_la - 333)) & ~0x3f) == 0 && ((1L << (_la - 333)) & -1L) != 0) || ((((_la - 397)) & ~0x3f) == 0 && ((1L << (_la - 397)) & -1L) != 0) || ((((_la - 461)) & ~0x3f) == 0 && ((1L << (_la - 461)) & 2199023255551L) != 0)) {
+			if (_la==HASH || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 7288033640447L) != 0) || ((((_la - 136)) & ~0x3f) == 0 && ((1L << (_la - 136)) & 127L) != 0) || ((((_la - 207)) & ~0x3f) == 0 && ((1L << (_la - 207)) & -1L) != 0) || ((((_la - 271)) & ~0x3f) == 0 && ((1L << (_la - 271)) & -1L) != 0) || ((((_la - 335)) & ~0x3f) == 0 && ((1L << (_la - 335)) & -1L) != 0) || ((((_la - 399)) & ~0x3f) == 0 && ((1L << (_la - 399)) & -1L) != 0) || ((((_la - 463)) & ~0x3f) == 0 && ((1L << (_la - 463)) & 2199023255551L) != 0)) {
 				{
 				State = 374;
 				argumentList();
@@ -1937,7 +1938,7 @@ public partial class KickAssemblerParser : Parser {
 			State = 382;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==HASH || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & 7288033640447L) != 0) || ((((_la - 134)) & ~0x3f) == 0 && ((1L << (_la - 134)) & 127L) != 0) || ((((_la - 205)) & ~0x3f) == 0 && ((1L << (_la - 205)) & -1L) != 0) || ((((_la - 269)) & ~0x3f) == 0 && ((1L << (_la - 269)) & -1L) != 0) || ((((_la - 333)) & ~0x3f) == 0 && ((1L << (_la - 333)) & -1L) != 0) || ((((_la - 397)) & ~0x3f) == 0 && ((1L << (_la - 397)) & -1L) != 0) || ((((_la - 461)) & ~0x3f) == 0 && ((1L << (_la - 461)) & 2199023255551L) != 0)) {
+			if (_la==HASH || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 7288033640447L) != 0) || ((((_la - 136)) & ~0x3f) == 0 && ((1L << (_la - 136)) & 127L) != 0) || ((((_la - 207)) & ~0x3f) == 0 && ((1L << (_la - 207)) & -1L) != 0) || ((((_la - 271)) & ~0x3f) == 0 && ((1L << (_la - 271)) & -1L) != 0) || ((((_la - 335)) & ~0x3f) == 0 && ((1L << (_la - 335)) & -1L) != 0) || ((((_la - 399)) & ~0x3f) == 0 && ((1L << (_la - 399)) & -1L) != 0) || ((((_la - 463)) & ~0x3f) == 0 && ((1L << (_la - 463)) & 2199023255551L) != 0)) {
 				{
 				State = 381;
 				argumentList();
@@ -2966,7 +2967,7 @@ public partial class KickAssemblerParser : Parser {
 				State = 468;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if (((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & 7285886156799L) != 0) || ((((_la - 134)) & ~0x3f) == 0 && ((1L << (_la - 134)) & 127L) != 0) || ((((_la - 205)) & ~0x3f) == 0 && ((1L << (_la - 205)) & -1L) != 0) || ((((_la - 269)) & ~0x3f) == 0 && ((1L << (_la - 269)) & -1L) != 0) || ((((_la - 333)) & ~0x3f) == 0 && ((1L << (_la - 333)) & -1L) != 0) || ((((_la - 397)) & ~0x3f) == 0 && ((1L << (_la - 397)) & -1L) != 0) || ((((_la - 461)) & ~0x3f) == 0 && ((1L << (_la - 461)) & 2199023255551L) != 0)) {
+				if (((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 7285886156799L) != 0) || ((((_la - 136)) & ~0x3f) == 0 && ((1L << (_la - 136)) & 127L) != 0) || ((((_la - 207)) & ~0x3f) == 0 && ((1L << (_la - 207)) & -1L) != 0) || ((((_la - 271)) & ~0x3f) == 0 && ((1L << (_la - 271)) & -1L) != 0) || ((((_la - 335)) & ~0x3f) == 0 && ((1L << (_la - 335)) & -1L) != 0) || ((((_la - 399)) & ~0x3f) == 0 && ((1L << (_la - 399)) & -1L) != 0) || ((((_la - 463)) & ~0x3f) == 0 && ((1L << (_la - 463)) & 2199023255551L) != 0)) {
 					{
 					State = 467;
 					expression(0);
@@ -5712,7 +5713,7 @@ public partial class KickAssemblerParser : Parser {
 			State = 739;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (((((_la - 4)) & ~0x3f) == 0 && ((1L << (_la - 4)) & 4611540813667891655L) != 0) || ((((_la - 85)) & ~0x3f) == 0 && ((1L << (_la - 85)) & -542683480206343935L) != 0) || ((((_la - 149)) & ~0x3f) == 0 && ((1L << (_la - 149)) & 72057594037927935L) != 0) || _la==UNQUOTED_STRING) {
+			if (((((_la - 4)) & ~0x3f) == 0 && ((1L << (_la - 4)) & -580818027699769L) != 0) || ((((_la - 87)) & ~0x3f) == 0 && ((1L << (_la - 87)) & -542683480206343935L) != 0) || ((((_la - 151)) & ~0x3f) == 0 && ((1L << (_la - 151)) & 72057594037927935L) != 0) || _la==UNQUOTED_STRING) {
 				{
 				State = 733;
 				unit();
@@ -5969,70 +5970,75 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			State = 777;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,46,Context) ) {
-			case 1:
+			switch (TokenStream.LA(1)) {
+			case DOTCPU:
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 768;
 				cpuDirective();
 				}
 				break;
-			case 2:
+			case DOTBYTE:
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 769;
 				byteDirective();
 				}
 				break;
-			case 3:
+			case DOTWORD:
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 770;
 				wordDirective();
 				}
 				break;
-			case 4:
+			case DOTDWORD:
 				EnterOuterAlt(_localctx, 4);
 				{
 				State = 771;
 				dwordDirective();
 				}
 				break;
-			case 5:
+			case DOTTEXT:
 				EnterOuterAlt(_localctx, 5);
 				{
 				State = 772;
 				textDirective();
 				}
 				break;
-			case 6:
+			case DOTFILL:
+			case DOTFILLWORD:
+			case DOTLOHIFILL:
 				EnterOuterAlt(_localctx, 6);
 				{
 				State = 773;
 				fillDirective();
 				}
 				break;
-			case 7:
+			case DOTENCODING:
 				EnterOuterAlt(_localctx, 7);
 				{
 				State = 774;
 				encodingDirective();
 				}
 				break;
-			case 8:
+			case DOTIMPORT:
 				EnterOuterAlt(_localctx, 8);
 				{
 				State = 775;
 				importDataDirective();
 				}
 				break;
-			case 9:
+			case PC:
+			case OP_MULT_ASSIGNMENT:
 				EnterOuterAlt(_localctx, 9);
 				{
 				State = 776;
 				memoryDirective();
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -6170,7 +6176,7 @@ public partial class KickAssemblerParser : Parser {
 			Match(DOTCPU);
 			State = 788;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 8053063680L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 16106127360L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -6440,7 +6446,7 @@ public partial class KickAssemblerParser : Parser {
 			{
 			State = 802;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 3670016L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 7340032L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -6642,12 +6648,13 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class ImportDataDirectiveContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOTIMPORT() { return GetToken(KickAssemblerParser.DOTIMPORT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public FileContext file() {
 			return GetRuleContext<FileContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOTBINARY() { return GetToken(KickAssemblerParser.DOTBINARY, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOTC64() { return GetToken(KickAssemblerParser.DOTC64, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOTTEXT() { return GetToken(KickAssemblerParser.DOTTEXT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BINARY() { return GetToken(KickAssemblerParser.BINARY, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode C64() { return GetToken(KickAssemblerParser.C64, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TEXT() { return GetToken(KickAssemblerParser.TEXT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] COMMA() { return GetTokens(KickAssemblerParser.COMMA); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA(int i) {
 			return GetToken(KickAssemblerParser.COMMA, i);
@@ -6690,33 +6697,35 @@ public partial class KickAssemblerParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 820;
+			Match(DOTIMPORT);
+			State = 821;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 229376L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 360448L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 821;
+			State = 822;
 			file();
-			State = 828;
+			State = 829;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,51,Context) ) {
 			case 1:
 				{
-				State = 822;
-				Match(COMMA);
 				State = 823;
+				Match(COMMA);
+				State = 824;
 				number();
-				State = 826;
+				State = 827;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,50,Context) ) {
 				case 1:
 					{
-					State = 824;
-					Match(COMMA);
 					State = 825;
+					Match(COMMA);
+					State = 826;
 					number();
 					}
 					break;
@@ -6771,29 +6780,29 @@ public partial class KickAssemblerParser : Parser {
 		LabelNameContext _localctx = new LabelNameContext(Context, State);
 		EnterRule(_localctx, 168, RULE_labelName);
 		try {
-			State = 834;
+			State = 835;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,52,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 830;
-				Match(BANG);
 				State = 831;
+				Match(BANG);
+				State = 832;
 				Match(UNQUOTED_STRING);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 832;
+				State = 833;
 				Match(BANG);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 833;
+				State = 834;
 				atName();
 				}
 				break;
@@ -6841,22 +6850,22 @@ public partial class KickAssemblerParser : Parser {
 		AtNameContext _localctx = new AtNameContext(Context, State);
 		EnterRule(_localctx, 170, RULE_atName);
 		try {
-			State = 839;
+			State = 840;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case AT:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 836;
-				Match(AT);
 				State = 837;
+				Match(AT);
+				State = 838;
 				Match(UNQUOTED_STRING);
 				}
 				break;
 			case UNQUOTED_STRING:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 838;
+				State = 839;
 				Match(UNQUOTED_STRING);
 				}
 				break;
@@ -6907,7 +6916,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 841;
+			State = 842;
 			Match(STRING);
 			}
 		}
@@ -6964,23 +6973,23 @@ public partial class KickAssemblerParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 843;
+			State = 844;
 			number();
-			State = 848;
+			State = 849;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,54,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 844;
-					Match(COMMA);
 					State = 845;
+					Match(COMMA);
+					State = 846;
 					number();
 					}
 					} 
 				}
-				State = 850;
+				State = 851;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,54,Context);
 			}
@@ -7039,21 +7048,21 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 851;
+			State = 852;
 			numeric();
-			State = 856;
+			State = 857;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 852;
-				Match(COMMA);
 				State = 853;
+				Match(COMMA);
+				State = 854;
 				numeric();
 				}
 				}
-				State = 858;
+				State = 859;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -7107,13 +7116,13 @@ public partial class KickAssemblerParser : Parser {
 		EnterRule(_localctx, 178, RULE_numeric);
 		int _la;
 		try {
-			State = 864;
+			State = 865;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CHAR:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 859;
+				State = 860;
 				Match(CHAR);
 				}
 				break;
@@ -7124,17 +7133,17 @@ public partial class KickAssemblerParser : Parser {
 			case BIN_NUMBER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 861;
+				State = 862;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==LT || _la==GT) {
 					{
-					State = 860;
+					State = 861;
 					lohibyte();
 					}
 				}
 
-				State = 863;
+				State = 864;
 				number();
 				}
 				break;
@@ -7191,27 +7200,27 @@ public partial class KickAssemblerParser : Parser {
 		NumberContext _localctx = new NumberContext(Context, State);
 		EnterRule(_localctx, 180, RULE_number);
 		try {
-			State = 869;
+			State = 870;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case DEC_NUMBER:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 866;
+				State = 867;
 				decNumber();
 				}
 				break;
 			case HEX_NUMBER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 867;
+				State = 868;
 				hexNumber();
 				}
 				break;
 			case BIN_NUMBER:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 868;
+				State = 869;
 				binNumber();
 				}
 				break;
@@ -7264,7 +7273,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 871;
+			State = 872;
 			_la = TokenStream.LA(1);
 			if ( !(_la==LT || _la==GT) ) {
 			ErrorHandler.RecoverInline(this);
@@ -7318,7 +7327,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 873;
+			State = 874;
 			Match(DEC_NUMBER);
 			}
 		}
@@ -7365,7 +7374,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 875;
+			State = 876;
 			Match(HEX_NUMBER);
 			}
 		}
@@ -7412,7 +7421,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 877;
+			State = 878;
 			Match(BIN_NUMBER);
 			}
 		}
@@ -7461,7 +7470,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 879;
+			State = 880;
 			_la = TokenStream.LA(1);
 			if ( !(_la==TRUE || _la==FALSE) ) {
 			ErrorHandler.RecoverInline(this);
@@ -7517,7 +7526,7 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 881;
+			State = 882;
 			_la = TokenStream.LA(1);
 			if ( !(_la==ONLYA || _la==ABS) ) {
 			ErrorHandler.RecoverInline(this);
@@ -7575,24 +7584,24 @@ public partial class KickAssemblerParser : Parser {
 		FullOpcodeContext _localctx = new FullOpcodeContext(Context, State);
 		EnterRule(_localctx, 194, RULE_fullOpcode);
 		try {
-			State = 888;
+			State = 889;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,59,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 883;
+				State = 884;
 				opcode();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 884;
-				opcode();
 				State = 885;
-				Match(DOT);
+				opcode();
 				State = 886;
+				Match(DOT);
+				State = 887;
 				opcodeExtension();
 				}
 				break;
@@ -7702,9 +7711,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 890;
+			State = 891;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 144)) & ~0x3f) == 0 && ((1L << (_la - 144)) & 2305843009213693951L) != 0)) ) {
+			if ( !(((((_la - 146)) & ~0x3f) == 0 && ((1L << (_la - 146)) & 2305843009213693951L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -7775,9 +7784,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 892;
+			State = 893;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & 524287L) != 0)) ) {
+			if ( !(((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 524287L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -8125,9 +8134,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 894;
+			State = 895;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 205)) & ~0x3f) == 0 && ((1L << (_la - 205)) & -1L) != 0) || ((((_la - 269)) & ~0x3f) == 0 && ((1L << (_la - 269)) & -1L) != 0) || ((((_la - 333)) & ~0x3f) == 0 && ((1L << (_la - 333)) & -1L) != 0) || ((((_la - 397)) & ~0x3f) == 0 && ((1L << (_la - 397)) & -1L) != 0) || ((((_la - 461)) & ~0x3f) == 0 && ((1L << (_la - 461)) & 1099511627775L) != 0)) ) {
+			if ( !(((((_la - 207)) & ~0x3f) == 0 && ((1L << (_la - 207)) & -1L) != 0) || ((((_la - 271)) & ~0x3f) == 0 && ((1L << (_la - 271)) & -1L) != 0) || ((((_la - 335)) & ~0x3f) == 0 && ((1L << (_la - 335)) & -1L) != 0) || ((((_la - 399)) & ~0x3f) == 0 && ((1L << (_la - 399)) & -1L) != 0) || ((((_la - 463)) & ~0x3f) == 0 && ((1L << (_la - 463)) & 1099511627775L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -8177,7 +8186,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,509,897,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		4,1,511,898,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
 		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
@@ -8237,97 +8246,97 @@ public partial class KickAssemblerParser : Parser {
 		72,778,8,72,1,73,1,73,1,73,3,73,783,8,73,1,73,3,73,786,8,73,1,74,1,74,
 		1,74,1,75,1,75,1,75,1,76,1,76,1,76,1,77,1,77,1,77,1,78,1,78,1,78,1,79,
 		1,79,1,79,1,79,1,79,1,80,1,80,1,80,1,80,1,80,1,80,3,80,814,8,80,1,81,1,
-		81,1,82,1,82,1,82,1,83,1,83,1,83,1,83,1,83,1,83,3,83,827,8,83,3,83,829,
-		8,83,1,84,1,84,1,84,1,84,3,84,835,8,84,1,85,1,85,1,85,3,85,840,8,85,1,
-		86,1,86,1,87,1,87,1,87,5,87,847,8,87,10,87,12,87,850,9,87,1,88,1,88,1,
-		88,5,88,855,8,88,10,88,12,88,858,9,88,1,89,1,89,3,89,862,8,89,1,89,3,89,
-		865,8,89,1,90,1,90,1,90,3,90,870,8,90,1,91,1,91,1,92,1,92,1,93,1,93,1,
-		94,1,94,1,95,1,95,1,96,1,96,1,97,1,97,1,97,1,97,1,97,3,97,889,8,97,1,98,
-		1,98,1,99,1,99,1,100,1,100,1,100,0,2,18,142,101,0,2,4,6,8,10,12,14,16,
-		18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,
-		66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,
-		110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,
-		146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,
-		182,184,186,188,190,192,194,196,198,200,0,14,2,0,2,2,94,94,1,0,95,96,3,
-		0,100,102,104,104,129,130,2,0,107,108,117,120,2,0,62,62,123,123,1,0,29,
-		32,1,0,19,21,1,0,15,17,1,0,107,108,1,0,134,135,1,0,13,14,1,0,144,204,1,
-		0,66,84,1,0,205,500,935,0,202,1,0,0,0,2,211,1,0,0,0,4,221,1,0,0,0,6,230,
-		1,0,0,0,8,233,1,0,0,0,10,249,1,0,0,0,12,251,1,0,0,0,14,281,1,0,0,0,16,
-		289,1,0,0,0,18,312,1,0,0,0,20,345,1,0,0,0,22,347,1,0,0,0,24,351,1,0,0,
-		0,26,366,1,0,0,0,28,368,1,0,0,0,30,370,1,0,0,0,32,379,1,0,0,0,34,386,1,
-		0,0,0,36,420,1,0,0,0,38,422,1,0,0,0,40,425,1,0,0,0,42,428,1,0,0,0,44,431,
-		1,0,0,0,46,434,1,0,0,0,48,443,1,0,0,0,50,450,1,0,0,0,52,453,1,0,0,0,54,
-		457,1,0,0,0,56,473,1,0,0,0,58,475,1,0,0,0,60,479,1,0,0,0,62,487,1,0,0,
-		0,64,492,1,0,0,0,66,504,1,0,0,0,68,510,1,0,0,0,70,516,1,0,0,0,72,524,1,
-		0,0,0,74,527,1,0,0,0,76,534,1,0,0,0,78,537,1,0,0,0,80,544,1,0,0,0,82,548,
-		1,0,0,0,84,556,1,0,0,0,86,561,1,0,0,0,88,565,1,0,0,0,90,576,1,0,0,0,92,
-		578,1,0,0,0,94,582,1,0,0,0,96,586,1,0,0,0,98,589,1,0,0,0,100,598,1,0,0,
-		0,102,606,1,0,0,0,104,615,1,0,0,0,106,623,1,0,0,0,108,630,1,0,0,0,110,
-		636,1,0,0,0,112,642,1,0,0,0,114,648,1,0,0,0,116,652,1,0,0,0,118,655,1,
-		0,0,0,120,672,1,0,0,0,122,680,1,0,0,0,124,685,1,0,0,0,126,693,1,0,0,0,
-		128,695,1,0,0,0,130,698,1,0,0,0,132,701,1,0,0,0,134,704,1,0,0,0,136,708,
-		1,0,0,0,138,711,1,0,0,0,140,729,1,0,0,0,142,749,1,0,0,0,144,777,1,0,0,
-		0,146,779,1,0,0,0,148,787,1,0,0,0,150,790,1,0,0,0,152,793,1,0,0,0,154,
-		796,1,0,0,0,156,799,1,0,0,0,158,802,1,0,0,0,160,813,1,0,0,0,162,815,1,
-		0,0,0,164,817,1,0,0,0,166,820,1,0,0,0,168,834,1,0,0,0,170,839,1,0,0,0,
-		172,841,1,0,0,0,174,843,1,0,0,0,176,851,1,0,0,0,178,864,1,0,0,0,180,869,
-		1,0,0,0,182,871,1,0,0,0,184,873,1,0,0,0,186,875,1,0,0,0,188,877,1,0,0,
-		0,190,879,1,0,0,0,192,881,1,0,0,0,194,888,1,0,0,0,196,890,1,0,0,0,198,
-		892,1,0,0,0,200,894,1,0,0,0,202,203,3,2,1,0,203,1,1,0,0,0,204,206,7,0,
-		0,0,205,204,1,0,0,0,206,209,1,0,0,0,207,205,1,0,0,0,207,208,1,0,0,0,208,
-		210,1,0,0,0,209,207,1,0,0,0,210,212,3,4,2,0,211,207,1,0,0,0,212,213,1,
-		0,0,0,213,211,1,0,0,0,213,214,1,0,0,0,214,3,1,0,0,0,215,222,3,8,4,0,216,
-		222,3,6,3,0,217,222,3,144,72,0,218,222,3,10,5,0,219,222,3,36,18,0,220,
-		222,3,126,63,0,221,215,1,0,0,0,221,216,1,0,0,0,221,217,1,0,0,0,221,218,
-		1,0,0,0,221,219,1,0,0,0,221,220,1,0,0,0,222,5,1,0,0,0,223,224,3,168,84,
-		0,224,225,5,93,0,0,225,226,3,4,2,0,226,231,1,0,0,0,227,228,3,168,84,0,
-		228,229,5,93,0,0,229,231,1,0,0,0,230,223,1,0,0,0,230,227,1,0,0,0,231,7,
-		1,0,0,0,232,234,5,93,0,0,233,232,1,0,0,0,233,234,1,0,0,0,234,235,1,0,0,
-		0,235,237,3,194,97,0,236,238,3,12,6,0,237,236,1,0,0,0,237,238,1,0,0,0,
-		238,9,1,0,0,0,239,240,5,501,0,0,240,241,5,93,0,0,241,242,5,85,0,0,242,
-		243,3,2,1,0,243,244,5,86,0,0,244,250,1,0,0,0,245,246,5,85,0,0,246,247,
-		3,2,1,0,247,248,5,86,0,0,248,250,1,0,0,0,249,239,1,0,0,0,249,245,1,0,0,
-		0,250,11,1,0,0,0,251,256,3,14,7,0,252,253,5,92,0,0,253,255,3,14,7,0,254,
-		252,1,0,0,0,255,258,1,0,0,0,256,254,1,0,0,0,256,257,1,0,0,0,257,13,1,0,
-		0,0,258,256,1,0,0,0,259,261,7,1,0,0,260,259,1,0,0,0,261,262,1,0,0,0,262,
-		260,1,0,0,0,262,263,1,0,0,0,263,282,1,0,0,0,264,265,5,3,0,0,265,282,3,
-		200,100,0,266,267,5,3,0,0,267,282,3,178,89,0,268,269,5,89,0,0,269,270,
-		3,12,6,0,270,271,5,90,0,0,271,282,1,0,0,0,272,273,5,87,0,0,273,274,3,12,
-		6,0,274,275,5,88,0,0,275,282,1,0,0,0,276,282,3,16,8,0,277,278,5,97,0,0,
-		278,282,3,18,9,0,279,282,3,18,9,0,280,282,5,97,0,0,281,260,1,0,0,0,281,
-		264,1,0,0,0,281,266,1,0,0,0,281,268,1,0,0,0,281,272,1,0,0,0,281,276,1,
-		0,0,0,281,277,1,0,0,0,281,279,1,0,0,0,281,280,1,0,0,0,282,15,1,0,0,0,283,
-		284,3,168,84,0,284,285,5,96,0,0,285,290,1,0,0,0,286,287,3,168,84,0,287,
-		288,5,95,0,0,288,290,1,0,0,0,289,283,1,0,0,0,289,286,1,0,0,0,290,17,1,
-		0,0,0,291,292,6,9,-1,0,292,293,5,89,0,0,293,294,3,18,9,0,294,295,5,90,
-		0,0,295,313,1,0,0,0,296,297,5,87,0,0,297,298,3,18,9,0,298,299,5,88,0,0,
-		299,313,1,0,0,0,300,301,5,95,0,0,301,313,3,18,9,12,302,303,5,96,0,0,303,
+		81,1,82,1,82,1,82,1,83,1,83,1,83,1,83,1,83,1,83,1,83,3,83,828,8,83,3,83,
+		830,8,83,1,84,1,84,1,84,1,84,3,84,836,8,84,1,85,1,85,1,85,3,85,841,8,85,
+		1,86,1,86,1,87,1,87,1,87,5,87,848,8,87,10,87,12,87,851,9,87,1,88,1,88,
+		1,88,5,88,856,8,88,10,88,12,88,859,9,88,1,89,1,89,3,89,863,8,89,1,89,3,
+		89,866,8,89,1,90,1,90,1,90,3,90,871,8,90,1,91,1,91,1,92,1,92,1,93,1,93,
+		1,94,1,94,1,95,1,95,1,96,1,96,1,97,1,97,1,97,1,97,1,97,3,97,890,8,97,1,
+		98,1,98,1,99,1,99,1,100,1,100,1,100,0,2,18,142,101,0,2,4,6,8,10,12,14,
+		16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,
+		64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,
+		108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,
+		144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,
+		180,182,184,186,188,190,192,194,196,198,200,0,14,2,0,2,2,96,96,1,0,97,
+		98,3,0,102,104,106,106,131,132,2,0,109,110,119,122,2,0,64,64,125,125,1,
+		0,30,33,1,0,20,22,2,0,15,16,18,18,1,0,109,110,1,0,136,137,1,0,13,14,1,
+		0,146,206,1,0,68,86,1,0,207,502,936,0,202,1,0,0,0,2,211,1,0,0,0,4,221,
+		1,0,0,0,6,230,1,0,0,0,8,233,1,0,0,0,10,249,1,0,0,0,12,251,1,0,0,0,14,281,
+		1,0,0,0,16,289,1,0,0,0,18,312,1,0,0,0,20,345,1,0,0,0,22,347,1,0,0,0,24,
+		351,1,0,0,0,26,366,1,0,0,0,28,368,1,0,0,0,30,370,1,0,0,0,32,379,1,0,0,
+		0,34,386,1,0,0,0,36,420,1,0,0,0,38,422,1,0,0,0,40,425,1,0,0,0,42,428,1,
+		0,0,0,44,431,1,0,0,0,46,434,1,0,0,0,48,443,1,0,0,0,50,450,1,0,0,0,52,453,
+		1,0,0,0,54,457,1,0,0,0,56,473,1,0,0,0,58,475,1,0,0,0,60,479,1,0,0,0,62,
+		487,1,0,0,0,64,492,1,0,0,0,66,504,1,0,0,0,68,510,1,0,0,0,70,516,1,0,0,
+		0,72,524,1,0,0,0,74,527,1,0,0,0,76,534,1,0,0,0,78,537,1,0,0,0,80,544,1,
+		0,0,0,82,548,1,0,0,0,84,556,1,0,0,0,86,561,1,0,0,0,88,565,1,0,0,0,90,576,
+		1,0,0,0,92,578,1,0,0,0,94,582,1,0,0,0,96,586,1,0,0,0,98,589,1,0,0,0,100,
+		598,1,0,0,0,102,606,1,0,0,0,104,615,1,0,0,0,106,623,1,0,0,0,108,630,1,
+		0,0,0,110,636,1,0,0,0,112,642,1,0,0,0,114,648,1,0,0,0,116,652,1,0,0,0,
+		118,655,1,0,0,0,120,672,1,0,0,0,122,680,1,0,0,0,124,685,1,0,0,0,126,693,
+		1,0,0,0,128,695,1,0,0,0,130,698,1,0,0,0,132,701,1,0,0,0,134,704,1,0,0,
+		0,136,708,1,0,0,0,138,711,1,0,0,0,140,729,1,0,0,0,142,749,1,0,0,0,144,
+		777,1,0,0,0,146,779,1,0,0,0,148,787,1,0,0,0,150,790,1,0,0,0,152,793,1,
+		0,0,0,154,796,1,0,0,0,156,799,1,0,0,0,158,802,1,0,0,0,160,813,1,0,0,0,
+		162,815,1,0,0,0,164,817,1,0,0,0,166,820,1,0,0,0,168,835,1,0,0,0,170,840,
+		1,0,0,0,172,842,1,0,0,0,174,844,1,0,0,0,176,852,1,0,0,0,178,865,1,0,0,
+		0,180,870,1,0,0,0,182,872,1,0,0,0,184,874,1,0,0,0,186,876,1,0,0,0,188,
+		878,1,0,0,0,190,880,1,0,0,0,192,882,1,0,0,0,194,889,1,0,0,0,196,891,1,
+		0,0,0,198,893,1,0,0,0,200,895,1,0,0,0,202,203,3,2,1,0,203,1,1,0,0,0,204,
+		206,7,0,0,0,205,204,1,0,0,0,206,209,1,0,0,0,207,205,1,0,0,0,207,208,1,
+		0,0,0,208,210,1,0,0,0,209,207,1,0,0,0,210,212,3,4,2,0,211,207,1,0,0,0,
+		212,213,1,0,0,0,213,211,1,0,0,0,213,214,1,0,0,0,214,3,1,0,0,0,215,222,
+		3,8,4,0,216,222,3,6,3,0,217,222,3,144,72,0,218,222,3,10,5,0,219,222,3,
+		36,18,0,220,222,3,126,63,0,221,215,1,0,0,0,221,216,1,0,0,0,221,217,1,0,
+		0,0,221,218,1,0,0,0,221,219,1,0,0,0,221,220,1,0,0,0,222,5,1,0,0,0,223,
+		224,3,168,84,0,224,225,5,95,0,0,225,226,3,4,2,0,226,231,1,0,0,0,227,228,
+		3,168,84,0,228,229,5,95,0,0,229,231,1,0,0,0,230,223,1,0,0,0,230,227,1,
+		0,0,0,231,7,1,0,0,0,232,234,5,95,0,0,233,232,1,0,0,0,233,234,1,0,0,0,234,
+		235,1,0,0,0,235,237,3,194,97,0,236,238,3,12,6,0,237,236,1,0,0,0,237,238,
+		1,0,0,0,238,9,1,0,0,0,239,240,5,503,0,0,240,241,5,95,0,0,241,242,5,87,
+		0,0,242,243,3,2,1,0,243,244,5,88,0,0,244,250,1,0,0,0,245,246,5,87,0,0,
+		246,247,3,2,1,0,247,248,5,88,0,0,248,250,1,0,0,0,249,239,1,0,0,0,249,245,
+		1,0,0,0,250,11,1,0,0,0,251,256,3,14,7,0,252,253,5,94,0,0,253,255,3,14,
+		7,0,254,252,1,0,0,0,255,258,1,0,0,0,256,254,1,0,0,0,256,257,1,0,0,0,257,
+		13,1,0,0,0,258,256,1,0,0,0,259,261,7,1,0,0,260,259,1,0,0,0,261,262,1,0,
+		0,0,262,260,1,0,0,0,262,263,1,0,0,0,263,282,1,0,0,0,264,265,5,3,0,0,265,
+		282,3,200,100,0,266,267,5,3,0,0,267,282,3,178,89,0,268,269,5,91,0,0,269,
+		270,3,12,6,0,270,271,5,92,0,0,271,282,1,0,0,0,272,273,5,89,0,0,273,274,
+		3,12,6,0,274,275,5,90,0,0,275,282,1,0,0,0,276,282,3,16,8,0,277,278,5,99,
+		0,0,278,282,3,18,9,0,279,282,3,18,9,0,280,282,5,99,0,0,281,260,1,0,0,0,
+		281,264,1,0,0,0,281,266,1,0,0,0,281,268,1,0,0,0,281,272,1,0,0,0,281,276,
+		1,0,0,0,281,277,1,0,0,0,281,279,1,0,0,0,281,280,1,0,0,0,282,15,1,0,0,0,
+		283,284,3,168,84,0,284,285,5,98,0,0,285,290,1,0,0,0,286,287,3,168,84,0,
+		287,288,5,97,0,0,288,290,1,0,0,0,289,283,1,0,0,0,289,286,1,0,0,0,290,17,
+		1,0,0,0,291,292,6,9,-1,0,292,293,5,91,0,0,293,294,3,18,9,0,294,295,5,92,
+		0,0,295,313,1,0,0,0,296,297,5,89,0,0,297,298,3,18,9,0,298,299,5,90,0,0,
+		299,313,1,0,0,0,300,301,5,97,0,0,301,313,3,18,9,12,302,303,5,98,0,0,303,
 		313,3,18,9,11,304,313,3,30,15,0,305,313,3,32,16,0,306,313,3,178,89,0,307,
 		313,3,200,100,0,308,313,3,198,99,0,309,313,3,190,95,0,310,313,3,168,84,
-		0,311,313,5,140,0,0,312,291,1,0,0,0,312,296,1,0,0,0,312,300,1,0,0,0,312,
+		0,311,313,5,142,0,0,312,291,1,0,0,0,312,296,1,0,0,0,312,300,1,0,0,0,312,
 		302,1,0,0,0,312,304,1,0,0,0,312,305,1,0,0,0,312,306,1,0,0,0,312,307,1,
 		0,0,0,312,308,1,0,0,0,312,309,1,0,0,0,312,310,1,0,0,0,312,311,1,0,0,0,
 		313,342,1,0,0,0,314,315,10,17,0,0,315,316,3,20,10,0,316,317,3,18,9,18,
-		317,341,1,0,0,0,318,319,10,16,0,0,319,320,5,97,0,0,320,341,3,18,9,17,321,
-		322,10,15,0,0,322,323,5,98,0,0,323,341,3,18,9,16,324,325,10,14,0,0,325,
-		326,5,95,0,0,326,341,3,18,9,15,327,328,10,13,0,0,328,329,5,96,0,0,329,
+		317,341,1,0,0,0,318,319,10,16,0,0,319,320,5,99,0,0,320,341,3,18,9,17,321,
+		322,10,15,0,0,322,323,5,100,0,0,323,341,3,18,9,16,324,325,10,14,0,0,325,
+		326,5,97,0,0,326,341,3,18,9,15,327,328,10,13,0,0,328,329,5,98,0,0,329,
 		341,3,18,9,14,330,331,10,10,0,0,331,332,3,28,14,0,332,333,3,18,9,11,333,
-		341,1,0,0,0,334,335,10,9,0,0,335,336,5,109,0,0,336,337,3,18,9,0,337,338,
-		5,93,0,0,338,339,3,18,9,10,339,341,1,0,0,0,340,314,1,0,0,0,340,318,1,0,
+		341,1,0,0,0,334,335,10,9,0,0,335,336,5,111,0,0,336,337,3,18,9,0,337,338,
+		5,95,0,0,338,339,3,18,9,10,339,341,1,0,0,0,340,314,1,0,0,0,340,318,1,0,
 		0,0,340,321,1,0,0,0,340,324,1,0,0,0,340,327,1,0,0,0,340,330,1,0,0,0,340,
 		334,1,0,0,0,341,344,1,0,0,0,342,340,1,0,0,0,342,343,1,0,0,0,343,19,1,0,
-		0,0,344,342,1,0,0,0,345,346,7,2,0,0,346,21,1,0,0,0,347,348,5,501,0,0,348,
-		349,5,106,0,0,349,350,3,18,9,0,350,23,1,0,0,0,351,352,5,501,0,0,352,353,
-		3,26,13,0,353,25,1,0,0,0,354,355,5,95,0,0,355,367,5,95,0,0,356,357,5,96,
-		0,0,357,367,5,96,0,0,358,359,5,95,0,0,359,367,5,106,0,0,360,361,5,96,0,
-		0,361,367,5,106,0,0,362,363,5,97,0,0,363,367,5,106,0,0,364,365,5,98,0,
-		0,365,367,5,106,0,0,366,354,1,0,0,0,366,356,1,0,0,0,366,358,1,0,0,0,366,
+		0,0,344,342,1,0,0,0,345,346,7,2,0,0,346,21,1,0,0,0,347,348,5,503,0,0,348,
+		349,5,108,0,0,349,350,3,18,9,0,350,23,1,0,0,0,351,352,5,503,0,0,352,353,
+		3,26,13,0,353,25,1,0,0,0,354,355,5,97,0,0,355,367,5,97,0,0,356,357,5,98,
+		0,0,357,367,5,98,0,0,358,359,5,97,0,0,359,367,5,108,0,0,360,361,5,98,0,
+		0,361,367,5,108,0,0,362,363,5,99,0,0,363,367,5,108,0,0,364,365,5,100,0,
+		0,365,367,5,108,0,0,366,354,1,0,0,0,366,356,1,0,0,0,366,358,1,0,0,0,366,
 		360,1,0,0,0,366,362,1,0,0,0,366,364,1,0,0,0,367,27,1,0,0,0,368,369,7,3,
-		0,0,369,29,1,0,0,0,370,371,5,140,0,0,371,372,5,91,0,0,372,373,5,140,0,
-		0,373,375,5,89,0,0,374,376,3,12,6,0,375,374,1,0,0,0,375,376,1,0,0,0,376,
-		377,1,0,0,0,377,378,5,90,0,0,378,31,1,0,0,0,379,380,5,140,0,0,380,382,
-		5,89,0,0,381,383,3,12,6,0,382,381,1,0,0,0,382,383,1,0,0,0,383,384,1,0,
-		0,0,384,385,5,90,0,0,385,33,1,0,0,0,386,387,3,18,9,0,387,35,1,0,0,0,388,
+		0,0,369,29,1,0,0,0,370,371,5,142,0,0,371,372,5,93,0,0,372,373,5,142,0,
+		0,373,375,5,91,0,0,374,376,3,12,6,0,375,374,1,0,0,0,375,376,1,0,0,0,376,
+		377,1,0,0,0,377,378,5,92,0,0,378,31,1,0,0,0,379,380,5,142,0,0,380,382,
+		5,91,0,0,381,383,3,12,6,0,382,381,1,0,0,0,382,383,1,0,0,0,383,384,1,0,
+		0,0,384,385,5,92,0,0,385,33,1,0,0,0,386,387,3,18,9,0,387,35,1,0,0,0,388,
 		421,3,38,19,0,389,421,3,40,20,0,390,421,3,42,21,0,391,421,3,44,22,0,392,
 		421,3,46,23,0,393,421,3,48,24,0,394,421,3,50,25,0,395,421,3,52,26,0,396,
 		421,3,54,27,0,397,421,3,58,29,0,398,421,3,64,32,0,399,421,3,66,33,0,400,
@@ -8343,95 +8352,95 @@ public partial class KickAssemblerParser : Parser {
 		1,0,0,0,420,406,1,0,0,0,420,407,1,0,0,0,420,408,1,0,0,0,420,409,1,0,0,
 		0,420,410,1,0,0,0,420,411,1,0,0,0,420,412,1,0,0,0,420,413,1,0,0,0,420,
 		414,1,0,0,0,420,415,1,0,0,0,420,416,1,0,0,0,420,417,1,0,0,0,420,418,1,
-		0,0,0,420,419,1,0,0,0,421,37,1,0,0,0,422,423,5,35,0,0,423,424,3,18,9,0,
-		424,39,1,0,0,0,425,426,5,36,0,0,426,427,3,18,9,0,427,41,1,0,0,0,428,429,
-		5,37,0,0,429,430,3,22,11,0,430,43,1,0,0,0,431,432,5,38,0,0,432,433,3,22,
-		11,0,433,45,1,0,0,0,434,435,5,39,0,0,435,436,5,89,0,0,436,437,3,18,9,0,
-		437,438,5,90,0,0,438,441,3,4,2,0,439,440,5,40,0,0,440,442,3,4,2,0,441,
-		439,1,0,0,0,441,442,1,0,0,0,442,47,1,0,0,0,443,444,5,41,0,0,444,445,5,
-		89,0,0,445,446,3,18,9,0,446,447,5,90,0,0,447,448,5,92,0,0,448,449,5,140,
-		0,0,449,49,1,0,0,0,450,451,5,42,0,0,451,452,3,24,12,0,452,51,1,0,0,0,453,
-		455,5,63,0,0,454,456,5,140,0,0,455,454,1,0,0,0,455,456,1,0,0,0,456,53,
-		1,0,0,0,457,458,5,64,0,0,458,459,3,56,28,0,459,55,1,0,0,0,460,474,3,18,
-		9,0,461,462,3,18,9,0,462,463,5,92,0,0,463,464,3,18,9,0,464,474,1,0,0,0,
-		465,466,3,18,9,0,466,468,5,92,0,0,467,469,3,18,9,0,468,467,1,0,0,0,468,
-		469,1,0,0,0,469,470,1,0,0,0,470,471,5,92,0,0,471,472,5,140,0,0,472,474,
+		0,0,0,420,419,1,0,0,0,421,37,1,0,0,0,422,423,5,36,0,0,423,424,3,18,9,0,
+		424,39,1,0,0,0,425,426,5,37,0,0,426,427,3,18,9,0,427,41,1,0,0,0,428,429,
+		5,38,0,0,429,430,3,22,11,0,430,43,1,0,0,0,431,432,5,40,0,0,432,433,3,22,
+		11,0,433,45,1,0,0,0,434,435,5,41,0,0,435,436,5,91,0,0,436,437,3,18,9,0,
+		437,438,5,92,0,0,438,441,3,4,2,0,439,440,5,42,0,0,440,442,3,4,2,0,441,
+		439,1,0,0,0,441,442,1,0,0,0,442,47,1,0,0,0,443,444,5,43,0,0,444,445,5,
+		91,0,0,445,446,3,18,9,0,446,447,5,92,0,0,447,448,5,94,0,0,448,449,5,142,
+		0,0,449,49,1,0,0,0,450,451,5,44,0,0,451,452,3,24,12,0,452,51,1,0,0,0,453,
+		455,5,65,0,0,454,456,5,142,0,0,455,454,1,0,0,0,455,456,1,0,0,0,456,53,
+		1,0,0,0,457,458,5,66,0,0,458,459,3,56,28,0,459,55,1,0,0,0,460,474,3,18,
+		9,0,461,462,3,18,9,0,462,463,5,94,0,0,463,464,3,18,9,0,464,474,1,0,0,0,
+		465,466,3,18,9,0,466,468,5,94,0,0,467,469,3,18,9,0,468,467,1,0,0,0,468,
+		469,1,0,0,0,469,470,1,0,0,0,470,471,5,94,0,0,471,472,5,142,0,0,472,474,
 		1,0,0,0,473,460,1,0,0,0,473,461,1,0,0,0,473,465,1,0,0,0,474,57,1,0,0,0,
-		475,476,5,85,0,0,476,477,3,60,30,0,477,478,5,86,0,0,478,59,1,0,0,0,479,
-		484,3,62,31,0,480,481,5,92,0,0,481,483,3,62,31,0,482,480,1,0,0,0,483,486,
+		475,476,5,87,0,0,476,477,3,60,30,0,477,478,5,88,0,0,478,59,1,0,0,0,479,
+		484,3,62,31,0,480,481,5,94,0,0,481,483,3,62,31,0,482,480,1,0,0,0,483,486,
 		1,0,0,0,484,482,1,0,0,0,484,485,1,0,0,0,485,61,1,0,0,0,486,484,1,0,0,0,
-		487,490,5,501,0,0,488,489,5,106,0,0,489,491,3,180,90,0,490,488,1,0,0,0,
-		490,491,1,0,0,0,491,63,1,0,0,0,492,493,5,43,0,0,493,495,5,89,0,0,494,496,
-		3,42,21,0,495,494,1,0,0,0,495,496,1,0,0,0,496,497,1,0,0,0,497,498,5,94,
-		0,0,498,499,3,34,17,0,499,500,5,94,0,0,500,501,3,18,9,0,501,502,5,90,0,
-		0,502,503,3,4,2,0,503,65,1,0,0,0,504,505,5,44,0,0,505,506,5,89,0,0,506,
-		507,3,34,17,0,507,508,5,90,0,0,508,509,3,4,2,0,509,67,1,0,0,0,510,511,
-		5,45,0,0,511,512,5,501,0,0,512,513,5,85,0,0,513,514,3,70,35,0,514,515,
-		5,86,0,0,515,69,1,0,0,0,516,521,5,501,0,0,517,518,5,92,0,0,518,520,5,501,
+		487,490,5,503,0,0,488,489,5,108,0,0,489,491,3,180,90,0,490,488,1,0,0,0,
+		490,491,1,0,0,0,491,63,1,0,0,0,492,493,5,45,0,0,493,495,5,91,0,0,494,496,
+		3,42,21,0,495,494,1,0,0,0,495,496,1,0,0,0,496,497,1,0,0,0,497,498,5,96,
+		0,0,498,499,3,34,17,0,499,500,5,96,0,0,500,501,3,18,9,0,501,502,5,92,0,
+		0,502,503,3,4,2,0,503,65,1,0,0,0,504,505,5,46,0,0,505,506,5,91,0,0,506,
+		507,3,34,17,0,507,508,5,92,0,0,508,509,3,4,2,0,509,67,1,0,0,0,510,511,
+		5,47,0,0,511,512,5,503,0,0,512,513,5,87,0,0,513,514,3,70,35,0,514,515,
+		5,88,0,0,515,69,1,0,0,0,516,521,5,503,0,0,517,518,5,94,0,0,518,520,5,503,
 		0,0,519,517,1,0,0,0,520,523,1,0,0,0,521,519,1,0,0,0,521,522,1,0,0,0,522,
 		71,1,0,0,0,523,521,1,0,0,0,524,525,3,70,35,0,525,526,3,10,5,0,526,73,1,
-		0,0,0,527,528,5,47,0,0,528,529,3,170,85,0,529,530,5,89,0,0,530,531,3,70,
-		35,0,531,532,5,90,0,0,532,533,3,10,5,0,533,75,1,0,0,0,534,535,5,48,0,0,
-		535,536,3,18,9,0,536,77,1,0,0,0,537,538,5,49,0,0,538,539,3,170,85,0,539,
-		540,5,89,0,0,540,541,3,70,35,0,541,542,5,90,0,0,542,543,3,10,5,0,543,79,
-		1,0,0,0,544,545,5,50,0,0,545,546,5,501,0,0,546,547,3,82,41,0,547,81,1,
-		0,0,0,548,553,5,501,0,0,549,550,5,93,0,0,550,552,5,501,0,0,551,549,1,0,
+		0,0,0,527,528,5,49,0,0,528,529,3,170,85,0,529,530,5,91,0,0,530,531,3,70,
+		35,0,531,532,5,92,0,0,532,533,3,10,5,0,533,75,1,0,0,0,534,535,5,50,0,0,
+		535,536,3,18,9,0,536,77,1,0,0,0,537,538,5,51,0,0,538,539,3,170,85,0,539,
+		540,5,91,0,0,540,541,3,70,35,0,541,542,5,92,0,0,542,543,3,10,5,0,543,79,
+		1,0,0,0,544,545,5,52,0,0,545,546,5,503,0,0,546,547,3,82,41,0,547,81,1,
+		0,0,0,548,553,5,503,0,0,549,550,5,95,0,0,550,552,5,503,0,0,551,549,1,0,
 		0,0,552,555,1,0,0,0,553,551,1,0,0,0,553,554,1,0,0,0,554,83,1,0,0,0,555,
-		553,1,0,0,0,556,557,5,52,0,0,557,559,5,501,0,0,558,560,3,10,5,0,559,558,
-		1,0,0,0,559,560,1,0,0,0,560,85,1,0,0,0,561,562,5,59,0,0,562,563,3,22,11,
-		0,563,564,3,10,5,0,564,87,1,0,0,0,565,566,5,58,0,0,566,567,5,140,0,0,567,
-		89,1,0,0,0,568,569,5,53,0,0,569,570,5,501,0,0,570,577,3,102,51,0,571,572,
-		5,53,0,0,572,573,5,501,0,0,573,577,5,140,0,0,574,575,5,53,0,0,575,577,
-		5,501,0,0,576,568,1,0,0,0,576,571,1,0,0,0,576,574,1,0,0,0,577,91,1,0,0,
-		0,578,579,5,54,0,0,579,580,5,501,0,0,580,581,3,102,51,0,581,93,1,0,0,0,
-		582,583,5,55,0,0,583,584,5,501,0,0,584,585,3,102,51,0,585,95,1,0,0,0,586,
-		587,5,60,0,0,587,588,3,102,51,0,588,97,1,0,0,0,589,591,5,61,0,0,590,592,
-		5,501,0,0,591,590,1,0,0,0,591,592,1,0,0,0,592,593,1,0,0,0,593,594,3,102,
-		51,0,594,595,5,85,0,0,595,596,3,100,50,0,596,597,5,86,0,0,597,99,1,0,0,
-		0,598,603,3,102,51,0,599,600,5,92,0,0,600,602,3,102,51,0,601,599,1,0,0,
+		553,1,0,0,0,556,557,5,54,0,0,557,559,5,503,0,0,558,560,3,10,5,0,559,558,
+		1,0,0,0,559,560,1,0,0,0,560,85,1,0,0,0,561,562,5,61,0,0,562,563,3,22,11,
+		0,563,564,3,10,5,0,564,87,1,0,0,0,565,566,5,60,0,0,566,567,5,142,0,0,567,
+		89,1,0,0,0,568,569,5,55,0,0,569,570,5,503,0,0,570,577,3,102,51,0,571,572,
+		5,55,0,0,572,573,5,503,0,0,573,577,5,142,0,0,574,575,5,55,0,0,575,577,
+		5,503,0,0,576,568,1,0,0,0,576,571,1,0,0,0,576,574,1,0,0,0,577,91,1,0,0,
+		0,578,579,5,56,0,0,579,580,5,503,0,0,580,581,3,102,51,0,581,93,1,0,0,0,
+		582,583,5,57,0,0,583,584,5,503,0,0,584,585,3,102,51,0,585,95,1,0,0,0,586,
+		587,5,62,0,0,587,588,3,102,51,0,588,97,1,0,0,0,589,591,5,63,0,0,590,592,
+		5,503,0,0,591,590,1,0,0,0,591,592,1,0,0,0,592,593,1,0,0,0,593,594,3,102,
+		51,0,594,595,5,87,0,0,595,596,3,100,50,0,596,597,5,88,0,0,597,99,1,0,0,
+		0,598,603,3,102,51,0,599,600,5,94,0,0,600,602,3,102,51,0,601,599,1,0,0,
 		0,602,605,1,0,0,0,603,601,1,0,0,0,603,604,1,0,0,0,604,101,1,0,0,0,605,
-		603,1,0,0,0,606,610,5,87,0,0,607,609,3,104,52,0,608,607,1,0,0,0,609,612,
+		603,1,0,0,0,606,610,5,89,0,0,607,609,3,104,52,0,608,607,1,0,0,0,609,612,
 		1,0,0,0,610,608,1,0,0,0,610,611,1,0,0,0,611,613,1,0,0,0,612,610,1,0,0,
-		0,613,614,5,88,0,0,614,103,1,0,0,0,615,620,3,106,53,0,616,617,5,92,0,0,
+		0,613,614,5,90,0,0,614,103,1,0,0,0,615,620,3,106,53,0,616,617,5,94,0,0,
 		617,619,3,106,53,0,618,616,1,0,0,0,619,622,1,0,0,0,620,618,1,0,0,0,620,
-		621,1,0,0,0,621,105,1,0,0,0,622,620,1,0,0,0,623,624,5,501,0,0,624,628,
-		5,106,0,0,625,629,3,180,90,0,626,629,5,140,0,0,627,629,3,190,95,0,628,
+		621,1,0,0,0,621,105,1,0,0,0,622,620,1,0,0,0,623,624,5,503,0,0,624,628,
+		5,108,0,0,625,629,3,180,90,0,626,629,5,142,0,0,627,629,3,190,95,0,628,
 		625,1,0,0,0,628,626,1,0,0,0,628,627,1,0,0,0,629,107,1,0,0,0,630,631,5,
-		56,0,0,631,632,5,501,0,0,632,633,5,89,0,0,633,634,5,90,0,0,634,635,3,10,
-		5,0,635,109,1,0,0,0,636,637,5,57,0,0,637,638,5,501,0,0,638,639,5,89,0,
-		0,639,640,3,14,7,0,640,641,5,90,0,0,641,111,1,0,0,0,642,643,5,33,0,0,643,
-		644,5,140,0,0,644,645,3,4,2,0,645,646,5,92,0,0,646,647,3,4,2,0,647,113,
-		1,0,0,0,648,649,5,34,0,0,649,650,5,140,0,0,650,651,3,4,2,0,651,115,1,0,
-		0,0,652,653,3,178,89,0,653,654,3,10,5,0,654,117,1,0,0,0,655,656,5,65,0,
-		0,656,660,5,85,0,0,657,659,5,2,0,0,658,657,1,0,0,0,659,662,1,0,0,0,660,
+		58,0,0,631,632,5,503,0,0,632,633,5,91,0,0,633,634,5,92,0,0,634,635,3,10,
+		5,0,635,109,1,0,0,0,636,637,5,59,0,0,637,638,5,503,0,0,638,639,5,91,0,
+		0,639,640,3,14,7,0,640,641,5,92,0,0,641,111,1,0,0,0,642,643,5,34,0,0,643,
+		644,5,142,0,0,644,645,3,4,2,0,645,646,5,94,0,0,646,647,3,4,2,0,647,113,
+		1,0,0,0,648,649,5,35,0,0,649,650,5,142,0,0,650,651,3,4,2,0,651,115,1,0,
+		0,0,652,653,3,178,89,0,653,654,3,10,5,0,654,117,1,0,0,0,655,656,5,67,0,
+		0,656,660,5,87,0,0,657,659,5,2,0,0,658,657,1,0,0,0,659,662,1,0,0,0,660,
 		658,1,0,0,0,660,661,1,0,0,0,661,663,1,0,0,0,662,660,1,0,0,0,663,667,3,
 		120,60,0,664,666,5,2,0,0,665,664,1,0,0,0,666,669,1,0,0,0,667,665,1,0,0,
-		0,667,668,1,0,0,0,668,670,1,0,0,0,669,667,1,0,0,0,670,671,5,86,0,0,671,
+		0,667,668,1,0,0,0,668,670,1,0,0,0,669,667,1,0,0,0,670,671,5,88,0,0,671,
 		119,1,0,0,0,672,677,3,122,61,0,673,674,5,2,0,0,674,676,3,122,61,0,675,
 		673,1,0,0,0,676,679,1,0,0,0,677,675,1,0,0,0,677,678,1,0,0,0,678,121,1,
-		0,0,0,679,677,1,0,0,0,680,681,3,170,85,0,681,682,5,93,0,0,682,683,5,26,
-		0,0,683,684,5,136,0,0,684,123,1,0,0,0,685,686,5,501,0,0,686,125,1,0,0,
+		0,0,0,679,677,1,0,0,0,680,681,3,170,85,0,681,682,5,95,0,0,682,683,5,27,
+		0,0,683,684,5,138,0,0,684,123,1,0,0,0,685,686,5,503,0,0,686,125,1,0,0,
 		0,687,694,3,128,64,0,688,694,3,130,65,0,689,694,3,132,66,0,690,694,3,134,
 		67,0,691,694,3,136,68,0,692,694,3,138,69,0,693,687,1,0,0,0,693,688,1,0,
 		0,0,693,689,1,0,0,0,693,690,1,0,0,0,693,691,1,0,0,0,693,692,1,0,0,0,694,
-		127,1,0,0,0,695,696,5,4,0,0,696,697,5,502,0,0,697,129,1,0,0,0,698,699,
-		5,5,0,0,699,700,5,504,0,0,700,131,1,0,0,0,701,702,5,10,0,0,702,703,5,140,
-		0,0,703,133,1,0,0,0,704,705,5,12,0,0,705,706,5,509,0,0,706,707,5,140,0,
-		0,707,135,1,0,0,0,708,709,5,11,0,0,709,710,5,140,0,0,710,137,1,0,0,0,711,
-		712,5,6,0,0,712,713,5,506,0,0,713,719,3,140,70,0,714,715,5,9,0,0,715,716,
-		5,506,0,0,716,718,3,140,70,0,717,714,1,0,0,0,718,721,1,0,0,0,719,717,1,
+		127,1,0,0,0,695,696,5,4,0,0,696,697,5,504,0,0,697,129,1,0,0,0,698,699,
+		5,5,0,0,699,700,5,506,0,0,700,131,1,0,0,0,701,702,5,10,0,0,702,703,5,142,
+		0,0,703,133,1,0,0,0,704,705,5,12,0,0,705,706,5,511,0,0,706,707,5,142,0,
+		0,707,135,1,0,0,0,708,709,5,11,0,0,709,710,5,142,0,0,710,137,1,0,0,0,711,
+		712,5,6,0,0,712,713,5,508,0,0,713,719,3,140,70,0,714,715,5,9,0,0,715,716,
+		5,508,0,0,716,718,3,140,70,0,717,714,1,0,0,0,718,721,1,0,0,0,719,717,1,
 		0,0,0,719,720,1,0,0,0,720,724,1,0,0,0,721,719,1,0,0,0,722,723,5,8,0,0,
 		723,725,3,140,70,0,724,722,1,0,0,0,724,725,1,0,0,0,725,726,1,0,0,0,726,
 		727,5,7,0,0,727,139,1,0,0,0,728,730,5,2,0,0,729,728,1,0,0,0,730,731,1,
 		0,0,0,731,729,1,0,0,0,731,732,1,0,0,0,732,739,1,0,0,0,733,735,3,4,2,0,
 		734,736,5,2,0,0,735,734,1,0,0,0,736,737,1,0,0,0,737,735,1,0,0,0,737,738,
 		1,0,0,0,738,740,1,0,0,0,739,733,1,0,0,0,739,740,1,0,0,0,740,141,1,0,0,
-		0,741,742,6,71,-1,0,742,743,5,89,0,0,743,744,3,142,71,0,744,745,5,90,0,
-		0,745,750,1,0,0,0,746,747,5,103,0,0,747,750,3,142,71,6,748,750,5,501,0,
+		0,741,742,6,71,-1,0,742,743,5,91,0,0,743,744,3,142,71,0,744,745,5,92,0,
+		0,745,750,1,0,0,0,746,747,5,105,0,0,747,750,3,142,71,6,748,750,5,503,0,
 		0,749,741,1,0,0,0,749,746,1,0,0,0,749,748,1,0,0,0,750,765,1,0,0,0,751,
-		752,10,5,0,0,752,753,5,114,0,0,753,764,3,142,71,6,754,755,10,4,0,0,755,
-		756,5,115,0,0,756,764,3,142,71,5,757,758,10,3,0,0,758,759,5,117,0,0,759,
-		764,3,142,71,4,760,761,10,2,0,0,761,762,5,118,0,0,762,764,3,142,71,3,763,
+		752,10,5,0,0,752,753,5,116,0,0,753,764,3,142,71,6,754,755,10,4,0,0,755,
+		756,5,117,0,0,756,764,3,142,71,5,757,758,10,3,0,0,758,759,5,119,0,0,759,
+		764,3,142,71,4,760,761,10,2,0,0,761,762,5,120,0,0,762,764,3,142,71,3,763,
 		751,1,0,0,0,763,754,1,0,0,0,763,757,1,0,0,0,763,760,1,0,0,0,764,767,1,
 		0,0,0,765,763,1,0,0,0,765,766,1,0,0,0,766,143,1,0,0,0,767,765,1,0,0,0,
 		768,778,3,148,74,0,769,778,3,150,75,0,770,778,3,152,76,0,771,778,3,154,
@@ -8439,41 +8448,41 @@ public partial class KickAssemblerParser : Parser {
 		3,166,83,0,776,778,3,146,73,0,777,768,1,0,0,0,777,769,1,0,0,0,777,770,
 		1,0,0,0,777,771,1,0,0,0,777,772,1,0,0,0,777,773,1,0,0,0,777,774,1,0,0,
 		0,777,775,1,0,0,0,777,776,1,0,0,0,778,145,1,0,0,0,779,780,7,4,0,0,780,
-		782,3,180,90,0,781,783,5,140,0,0,782,781,1,0,0,0,782,783,1,0,0,0,783,785,
-		1,0,0,0,784,786,5,501,0,0,785,784,1,0,0,0,785,786,1,0,0,0,786,147,1,0,
-		0,0,787,788,5,25,0,0,788,789,7,5,0,0,789,149,1,0,0,0,790,791,5,26,0,0,
-		791,792,3,174,87,0,792,151,1,0,0,0,793,794,5,27,0,0,794,795,3,174,87,0,
-		795,153,1,0,0,0,796,797,5,28,0,0,797,798,3,174,87,0,798,155,1,0,0,0,799,
-		800,5,17,0,0,800,801,5,140,0,0,801,157,1,0,0,0,802,803,7,6,0,0,803,804,
-		3,180,90,0,804,805,5,92,0,0,805,806,3,160,80,0,806,159,1,0,0,0,807,814,
-		3,180,90,0,808,809,5,87,0,0,809,810,3,174,87,0,810,811,5,88,0,0,811,814,
+		782,3,180,90,0,781,783,5,142,0,0,782,781,1,0,0,0,782,783,1,0,0,0,783,785,
+		1,0,0,0,784,786,5,503,0,0,785,784,1,0,0,0,785,786,1,0,0,0,786,147,1,0,
+		0,0,787,788,5,26,0,0,788,789,7,5,0,0,789,149,1,0,0,0,790,791,5,27,0,0,
+		791,792,3,174,87,0,792,151,1,0,0,0,793,794,5,28,0,0,794,795,3,174,87,0,
+		795,153,1,0,0,0,796,797,5,29,0,0,797,798,3,174,87,0,798,155,1,0,0,0,799,
+		800,5,17,0,0,800,801,5,142,0,0,801,157,1,0,0,0,802,803,7,6,0,0,803,804,
+		3,180,90,0,804,805,5,94,0,0,805,806,3,160,80,0,806,159,1,0,0,0,807,814,
+		3,180,90,0,808,809,5,89,0,0,809,810,3,174,87,0,810,811,5,90,0,0,811,814,
 		1,0,0,0,812,814,3,162,81,0,813,807,1,0,0,0,813,808,1,0,0,0,813,812,1,0,
-		0,0,814,161,1,0,0,0,815,816,1,0,0,0,816,163,1,0,0,0,817,818,5,18,0,0,818,
-		819,5,140,0,0,819,165,1,0,0,0,820,821,7,7,0,0,821,828,3,172,86,0,822,823,
-		5,92,0,0,823,826,3,180,90,0,824,825,5,92,0,0,825,827,3,180,90,0,826,824,
-		1,0,0,0,826,827,1,0,0,0,827,829,1,0,0,0,828,822,1,0,0,0,828,829,1,0,0,
-		0,829,167,1,0,0,0,830,831,5,103,0,0,831,835,5,501,0,0,832,835,5,103,0,
-		0,833,835,3,170,85,0,834,830,1,0,0,0,834,832,1,0,0,0,834,833,1,0,0,0,835,
-		169,1,0,0,0,836,837,5,105,0,0,837,840,5,501,0,0,838,840,5,501,0,0,839,
-		836,1,0,0,0,839,838,1,0,0,0,840,171,1,0,0,0,841,842,5,140,0,0,842,173,
-		1,0,0,0,843,848,3,180,90,0,844,845,5,92,0,0,845,847,3,180,90,0,846,844,
-		1,0,0,0,847,850,1,0,0,0,848,846,1,0,0,0,848,849,1,0,0,0,849,175,1,0,0,
-		0,850,848,1,0,0,0,851,856,3,178,89,0,852,853,5,92,0,0,853,855,3,178,89,
-		0,854,852,1,0,0,0,855,858,1,0,0,0,856,854,1,0,0,0,856,857,1,0,0,0,857,
-		177,1,0,0,0,858,856,1,0,0,0,859,865,5,139,0,0,860,862,3,182,91,0,861,860,
-		1,0,0,0,861,862,1,0,0,0,862,863,1,0,0,0,863,865,3,180,90,0,864,859,1,0,
-		0,0,864,861,1,0,0,0,865,179,1,0,0,0,866,870,3,184,92,0,867,870,3,186,93,
-		0,868,870,3,188,94,0,869,866,1,0,0,0,869,867,1,0,0,0,869,868,1,0,0,0,870,
-		181,1,0,0,0,871,872,7,8,0,0,872,183,1,0,0,0,873,874,5,136,0,0,874,185,
-		1,0,0,0,875,876,5,137,0,0,876,187,1,0,0,0,877,878,5,138,0,0,878,189,1,
-		0,0,0,879,880,7,9,0,0,880,191,1,0,0,0,881,882,7,10,0,0,882,193,1,0,0,0,
-		883,889,3,196,98,0,884,885,3,196,98,0,885,886,5,91,0,0,886,887,3,192,96,
-		0,887,889,1,0,0,0,888,883,1,0,0,0,888,884,1,0,0,0,889,195,1,0,0,0,890,
-		891,7,11,0,0,891,197,1,0,0,0,892,893,7,12,0,0,893,199,1,0,0,0,894,895,
-		7,13,0,0,895,201,1,0,0,0,60,207,213,221,230,233,237,249,256,262,281,289,
-		312,340,342,366,375,382,420,441,455,468,473,484,490,495,521,553,559,576,
-		591,603,610,620,628,660,667,677,693,719,724,731,737,739,749,763,765,777,
-		782,785,813,826,828,834,839,848,856,861,864,869,888
+		0,0,814,161,1,0,0,0,815,816,1,0,0,0,816,163,1,0,0,0,817,818,5,19,0,0,818,
+		819,5,142,0,0,819,165,1,0,0,0,820,821,5,39,0,0,821,822,7,7,0,0,822,829,
+		3,172,86,0,823,824,5,94,0,0,824,827,3,180,90,0,825,826,5,94,0,0,826,828,
+		3,180,90,0,827,825,1,0,0,0,827,828,1,0,0,0,828,830,1,0,0,0,829,823,1,0,
+		0,0,829,830,1,0,0,0,830,167,1,0,0,0,831,832,5,105,0,0,832,836,5,503,0,
+		0,833,836,5,105,0,0,834,836,3,170,85,0,835,831,1,0,0,0,835,833,1,0,0,0,
+		835,834,1,0,0,0,836,169,1,0,0,0,837,838,5,107,0,0,838,841,5,503,0,0,839,
+		841,5,503,0,0,840,837,1,0,0,0,840,839,1,0,0,0,841,171,1,0,0,0,842,843,
+		5,142,0,0,843,173,1,0,0,0,844,849,3,180,90,0,845,846,5,94,0,0,846,848,
+		3,180,90,0,847,845,1,0,0,0,848,851,1,0,0,0,849,847,1,0,0,0,849,850,1,0,
+		0,0,850,175,1,0,0,0,851,849,1,0,0,0,852,857,3,178,89,0,853,854,5,94,0,
+		0,854,856,3,178,89,0,855,853,1,0,0,0,856,859,1,0,0,0,857,855,1,0,0,0,857,
+		858,1,0,0,0,858,177,1,0,0,0,859,857,1,0,0,0,860,866,5,141,0,0,861,863,
+		3,182,91,0,862,861,1,0,0,0,862,863,1,0,0,0,863,864,1,0,0,0,864,866,3,180,
+		90,0,865,860,1,0,0,0,865,862,1,0,0,0,866,179,1,0,0,0,867,871,3,184,92,
+		0,868,871,3,186,93,0,869,871,3,188,94,0,870,867,1,0,0,0,870,868,1,0,0,
+		0,870,869,1,0,0,0,871,181,1,0,0,0,872,873,7,8,0,0,873,183,1,0,0,0,874,
+		875,5,138,0,0,875,185,1,0,0,0,876,877,5,139,0,0,877,187,1,0,0,0,878,879,
+		5,140,0,0,879,189,1,0,0,0,880,881,7,9,0,0,881,191,1,0,0,0,882,883,7,10,
+		0,0,883,193,1,0,0,0,884,890,3,196,98,0,885,886,3,196,98,0,886,887,5,93,
+		0,0,887,888,3,192,96,0,888,890,1,0,0,0,889,884,1,0,0,0,889,885,1,0,0,0,
+		890,195,1,0,0,0,891,892,7,11,0,0,892,197,1,0,0,0,893,894,7,12,0,0,894,
+		199,1,0,0,0,895,896,7,13,0,0,896,201,1,0,0,0,60,207,213,221,230,233,237,
+		249,256,262,281,289,312,340,342,366,375,382,420,441,455,468,473,484,490,
+		495,521,553,559,576,591,603,610,620,628,660,667,677,693,719,724,731,737,
+		739,749,763,765,777,782,785,813,827,829,835,840,849,857,862,865,870,889
 	};
 
 	public static readonly ATN _ATN =

@@ -5,6 +5,8 @@ public enum CompletionOptionType
     FileReference,
     PreprocessorDirective,
     ProgramFile,
+    TextFile,
+    BinaryFile,
     SidFile,
     Segments,
 }
