@@ -300,7 +300,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                                        """);
             var source = new KickAssemblerParsedSourceFile("main.asm",
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty, FrozenSet<string>.Empty,
-                FrozenSet<string>.Empty, _now,
+                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty, _now,
                 liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, mainParsed.ParserListener,
                 mainParsed.LexerErrorListener, mainParsed.ParserErrorListener, isImportOnce: false);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
@@ -331,7 +331,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var source = new KickAssemblerParsedSourceFile("main.asm",
                 referencedFiles,
                 FrozenSet<string>.Empty,
-                FrozenSet<string>.Empty, _now,
+                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty, _now,
                 liveContent: null, mainParsed.Lexer, mainParsed.Stream, mainParsed.Parser, mainParsed.ParserListener,
                 mainParsed.LexerErrorListener, mainParsed.ParserErrorListener, isImportOnce: false);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();

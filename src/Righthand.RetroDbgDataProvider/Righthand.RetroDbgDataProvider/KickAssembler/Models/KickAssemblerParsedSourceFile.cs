@@ -668,7 +668,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     // ReSharper disable once StringLiteralTypo
     [GeneratedRegex("""
-                    ^\s*(?<KeyWord>(\.segmentdef|\.segment|.segmentout|\.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,\s*)*(?<ArgName>\w+)\s*=\s*(?<StartDoubleQuote>")(\s*(?<PrevArrayItem>[^,"]*)\s*(?<ArgComma>,))*\s*(?<Root>[^,"]*)$
+                    (?<KeyWord>(\.segmentdef|\.segment|.segmentout|\.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,\s*)*(?<ArgName>\w+)\s*=\s*(?<StartDoubleQuote>")(\s*(?<PrevArrayItem>[^,"]*)\s*(?<ArgComma>,))*\s*(?<Root>[^,"]*)$
                     """, RegexOptions.Singleline)]
     private static partial Regex ArraySuggestionTemplateRegex();
     /// <summary>

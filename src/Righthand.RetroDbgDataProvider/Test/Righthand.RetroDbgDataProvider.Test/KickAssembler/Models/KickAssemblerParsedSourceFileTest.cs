@@ -71,7 +71,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var input = GetParsed("");
             var target = new KickAssemblerParsedSourceFile("fileName",
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<string>.Empty,
+                FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
 
@@ -90,7 +90,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                   """.FixLineEndings());
             var target = new KickAssemblerParsedSourceFile("fileName",
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<string>.Empty,
+                FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
 
@@ -112,7 +112,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                   """.FixLineEndings());
             var target = new KickAssemblerParsedSourceFile("fileName",
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<string>.Empty,
+                FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
                 input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
 
@@ -580,6 +580,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase(".file [segments = \"Code\" , name = \"")]
         [TestCase(".segment Base [prgFiles = \"")]
         [TestCase(".segment Base [prgFiles=\"test.prg,")]
+        [TestCase("zpCode: .segment Base [prgFiles=\"test.prg,")]
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
         {
             var actual =
@@ -592,6 +593,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase(".file [name=\"\"")]
         [TestCase(".file [segments=\"Code\" name=\"")]
         [TestCase(".file segments = \"Code\" , name = \"")]
+        [TestCase("zpCode: .file segments = \"Code\" , name = \"")]
         public void GivenSampleInputThatDoesNotPutCursorWithinArray_ReturnsNullResult(string line)
         {
             var actual =
@@ -604,6 +606,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         [TestCase(".file [name=\"", ExpectedResult = 6)]
         [TestCase(".file [segments=\"Code\",name=\"", ExpectedResult = 6)]
         [TestCase(".file  [ segments = \"Code\" , name = \"", ExpectedResult = 7)]
+        [TestCase("zpCode: .file  [ segments = \"Code\" , name = \"", ExpectedResult = 15)]
         public int? GivenSampleInput_ReturnsOpenBracketColumnIndex(string line)
         {
             return KickAssemblerParsedSourceFile
