@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Frozen;
+using System.Text.RegularExpressions;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
@@ -11,7 +12,7 @@ public static partial class PreprocessorDirectivesCompletionOptions
         if (isMatch)
         {
             return new CompletionOption(CompletionOptionType.PreprocessorDirective, root, false,
-                replaceableText.Length + 1, []);
+                replaceableText.Length + 1, [], FrozenSet<string>.Empty);
         }
 
         return null;

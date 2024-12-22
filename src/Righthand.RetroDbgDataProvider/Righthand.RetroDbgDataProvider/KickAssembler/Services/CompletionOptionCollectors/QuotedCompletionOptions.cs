@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Frozen;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
@@ -34,7 +35,8 @@ public static partial class QuotedCompletionOptions
                     CompletionOptionType.ProgramFile or CompletionOptionType.BinaryFile or CompletionOptionType.TextFile
                         =>
                         new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
-                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength, []),
+                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength, [],
+                            FrozenSet<string>.Empty),
                     _ => null,
                 };
                 return completionOption;

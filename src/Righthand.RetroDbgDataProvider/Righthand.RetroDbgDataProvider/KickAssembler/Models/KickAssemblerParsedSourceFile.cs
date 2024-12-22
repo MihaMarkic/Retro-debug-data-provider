@@ -76,7 +76,8 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
                     ValuesCount.Multiple) ??
                 QuotedCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger,
                     column
-            );
+            ) ??
+            ArrayPropertiesCompletionOptions.GetOption(text, textStart, textLength, column);
 
         return result;
     }

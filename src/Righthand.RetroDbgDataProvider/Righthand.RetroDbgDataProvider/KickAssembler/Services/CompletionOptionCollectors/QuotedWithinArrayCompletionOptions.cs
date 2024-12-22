@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Frozen;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
@@ -60,13 +61,13 @@ public static partial class QuotedWithinArrayCompletionOptions
                             or "file" =>
                         new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
                             cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
-                            cursorWithinArray.Value.ArrayValues),
+                            cursorWithinArray.Value.ArrayValues, FrozenSet<string>.Empty),
                     CompletionOptionType.ProgramFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
                             or ".segmentout"
                         =>
                         new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
                             cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
-                            cursorWithinArray.Value.ArrayValues),
+                            cursorWithinArray.Value.ArrayValues, FrozenSet<string>.Empty),
                     CompletionOptionType.Segments when cursorWithinArray.Value.KeyWord is ".file" or ".segmentdef"
                         or ".segmentout" => GetCompletionOptionForSegments(completionOptionType.Value,
                         cursorWithinArray.Value),
@@ -220,7 +221,7 @@ public static partial class QuotedWithinArrayCompletionOptions
         }
 
         return new CompletionOption(completionOptionType, data.Root, data.HasEndDelimiter, data.ReplacementLength,
-            excludedValues);
+            excludedValues, FrozenSet<string>.Empty);
     }
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global")]
     internal record struct IsCursorWithinArrayResult(

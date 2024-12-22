@@ -1,4 +1,5 @@
-﻿using Antlr4.Runtime;
+﻿using System.Collections.Frozen;
+using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
@@ -16,18 +17,21 @@ public static class FileReferenceCompletionOptions
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens,
         ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
     {
-        var leftLinePart = line[..(column+1)];
+        var leftLinePart = line[..(column + 1)];
         var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(tokens, leftLinePart, trigger);
         if (isMatch)
         {
-            var suggestionLine = line[(doubleQuoteColumn+1)..];
+            var suggestionLine = line[(doubleQuoteColumn + 1)..];
             var (rootText, length, endsWithDoubleQuote) =
-                CompletionOptionCollectorsCommon.GetSuggestionTextInDoubleQuotes(suggestionLine, column - doubleQuoteColumn);
-            return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length, []);
+                CompletionOptionCollectorsCommon.GetSuggestionTextInDoubleQuotes(suggestionLine,
+                    column - doubleQuoteColumn);
+            return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length, [],
+                FrozenSet<string>.Empty);
         }
 
         return null;
     }
+
     /// <summary>
     /// Returns status whether line is valid for file reference suggestions or not.
     /// Also includes index of first double quotes to the left of the column.

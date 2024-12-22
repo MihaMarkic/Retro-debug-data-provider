@@ -55,7 +55,7 @@ public class ArrayContentExtractorTest
             }
         }
         [TestCaseSource(typeof(ExtractSource))]
-        public void GivenJustName_ReturnsNameAndEmptyValue(string input, ImmutableArray<KeyValuePair<string, string>> expected)
+        public void GivenSamples_ReturnsNameAndEmptyValue(string input, ImmutableArray<KeyValuePair<string, string>> expected)
         {
             var actual = ArrayContentExtractor.Extract(input);
 

@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Frozen;
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
@@ -8,7 +10,7 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOption
 public static partial class ArrayPropertiesCompletionOptions
 {
     [GeneratedRegex("""
-                    (?<KeyWord>(.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,)*(?<Root>\w*)$/s
+                    (?<KeyWord>(.file))\s*(?<Parameter>\w+)?\s*(?<OpenBracket>\[)\s*((?<PrevArgName>\w+)\s*(=\s*((?<PrevQuotedValue>".*")|(?<PrevUnquotedValue>[^,\s]+)))?\s*,)*(?<Root>\w*)$
                     """, RegexOptions.Singleline)]
     private static partial Regex ArrayKeywordSuggestionTemplateRegex();
 
@@ -47,13 +49,19 @@ public static partial class ArrayPropertiesCompletionOptions
                 currentValue = [];
             }
 
+            int keyValueTextStart = match.Groups["OpenBracket"].Index + 1;
+            var keyValueText = line[keyValueTextStart..];
+            var existingProperties = ArrayContentExtractor.Extract(keyValueText)
+                .Select(p => p.Key).ToImmutableArray();
+
             Debug.WriteLine($"Found a match with current being '{currentValue}'");
 
             return new IsCursorWithinArrayKeywordResult(
                 match.Groups["KeyWord"].Value,
                 match.Groups["Parameter"].Value,
                 rootGroup.Value,
-                ReplacementLength: currentValue.Length
+                ReplacementLength: currentValue.Length,
+                existingProperties
             );
         }
         else
@@ -74,8 +82,7 @@ public static partial class ArrayPropertiesCompletionOptions
         return ImmutableArray<string>.Empty;
     }
 
-    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens,
-        string text, int lineStart, int lineLength, TextChangeTrigger trigger, int column)
+    internal static CompletionOption? GetOption(string text, int lineStart, int lineLength, int column)
     {
         var line = text.AsSpan()[lineStart..(lineStart + lineLength)];
         if (line.Length == 0)
@@ -87,8 +94,21 @@ public static partial class ArrayPropertiesCompletionOptions
         var cursorWithinArrayKeyword = IsCursorWithinArrayKeyword(text, lineStart, lineLength, column);
         if (cursorWithinArrayKeyword is not null)
         {
+            FrozenSet<string> suitableValues;
+            if (string.IsNullOrEmpty(cursorWithinArrayKeyword.Value.Root))
+            {
+                suitableValues = ArrayProperties.GetNames(cursorWithinArrayKeyword.Value.KeyWord);
+            }
+            else
+            {
+                suitableValues = ArrayProperties.GetNames(cursorWithinArrayKeyword.Value.KeyWord, cursorWithinArrayKeyword.Value.Root);
+            }
+
+            var existingProperties = cursorWithinArrayKeyword.Value.ExistingProperties.Distinct().ToFrozenSet();
+            var values = suitableValues.Except(existingProperties);
+
             return new CompletionOption(CompletionOptionType.ArrayProperty, cursorWithinArrayKeyword.Value.Root,
-                false, cursorWithinArrayKeyword.Value.ReplacementLength, []);
+                false, cursorWithinArrayKeyword.Value.ReplacementLength, [], suitableValues);
         }
 
         return null;
@@ -98,5 +118,6 @@ public static partial class ArrayPropertiesCompletionOptions
         string KeyWord,
         string? Parameter,
         string Root,
-        int ReplacementLength);
+        int ReplacementLength,
+        ImmutableArray<string> ExistingProperties);
 }
