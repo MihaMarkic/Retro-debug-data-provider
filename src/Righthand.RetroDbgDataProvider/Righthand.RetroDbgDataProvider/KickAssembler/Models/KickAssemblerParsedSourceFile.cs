@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Microsoft.Extensions.Logging;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
@@ -67,7 +68,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         var textSpan = text.AsSpan()[textStart..(textStart + textLength)];
         CompletionOption? result =
-            (GetFileReferenceCompletionOption(tokensAtLine.AsSpan(), textSpan, trigger, column) ??
+            (FileReferenceCompletionOptions.GetOption(tokensAtLine.AsSpan(), textSpan, trigger, column) ??
              GetPreprocessorDirectiveCompletionOption(textSpan, trigger, column)) ??
             GetFileSuggestionInArrayCompletionOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger,
                 column,
@@ -162,160 +163,6 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             return (true, root, match.Groups["import"].Value);
         }
         return (false, string.Empty, string.Empty);
-    }
-
-    /// <summary>
-    /// Returns possible completion for file references.
-    /// </summary>
-    /// <param name="tokens"></param>
-    /// <param name="line"></param>
-    /// <param name="trigger"></param>
-    /// <param name="column"></param>
-    /// <returns></returns>
-    internal static CompletionOption? GetFileReferenceCompletionOption(ReadOnlySpan<IToken> tokens,
-        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
-    {
-        var leftLinePart = line[..(column+1)];
-        var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(tokens, leftLinePart, trigger);
-        if (isMatch)
-        {
-            var suggestionLine = line[(doubleQuoteColumn+1)..];
-            var (rootText, length, endsWithDoubleQuote) =
-                GetSuggestionTextInDoubleQuotes(suggestionLine, column - doubleQuoteColumn);
-            return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length, []);
-        }
-
-        return null;
-    }
-
-    /// <summary>
-    /// Extracts text of left caret, entire replaceable length and whether it ends with double quote or not
-    /// </summary>
-    /// <param name="line">Text right to first double quote</param>
-    /// <param name="caret">Caret position within line</param>
-    /// <returns></returns>
-    internal static (string RootText, int Length, bool EndsWithDoubleQuote) GetSuggestionTextInDoubleQuotes(
-        ReadOnlySpan<char> line, int caret)
-    {
-        if (caret > line.Length || caret < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(caret));
-        }
-        string root = line[..caret].ToString();
-        int indexOfDoubleQuote = line.IndexOf('"');
-        if (indexOfDoubleQuote < 0)
-        {
-            return (root, line.Length, false);
-        }
-        return (root, indexOfDoubleQuote, true);
-    }
-
-    /// <summary>
-    /// Returns status whether line is valid for file reference suggestions or not.
-    /// Also includes index of first double quotes to the left of the column.
-    /// </summary>
-    /// <param name="tokens"></param>
-    /// <param name="line"></param>
-    /// <param name="trigger"></param>
-    /// <returns></returns>
-    internal static (bool IsMatch, int DoubleQuoteColumn) GetFileReferenceSuggestion(
-        ReadOnlySpan<IToken> tokens, ReadOnlySpan<char> line, TextChangeTrigger trigger)
-    {
-        // check obvious conditions
-        if (line.Length == 0 || trigger == TextChangeTrigger.CharacterTyped && line[^1] != '\"')
-        {
-            return (false, -1);
-        }
-
-        int doubleQuoteIndex = line.Length - 1;
-        // finds first double quote on the left
-        while (doubleQuoteIndex >= 0 && line[doubleQuoteIndex] != '\"')
-        {
-            doubleQuoteIndex--;
-        }
-
-        if (doubleQuoteIndex < 0)
-        {
-            return (false, -1);
-        }
-        // there should be only one double quote on the left
-        if (line[..doubleQuoteIndex].Contains('\"'))
-        {
-            return (false, -1);
-        }
-        // check first token now
-        var trimmedLine = TrimWhitespaces(tokens);
-        if (trimmedLine.Length == 0)
-        {
-            return (false, -1);
-        }
-
-        var firstToken = trimmedLine[0]; 
-        if (firstToken.Type is not (KickAssemblerLexer.HASHIMPORT or KickAssemblerLexer.HASHIMPORTIF))
-        {
-            return (false, -1);
-        }
-        var secondToken = trimmedLine[1];
-        
-        switch (firstToken.Type)
-        {
-            // when #import tolerate only WS tokens between keyword and double quotes
-            case KickAssemblerLexer.HASHIMPORT:
-            {
-                if (secondToken.Type != KickAssemblerLexer.WS)
-                {
-                    return (false, -1);
-                }
-                int start = secondToken.Column + secondToken.Length();
-                int end = doubleQuoteIndex - 1;
-                if (end > start)
-                {
-                    foreach (char c in line[start..end])
-                    {
-                        if (c is not (' ' or '\t'))
-                        {
-                            return (false, -1);
-                        }
-                    }
-                }
-
-                break;
-            }
-            case KickAssemblerLexer.HASHIMPORTIF:
-                if (secondToken.Type != KickAssemblerLexer.IIF_CONDITION)
-                {
-                    return (false, -1);
-                }
-                break;
-        }
-        return (true, doubleQuoteIndex);
-    }
-
-    /// <summary>
-    /// Trims WS tokens at start and both WS and EOL at the end of the line. 
-    /// </summary>
-    /// <param name="tokens"></param>
-    /// <returns></returns>
-    internal static ReadOnlySpan<IToken> TrimWhitespaces(ReadOnlySpan<IToken> tokens)
-    {
-        int start = 0;
-        while (start < tokens.Length && (tokens[start].Type == KickAssemblerLexer.WS || tokens[start].Channel != 0))
-        {
-            start++;
-        }
-
-        if (start == tokens.Length)
-        {
-            return ReadOnlySpan<IToken>.Empty;
-        }
-        int end = tokens.Length - 1;
-        while (end >= start &&
-               tokens[end].Type is KickAssemblerLexer.WS or KickAssemblerLexer.EOL or KickAssemblerLexer.Eof)
-        {
-            end--;
-        }
-
-        return tokens[start..(end+1)];
     }
     
     /// <summary>
