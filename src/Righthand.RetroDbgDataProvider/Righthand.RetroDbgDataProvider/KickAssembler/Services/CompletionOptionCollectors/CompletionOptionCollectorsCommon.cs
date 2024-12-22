@@ -53,4 +53,49 @@ public static class CompletionOptionCollectorsCommon
 
         return tokens[start..(end+1)];
     }
+    
+    /// <summary>
+    /// Checks whether suggestions happens within string or comment.
+    /// </summary>
+    /// <param name="text">Text before suggestions match</param>
+    /// <returns>True when prefix is not a string or comment, false otherwise.</returns>
+    internal static bool IsPrefixValidForSuggestions(ReadOnlySpan<char> text)
+    {
+        IsPrefixValidForSuggestionsStatus status =  IsPrefixValidForSuggestionsStatus.None;
+        foreach (char c in text)
+        {
+            switch (c)
+            {
+                case '\"':
+                    status = status switch
+                    {
+                        IsPrefixValidForSuggestionsStatus.String => IsPrefixValidForSuggestionsStatus.None,
+                        _ => IsPrefixValidForSuggestionsStatus.String,
+                    };
+                    break;
+                case '/':
+                    switch (status)
+                    {
+                        case IsPrefixValidForSuggestionsStatus.FirstCommentChar:
+                            return false;
+                        case IsPrefixValidForSuggestionsStatus.String:
+                            break;
+                        default:
+                            status = IsPrefixValidForSuggestionsStatus.FirstCommentChar;
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        return status != IsPrefixValidForSuggestionsStatus.String;
+    }
+
+    public enum IsPrefixValidForSuggestionsStatus
+    {
+        None,
+        String,
+        FirstCommentChar
+    }
+
 }

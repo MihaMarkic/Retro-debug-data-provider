@@ -41,6 +41,30 @@ public class CompletionOptionCollectorsCommonTest
                     GetArray((KickAssemblerLexer.STRING, 0)));
             }
         }
+        [TestFixture]
+        public class IsPrefixValidForSuggestions : QuotedWithinArrayCompletionOptionsTest
+        {
+            [TestCase("")]
+            [TestCase("\"\"")]
+            [TestCase("\"//\"")]
+            [TestCase("\"xxx\"")]
+            [TestCase("\"\"\"xxx\"")]
+            public void GivenValidSample_ReturnsTrue(string text)
+            {
+                var actual = CompletionOptionCollectorsCommon.IsPrefixValidForSuggestions(text);
+            
+                Assert.That(actual, Is.True);
+            }
+            [TestCase("//\"")]
+            [TestCase("bla bla // kkkk")]
+            [TestCase("\"\"\"")]
+            public void GivenInvalidSample_ReturnsFalse(string text)
+            {
+                var actual = CompletionOptionCollectorsCommon.IsPrefixValidForSuggestions(text);
+            
+                Assert.That(actual, Is.False);
+            }
+        }
 
         [TestFixture]
         public class GetSuggestionTextInDoubleQuotes : KickAssemblerParsedSourceFileTest
