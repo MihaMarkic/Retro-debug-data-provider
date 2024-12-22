@@ -9,6 +9,7 @@ public enum CompletionOptionType
     BinaryFile,
     SidFile,
     Segments,
+    ArrayProperty,
 }
 
 public enum TextChangeTrigger
