@@ -1,11 +1,17 @@
-﻿namespace Righthand.RetroDbgDataProvider.Models.Parsing;
+﻿using System.Collections.Frozen;
+
+namespace Righthand.RetroDbgDataProvider.Models.Parsing;
 
 public enum CompletionOptionType
 {
     FileReference,
     PreprocessorDirective,
     ProgramFile,
+    TextFile,
+    BinaryFile,
     SidFile,
+    Segments,
+    ArrayProperty,
 }
 
 public enum TextChangeTrigger
@@ -21,6 +27,7 @@ public enum TextChangeTrigger
 /// <param name="Root"></param>
 /// <param name="EndsWithDoubleQuote"></param>
 /// <param name="ReplacementLength"></param>
-/// <param name="ExcludedFiles">Relative paths of excluded files</param>
+/// <param name="ExcludedValues">Relative paths of excluded files</param>
+/// <param name="ValueType">Additional parameter, such as '.file' from '.file c64 [....]'</param>
 public record struct CompletionOption(CompletionOptionType Type, string Root, bool EndsWithDoubleQuote, int ReplacementLength,
-    ImmutableArray<string> ExcludedFiles);
+    FrozenSet<string> ExcludedValues, string? ValueType = null);

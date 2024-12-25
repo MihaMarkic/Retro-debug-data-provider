@@ -62,9 +62,10 @@ HASHIMPORTIF
 ONLYA: 'a' ;
 ABS: 'abs';
 
-DOTBINARY: 'binary';
-DOTC64: 'c64';
+BINARY: 'binary';
+C64: 'c64';
 DOTTEXT: '.text';
+TEXT: 'text';
 DOTENCODING: '.encoding';
 DOTFILL: '.fill';
 DOTFILLWORD: '.fillword'; 
@@ -87,6 +88,7 @@ ASSERTERROR: 'asserterror';
 PRINT: '.print';
 PRINTNOW: '.printnow';
 VAR: '.var';
+DOTIMPORT: '.import';
 CONST: '.const';
 IF: '.if';
 ELSE: 'else';
