@@ -25,7 +25,7 @@ public static class FileReferenceCompletionOptions
             var (rootText, length, endsWithDoubleQuote) =
                 CompletionOptionCollectorsCommon.GetSuggestionTextInDoubleQuotes(suggestionLine,
                     column - doubleQuoteColumn);
-            return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length, FrozenSet<string>.Empty);
+            //return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length, FrozenSet<string>.Empty);
         }
 
         return null;

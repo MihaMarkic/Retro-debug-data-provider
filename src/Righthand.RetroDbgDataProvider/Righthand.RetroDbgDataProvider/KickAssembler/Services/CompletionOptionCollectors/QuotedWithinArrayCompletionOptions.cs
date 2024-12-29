@@ -43,40 +43,40 @@ public static partial class QuotedWithinArrayCompletionOptions
 
         // TODO properly handle valuesCountSupport (to limit it to single value when required)
         var cursorWithinArray = IsCursorWithinArray(text, lineStart, lineLength, column, valuesCountSupport);
-        if (cursorWithinArray is not null)
-        {
-            CompletionOptionType? completionOptionType = cursorWithinArray.Value.ArgumentName switch
-            {
-                "sidFiles" => CompletionOptionType.SidFile,
-                "prgFiles" or "name" => CompletionOptionType.ProgramFile,
-                "segments" => CompletionOptionType.Segments,
-                _ => null,
-            };
-            if (completionOptionType is not null)
-            {
-                CompletionOption? completionOption = completionOptionType switch
-                {
-                    CompletionOptionType.SidFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
-                            or ".segmentout"
-                            or "file" =>
-                        new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
-                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
-                            cursorWithinArray.Value.ArrayValues.Distinct().ToFrozenSet()),
-                    CompletionOptionType.ProgramFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
-                            or ".segmentout"
-                        =>
-                        new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
-                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
-                            cursorWithinArray.Value.ArrayValues.Distinct().ToFrozenSet()),
-                    CompletionOptionType.Segments when cursorWithinArray.Value.KeyWord is ".file" or ".segmentdef"
-                        or ".segmentout" => GetCompletionOptionForSegments(completionOptionType.Value,
-                        cursorWithinArray.Value),
-
-                    _ => null,
-                };
-                return completionOption;
-            }
-        }
+        // if (cursorWithinArray is not null)
+        // {
+        //     CompletionOptionType? completionOptionType = cursorWithinArray.Value.ArgumentName switch
+        //     {
+        //         "sidFiles" => CompletionOptionType.SidFile,
+        //         "prgFiles" or "name" => CompletionOptionType.ProgramFile,
+        //         "segments" => CompletionOptionType.Segments,
+        //         _ => null,
+        //     };
+        //     if (completionOptionType is not null)
+        //     {
+                // CompletionOption? completionOption = completionOptionType switch
+                // {
+                //     CompletionOptionType.SidFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
+                //             or ".segmentout"
+                //             or "file" =>
+                //         new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
+                //             cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
+                //             cursorWithinArray.Value.ArrayValues.Distinct().ToFrozenSet()),
+                //     CompletionOptionType.ProgramFile when cursorWithinArray.Value.KeyWord is ".segment" or ".segmentdef"
+                //             or ".segmentout"
+                //         =>
+                //         new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
+                //             cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength,
+                //             cursorWithinArray.Value.ArrayValues.Distinct().ToFrozenSet()),
+                //     CompletionOptionType.Segments when cursorWithinArray.Value.KeyWord is ".file" or ".segmentdef"
+                //         or ".segmentout" => GetCompletionOptionForSegments(completionOptionType.Value,
+                //         cursorWithinArray.Value),
+                //
+                //     _ => null,
+                // };
+                // return completionOption;
+        //     }
+        // }
 
         return null;
     }
@@ -197,22 +197,22 @@ public static partial class QuotedWithinArrayCompletionOptions
         return null;
     }
 
-    private static CompletionOption GetCompletionOptionForSegments(CompletionOptionType completionOptionType,
-        IsCursorWithinArrayResult data)
-    {
-        ImmutableArray<string> excludedValues;
-        if (data.KeyWord.Equals(".segmentdef", StringComparison.Ordinal) && data.Parameter is not null)
-        {
-            excludedValues = data.ArrayValues.Add(data.Parameter);
-        }
-        else
-        {
-            excludedValues = data.ArrayValues;
-        }
-
-        return new CompletionOption(completionOptionType, data.Root, data.HasEndDelimiter, data.ReplacementLength,
-            excludedValues.Distinct(OsDependent.FileStringComparer).ToFrozenSet());
-    }
+    // private static CompletionOption GetCompletionOptionForSegments(CompletionOptionType completionOptionType,
+    //     IsCursorWithinArrayResult data)
+    // {
+    //     ImmutableArray<string> excludedValues;
+    //     if (data.KeyWord.Equals(".segmentdef", StringComparison.Ordinal) && data.Parameter is not null)
+    //     {
+    //         excludedValues = data.ArrayValues.Add(data.Parameter);
+    //     }
+    //     else
+    //     {
+    //         excludedValues = data.ArrayValues;
+    //     }
+    //
+    //     return new CompletionOption(completionOptionType, data.Root, data.HasEndDelimiter, data.ReplacementLength,
+    //         excludedValues.Distinct(OsDependent.FileStringComparer).ToFrozenSet());
+    // }
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global")]
     internal record struct IsCursorWithinArrayResult(
         string KeyWord,

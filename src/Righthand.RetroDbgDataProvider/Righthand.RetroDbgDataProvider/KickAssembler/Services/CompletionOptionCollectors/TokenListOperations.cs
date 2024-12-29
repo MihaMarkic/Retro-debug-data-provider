@@ -83,8 +83,8 @@ public static class TokenListOperations
     /// <param name="content">File text content</param>
     /// <param name="absolutePosition">Absolute cursor position</param>
     /// <returns>Returns property name, type of position, text left of the position and entire value.</returns>
-    internal static (IToken? Name, PositionWithinArray Position, string Root, string Value) GetColumnPositionData(FrozenDictionary<IToken, ArrayPropertyMeta> properties,
-        ReadOnlySpan<char> content, int absolutePosition)
+    internal static (IToken? Name, PositionWithinArray Position, string Root, string Value) 
+        GetColumnPositionData(FrozenDictionary<IToken, ArrayPropertyMeta> properties, ReadOnlySpan<char> content, int absolutePosition)
     {
         // when no properties, it has to be on an empty one
         if (properties.Count == 0)

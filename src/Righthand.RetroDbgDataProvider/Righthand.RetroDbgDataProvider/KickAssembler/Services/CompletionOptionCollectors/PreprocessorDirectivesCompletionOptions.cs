@@ -11,8 +11,8 @@ public static partial class PreprocessorDirectivesCompletionOptions
         var (isMatch, root, replaceableText) = GetPreprocessorDirectiveSuggestion(line, trigger, column);
         if (isMatch)
         {
-            return new CompletionOption(CompletionOptionType.PreprocessorDirective, root, false,
-                replaceableText.Length + 1, FrozenSet<string>.Empty);
+            // return new CompletionOption(CompletionOptionType.PreprocessorDirective, root, false,
+            //     replaceableText.Length + 1, FrozenSet<string>.Empty);
         }
 
         return null;

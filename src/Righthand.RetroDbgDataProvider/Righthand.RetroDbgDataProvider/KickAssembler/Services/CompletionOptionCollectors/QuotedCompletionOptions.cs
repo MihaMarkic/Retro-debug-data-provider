@@ -19,30 +19,30 @@ public static partial class QuotedCompletionOptions
 
         // TODO properly handle valuesCountSupport (to limit it to single value when required)
         var cursorWithinArray = IsCursorWithinNonArray(text, lineStart, lineLength, column);
-        if (cursorWithinArray is not null)
-        {
-            CompletionOptionType? completionOptionType = cursorWithinArray.Value.KeyWord switch
-            {
-                ".import" when cursorWithinArray.Value.Parameter is "c64" => CompletionOptionType.ProgramFile,
-                ".import" when cursorWithinArray.Value.Parameter is "text" => CompletionOptionType.TextFile,
-                ".import" when cursorWithinArray.Value.Parameter is "binary" => CompletionOptionType.BinaryFile,
-                _ => null,
-            };
-            if (completionOptionType is not null)
-            {
-                var excludedValues = new string[] { cursorWithinArray.Value.CurrentValue }.ToFrozenSet();
-                CompletionOption? completionOption = completionOptionType switch
-                {
-                    CompletionOptionType.ProgramFile or CompletionOptionType.BinaryFile or CompletionOptionType.TextFile
-                        =>
-                        new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
-                            cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength, 
-                            excludedValues),
-                    _ => null,
-                };
-                return completionOption;
-            }
-        }
+        // if (cursorWithinArray is not null)
+        // {
+        //     CompletionOptionType? completionOptionType = cursorWithinArray.Value.KeyWord switch
+        //     {
+        //         ".import" when cursorWithinArray.Value.Parameter is "c64" => CompletionOptionType.ProgramFile,
+        //         ".import" when cursorWithinArray.Value.Parameter is "text" => CompletionOptionType.TextFile,
+        //         ".import" when cursorWithinArray.Value.Parameter is "binary" => CompletionOptionType.BinaryFile,
+        //         _ => null,
+        //     };
+        //     if (completionOptionType is not null)
+        //     {
+        //         var excludedValues = new string[] { cursorWithinArray.Value.CurrentValue }.ToFrozenSet();
+        //         CompletionOption? completionOption = completionOptionType switch
+        //         {
+        //             CompletionOptionType.ProgramFile or CompletionOptionType.BinaryFile or CompletionOptionType.TextFile
+        //                 =>
+        //                 new CompletionOption(completionOptionType.Value, cursorWithinArray.Value.Root,
+        //                     cursorWithinArray.Value.HasEndDelimiter, cursorWithinArray.Value.ReplacementLength, 
+        //                     excludedValues),
+        //             _ => null,
+        //         };
+        //         return completionOption;
+        //     }
+        // }
 
         return null;
     }

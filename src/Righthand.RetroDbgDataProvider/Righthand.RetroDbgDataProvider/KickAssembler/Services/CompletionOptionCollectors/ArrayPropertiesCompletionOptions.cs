@@ -84,10 +84,18 @@ public static partial class ArrayPropertiesCompletionOptions
         var cursorWithinArrayKeyword = IsCursorWithinArrayKeyword(text, lineStart, lineLength, column);
         if (cursorWithinArrayKeyword is not null)
         {
+            string root = cursorWithinArrayKeyword.Value.Root;
+            string keyWord = cursorWithinArrayKeyword.Value.KeyWord;
             var existingProperties = cursorWithinArrayKeyword.Value.ExistingProperties.Distinct().ToFrozenSet();
-            return new CompletionOption(CompletionOptionType.ArrayPropertyName, cursorWithinArrayKeyword.Value.Root,
-                false, cursorWithinArrayKeyword.Value.ReplacementLength, existingProperties,
-                cursorWithinArrayKeyword.Value.KeyWord);
+            var names = ArrayProperties.GetNames(keyWord, root);
+            var query = names.Except(existingProperties);
+            FrozenSet<Suggestion> suggestions =  [..names.Select(n => new Suggestion(SuggestionOrigin.PropertyName, n))];
+                
+            return new ArrayPropertyNameCompletionOption(cursorWithinArrayKeyword.Value.Root, cursorWithinArrayKeyword.Value.ReplacementLength, suggestions);
+            // return new CompletionOption(CompletionOptionType.ArrayPropertyName, cursorWithinArrayKeyword.Value.Root,
+            //     false, cursorWithinArrayKeyword.Value.ReplacementLength, existingProperties,
+            //     cursorWithinArrayKeyword.Value.KeyWord);
+            return null;
         }
 
         return null;

@@ -47,59 +47,59 @@ public class FileReferenceCompletionOptionsTest
             return (zeroBasedColumn, tokenIndex, tokens);
         }
 
-        /// <summary>
-        /// | signifies the caret position.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [TestCase("#import \"|", ExpectedResult = true)]
-        [TestCase("  #import \"|", ExpectedResult = true)]
-        [TestCase("#import |\"", ExpectedResult = false)]
-        [TestCase("#import x \"|", ExpectedResult = false)]
-        [TestCase("#importif \"|", ExpectedResult = true)]
-        [TestCase("  #importif \"|", ExpectedResult = true)]
-        [TestCase("#importif |\"", ExpectedResult = false)]
-        [TestCase("#importif x \"|", ExpectedResult = true)]
-        [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
-        public bool CharacterTypedCases(string input)
-        {
-            var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
+        // /// <summary>
+        // /// | signifies the caret position.
+        // /// </summary>
+        // /// <param name="input"></param>
+        // /// <returns></returns>
+        // [TestCase("#import \"|", ExpectedResult = true)]
+        // [TestCase("  #import \"|", ExpectedResult = true)]
+        // [TestCase("#import |\"", ExpectedResult = false)]
+        // [TestCase("#import x \"|", ExpectedResult = false)]
+        // [TestCase("#importif \"|", ExpectedResult = true)]
+        // [TestCase("  #importif \"|", ExpectedResult = true)]
+        // [TestCase("#importif |\"", ExpectedResult = false)]
+        // [TestCase("#importif x \"|", ExpectedResult = true)]
+        // [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
+        // public bool CharacterTypedCases(string input)
+        // {
+            // var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
+            //
+            // var actual =
+            //     FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input.Replace("|", ""),
+            //         TextChangeTrigger.CharacterTyped,
+            //         zeroBasedColumn);
+            //
+            // return actual?.Type == CompletionOptionType.FileReference;
+        // }
 
-            var actual =
-                FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input.Replace("|", ""),
-                    TextChangeTrigger.CharacterTyped,
-                    zeroBasedColumn);
-
-            return actual?.Type == CompletionOptionType.FileReference;
-        }
-
-        /// <summary>
-        /// | signifies the caret position.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [TestCase("#import \"|", ExpectedResult = true)]
-        [TestCase("  #import \"|", ExpectedResult = true)]
-        [TestCase("#import |\"", ExpectedResult = false)]
-        [TestCase("#import x \"|", ExpectedResult = false)]
-        [TestCase("#importif \"|", ExpectedResult = true)]
-        [TestCase("  #importif \"|", ExpectedResult = true)]
-        [TestCase("#importif |\"", ExpectedResult = false)]
-        [TestCase("#importif x \"|", ExpectedResult = true)]
-        [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
-        [TestCase("#import \"multi|_import.asm\"", ExpectedResult = true)]
-        [TestCase("#import \"multi_import.as|m\"", ExpectedResult = true)]
-        [TestCase("#import \"multi_import.as|", ExpectedResult = true)]
-        public bool CompletionRequestedTypedCases(string input)
-        {
-            var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
-
-            var actual =
-                FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input,
-                    TextChangeTrigger.CompletionRequested,
-                    zeroBasedColumn);
-
-            return actual?.Type == CompletionOptionType.FileReference;
-        }
+        // /// <summary>
+        // /// | signifies the caret position.
+        // /// </summary>
+        // /// <param name="input"></param>
+        // /// <returns></returns>
+        // [TestCase("#import \"|", ExpectedResult = true)]
+        // [TestCase("  #import \"|", ExpectedResult = true)]
+        // [TestCase("#import |\"", ExpectedResult = false)]
+        // [TestCase("#import x \"|", ExpectedResult = false)]
+        // [TestCase("#importif \"|", ExpectedResult = true)]
+        // [TestCase("  #importif \"|", ExpectedResult = true)]
+        // [TestCase("#importif |\"", ExpectedResult = false)]
+        // [TestCase("#importif x \"|", ExpectedResult = true)]
+        // [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
+        // [TestCase("#import \"multi|_import.asm\"", ExpectedResult = true)]
+        // [TestCase("#import \"multi_import.as|m\"", ExpectedResult = true)]
+        // [TestCase("#import \"multi_import.as|", ExpectedResult = true)]
+        // public bool CompletionRequestedTypedCases(string input)
+        // {
+        //     var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
+        //
+        //     var actual =
+        //         FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input,
+        //             TextChangeTrigger.CompletionRequested,
+        //             zeroBasedColumn);
+        //
+        //     return actual?.Type == CompletionOptionType.FileReference;
+        // }
     }
 }

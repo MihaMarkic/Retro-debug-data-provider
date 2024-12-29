@@ -65,16 +65,17 @@ public static class BodyArrayCompletionOptions
         var (name, position, root, value) = TokenListOperations.GetColumnPositionData(arrayProperties, content, absoluteColumn);
 
         int replacementLength;
+        // fixed for now, will change eventually
+        const string arrayOwner = ".DISK_FILE";
         switch (position)
         {
             case PositionWithinArray.Name:
                 replacementLength = name is not null ? name.StopIndex - absoluteColumn + 1 : 0;
-                var excludedValues = arrayProperties
-                    .Where(p => p.Key != name)
-                    .Select(p => p.Key.Text)
-                    .Distinct().ToFrozenSet();
-                return new CompletionOption(CompletionOptionType.ArrayPropertyName, root, false, replacementLength, excludedValues,
-                    ".DISK_FILE");
+                var suggestedValues = ArrayProperties
+                    .GetNames(arrayOwner, root)
+                    .Select(v => new Suggestion(SuggestionOrigin.PropertyName, v))
+                    .ToFrozenSet();
+                return new ArrayPropertyNameCompletionOption(root, replacementLength, suggestedValues);
             case PositionWithinArray.Value:
                 replacementLength = value?.Length ?? 0;
                 bool endsWithDoubleQuote;
@@ -88,8 +89,21 @@ public static class BodyArrayCompletionOptions
                 {
                     endsWithDoubleQuote = false;
                 }
-                return new CompletionOption(CompletionOptionType.ArrayPropertyValue, root, endsWithDoubleQuote, replacementLength, FrozenSet<string>.Empty,
-                    ".DISK_FILE", name!.Text);
+
+                HashSet<string> suggestionTexts = [];
+                if (ArrayProperties.GetProperty(arrayOwner, name!.Text, out var propertyMeta))
+                {
+                    switch (propertyMeta.Type)
+                    {
+                        case ArrayPropertyType.Bool:
+                            suggestionTexts = [..ArrayPropertyValues.BoolValues];
+                            break;
+                    }
+                }
+
+                FrozenSet<Suggestion>? suggestions =
+                    suggestionTexts.Count > 0 ? suggestionTexts.Select(t => new Suggestion(SuggestionOrigin.PropertyValue, t)).ToFrozenSet() : null;
+                return new ArrayPropertyValueCompletionOption(root, replacementLength, endsWithDoubleQuote, propertyMeta, suggestions);
             default:
                 throw new Exception($"Invalid position {position}");
         }

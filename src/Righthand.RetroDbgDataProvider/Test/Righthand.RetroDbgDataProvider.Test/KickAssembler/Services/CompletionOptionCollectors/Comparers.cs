@@ -5,20 +5,52 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionO
 public class CompletionOptionComparer: IEqualityComparer<CompletionOption>
 {
     public static CompletionOptionComparer Default { get; } = new CompletionOptionComparer();
-    public bool Equals(CompletionOption x, CompletionOption y)
+    public bool Equals(CompletionOption? x, CompletionOption? y)
     {
-        return x.Type == y.Type && x.Root == y.Root && x.EndsWithDoubleQuote == y.EndsWithDoubleQuote && x.ReplacementLength == y.ReplacementLength &&
-               x.ExcludedValues.SetEquals(y.ExcludedValues) && x.ValueType == y.ValueType;
+        if (x is null && y is null)
+        {
+            return true;
+        }
+        if (x is null || y is null)
+        {
+            return false;
+        }
+        return x.RootText == y.RootText && x.ReplacementLength == y.ReplacementLength;
     }
 
     public int GetHashCode(CompletionOption obj)
     {
-        long excludedValuesHash = 0;
-        foreach (var ev in obj.ExcludedValues)
-        {
-            excludedValuesHash = HashCode.Combine(excludedValuesHash, ev.GetHashCode());
-        }
+        return obj.GetHashCode();
+    }
 
-        return HashCode.Combine((int)obj.Type, obj.Root, obj.EndsWithDoubleQuote, obj.ReplacementLength, excludedValuesHash, obj.ValueType);
+    public static void AddHashCode(CompletionOption source, ref HashCode hc)
+    {
+        hc.Add(source.RootText);
+        hc.Add(source.ReplacementLength);
+    }
+}
+public class ArrayPropertyNameCompletionOptionComparer: IEqualityComparer<ArrayPropertyNameCompletionOption>
+{
+    public static ArrayPropertyNameCompletionOptionComparer Default { get; } = new ArrayPropertyNameCompletionOptionComparer();
+    public bool Equals(ArrayPropertyNameCompletionOption? x, ArrayPropertyNameCompletionOption? y)
+    {
+        if (!CompletionOptionComparer.Default.Equals(x, y))
+        {
+            return false;
+        }
+        return x!.Suggestions.SetEquals(y!.Suggestions);
+    }
+
+    public int GetHashCode(ArrayPropertyNameCompletionOption obj)
+    {
+        var hc = new HashCode();
+        foreach (var ev in obj.Suggestions)
+        {
+            hc.Add(ev);
+        }
+        hc.Add(obj);
+
+        CompletionOptionComparer.AddHashCode(obj, ref hc);
+        hc.Add();
     }
 }

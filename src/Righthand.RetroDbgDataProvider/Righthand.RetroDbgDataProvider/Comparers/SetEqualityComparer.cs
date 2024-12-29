@@ -28,3 +28,14 @@ public sealed class SetEqualityComparer<T> : IEqualityComparer<ISet<T>>
         return hc.ToHashCode();
     }
 }
+
+public static class Equatable
+{
+    public static void AddHashCode<T>(this ICollection<T> source, ref HashCode hc)
+    {
+        foreach (var i in source)
+        {
+            hc.Add(i);
+        }
+    }
+}
