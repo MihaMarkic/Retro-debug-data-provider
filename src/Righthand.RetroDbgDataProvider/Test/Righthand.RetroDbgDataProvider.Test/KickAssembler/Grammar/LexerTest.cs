@@ -1,4 +1,3 @@
-using System.Collections.Frozen;
 using System.Collections.Immutable;
 using Antlr4.Runtime;
 using NUnit.Framework;
@@ -10,7 +9,7 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 [TestFixture]
 public class LexerTest
 {
-    ImmutableArray<IToken> GetTokens<TLexerErrorListener>(string text, out TLexerErrorListener errorListener, params string[] definitions)
+    public static ImmutableArray<IToken> GetTokens<TLexerErrorListener>(string text, out TLexerErrorListener errorListener, params string[] definitions)
         where TLexerErrorListener: IAntlrErrorListener<int>, new ()
     {
         var input = new AntlrInputStream(text);
@@ -55,6 +54,24 @@ public class LexerTest
     ImmutableArray<int> GetTokenTypes(params int[] tokens)
     {
         return [..tokens];
+    }
+
+    [TestFixture]
+    public class SpecialCases : LexerTest
+    {
+        private static IEnumerable<(string Input, ImmutableArray<int> ExpectedTokens, string? Message)> GetTestCases()
+        {
+            yield return new("\"", [DOUBLE_QUOTE], "Given double quotes returns DOUBLE_QUOTE");
+        }
+
+        [TestCaseSource(nameof(GetTestCases))]
+        public void GivenInput_AssertsExpected((string Input, ImmutableArray<int> ExpectedTokens, string? Message) td)
+        {
+            var actual  = GetTokens<LexerErrorListener>(td.Input, out _)
+                .Select(t => t.Type);
+            
+            Assert.That(actual, Is.EquivalentTo(td.ExpectedTokens.Add(KickAssemblerLexer.Eof)), td.Message);
+        }
     }
     [TestFixture]
     public class HashIf : LexerTest

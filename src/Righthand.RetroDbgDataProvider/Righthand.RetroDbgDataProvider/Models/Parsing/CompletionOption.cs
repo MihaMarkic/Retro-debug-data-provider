@@ -11,7 +11,8 @@ public enum CompletionOptionType
     BinaryFile,
     SidFile,
     Segments,
-    ArrayProperty,
+    ArrayPropertyName,
+    ArrayPropertyValue,
 }
 
 public enum TextChangeTrigger
@@ -28,6 +29,6 @@ public enum TextChangeTrigger
 /// <param name="EndsWithDoubleQuote"></param>
 /// <param name="ReplacementLength"></param>
 /// <param name="ExcludedValues">Relative paths of excluded files</param>
-/// <param name="ValueType">Additional parameter, such as '.file' from '.file c64 [....]'</param>
+/// <param name="DirectiveType">Additional parameter, such as '.file' from '.file c64 [....]'</param>
 public record struct CompletionOption(CompletionOptionType Type, string Root, bool EndsWithDoubleQuote, int ReplacementLength,
-    FrozenSet<string> ExcludedValues, string? ValueType = null);
+    FrozenSet<string> ExcludedValues, string? DirectiveType = null, string? ValueType = null);

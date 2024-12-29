@@ -85,7 +85,7 @@ public static partial class ArrayPropertiesCompletionOptions
         if (cursorWithinArrayKeyword is not null)
         {
             var existingProperties = cursorWithinArrayKeyword.Value.ExistingProperties.Distinct().ToFrozenSet();
-            return new CompletionOption(CompletionOptionType.ArrayProperty, cursorWithinArrayKeyword.Value.Root,
+            return new CompletionOption(CompletionOptionType.ArrayPropertyName, cursorWithinArrayKeyword.Value.Root,
                 false, cursorWithinArrayKeyword.Value.ReplacementLength, existingProperties,
                 cursorWithinArrayKeyword.Value.KeyWord);
         }

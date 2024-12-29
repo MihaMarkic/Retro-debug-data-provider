@@ -29,6 +29,10 @@ public abstract class ParsedSourceFile
     /// </summary>
     public ImmutableArray<IToken> AllTokens { get; private set; }
     /// <summary>
+    /// All tokens from default channel.
+    /// </summary>
+    public ImmutableArray<IToken> Tokens { get; private set; }
+    /// <summary>
     /// All tokens regardless of channel mapped by 0 based line index.
     /// </summary>
     public FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap { get; private set; }
@@ -59,7 +63,7 @@ public abstract class ParsedSourceFile
         SegmentDefinitions = segmentDefinitions;
         LastModified = lastModified;
         LiveContent = liveContent;
-        AllTokens = ImmutableArray<IToken>.Empty;
+        AllTokens = Tokens = ImmutableArray<IToken>.Empty;
         AllTokensByLineMap = FrozenDictionary<int, ImmutableArray<IToken>>.Empty;
     }
 
@@ -116,6 +120,7 @@ public abstract class ParsedSourceFile
 
             (_syntaxLines, var ignoredDefineContent, _syntaxErrors, AllTokens, AllTokensByLineMap) =
                 await _syntaxInfoInitTask;
+            Tokens = [..AllTokens.Where(t => t.Channel == 0)];
             // since assigning a non-nullable value to nullable field results in warning, I'll do it through a variable instead
             _ignoredDefineContent = ignoredDefineContent;
             Debug.WriteLine("Parsing done");

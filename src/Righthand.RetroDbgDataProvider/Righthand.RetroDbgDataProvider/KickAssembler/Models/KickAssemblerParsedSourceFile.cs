@@ -61,10 +61,23 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             Debug.WriteLine($"Line {line} is within ignored content");
             return null;
         }
-        return GetCompletionOption(AllTokensByLineMap, trigger, line, column, text, textStart, textLength);
+        return GetCompletionOption(Tokens, AllTokensByLineMap, trigger, line, column, text, textStart, textLength);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tokens">Tokens from default channel</param>
+    /// <param name="allTokensByLineMap"></param>
+    /// <param name="trigger"></param>
+    /// <param name="line"></param>
+    /// <param name="column"></param>
+    /// <param name="text"></param>
+    /// <param name="textStart"></param>
+    /// <param name="textLength"></param>
+    /// <returns></returns>
     internal static CompletionOption? GetCompletionOption(
+        ImmutableArray<IToken> tokens,
         FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int line,
         int column, string text, int textStart, int textLength)
     {
@@ -81,7 +94,6 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             return null;
         }
 
-
         var textSpan = text.AsSpan()[textStart..(textStart + textLength)];
         CompletionOption? result = PreprocessorDirectivesCompletionOptions.GetOption(textSpan, trigger, column);
         if (result is null)
@@ -89,23 +101,29 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             if (syntaxStateAtColumn == SyntaxStatus.Array)
             {
                 result = ArrayPropertiesCompletionOptions.GetOption(text, textStart, textLength, column);
-                ;
             }
 
             if (result is null)
             {
-                if (syntaxStateAtColumn == SyntaxStatus.String)
+                if (syntaxStateAtColumn.HasFlag(SyntaxStatus.Array))
                 {
-                    result = FileReferenceCompletionOptions.GetOption(tokensAtLine.AsSpan(), textSpan, trigger, column)
-                             ?? QuotedCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength,
-                                 trigger, column);
+                    result = BodyArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column);
                 }
 
-                if (result is null && syntaxStateAtColumn.HasFlag(SyntaxStatus.Array) &&
-                    syntaxStateAtColumn.HasFlag(SyntaxStatus.String))
+                if (result is null)
                 {
-                    result = QuotedWithinArrayCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart,
-                        textLength, trigger, column, ValuesCount.Multiple);
+                    if (syntaxStateAtColumn == SyntaxStatus.String)
+                    {
+                        result = FileReferenceCompletionOptions.GetOption(tokensAtLine.AsSpan(), textSpan, trigger, column)
+                                 ?? QuotedCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength,
+                                     trigger, column);
+                    }
+
+                    if (result is null && syntaxStateAtColumn.HasFlag(SyntaxStatus.Array) &&
+                        syntaxStateAtColumn.HasFlag(SyntaxStatus.String))
+                    {
+                        result = QuotedWithinArrayCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger, column, ValuesCount.Multiple);
+                    }
                 }
             }
         }
