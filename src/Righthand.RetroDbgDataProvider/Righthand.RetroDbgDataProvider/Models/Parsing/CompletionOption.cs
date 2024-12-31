@@ -1,6 +1,5 @@
 ﻿using System.Collections.Frozen;
-using Righthand.RetroDbgDataProvider.Comparers;
-using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Righthand.RetroDbgDataProvider.Models.Parsing;
 
@@ -19,40 +18,39 @@ public enum SuggestionOrigin
 
 public record Suggestion(SuggestionOrigin Origin, string Text);
 
-public abstract record CompletionOption(string RootText, int ReplacementLength)
+public readonly struct CompletionOption
 {
-    protected void AddHashCode(ref HashCode hc)
+    public string RootText { get; }
+    public int ReplacementLength { get; }
+    public string AppendText { get; }
+    public FrozenSet<Suggestion> Suggestions { get; }
+    public CompletionOption(string rootText, int replacementLength, string appendText, FrozenSet<Suggestion> suggestions)
     {
-        hc.Add(RootText);
-        hc.Add(ReplacementLength);
+        RootText = rootText;
+        ReplacementLength = replacementLength;
+        AppendText = appendText;
+        Suggestions = suggestions;
     }
-}
+    public override bool Equals([NotNullWhen(true)] object? obj)
+    {
+        if (obj is CompletionOption other)
+        {
+            return other.RootText.Equals(RootText) && other.ReplacementLength.Equals(ReplacementLength)
+                && other.AppendText.Equals(AppendText) && other.Suggestions.SetEquals(Suggestions);
+        }
+        return false;
+    }
 
-public enum FileType
-{
-    Source,
-    Text,
-    Program,
-    Binary,
-    Sid
-}
-
-public record FileCompletionOption(string RootText, int ReplacementLength, FileType FileType, bool AppendDoubleQuote, FrozenSet<string> ExcludedValues)
-    : CompletionOption(RootText, ReplacementLength);
-
-public record SegmentCompletionOption(string RootText, int ReplacementLength, FrozenSet<string> ExcludedValues) : CompletionOption(RootText, ReplacementLength);
-
-public record KeywordCompletionOption(string RootText, int ReplacementLength) : CompletionOption(RootText, ReplacementLength);
-
-public record ArrayPropertyNameCompletionOption(string RootText, int ReplacementLength, FrozenSet<Suggestion> Suggestions) : CompletionOption(RootText, ReplacementLength)
-{
     public override int GetHashCode()
     {
         var hc = new HashCode();
-        base.AddHashCode(ref hc);
-        Suggestions.AddHashCode(ref hc);
+        foreach (var ev in Suggestions)
+        {
+            hc.Add(ev);
+        }
+        hc.Add(RootText);
+        hc.Add(ReplacementLength);
+        hc.Add(AppendText);
         return hc.ToHashCode();
     }
 }
-
-public record ArrayPropertyValueCompletionOption(string RootText, int ReplacementLength, bool AppendDoubleQuote, ArrayProperty? Property, FrozenSet<Suggestion>? Suggestions) :CompletionOption(RootText, ReplacementLength);

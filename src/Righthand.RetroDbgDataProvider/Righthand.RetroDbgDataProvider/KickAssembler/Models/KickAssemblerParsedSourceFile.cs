@@ -54,14 +54,14 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     /// <inheritdoc />
     public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column,
-        string text, int textStart, int textLength)
+        string text, int textStart, int textLength, CompletionOptionContext context)
     {
         if (IsLineIgnoredContent(line))
         {
             Debug.WriteLine($"Line {line} is within ignored content");
             return null;
         }
-        return GetCompletionOption(Tokens, AllTokensByLineMap, trigger, line, column, text, textStart, textLength);
+        return GetCompletionOption(Tokens, AllTokensByLineMap, trigger, line, column, text, textStart, textLength, context);
     }
 
     /// <summary>
@@ -75,11 +75,11 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="text"></param>
     /// <param name="textStart"></param>
     /// <param name="textLength"></param>
+    /// <param name="context"></param>
     /// <returns></returns>
-    internal static CompletionOption? GetCompletionOption(
-        ImmutableArray<IToken> tokens,
+    internal static CompletionOption? GetCompletionOption(ImmutableArray<IToken> tokens,
         FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int line,
-        int column, string text, int textStart, int textLength)
+        int column, string text, int textStart, int textLength, CompletionOptionContext context)
     {
         if (!allTokensByLineMap.TryGetValue(line, out var tokensAtLine))
         {
@@ -107,7 +107,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             {
                 if (syntaxStateAtColumn.HasFlag(SyntaxStatus.Array))
                 {
-                    result = BodyArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column);
+                    result = BodyArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context);
                 }
 
                 if (result is null)

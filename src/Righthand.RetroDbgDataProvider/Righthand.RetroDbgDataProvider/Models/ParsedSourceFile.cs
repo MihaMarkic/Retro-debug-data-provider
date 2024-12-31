@@ -86,7 +86,7 @@ public abstract class ParsedSourceFile
     /// <param name="textLength">Text length</param>
     /// <returns></returns>
     public virtual CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column, 
-        string text, int textStart, int textLength) => null;
+        string text, int textStart, int textLength, CompletionOptionContext context) => null;
 
     /// <summary>
     /// Returns all tokens regardless of channels.

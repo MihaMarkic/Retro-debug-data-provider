@@ -1,8 +1,6 @@
 ﻿using System.Collections.Frozen;
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
-using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
@@ -91,11 +89,10 @@ public static partial class ArrayPropertiesCompletionOptions
             var query = names.Except(existingProperties);
             FrozenSet<Suggestion> suggestions =  [..names.Select(n => new Suggestion(SuggestionOrigin.PropertyName, n))];
                 
-            return new ArrayPropertyNameCompletionOption(cursorWithinArrayKeyword.Value.Root, cursorWithinArrayKeyword.Value.ReplacementLength, suggestions);
+            return new CompletionOption(cursorWithinArrayKeyword.Value.Root, cursorWithinArrayKeyword.Value.ReplacementLength, "", suggestions);
             // return new CompletionOption(CompletionOptionType.ArrayPropertyName, cursorWithinArrayKeyword.Value.Root,
             //     false, cursorWithinArrayKeyword.Value.ReplacementLength, existingProperties,
             //     cursorWithinArrayKeyword.Value.KeyWord);
-            return null;
         }
 
         return null;
