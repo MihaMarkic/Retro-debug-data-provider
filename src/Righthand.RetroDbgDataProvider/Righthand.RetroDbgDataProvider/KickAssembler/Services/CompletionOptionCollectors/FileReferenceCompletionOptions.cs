@@ -9,17 +9,17 @@ public static class FileReferenceCompletionOptions
     /// <summary>
     /// Returns possible completion for file references.
     /// </summary>
-    /// <param name="tokens"></param>
+    /// <param name="lineTokens"></param>
     /// <param name="line"></param>
     /// <param name="trigger"></param>
     /// <param name="column"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens,
+    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens,
         ReadOnlySpan<char> line, TextChangeTrigger trigger, int column, CompletionOptionContext context)
     {
         var leftLinePart = line[..(column + 1)];
-        var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(tokens, leftLinePart, trigger);
+        var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(lineTokens, leftLinePart, trigger);
         if (isMatch)
         {
             var suggestionLine = line[(doubleQuoteColumn + 1)..];

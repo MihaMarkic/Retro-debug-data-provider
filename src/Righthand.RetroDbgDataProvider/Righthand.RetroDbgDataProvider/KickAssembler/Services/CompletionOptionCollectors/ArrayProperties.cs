@@ -13,6 +13,12 @@ public static class ArrayProperties
         Data = new Dictionary<string, HashSet<ArrayProperty>>
         {
             {
+                ".segmentdef",
+                [
+                    new ArrayProperty("segments", Segments),
+                ]
+            },
+            {
                 ".file",
                 [
                     new ArrayProperty("mbfiles", Bool),

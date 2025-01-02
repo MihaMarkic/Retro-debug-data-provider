@@ -67,7 +67,7 @@ public static class ArrayCompletionOptions
         string arrayOwner;
         if (isWithinDirectiveBody)
         {
-            if (statement.Value.Directive != KickAssemblerLexer.DISK)
+            if (statement.Value.DirectiveToken.Type != KickAssemblerLexer.DISK)
             {
                 Debug.WriteLine("Body arrays currently only supported with .disk directive");
                 return null;
@@ -76,13 +76,13 @@ public static class ArrayCompletionOptions
         }
         else
         {
-            var directiveToken = tokens[statement.Value.Directive];
+            var directiveToken = statement.Value.DirectiveToken;
             arrayOwner = directiveToken.Text;
         }
 
         var arrayProperties = TokenListOperations.GetArrayProperties(tokens[(openBracketIndex.Value + 1)..]);
         int absoluteColumn = lineStart + column + 1;
-        var (name, position, root, value) = TokenListOperations.GetColumnPositionData(arrayProperties, content, absoluteColumn);
+        var (name, position, root, value, matchingArrayProperty) = TokenListOperations.GetColumnPositionData(arrayProperties, content, absoluteColumn);
 
         switch (position)
         {
@@ -97,7 +97,7 @@ public static class ArrayCompletionOptions
             case PositionWithinArray.Value:
                 if (ArrayProperties.GetProperty(arrayOwner, name!.Text, out var propertyMeta))
                 {
-                    return CreateSuggestionsForArrayValue(root, name!.Text, value, propertyMeta, context);
+                    return CreateSuggestionsForArrayValue(root, value, absoluteColumn, arrayOwner, statement.Value.OptionToken?.Text, matchingArrayProperty, propertyMeta, context);
                 }
 
                 break;
@@ -108,7 +108,20 @@ public static class ArrayCompletionOptions
         return null;
     }
 
-    internal static CompletionOption CreateSuggestionsForArrayValue(string root, string propertyName, string? value, ArrayProperty arrayProperty,
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="value"></param>
+    /// <param name="absoluteColumn"></param>
+    /// <param name="arrayOwner"></param>
+    /// <param name="option"></param>
+    /// <param name="matchingProperty"></param>
+    /// <param name="arrayProperty"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    internal static CompletionOption CreateSuggestionsForArrayValue(string root, string? value, int absoluteColumn, string arrayOwner, string? option,
+        ArrayPropertyMeta? matchingProperty, ArrayProperty arrayProperty,
         CompletionOptionContext context)
     {
         int replacementLength = value?.Length ?? 0;
@@ -155,14 +168,26 @@ public static class ArrayCompletionOptions
 
             case ArrayPropertyType.Segments:
             {
-                var excluded = GetArrayValues(value);
-                suggestionTexts = CompletionOptionCollectorsCommon.CollectSegmentsSuggestions(root, excluded, context.ProjectServices);
-                suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, suggestionTexts, SuggestionOrigin.PropertyValue);
+                if (matchingProperty?.StartValue is not null && value is not null)
+                {
+                    var values = GetArrayValues(value);
+                    bool startsWithDoubleQuote = value.StartsWith('\"');
+                    string valueRoot = GetRootValue(values, absoluteColumn - matchingProperty.StartValue.StartIndex + (startsWithDoubleQuote ? 1 : 0));
+                    var valueTexts = values.Select(v => v.Text).ToImmutableArray();
+                    if (!string.IsNullOrWhiteSpace(option))
+                    {
+                        valueTexts = valueTexts.Add(option);
+                    }
+                    var excluded = valueTexts.Distinct().ToFrozenSet();
+                    suggestionTexts = CompletionOptionCollectorsCommon.CollectSegmentsSuggestions(valueRoot, excluded, context.ProjectServices);
+                    suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(valueRoot, suggestionTexts, SuggestionOrigin.PropertyValue);
+                }
+
                 break;
             }
             case ArrayPropertyType.FileNames:
             {
-                var excluded = GetArrayValues(value);
+                var excluded = GetArrayValues(value).Select(v => v.Text).Distinct().ToFrozenSet();
                 var property = (FileArrayProperty)arrayProperty;
                 suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, property.ValidExtensions, excluded, context.ProjectServices);
                 break;
@@ -171,12 +196,25 @@ public static class ArrayCompletionOptions
         return new CompletionOption(root, replacementLength, endsWithDoubleQuote ? "\"" : "", suggestions);
     }
 
-    internal static FrozenSet<string> GetArrayValues(string? value)
+    internal static string GetRootValue(ImmutableArray<(string Text, int StartIndex)> values, int relativeColumn)
+    {
+        foreach (var v in values)
+        {
+            if (v.StartIndex <= relativeColumn && v.StartIndex + v.Text.Length >= relativeColumn)
+            {
+                return v.Text[..(relativeColumn - v.StartIndex)];
+            }
+        }
+
+        return string.Empty;
+    }
+
+    internal static ImmutableArray<(string Text, int StartIndex)> GetArrayValues(string? value)
     {
         if (value is not null && value.StartsWith('\"'))
         {
             int length = value.Length > 1 && value.EndsWith('\"') ? value.Length - 1 : value.Length;
-            return TokenListOperations.GetArrayValues(value, 0, length).Distinct().ToFrozenSet();
+            return [..TokenListOperations.GetArrayValues(value, 0, length)];
         }
         else
         {

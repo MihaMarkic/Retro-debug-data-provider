@@ -85,13 +85,13 @@ public static partial class TokenListOperations
     /// <param name="content">File text content</param>
     /// <param name="absolutePosition">Absolute cursor position</param>
     /// <returns>Returns property name, type of position, text left of the position and entire value.</returns>
-    internal static (IToken? Name, PositionWithinArray Position, string Root, string Value) 
+    internal static (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) 
         GetColumnPositionData(FrozenDictionary<IToken, ArrayPropertyMeta> properties, ReadOnlySpan<char> content, int absolutePosition)
     {
         // when no properties, it has to be on an empty one
         if (properties.Count == 0)
         {
-            return (null, PositionWithinArray.Name, "", "");
+            return (null, PositionWithinArray.Name, "", "", null);
         }
 
         foreach (var pair in properties.OrderBy(p => p.Key.StartIndex))
@@ -112,24 +112,25 @@ public static partial class TokenListOperations
             if (isWithinProperty)
             {
                 var assignment = meta.Assignment;
+                string value = meta.GetValue(content);
                 if (assignment is null)
                 {
-                    return (pair.Key, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), meta.GetValue(content));
+                    return (pair.Key, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), value, meta);
                 }
                 else
                 {
                     if (absolutePosition < assignment.StartIndex)
                     {
-                        return (name, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), meta.GetValue(content));
+                        return (name, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), value, meta);
                     }
                     else
                     {
-                        return (name, PositionWithinArray.Value, meta.GetValue(content, absolutePosition), meta.GetValue(content));
+                        return (name, PositionWithinArray.Value, meta.GetValue(content, absolutePosition), value, meta);
                     }
                 }
             }
         }
-        return (null, PositionWithinArray.Name, "", "");
+        return (null, PositionWithinArray.Name, "", "", null);
     }
     
     /// <summary>
@@ -250,19 +251,20 @@ public static partial class TokenListOperations
     /// <param name="start"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    internal static ImmutableArray<string> GetArrayValues(string text, int start, int length)
+    internal static ImmutableArray<(string Text, int StartIndex)> GetArrayValues(string text, int start, int length)
     {
         var m = GetArrayValuesRegex().Match(text, start, length);
         if (m.Success)
         {
             var items = m.Groups["ArrayItem"].Captures
                 .Where(c => !string.IsNullOrWhiteSpace(c.Value))
-                .Select(c => c.Value)
+                .Select(c => (c.Value, c.Index))
                 .ToImmutableArray();
-            string? lastItem = m.Groups["LastItem"].Value;
+            var lastItemGroup = m.Groups["LastItem"]; 
+            string? lastItem = lastItemGroup.Value;
             if (!string.IsNullOrWhiteSpace(lastItem))
             {
-                return items.Add(lastItem);
+                return items.Add((lastItem, lastItemGroup.Index));
             }
 
             return items;
@@ -276,7 +278,7 @@ public static partial class TokenListOperations
     /// </summary>
     /// <param name="tokens"></param>
     /// <returns></returns>
-    internal static (int Directive, string? Option)? FindDirectiveAndOption(ReadOnlySpan<IToken> tokens)
+    internal static (IToken DirectiveToken, IToken? OptionToken)? FindDirectiveAndOption(ReadOnlySpan<IToken> tokens)
     {
         if (tokens.IsEmpty)
         {
@@ -286,7 +288,7 @@ public static partial class TokenListOperations
         var token = tokens[^1];
         if (GetTokenTypeFamily(token) == TokenTypeFamily.Directive)
         {
-            return (token.Type, null);
+            return (token, null);
         }
 
         if (tokens.Length > 1 && token.IsTextType())
@@ -294,7 +296,7 @@ public static partial class TokenListOperations
             var previousToken = tokens[^2];
             if (GetTokenTypeFamily(previousToken) == TokenTypeFamily.Directive)
             {
-                return (previousToken.Type, token.Text);
+                return (previousToken, token);
             }
         }
 

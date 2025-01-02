@@ -15,13 +15,13 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionO
 public class TokenListOperationsTest
 {
     private static IToken CreateToken(int tokenType) => new MockToken { Type = tokenType };
-    private static IToken CreateToken(int tokenType, string text) => new MockToken { Type = tokenType, Text = text };
+    private static IToken CreateToken(int tokenType, string text, int index = -1) => new MockToken { Type = tokenType, Text = text, TokenIndex = index };
 
     private static ImmutableArray<IToken> CreateTokens(params ImmutableArray<int> tokenTypes)
         => [..tokenTypes.Select(CreateToken)];
 
     private static ImmutableArray<IToken> CreateTokens(params ImmutableArray<(int Type, string Text)> tokenTypes)
-        => [..tokenTypes.Select(t => CreateToken(t.Type, t.Text))];
+        => [..tokenTypes.Select((t, i) => CreateToken(t.Type, t.Text, i))];
 
     [TestFixture]
     public class GetTokenAtColumn : TokenListOperationsTest
@@ -115,17 +115,26 @@ public class TokenListOperationsTest
     [TestFixture]
     public class FindDirectiveAndOption : TokenListOperationsTest
     {
-        private static IEnumerable<(ImmutableArray<IToken> Tokens, (int Directive, string? Option)? ExpectedResult)> GetSource()
+        private static IEnumerable<(ImmutableArray<IToken> Tokens, (int DirectiveTokenIndex, int? OptionTokenIndex)? ExpectedResult)> GetSource()
         {
             yield return (ImmutableArray<IToken>.Empty, null);
-            yield return (CreateTokens((DISK, ".disk")), (DISK, null));
-            yield return (CreateTokens((DOTIMPORT, ".import"), (UNQUOTED_STRING, "binary")), (DOTIMPORT, "binary"));
+            yield return (CreateTokens((DISK, ".disk")), (0, null));
+            yield return (CreateTokens((DOTIMPORT, ".import"), (UNQUOTED_STRING, "binary")), (0, 1));
             yield return (CreateTokens((UNQUOTED_STRING, "binary")), null);
         }
         [TestCaseSource(nameof(GetSource))]
-        public void GivenSample_ReturnsExpectedResult((ImmutableArray<IToken> Tokens, (int Directive, string? Option)? ExpectedResult) td)
+        public void GivenSample_ReturnsExpectedResult((ImmutableArray<IToken> Tokens, (int DirectiveTokenIndex, int? OptionTokenIndex)? ExpectedResult) td)
         {
-            var actual = TokenListOperations.FindDirectiveAndOption(td.Tokens.AsSpan());
+            var result = TokenListOperations.FindDirectiveAndOption(td.Tokens.AsSpan());
+            (int DirectiveTokenIndex, int? OptionTokenIndex)? actual;
+            if (result is not null)
+            {
+                actual = (result.Value.DirectiveToken.TokenIndex, result.Value.OptionToken?.TokenIndex);
+            }
+            else
+            {
+                actual = null;
+            }
 
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
@@ -191,32 +200,44 @@ public class TokenListOperationsTest
             CreateProperties(ImmutableArray<IToken> tokens, params ImmutableArray<(int TokenIndex, ArrayPropertyMetaBuilder MetaBuilder)> items)
             => items.ToFrozenDictionary(i => tokens[i.TokenIndex], i => i.MetaBuilder.Create(tokens));
 
-        private static (FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, IToken Name) GetValues(string source)
+        private static (FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, IToken Name, int Cursor) GetValues(string source, int? tokenNameIndex = null,
+            int skipTokensCount = 0)
         {
+            var cursor = source.IndexOf('|');
+            source = source.Replace("|", "");
             var tokens = GetAllTokens(source);
-            var properties = TokenListOperations.GetArrayProperties(tokens.AsSpan());
-            return (properties, source, tokens.First(t => !string.IsNullOrWhiteSpace(t.Text)));
+            var nameToken = tokenNameIndex is not null ? tokens[tokenNameIndex.Value] : tokens.First(t => t.Text != "\"" && !string.IsNullOrWhiteSpace(t.Text));
+            var properties = TokenListOperations.GetArrayProperties(tokens.AsSpan()[skipTokensCount..]);
+            return (properties, source, nameToken, cursor);
         }
 
         private static IEnumerable<(FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, int AbsolutePosition, 
-            (IToken? Name, PositionWithinArray Position, string Root, string Value) ExpectedResult)> GetSource()
+            (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) ExpectedResult)> GetSource()
         {
             {
-                var (properties, source, name) = GetValues("first");
-                yield return (properties, source, 5, (name, PositionWithinArray.Name, "first", ""));
+                var (properties, source, name, cursor) = GetValues("first|");
+                yield return (properties, source, cursor, (name, PositionWithinArray.Name, "first", "", properties[name]));
                 
-                (properties, source, name) = GetValues(" alfa");
-                yield return (properties, source, 5, (name, PositionWithinArray.Name, "alfa", ""));
+                (properties, source, name, cursor) = GetValues(" alfa|");
+                yield return (properties, source, cursor, (name, PositionWithinArray.Name, "alfa", "", properties[name]));
                 
-                (properties, source, name) = GetValues(" alfa, ");
-                yield return (properties, source, 5, (name, PositionWithinArray.Name, "alfa", ""));
-                yield return (properties, source, 6, (null, PositionWithinArray.Name, "", ""));
+                (properties, source, name, cursor) = GetValues(" alfa|, ");
+                yield return (properties, source, cursor, (name, PositionWithinArray.Name, "alfa", "", properties[name]));
+                (properties, source, name, cursor) = GetValues(" alfa,| ");
+                yield return (properties, source, cursor, (null, PositionWithinArray.Name, "", "", null));
+
+                (properties, source, name, cursor) = GetValues("one=|, ");
+                yield return (properties, source, cursor, (name, PositionWithinArray.Value, "", "", properties[name]));
+                (properties, source, name, cursor) = GetValues("one=xx|y, ");
+                yield return (properties, source, cursor, (name, PositionWithinArray.Value, "xx", "xxy", properties[name]));
+                (properties, source, name, cursor) = GetValues("pre,one=xx|y, ", 2);
+                yield return (properties, source, cursor, (name, PositionWithinArray.Value, "xx", "xxy", properties[name]));
             }
         }
 
         [TestCaseSource(nameof(GetSource))]
         public void GivenSample_ReturnsExpectedResult((FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, int AbsolutePosition,
-            (IToken? Name, PositionWithinArray Position, string Root, string Value) ExpectedResult) td)
+            (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) ExpectedResult) td)
         {
             var actual = TokenListOperations.GetColumnPositionData(td.Properties, td.Content, td.AbsolutePosition);
             
@@ -225,14 +246,14 @@ public class TokenListOperationsTest
     }
 
     [DebuggerDisplay("{TypeText,q}")]
-    private class MockToken: IToken
+    public class MockToken: IToken
     {
         public string Text { get; init; } = "";
         public int Type { get; init; } = -1;
         public int Line { get; } = -1;
         public int Column { get; } = -1;
         public int Channel { get; } = -1;
-        public int TokenIndex { get; } = -1;
+        public int TokenIndex { get; init; } = -1;
         public int StartIndex { get; init; } = -1;
         public int StopIndex { get; init; } = -1;
         public ITokenSource TokenSource { get; } = null!;

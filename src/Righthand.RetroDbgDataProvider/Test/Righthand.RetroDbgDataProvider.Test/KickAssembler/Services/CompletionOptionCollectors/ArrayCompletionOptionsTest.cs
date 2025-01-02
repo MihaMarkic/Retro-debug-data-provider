@@ -34,6 +34,13 @@ public class ArrayCompletionOptionsTest
             .Where(t => !string.IsNullOrEmpty(t))
             .ToFrozenSet();
     }
+    private static ImmutableArray<string> CreateExpectedResultArray(string values)
+    {
+        return [
+            ..values.Split(',')
+                .Where(t => !string.IsNullOrEmpty(t))
+        ];
+    }
 
     private static ImmutableArray<IToken> GetAllTokens(string text)
     {
@@ -129,11 +136,11 @@ public class ArrayCompletionOptionsTest
 
         [TestCase("", "hide", "", "true,false")]
         [TestCase("t", "hide", "", "true")]
-        public void GivenTestCaseForBoolValue_ReturnsCorrectSuggestions(string root, string propertyName, string? value, string expectedResult)
+        public void GivenTestCaseForBoolValue_ReturnsCorrectSuggestions(string root, string propertyName, string value, string expectedResult)
         {
             var arrayProperty = new ValuesArrayProperty("hide", ArrayPropertyType.Bool, ArrayPropertyValues.BoolValues.ToFrozenSet());
 
-            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, NoOpContext)
+            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, value, 0, ".file", null,null, arrayProperty, NoOpContext)
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
@@ -143,13 +150,13 @@ public class ArrayCompletionOptionsTest
         [TestCase("", "type", "", "\"prg\",\"bin\"")]
         [TestCase("\"pr", "type", "", "\"prg\"")]
         [TestCase("pr", "type", "", "")]
-        public void GivenTestCaseForQuotedEnumerableValue_ReturnsCorrectSuggestions(string root, string propertyName, string? value,
+        public void GivenTestCaseForQuotedEnumerableValue_ReturnsCorrectSuggestions(string root, string propertyName, string value,
             string expectedResult)
         {
             var arrayProperty = new ValuesArrayProperty("hide", ArrayPropertyType.QuotedEnumerable,
                 new HashSet<string> { "prg", "bin" }.ToFrozenSet());
 
-            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, NoOpContext)
+            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, value, 0, ".file", null, null, arrayProperty, NoOpContext)
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
@@ -157,19 +164,25 @@ public class ArrayCompletionOptionsTest
             Assert.That(actual, Is.EqualTo(expected));
         }
         [TestCase("", "segments", "", "sx1,sy2")]
-        [TestCase("s", "segments", "", "sx1,sy2")]
-        [TestCase("sx", "segments", "", "sx1")]
-        [TestCase("sx1", "segments", "", "")]
-        public void GivenTestCaseForSegments_ReturnsCorrectSuggestions(string root, string propertyName, string? value,
+        [TestCase("s", "segments", "s",  "sx1,sy2")]
+        [TestCase("sx", "segments", "sx",  "sx1")]
+        [TestCase("sx1", "segments", "sx1",  "")]
+        [TestCase("sx1,s", "segments", "sx1,sy", "sy2")]
+        public void GivenTestCaseForSegments_ReturnsCorrectSuggestions(string root, string propertyName, string value, 
             string expectedResult)
         {
 
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.CollectSegments().Returns(["sx1", "sy2"]);
             var arrayProperty = new ValuesArrayProperty("segments", ArrayPropertyType.Segments);
+            var startValueToken = Substitute.For<IToken>();
+            startValueToken.StartIndex.Returns(0);
+            var endValueToken = Substitute.For<IToken>();
+            endValueToken.StopIndex.Returns(value.Length);
+            var matchingProperty = new ArrayPropertyMeta(null, startValueToken, endValueToken, null);
             
             var actual = ArrayCompletionOptions
-                .CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, new CompletionOptionContext(projectServices))
+                .CreateSuggestionsForArrayValue(root, $"\"{value}\"", root.Length, ".file", null ,matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
@@ -193,11 +206,11 @@ public class ArrayCompletionOptionsTest
 
         public void GivenTestCase_ReturnsCorrectSet(string? values, string expectedText)
         {
-            var actual = ArrayCompletionOptions.GetArrayValues(values);
+            var actual = ArrayCompletionOptions.GetArrayValues(values).Select(v => v.Text).ToImmutableArray();
             
             var expected = CreateExpectedResultSet(expectedText);
             
-            Assert.That(actual.SetEquals(expected), Is.True);
+            Assert.That(actual, Is.EqualTo(expected));
         }
     }
 }
