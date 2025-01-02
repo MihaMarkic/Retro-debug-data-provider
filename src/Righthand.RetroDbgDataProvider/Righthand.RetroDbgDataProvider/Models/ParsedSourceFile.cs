@@ -150,12 +150,6 @@ public abstract class ParsedSourceFile
     }
 
     public abstract SingleLineTextRange? GetTokenRangeAt(int line, int column);
-    /// <summary>
-    /// Returns all suggestions for preprocessor directives.
-    /// </summary>
-    /// <param name="root">Root part</param>
-    /// <returns>A list of matching preprocessor directives.</returns>
-    public abstract ImmutableArray<string> GetPreprocessorDirectiveSuggestions(string root);
 
     /// <summary>
     /// Checks whether given <param name="line"/> falls into ignored content.

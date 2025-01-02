@@ -15,12 +15,25 @@ using GetOptionTestCase =
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionOptionCollectors;
 
-public class BodyArrayCompletionOptionsTest
+public class ArrayCompletionOptionsTest
 {
     private static CompletionOptionContext NoOpContext { get; } = new CompletionOptionContext(
-        Substitute.For<ISourceCodeParser<ParsedSourceFile>>(),
         Substitute.For<IProjectServices>()
     );
+    
+    private static FrozenSet<T> CreateExpectedResult<T>(string values, Func<string, T> create)
+    {
+        return values.Split(',')
+            .Where(t => !string.IsNullOrEmpty(t))
+            .Select(create)
+            .ToFrozenSet();
+    }
+    private static FrozenSet<string> CreateExpectedResultSet(string values)
+    {
+        return values.Split(',')
+            .Where(t => !string.IsNullOrEmpty(t))
+            .ToFrozenSet();
+    }
 
     private static ImmutableArray<IToken> GetAllTokens(string text)
     {
@@ -41,12 +54,13 @@ public class BodyArrayCompletionOptionsTest
     }
 
     [TestFixture]
-    public class GetOption : BodyArrayCompletionOptionsTest
+    public class GetOption : ArrayCompletionOptionsTest
     {
         private static IEnumerable<GetOptionTestCase> GetTestCasesForNameWithExpectedResult()
         {
             var defaultSuggestions = ArrayProperties.GetNames(".DISK_FILE")
-                .Select(s => new Suggestion(SuggestionOrigin.PropertyName, s))
+                .Select(s => new StandardSuggestion(SuggestionOrigin.PropertyName, s))
+                .Cast<Suggestion>()
                 .ToFrozenSet();
             yield return CreateCase(".disk { [hide|", 0, 0, new CompletionOption("hide", 0, "", []));
             yield return CreateCase(".disk { [|", 0, 0, new CompletionOption("", 0, "", defaultSuggestions));
@@ -56,7 +70,7 @@ public class BodyArrayCompletionOptionsTest
         [TestCaseSource(nameof(GetTestCasesForNameWithExpectedResult))]
         public void GivenSampleForName_ReturnsExpectedResult(GetOptionTestCase td)
         {
-            var actual = BodyArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
+            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
 
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
@@ -67,7 +81,8 @@ public class BodyArrayCompletionOptionsTest
             ArrayProperties.GetProperty(".DISK_FILE", "hide", out var property);
 
             var defaultSuggestions = ArrayPropertyValues.BoolValues
-                .Select(s => new Suggestion(SuggestionOrigin.PropertyValue, s))
+                .Select(s => new StandardSuggestion(SuggestionOrigin.PropertyValue, s))
+                .Cast<Suggestion>()
                 .ToFrozenSet();
             yield return CreateCase(".disk { [hide=\"|x", 0, 0, new CompletionOption("\"", 2, "", []));
             yield return CreateCase("""
@@ -83,7 +98,7 @@ public class BodyArrayCompletionOptionsTest
         [TestCaseSource(nameof(GetTestCasesForValueWithExpectedResult))]
         public void GivenSampleForValue_ReturnsExpectedResult(GetOptionTestCase td)
         {
-            var actual = BodyArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
+            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
 
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
@@ -100,29 +115,25 @@ public class BodyArrayCompletionOptionsTest
         [TestCaseSource(nameof(GetTestCasesForNameWithoutExpectedResult))]
         public void GivenSample_ReturnsNullExpectedResult(GetOptionTestCase td)
         {
-            var actual = BodyArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
+            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
 
             Assert.That(actual, Is.Null);
         }
     }
 
     [TestFixture]
-    public class CreateSuggestionsForArrayValue : BodyArrayCompletionOptionsTest
+    public class CreateSuggestionsForArrayValue : ArrayCompletionOptionsTest
     {
-        private static FrozenSet<Suggestion> CreateExpectedResult(string values)
-        {
-            return values.Split(',')
-                .Where(t => !string.IsNullOrEmpty(t))
-                .Select(p => new Suggestion(SuggestionOrigin.PropertyValue, p))
-                .ToFrozenSet();
-        }
+        private static FrozenSet<Suggestion> CreateExpectedResult(string values) =>
+            CreateExpectedResult<Suggestion>(values, v => new StandardSuggestion(SuggestionOrigin.PropertyValue, v));
+
         [TestCase("", "hide", "", "true,false")]
         [TestCase("t", "hide", "", "true")]
         public void GivenTestCaseForBoolValue_ReturnsCorrectSuggestions(string root, string propertyName, string? value, string expectedResult)
         {
             var arrayProperty = new ValuesArrayProperty("hide", ArrayPropertyType.Bool, ArrayPropertyValues.BoolValues.ToFrozenSet());
 
-            var actual = BodyArrayCompletionOptions.CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, NoOpContext)
+            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, NoOpContext)
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
@@ -138,12 +149,55 @@ public class BodyArrayCompletionOptionsTest
             var arrayProperty = new ValuesArrayProperty("hide", ArrayPropertyType.QuotedEnumerable,
                 new HashSet<string> { "prg", "bin" }.ToFrozenSet());
 
-            var actual = BodyArrayCompletionOptions.CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, NoOpContext)
+            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, NoOpContext)
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
 
             Assert.That(actual, Is.EqualTo(expected));
+        }
+        [TestCase("", "segments", "", "sx1,sy2")]
+        [TestCase("s", "segments", "", "sx1,sy2")]
+        [TestCase("sx", "segments", "", "sx1")]
+        [TestCase("sx1", "segments", "", "")]
+        public void GivenTestCaseForSegments_ReturnsCorrectSuggestions(string root, string propertyName, string? value,
+            string expectedResult)
+        {
+
+            var projectServices = Substitute.For<IProjectServices>();
+            projectServices.CollectSegments().Returns(["sx1", "sy2"]);
+            var arrayProperty = new ValuesArrayProperty("segments", ArrayPropertyType.Segments);
+            
+            var actual = ArrayCompletionOptions
+                .CreateSuggestionsForArrayValue(root, propertyName, value, arrayProperty, new CompletionOptionContext(projectServices))
+                .Suggestions;
+
+            var expected = CreateExpectedResult(expectedResult);
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+    }
+
+    [TestFixture]
+    public class GetArrayValues : ArrayCompletionOptionsTest
+    {
+        [TestCase(null, "")]
+        [TestCase("", "")]
+        [TestCase("\"a", "a")]
+        [TestCase("\"a\"", "a")]
+        [TestCase("\"a, a b", "a,a b")]
+        [TestCase("\"alfa.prg", "alfa.prg")]
+        [TestCase("\"alfa.prg,", "alfa.prg")]
+        [TestCase("\"alfa.prg,a.prg", "alfa.prg,a.prg")]
+        [TestCase("\"alfa.prg,a.prg\"", "alfa.prg,a.prg")]
+
+        public void GivenTestCase_ReturnsCorrectSet(string? values, string expectedText)
+        {
+            var actual = ArrayCompletionOptions.GetArrayValues(values);
+            
+            var expected = CreateExpectedResultSet(expectedText);
+            
+            Assert.That(actual.SetEquals(expected), Is.True);
         }
     }
 }

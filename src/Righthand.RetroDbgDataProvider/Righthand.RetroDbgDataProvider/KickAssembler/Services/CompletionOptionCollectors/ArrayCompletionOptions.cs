@@ -7,7 +7,7 @@ using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public static class BodyArrayCompletionOptions
+public static class ArrayCompletionOptions
 {
     /// <summary>
     /// Get completion option for arrays within a body, such as files in .disk.
@@ -90,7 +90,8 @@ public static class BodyArrayCompletionOptions
                 var replacementLength = name is not null ? name.StopIndex - absoluteColumn + 1 : 0;
                 var suggestedValues = ArrayProperties
                     .GetNames(arrayOwner, root)
-                    .Select(v => new Suggestion(SuggestionOrigin.PropertyName, v))
+                    .Select(v => new StandardSuggestion(SuggestionOrigin.PropertyName, v))
+                    .Cast<Suggestion>()
                     .ToFrozenSet();
                 return new CompletionOption(root, replacementLength, "", suggestedValues);
             case PositionWithinArray.Value:
@@ -123,17 +124,20 @@ public static class BodyArrayCompletionOptions
             endsWithDoubleQuote = false;
         }
 
-        FrozenSet<string> suggestionTexts = [];
+        FrozenSet<string> suggestionTexts;
+        FrozenSet<Suggestion> suggestions = [];
         switch (arrayProperty.Type)
         {
             case ArrayPropertyType.Bool:
                 suggestionTexts = [.. ArrayPropertyValues.BoolValues];
+                suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, suggestionTexts, SuggestionOrigin.PropertyValue);
                 break;
             case ArrayPropertyType.QuotedEnumerable:
             {
                 if (arrayProperty is ValuesArrayProperty valuesProperty)
                 {
                     suggestionTexts = valuesProperty.Values?.Select(v => $"\"{v}\"").ToFrozenSet() ?? [];
+                    suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, suggestionTexts, SuggestionOrigin.PropertyValue);
                 }
             }
 
@@ -143,62 +147,40 @@ public static class BodyArrayCompletionOptions
                 if (arrayProperty is ValuesArrayProperty valuesProperty)
                 {
                     suggestionTexts = valuesProperty.Values ?? [];
+                    suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, suggestionTexts, SuggestionOrigin.PropertyValue);
                 }
+
+                break;
             }
 
-                break;
             case ArrayPropertyType.Segments:
-                FrozenSet<string> excluded = [];
-                suggestionTexts = CollectSegmentsSuggestions(root, excluded, context.SourceFiles);
+            {
+                var excluded = GetArrayValues(value);
+                suggestionTexts = CompletionOptionCollectorsCommon.CollectSegmentsSuggestions(root, excluded, context.ProjectServices);
+                suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, suggestionTexts, SuggestionOrigin.PropertyValue);
                 break;
+            }
+            case ArrayPropertyType.FileNames:
+            {
+                var excluded = GetArrayValues(value);
+                var property = (FileArrayProperty)arrayProperty;
+                suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, property.ValidExtensions, excluded, context.ProjectServices);
+                break;
+            }
         }
-
-        FrozenSet<Suggestion> suggestions =
-            suggestionTexts.Count > 0 
-                ? suggestionTexts
-                    .Where(t => t.StartsWith(root, StringComparison.OrdinalIgnoreCase))
-                    .Select(t => new Suggestion(SuggestionOrigin.PropertyValue, t)).ToFrozenSet() 
-                : [];
         return new CompletionOption(root, replacementLength, endsWithDoubleQuote ? "\"" : "", suggestions);
     }
 
-    internal static FrozenSet<string> CollectSegmentsSuggestions(string rootText, FrozenSet<string> excluded, ISourceCodeParser<ParsedSourceFile> sourceFiles)
+    internal static FrozenSet<string> GetArrayValues(string? value)
     {
-        var builder = new List<string>();
-        var allFiles = sourceFiles.AllFiles;
-        foreach (var k in allFiles.Keys)
+        if (value is not null && value.StartsWith('\"'))
         {
-            Debug.WriteLine($"Looking at {k}");
-            var fileWithSet = allFiles.GetValueOrDefault(k);
-            if (fileWithSet is not null)
-            {
-                foreach (var s in fileWithSet.AllDefineSets)
-                {
-                    Debug.WriteLine($"\tLooking at set {string.Join(", ", s)}");
-                    var parsedSourceFile = allFiles.GetFileOrDefault(k, s);
-                    if (parsedSourceFile is not null)
-                    {
-                        foreach (var si in parsedSourceFile.SegmentDefinitions)
-                        {
-                            if (!excluded.Contains(si.Name) &&
-                                si.Name.StartsWith(rootText, StringComparison.Ordinal))
-                            {
-                                builder.Add(si.Name);
-                            }
-                            else
-                            {
-                                Debug.WriteLine($"Segment {si.Name} is excluded");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Failed to get parsed source file");
-                    }
-                }
-            }
+            int length = value.Length > 1 && value.EndsWith('\"') ? value.Length - 1 : value.Length;
+            return TokenListOperations.GetArrayValues(value, 0, length).Distinct().ToFrozenSet();
         }
-
-        return builder.Distinct().ToFrozenSet();
+        else
+        {
+            return [];
+        }
     }
 }

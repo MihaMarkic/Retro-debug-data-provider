@@ -1,8 +1,11 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
 using Antlr4.Runtime;
+using NSubstitute;
 using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
+using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -47,59 +50,63 @@ public class FileReferenceCompletionOptionsTest
             return (zeroBasedColumn, tokenIndex, tokens);
         }
 
-        // /// <summary>
-        // /// | signifies the caret position.
-        // /// </summary>
-        // /// <param name="input"></param>
-        // /// <returns></returns>
-        // [TestCase("#import \"|", ExpectedResult = true)]
-        // [TestCase("  #import \"|", ExpectedResult = true)]
-        // [TestCase("#import |\"", ExpectedResult = false)]
-        // [TestCase("#import x \"|", ExpectedResult = false)]
-        // [TestCase("#importif \"|", ExpectedResult = true)]
-        // [TestCase("  #importif \"|", ExpectedResult = true)]
-        // [TestCase("#importif |\"", ExpectedResult = false)]
-        // [TestCase("#importif x \"|", ExpectedResult = true)]
-        // [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
-        // public bool CharacterTypedCases(string input)
-        // {
-            // var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
-            //
-            // var actual =
-            //     FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input.Replace("|", ""),
-            //         TextChangeTrigger.CharacterTyped,
-            //         zeroBasedColumn);
-            //
-            // return actual?.Type == CompletionOptionType.FileReference;
-        // }
+        /// <summary>
+        /// | signifies the caret position.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [TestCase("#import \"|", ExpectedResult = true)]
+        [TestCase("  #import \"|", ExpectedResult = true)]
+        [TestCase("#import |\"", ExpectedResult = false)]
+        [TestCase("#import x \"|", ExpectedResult = false)]
+        [TestCase("#importif \"|", ExpectedResult = true)]
+        [TestCase("  #importif \"|", ExpectedResult = true)]
+        [TestCase("#importif |\"", ExpectedResult = false)]
+        [TestCase("#importif x \"|", ExpectedResult = true)]
+        [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
+        public bool GivenTestCase_ReturnsWhetherCompletionOptionHasBeenFound(string input)
+        {
+            var projectServices = Substitute.For<IProjectServices>();
+            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<string, FrozenSet<string>>.Empty);
+            var context = new CompletionOptionContext(projectServices);
 
-        // /// <summary>
-        // /// | signifies the caret position.
-        // /// </summary>
-        // /// <param name="input"></param>
-        // /// <returns></returns>
-        // [TestCase("#import \"|", ExpectedResult = true)]
-        // [TestCase("  #import \"|", ExpectedResult = true)]
-        // [TestCase("#import |\"", ExpectedResult = false)]
-        // [TestCase("#import x \"|", ExpectedResult = false)]
-        // [TestCase("#importif \"|", ExpectedResult = true)]
-        // [TestCase("  #importif \"|", ExpectedResult = true)]
-        // [TestCase("#importif |\"", ExpectedResult = false)]
-        // [TestCase("#importif x \"|", ExpectedResult = true)]
-        // [TestCase("#import \"|multi_import.asm\"", ExpectedResult = true)]
-        // [TestCase("#import \"multi|_import.asm\"", ExpectedResult = true)]
-        // [TestCase("#import \"multi_import.as|m\"", ExpectedResult = true)]
-        // [TestCase("#import \"multi_import.as|", ExpectedResult = true)]
-        // public bool CompletionRequestedTypedCases(string input)
-        // {
-        //     var (zeroBasedColumn, tokenIndex, tokens) = GetColumnAndTokenIndex(input);
-        //
-        //     var actual =
-        //         FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input,
-        //             TextChangeTrigger.CompletionRequested,
-        //             zeroBasedColumn);
-        //
-        //     return actual?.Type == CompletionOptionType.FileReference;
-        // }
+            var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
+            
+            var actual =
+                FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input.Replace("|", ""),
+                    TextChangeTrigger.CharacterTyped,
+                    zeroBasedColumn, context);
+
+            return actual is not null;
+        }
+
+        /// <summary>
+        /// | signifies the caret position.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [TestCase("#import \"|", ExpectedResult = true)]
+        [TestCase("  #import \"|", ExpectedResult = true)]
+        [TestCase("#import |\"", ExpectedResult = false)]
+        [TestCase("#import x \"|", ExpectedResult = false)]
+        [TestCase("#importif \"|", ExpectedResult = true)]
+        [TestCase("  #importif \"|", ExpectedResult = true)]
+        [TestCase("#importif |\"", ExpectedResult = false)]
+        [TestCase("#importif x \"|", ExpectedResult = true)]
+        public bool CompletionRequestedTypedCases(string input)
+        {
+            var projectServices = Substitute.For<IProjectServices>();
+            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<string, FrozenSet<string>>.Empty);
+            var context = new CompletionOptionContext(projectServices);
+
+            var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
+            
+            var actual =
+                FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input.Replace("|", ""),
+                    TextChangeTrigger.CompletionRequested,
+                    zeroBasedColumn, context);
+
+            return actual is not null;
+        }
     }
 }

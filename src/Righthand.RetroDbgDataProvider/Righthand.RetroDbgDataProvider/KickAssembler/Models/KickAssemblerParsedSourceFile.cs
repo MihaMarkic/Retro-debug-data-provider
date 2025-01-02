@@ -70,7 +70,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="tokens">Tokens from default channel</param>
     /// <param name="allTokensByLineMap"></param>
     /// <param name="trigger"></param>
-    /// <param name="line"></param>
+    /// <param name="lineNumber"></param>
     /// <param name="column"></param>
     /// <param name="text"></param>
     /// <param name="textStart"></param>
@@ -78,64 +78,64 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetCompletionOption(ImmutableArray<IToken> tokens,
-        FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int line,
+        FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int lineNumber,
         int column, string text, int textStart, int textLength, CompletionOptionContext context)
     {
-        if (!allTokensByLineMap.TryGetValue(line, out var tokensAtLine))
+        if (!allTokensByLineMap.TryGetValue(lineNumber, out var tokensAtLine))
         {
             return null;
         }
 
         var lineToCursor = text.AsSpan().Slice(textStart, column+1);
-        var syntaxStateAtColumn = CompletionOptionCollectorsCommon.GetSyntaxStatusAtThenEnd(lineToCursor);
-        if (syntaxStateAtColumn.HasFlag(SyntaxStatus.Comment) || syntaxStateAtColumn.HasFlag(SyntaxStatus.Error))
-        {
-            Debug.WriteLine($"Failed pre-parsing because of {syntaxStateAtColumn}");
-            return null;
-        }
+        var line = text.AsSpan()[textStart..(textStart + textLength)];
+        var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context)
+                     ?? PreprocessorDirectivesCompletionOptions.GetOption(line, trigger, column)
+                     ?? DirectiveCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context)
+                     ?? FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), line, trigger, column, context);
 
-        var textSpan = text.AsSpan()[textStart..(textStart + textLength)];
-        CompletionOption? result = PreprocessorDirectivesCompletionOptions.GetOption(textSpan, trigger, column);
-        if (result is null)
-        {
-            if (syntaxStateAtColumn == SyntaxStatus.Array)
-            {
-                result = ArrayPropertiesCompletionOptions.GetOption(text, textStart, textLength, column);
-            }
-
-            if (result is null)
-            {
-                if (syntaxStateAtColumn.HasFlag(SyntaxStatus.Array))
-                {
-                    result = BodyArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context);
-                }
-
-                if (result is null)
-                {
-                    if (syntaxStateAtColumn == SyntaxStatus.String)
-                    {
-                        result = FileReferenceCompletionOptions.GetOption(tokensAtLine.AsSpan(), textSpan, trigger, column)
-                                 ?? QuotedCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength,
-                                     trigger, column);
-                    }
-
-                    if (result is null && syntaxStateAtColumn.HasFlag(SyntaxStatus.Array) &&
-                        syntaxStateAtColumn.HasFlag(SyntaxStatus.String))
-                    {
-                        result = QuotedWithinArrayCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger, column, ValuesCount.Multiple);
-                    }
-                }
-            }
-        }
+        // var lineToCursor = text.AsSpan().Slice(textStart, column+1);
+        // var syntaxStateAtColumn = CompletionOptionCollectorsCommon.GetSyntaxStatusAtThenEnd(lineToCursor);
+        // if (syntaxStateAtColumn.HasFlag(SyntaxStatus.Comment) || syntaxStateAtColumn.HasFlag(SyntaxStatus.Error))
+        // {
+        //     Debug.WriteLine($"Failed pre-parsing because of {syntaxStateAtColumn}");
+        //     return null;
+        // }
+        //
+        // var textSpan = text.AsSpan()[textStart..(textStart + textLength)];
+        // CompletionOption? result = PreprocessorDirectivesCompletionOptions.GetOption(textSpan, trigger, column);
+        // if (result is null)
+        // {
+        //     if (syntaxStateAtColumn == SyntaxStatus.Array)
+        //     {
+        //         result = ArrayPropertiesCompletionOptions.GetOption(text, textStart, textLength, column);
+        //     }
+        //
+        //     if (result is null)
+        //     {
+        //         if (syntaxStateAtColumn.HasFlag(SyntaxStatus.Array))
+        //         {
+        //             result = BodyArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context);
+        //         }
+        //
+        //         if (result is null)
+        //         {
+        //             if (syntaxStateAtColumn == SyntaxStatus.String)
+        //             {
+        //                 result = FileReferenceCompletionOptions.GetOption(tokensAtLine.AsSpan(), textSpan, trigger, column)
+        //                          ?? QuotedCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength,
+        //                              trigger, column);
+        //             }
+        //
+        //             if (result is null && syntaxStateAtColumn.HasFlag(SyntaxStatus.Array) &&
+        //                 syntaxStateAtColumn.HasFlag(SyntaxStatus.String))
+        //             {
+        //                 result = QuotedWithinArrayCompletionOptions.GetOption(tokensAtLine.AsSpan(), text, textStart, textLength, trigger, column, ValuesCount.Multiple);
+        //             }
+        //         }
+        //     }
+        // }
 
         return result;
-    }
-
-
-    /// <inheritdoc />
-    public override ImmutableArray<string> GetPreprocessorDirectiveSuggestions(string root)
-    {
-        return GetMatches(root.AsSpan(), 1, KickAssemblerLexer.PreprocessorDirectives.AsSpan());
     }
     /// <summary>
     /// Matches all those items from list that have same root.

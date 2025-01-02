@@ -3,10 +3,10 @@ using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionColl
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionOptionCollectors;
 
-public class QuotedCompletionOptionsTest
+public class DirectiveCompletionOptionsTest
 {
     [TestFixture]
-    public class IsCursorWithinNonArray : QuotedCompletionOptionsTest
+    public class IsCursorWithinNonArray : DirectiveCompletionOptionsTest
     {
         [TestCase(".import c64 \"")]
         [TestCase(".import c64 \"xx/p")]
@@ -16,7 +16,7 @@ public class QuotedCompletionOptionsTest
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
         {
             var actual =
-                QuotedCompletionOptions.IsCursorWithinNonArray(line, 0, line.Length, line.Length-1);
+                DirectiveCompletionOptions.IsCursorWithinNonArrayValue(line, 0, line.Length, line.Length-1);
 
             Assert.That(actual, Is.Not.Null);
         }
@@ -26,7 +26,7 @@ public class QuotedCompletionOptionsTest
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNullResult(string line)
         {
             var actual =
-                QuotedCompletionOptions.IsCursorWithinNonArray(line, 0, line.Length, line.Length-1);
+                DirectiveCompletionOptions.IsCursorWithinNonArrayValue(line, 0, line.Length, line.Length-1);
 
             Assert.That(actual, Is.Null);
         }
@@ -37,7 +37,7 @@ public class QuotedCompletionOptionsTest
         public string? GivenSampleInputWithOnlyPrefix_ReturnsCorrectRoot(string line)
         {
             var actual =
-                QuotedCompletionOptions.IsCursorWithinNonArray(line, 0, line.Length, line.Length-1);
+                DirectiveCompletionOptions.IsCursorWithinNonArrayValue(line, 0, line.Length, line.Length-1);
             return actual?.Root;
         }
         [TestCase(".import c64 \"xx/p", 13, ExpectedResult = "x")]
@@ -46,7 +46,7 @@ public class QuotedCompletionOptionsTest
         public string? GivenSampleInputWithCursorInBetween_ReturnsCorrectRoot(string line, int cursor)
         {
             var actual =
-                QuotedCompletionOptions.IsCursorWithinNonArray(line, 0, line.Length, cursor);
+                DirectiveCompletionOptions.IsCursorWithinNonArrayValue(line, 0, line.Length, cursor);
             return actual?.Root;
         }
     }

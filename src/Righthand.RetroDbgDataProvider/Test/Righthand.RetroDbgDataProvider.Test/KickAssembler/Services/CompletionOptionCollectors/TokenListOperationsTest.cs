@@ -191,99 +191,26 @@ public class TokenListOperationsTest
             CreateProperties(ImmutableArray<IToken> tokens, params ImmutableArray<(int TokenIndex, ArrayPropertyMetaBuilder MetaBuilder)> items)
             => items.ToFrozenDictionary(i => tokens[i.TokenIndex], i => i.MetaBuilder.Create(tokens));
 
-        internal class TokenValueBuilder
+        private static (FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, IToken Name) GetValues(string source)
         {
-            private readonly TokenBuilder _tokenBuilder;
-            private readonly IToken _name;
-            private readonly List<IToken> _tokens = new ();
-            private bool _isAssignment;
-
-            internal TokenValueBuilder(TokenBuilder tokenBuilder, string name)
-            {
-                _tokenBuilder = tokenBuilder;
-                _name = _tokenBuilder.AddAny(name, UNQUOTED_STRING);
-            }
-
-            internal TokenValueBuilder AddSpace(int length)
-            {
-                _tokenBuilder.AddSpace(length);
-                return this;
-            }
-
-            internal TokenValueBuilder AddAssignment()
-            {
-                _tokenBuilder.AddAny("=", ASSIGNMENT);
-                _isAssignment = true;
-                return this;
-            }
-
-            internal TokenValueBuilder AddValue(string text, int type)
-            {
-                var token = _tokenBuilder.AddAny(text, type);
-                _tokens.Add(token);
-                return this;
-            }
-
-            internal TokenBuilder Commit()
-            {
-                _tokenBuilder.Store(_name, ArrayPropertyMeta.Empty);
-                return _tokenBuilder;
-            }
-        }
-        internal class TokenBuilder
-        {
-            private readonly StringBuilder _stringBuilder = new();
-            private readonly List<IToken> _tokens = new ();
-            private readonly Dictionary<IToken, ArrayPropertyMeta> _properties = new();
-
-            internal TokenValueBuilder AddName(string name)
-            {
-                return new TokenValueBuilder(this, name);
-            }
-
-            internal TokenBuilder AddSpace(int length)
-            {
-                _stringBuilder.Append(new string[length]);
-                return this;
-            }
-
-            internal TokenBuilder Store(IToken token, ArrayPropertyMeta meta)
-            {
-                _properties.Add(token, ArrayPropertyMeta.Empty);
-                return this;
-            }
-
-            internal IToken AddAny(string text, int type)
-            {
-                var token = new MockToken
-                {
-                    Type = UNQUOTED_STRING,
-                    StartIndex = _stringBuilder.Length,
-                    StopIndex = _stringBuilder.Length + text.Length,
-                    Text = text,
-                };
-                _tokens.Add(token);
-                _properties.Add(token, ArrayPropertyMeta.Empty);
-                _stringBuilder.Append(text);
-                return token;
-            }
-
-            public (string Content, FrozenDictionary<IToken, ArrayPropertyMeta> Meta, ImmutableArray<IToken> Tokens) Build()
-                => (_stringBuilder.ToString(), _properties.ToFrozenDictionary(), _tokens.ToImmutableArray());
+            var tokens = GetAllTokens(source);
+            var properties = TokenListOperations.GetArrayProperties(tokens.AsSpan());
+            return (properties, source, tokens.First(t => !string.IsNullOrWhiteSpace(t.Text)));
         }
 
         private static IEnumerable<(FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, int AbsolutePosition, 
             (IToken? Name, PositionWithinArray Position, string Root, string Value) ExpectedResult)> GetSource()
         {
             {
-                // var (content, meta, tokens) = new TokenBuilder()
-                //     .AddName("first").AddSpace(1).Commit()
-                //     .Build();
-                const string source = "first";
-                var tokens = GetAllTokens(source);
-                var properties = TokenListOperations.GetArrayProperties(tokens.AsSpan());
+                var (properties, source, name) = GetValues("first");
+                yield return (properties, source, 5, (name, PositionWithinArray.Name, "first", ""));
                 
-                yield return (properties, source, 5, (tokens[0], PositionWithinArray.Name, "first", ""));
+                (properties, source, name) = GetValues(" alfa");
+                yield return (properties, source, 5, (name, PositionWithinArray.Name, "alfa", ""));
+                
+                (properties, source, name) = GetValues(" alfa, ");
+                yield return (properties, source, 5, (name, PositionWithinArray.Name, "alfa", ""));
+                yield return (properties, source, 6, (null, PositionWithinArray.Name, "", ""));
             }
         }
 

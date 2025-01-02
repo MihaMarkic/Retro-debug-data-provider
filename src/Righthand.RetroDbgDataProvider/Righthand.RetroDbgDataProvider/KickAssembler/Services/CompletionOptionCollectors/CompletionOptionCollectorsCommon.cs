@@ -1,4 +1,7 @@
-﻿using Antlr4.Runtime;
+﻿using System.Collections.Frozen;
+using Antlr4.Runtime;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
+using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -14,6 +17,40 @@ public enum SyntaxStatus
 
 public static class CompletionOptionCollectorsCommon
 {
+    internal static FrozenSet<Suggestion> CreateSuggestionsFromTexts(string root, FrozenSet<string> suggestionTexts, SuggestionOrigin origin)
+    {
+        return suggestionTexts.Count > 0
+            ? suggestionTexts
+                .Where(t => t.StartsWith(root, StringComparison.OrdinalIgnoreCase) && !t.Equals(root, StringComparison.OrdinalIgnoreCase))
+                .Select(t => new StandardSuggestion(origin, t))
+                .Cast<Suggestion>()
+                .ToFrozenSet() 
+            : [];
+    }
+    
+
+    internal static FrozenSet<string> CollectSegmentsSuggestions(string rootText, FrozenSet<string> excluded, IProjectServices projectServices)
+    {
+        var result = projectServices.CollectSegments()
+            .Where(s => !excluded.Contains(s) && s.StartsWith(rootText, StringComparison.OrdinalIgnoreCase))
+            .Distinct()
+            .ToFrozenSet();
+        return result;
+    }
+    internal static FrozenSet<Suggestion> CollectFileSuggestions(string rootText, FrozenSet<string> fileExtensions, FrozenSet<string> excluded, IProjectServices projectServices)
+    {
+        var builder = new HashSet<Suggestion>();
+        var files = projectServices.GetMatchingFiles(rootText, fileExtensions, excluded);
+        foreach (var p in files)
+        {
+            foreach (var f in p.Value)
+            {
+                builder.Add(new FileSuggestion( Path.GetFileName(f), p.Key));
+            }
+        }
+        return builder.ToFrozenSet();
+    }
+    
     /// <summary>
     /// Extracts text of left caret, entire replaceable length and whether it ends with double quote or not
     /// </summary>

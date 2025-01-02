@@ -13,19 +13,21 @@ public static class FileReferenceCompletionOptions
     /// <param name="line"></param>
     /// <param name="trigger"></param>
     /// <param name="column"></param>
+    /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens,
-        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column, CompletionOptionContext context)
     {
         var leftLinePart = line[..(column + 1)];
         var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(tokens, leftLinePart, trigger);
         if (isMatch)
         {
             var suggestionLine = line[(doubleQuoteColumn + 1)..];
-            var (rootText, length, endsWithDoubleQuote) =
-                CompletionOptionCollectorsCommon.GetSuggestionTextInDoubleQuotes(suggestionLine,
-                    column - doubleQuoteColumn);
-            //return new CompletionOption(CompletionOptionType.FileReference, rootText, endsWithDoubleQuote, length, FrozenSet<string>.Empty);
+            var (rootText, length, endsWithDoubleQuote) = CompletionOptionCollectorsCommon.GetSuggestionTextInDoubleQuotes(suggestionLine, column - doubleQuoteColumn);
+            FrozenSet<string> excluded = [suggestionLine.Slice(0, length).ToString()];
+            FrozenSet<string> fileExtensions = ["asm"];
+            var suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(rootText, fileExtensions, excluded, context.ProjectServices);
+            return new CompletionOption(rootText, length, endsWithDoubleQuote ? "": "\"", suggestions);
         }
 
         return null;

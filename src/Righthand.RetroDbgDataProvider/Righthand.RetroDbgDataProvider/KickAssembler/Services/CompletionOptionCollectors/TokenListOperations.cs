@@ -1,7 +1,9 @@
 using System.Collections.Frozen;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Dfa;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
@@ -36,7 +38,7 @@ public record ArrayPropertyMeta(IToken? Assignment = null, IToken? StartValue = 
     }
 }
 
-public static class TokenListOperations
+public static partial class TokenListOperations
 {
     public enum TokenTypeFamily
     {
@@ -100,7 +102,7 @@ public static class TokenListOperations
             bool isWithinProperty;
             if (comma is not null)
             {
-                isWithinProperty = name.StartIndex <= absolutePosition && comma.StopIndex > absolutePosition;
+                isWithinProperty = name.StartIndex <= absolutePosition && comma.StopIndex >= absolutePosition;
             }
             else
             {
@@ -235,6 +237,38 @@ public static class TokenListOperations
         Assignment,
         Value,
         Comma,
+    }
+    
+    [GeneratedRegex("""
+                    ^"(\s*(?<ArrayItem>[^,"]*)\s*,)*\s*(?<LastItem>[^,"]*)?
+                    """, RegexOptions.Singleline)]
+    private static partial Regex GetArrayValuesRegex();
+    /// <summary>
+    /// Collects all coma delimited values within a string.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="start"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    internal static ImmutableArray<string> GetArrayValues(string text, int start, int length)
+    {
+        var m = GetArrayValuesRegex().Match(text, start, length);
+        if (m.Success)
+        {
+            var items = m.Groups["ArrayItem"].Captures
+                .Where(c => !string.IsNullOrWhiteSpace(c.Value))
+                .Select(c => c.Value)
+                .ToImmutableArray();
+            string? lastItem = m.Groups["LastItem"].Value;
+            if (!string.IsNullOrWhiteSpace(lastItem))
+            {
+                return items.Add(lastItem);
+            }
+
+            return items;
+        }
+
+        return [];
     }
 
     /// <summary>

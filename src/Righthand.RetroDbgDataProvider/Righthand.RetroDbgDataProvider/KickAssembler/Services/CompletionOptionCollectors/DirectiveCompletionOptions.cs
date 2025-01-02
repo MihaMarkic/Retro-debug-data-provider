@@ -6,10 +6,9 @@ using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public static partial class QuotedCompletionOptions
+public static partial class DirectiveCompletionOptions
 {
-    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens,
-        string text, int lineStart, int lineLength, TextChangeTrigger trigger, int column)
+    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens, string text, int lineStart, int lineLength, int column, CompletionOptionContext context)
     {
         var line = text.AsSpan()[lineStart..(lineStart + lineLength)];
         if (line.Length == 0)
@@ -17,8 +16,26 @@ public static partial class QuotedCompletionOptions
             return null;
         }
 
-        // TODO properly handle valuesCountSupport (to limit it to single value when required)
-        var cursorWithinArray = IsCursorWithinNonArray(text, lineStart, lineLength, column);
+        var cursorWithinArray = IsCursorWithinNonArrayValue(text, lineStart, lineLength, column);
+        if (cursorWithinArray is not null)
+        {
+            var (keyword, parameter, root, currentValue, replacementLength, hasEndDelimiter) = cursorWithinArray.Value;
+            var directiveValues = DirectiveProperties.GetValueType(keyword, parameter);
+            if (directiveValues is not null)
+            {
+                var fileExtensions = directiveValues.Items.OfType<FileDirectiveValueType>()
+                    .Select(vt => vt.FileExtension)
+                    .ToFrozenSet();
+                FrozenSet<string> excluded = [currentValue];
+                if (fileExtensions.Count > 0)
+                {
+                    var suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, fileExtensions, excluded, context.ProjectServices);
+                    return new CompletionOption(root, replacementLength, string.Empty, suggestions.ToFrozenSet());
+                }
+            }
+
+            return null;
+        }
         // if (cursorWithinArray is not null)
         // {
         //     CompletionOptionType? completionOptionType = cursorWithinArray.Value.KeyWord switch
@@ -52,7 +69,7 @@ public static partial class QuotedCompletionOptions
                     """, RegexOptions.Singleline)]
     private static partial Regex NonArraySuggestionTemplateRegex();
 
-    internal static IsCursorWithinNonArrayResult? IsCursorWithinNonArray(string text, int lineStart, int lineLength,
+    internal static IsCursorWithinNonArrayResult? IsCursorWithinNonArrayValue(string text, int lineStart, int lineLength,
         int cursor)
     {
         Debug.WriteLine($"Searching IsCursorWithinNonArray in: '{text.Substring(lineStart, cursor + 1)}'");

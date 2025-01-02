@@ -3,7 +3,6 @@ using System.Collections.Immutable;
 using Antlr4.Runtime;
 using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler;
-using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 using Righthand.RetroDbgDataProvider.Test.KickAssembler.Models;
 
@@ -40,31 +39,6 @@ public class CompletionOptionCollectorsCommonTest
                     GetArray((KickAssemblerLexer.WS, 0), (KickAssemblerLexer.STRING, 0), (KickAssemblerLexer.EOL, 1)),
                     GetArray((KickAssemblerLexer.STRING, 0)));
             }
-        }
-        [TestFixture]
-        public class GetSyntaxStatusAtThenEnd : QuotedWithinArrayCompletionOptionsTest
-        {
-            [TestCase("", ExpectedResult = SyntaxStatus.None)]
-            [TestCase("\"\"", ExpectedResult = SyntaxStatus.None)]
-            [TestCase("\"", ExpectedResult = SyntaxStatus.String)]
-            [TestCase("\"//\"", ExpectedResult = SyntaxStatus.None)]
-            [TestCase("\"xxx\"", ExpectedResult = SyntaxStatus.None)]
-            [TestCase("\"\"\"xxx\"", ExpectedResult = SyntaxStatus.None)]
-            [TestCase(".segmentdef tubo [a=\"", ExpectedResult = SyntaxStatus.Array | SyntaxStatus.String)]
-            [TestCase(".segmentdef tubo [a=", ExpectedResult = SyntaxStatus.Array)]
-            public SyntaxStatus GivenValidSample_ReturnsExpected(string text)
-            {
-                return CompletionOptionCollectorsCommon.GetSyntaxStatusAtThenEnd(text);
-            }
-            // [TestCase("//\"")]
-            // [TestCase("bla bla // kkkk")]
-            // [TestCase("\"\"\"")]
-            // public void GivenInvalidSample_ReturnsFalse(string text)
-            // {
-            //     var actual = CompletionOptionCollectorsCommon.GetSyntaxStatusAtThenEnd(text);
-            //
-            //     Assert.That(actual, Is.False);
-            // }
         }
 
         [TestFixture]

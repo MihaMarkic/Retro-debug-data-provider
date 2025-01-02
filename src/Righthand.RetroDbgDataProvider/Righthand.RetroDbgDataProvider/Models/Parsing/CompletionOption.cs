@@ -11,12 +11,16 @@ public enum TextChangeTrigger
 
 public enum SuggestionOrigin
 {
+    PreprocessorDirective,
     File,
     PropertyName,
     PropertyValue,
 }
 
-public record Suggestion(SuggestionOrigin Origin, string Text);
+public abstract record Suggestion(SuggestionOrigin Origin, string Text);
+
+public record StandardSuggestion(SuggestionOrigin Origin, string Text) : Suggestion(Origin, Text);
+public record FileSuggestion(string Text, string AdditionalInfo) : Suggestion(SuggestionOrigin.File, Text);
 
 public readonly struct CompletionOption
 {

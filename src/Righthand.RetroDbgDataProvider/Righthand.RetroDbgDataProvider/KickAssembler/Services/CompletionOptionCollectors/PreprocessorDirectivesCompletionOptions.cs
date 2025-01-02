@@ -11,8 +11,9 @@ public static partial class PreprocessorDirectivesCompletionOptions
         var (isMatch, root, replaceableText) = GetPreprocessorDirectiveSuggestion(line, trigger, column);
         if (isMatch)
         {
-            // return new CompletionOption(CompletionOptionType.PreprocessorDirective, root, false,
-            //     replaceableText.Length + 1, FrozenSet<string>.Empty);
+            var suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, KickAssemblerLexer.PreprocessorDirectives,
+                SuggestionOrigin.PreprocessorDirective);
+            return new CompletionOption(root, replaceableText.Length + 1, string.Empty, suggestions);
         }
 
         return null;
