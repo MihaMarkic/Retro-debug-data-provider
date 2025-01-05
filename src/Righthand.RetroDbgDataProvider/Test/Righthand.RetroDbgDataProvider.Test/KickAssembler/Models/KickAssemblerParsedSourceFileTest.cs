@@ -12,6 +12,7 @@ using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Models.Program;
+using Righthand.RetroDbgDataProvider.Services.Abstract;
 using CommonTokenStream = Antlr4.Runtime.CommonTokenStream;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Models;
@@ -20,7 +21,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 {
     readonly DateTimeOffset _lastModified = new DateTimeOffset(2020, 09, 09, 09, 01, 05, TimeSpan.Zero);
 
-    (KickAssemblerLexer Lexer, CommonTokenStream TokenStream, KickAssemblerParser Parser,
+    static (KickAssemblerLexer Lexer, CommonTokenStream TokenStream, KickAssemblerParser Parser,
         KickAssemblerParserListener ParserListener,
         KickAssemblerLexerErrorListener LexerErrorListener, KickAssemblerParserErrorListener ParserErrorListener)
         GetParsed(string text, params string[] definitions)
@@ -39,6 +40,16 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         parser.AddErrorListener(parserErrorListener);
         stream.Fill();
         return (lexer, stream, parser, parserListener, lexerErrorListener, parserErrorListener);
+    }
+
+    static (ImmutableArray<IToken> Tokens, FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap) GetTokens(string text, params string[] definitions)
+    {
+        var (_, tokenStream, _, _, _, _) = GetParsed(text.Replace("|", ""), definitions);
+        ImmutableArray<IToken> tokens = [..tokenStream.GetTokens().Where(t => t.Channel == 0)];
+        var allTokensByLineMap = tokens
+            .GroupBy(t => t.Line - 1)
+            .ToFrozenDictionary(g => g.Key, g => g.OrderBy(t => t.Column).ToImmutableArray());
+        return (tokens, allTokensByLineMap);
     }
 
     [TestFixture]
@@ -160,7 +171,133 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         }
     }
 
-    // [TestFixture]
+    [TestFixture]
+    public class GetCompletionOption : KickAssemblerParsedSourceFileTest
+    {
+        private static CompletionOptionContext NoOpContext { get; } = new (
+            Substitute.For<IProjectServices>()
+        );
+
+        private static CompletionOptionContext CreateContext(ImmutableArray<string> segments)
+        {
+            var projectServices = Substitute.For<IProjectServices>();
+            projectServices.CollectSegments().Returns(segments);
+            return new(projectServices);
+        }
+
+        /// <summary>
+        /// First column is -1
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private static (int Column, int LineNumber, int Start, int End, string Text, int TextLength) GetPosition(string text)
+        {
+            var lines = text.Split(Environment.NewLine);
+            int index = 0;
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                string lineText = lines[i];
+                int caretIndex = lineText.IndexOf('|');
+                if (caretIndex >= 0)
+                {
+                    // 1 should be subtracted from line length because of caret
+                    return (index + caretIndex - 1, i, index, index + lineText.Length - 1, text.Replace("|", ""), lineText.Length - 1);
+                }
+
+                if (index > 0)
+                {
+                    index += Environment.NewLine.Length;
+                }
+
+                index += lineText.Length;
+            }
+
+            throw new Exception("Couldn't find caret");
+        }
+
+        private static CompletionOption? RunTest(string text, TextChangeTrigger trigger)
+        {
+            var (tokens, tokensByLine) = GetTokens(text);
+            var (column, lineNumber, lineTextStart, lineTextEnd, realText, textLength) = GetPosition(text);
+            var context = CreateContext(["one1", "one2", "two1"]);
+            var actual = KickAssemblerParsedSourceFile.GetCompletionOption(tokens, tokensByLine, trigger, TriggerChar.DoubleQuote, lineNumber, column, realText, lineTextStart,
+                textLength, context);
+            return actual;
+        }
+
+        [TestCase(".segmentdef Base [segments=\"|\"]", "one1,one2,two1")]
+        [TestCase(".segmentdef Base [segments=|\"", "")]
+        [TestCase(".segmentdef Base [segments=\"o|\"]", "one1,one2")]
+        [TestCase(".segmentdef Base [segments=\"t,o|\"]", "one1,one2")]
+        [TestCase(".segmentdef Base [segments=\"t\"|", null)]
+        [TestCase(".segmentdef Base [segments=\"|]", "one1,one2,two1")]
+        public void GivenTestCaseForCharacterTypedTriggerA_ReturnsSuggestedTexts(string text, string? expectedText)
+        {
+            var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+            var actual = actualOption?.Suggestions.Select(s => s.Text).ToImmutableArray();
+            var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [TestCase(".segmentdef Base [segments=\"|\"]", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "o")]
+        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "o")]
+        [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
+        public string? GivenTestCaseForCharacterTypedTriggerA_ReturnsValueRoot(string text)
+        {
+            var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+            return actualOption?.RootText;
+        }
+
+        [TestCase(".segmentdef Base [segments=|", ExpectedResult = "\"")]
+        [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "")]
+        public string? GivenTestCase_PrependsDoubleQuotesWhenExpected(string text)
+        {
+            var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+            return actual?.PrependText;
+        }
+
+        [TestCase(".segmentdef Base [segments=|", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "")]
+        [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
+        public string? GivenTestCase_AppendsDoubleQuotesWhenExpected(string text)
+        {
+            var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+            return actual?.AppendText;
+        }
+        
+        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = 1)]
+        [TestCase(".segmentdef Base [segments=\"|o\"]", ExpectedResult = 1)]
+        [TestCase(".segmentdef Base [segments=|\"o\"]", ExpectedResult = 1)]
+        [TestCase(".segmentdef Base [segments=\"o|]", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"|o]", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"|", ExpectedResult = 0)]
+        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = 1)]
+        [TestCase(".segmentdef Base [segments=\"t,o|x\"]", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"t,o|x,\"]", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"t,o|x\"", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"t,o|x,\"", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"t,o|x", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"t,o|x,", ExpectedResult = 2)]
+        [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = 0)]
+        public int? GivenTestCase_ReplacementLenghtIsCorrect(string text)
+        {
+            var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+            return actual?.ReplacementLength;
+        }
+    }
+// [TestFixture]
     // public class GetCompletionOption : KickAssemblerParsedSourceFileTest
     // {
     //     [Test]

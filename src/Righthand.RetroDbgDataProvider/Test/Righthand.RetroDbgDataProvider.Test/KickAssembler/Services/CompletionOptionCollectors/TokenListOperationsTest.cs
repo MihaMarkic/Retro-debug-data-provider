@@ -51,7 +51,7 @@ public class TokenListOperationsTest
             yield return (ImmutableArray<IToken>.Empty, null);
             yield return (CreateTokens(DOUBLE_QUOTE), null);
             yield return (CreateTokens(OPEN_BRACKET), 0);
-            yield return (CreateTokens(DOUBLE_QUOTE, OPEN_BRACKET), 1);
+            yield return (CreateTokens(DOUBLE_QUOTE, OPEN_BRACKET), null);
             yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING), 0);
             yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT), 0);
             yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT, STRING), 0);
@@ -63,6 +63,9 @@ public class TokenListOperationsTest
             yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT,DEC_NUMBER, COMMA), 0);
             yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT,DEC_NUMBER, COMMA, UNQUOTED_STRING), 0);
             yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT,DEC_NUMBER, COMMA, UNQUOTED_STRING, ASSIGNMENT), 0);
+            yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT, DOUBLE_QUOTE, UNQUOTED_STRING), 0);
+            yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT, DOUBLE_QUOTE), 0);
+            yield return (CreateTokens(OPEN_BRACKET, UNQUOTED_STRING, ASSIGNMENT, DOUBLE_QUOTE, UNQUOTED_STRING, COMMA), 0);
         }
 
         [TestCaseSource(nameof(GetSource))]
@@ -155,14 +158,15 @@ public class TokenListOperationsTest
     [TestFixture]
     public class GetArrayProperties : TokenListOperationsTest
     {
-        private static (ImmutableArray<IToken> Tokens, FrozenDictionary<IToken, ArrayPropertyMeta> PropertiesMeta)
+        public record struct TestItem(ImmutableArray<IToken> Tokens, FrozenDictionary<IToken, ArrayPropertyMeta> ExpectedResult);
+        private static TestItem
             CreateCase(ImmutableArray<IToken> tokens, params ImmutableArray<(int TokenIndex, ArrayPropertyMetaBuilder MetaBuilder)> items)
-            => (tokens, items.ToFrozenDictionary(i => tokens[i.TokenIndex], i => i.MetaBuilder.Create(tokens)));
+            => new (tokens, items.ToFrozenDictionary(i => tokens[i.TokenIndex], i => i.MetaBuilder.Create(tokens)));
 
-        private static IEnumerable<(ImmutableArray<IToken> Tokens, FrozenDictionary<IToken, ArrayPropertyMeta> PropertiesMeta)> GetSource()
+        private static IEnumerable<TestItem> GetSource()
         {
-            yield return (ImmutableArray<IToken>.Empty, FrozenDictionary<IToken, ArrayPropertyMeta>.Empty);
-            yield return (CreateTokens(DISK), FrozenDictionary<IToken, ArrayPropertyMeta>.Empty);
+            yield return new (ImmutableArray<IToken>.Empty, FrozenDictionary<IToken, ArrayPropertyMeta>.Empty);
+            yield return new (CreateTokens(DISK), FrozenDictionary<IToken, ArrayPropertyMeta>.Empty);
             yield return CreateCase(CreateTokens(UNQUOTED_STRING), (0, ArrayPropertyMetaBuilder.Empty));
             yield return CreateCase(CreateTokens(UNQUOTED_STRING, COMMA), (0, new ArrayPropertyMetaBuilder(CommaIndex: 1)));
             yield return CreateCase(
@@ -171,11 +175,11 @@ public class TokenListOperationsTest
             yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, COMMA), (0, new ArrayPropertyMetaBuilder(1, CommaIndex: 2)));
             yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, STRING, COMMA), (0, new ArrayPropertyMetaBuilder(1, 2, 2, CommaIndex: 3)));
             yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, STRING), (0, new ArrayPropertyMetaBuilder(1, 2, 2)));
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, DOUBLE_QUOTE, STRING, ASSIGNMENT), (0, new ArrayPropertyMetaBuilder(1, 2, 4)));
         }
 
         [TestCaseSource(nameof(GetSource))]
-        public void GivenSample_ReturnsExpectedResult(
-            (ImmutableArray<IToken> Tokens, FrozenDictionary<IToken, ArrayPropertyMeta> ExpectedResult) td)
+        public void GivenSample_ReturnsExpectedResult(TestItem td)
         {
             var actual = TokenListOperations.GetArrayProperties(td.Tokens.AsSpan());
 
@@ -195,15 +199,21 @@ public class TokenListOperationsTest
             var tokens = stream.GetTokens();
             return [..tokens];
         }
-        
+
         private static FrozenDictionary<IToken, ArrayPropertyMeta>
             CreateProperties(ImmutableArray<IToken> tokens, params ImmutableArray<(int TokenIndex, ArrayPropertyMetaBuilder MetaBuilder)> items)
             => items.ToFrozenDictionary(i => tokens[i.TokenIndex], i => i.MetaBuilder.Create(tokens));
 
+        public record struct TestItem(
+            FrozenDictionary<IToken, ArrayPropertyMeta> Properties,
+            string Content,
+            int AbsolutePosition,
+            (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) ExpectedResult);
+
         private static (FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, IToken Name, int Cursor) GetValues(string source, int? tokenNameIndex = null,
             int skipTokensCount = 0)
         {
-            var cursor = source.IndexOf('|');
+            var cursor = source.IndexOf('|') - 1;
             source = source.Replace("|", "");
             var tokens = GetAllTokens(source);
             var nameToken = tokenNameIndex is not null ? tokens[tokenNameIndex.Value] : tokens.First(t => t.Text != "\"" && !string.IsNullOrWhiteSpace(t.Text));
@@ -211,33 +221,31 @@ public class TokenListOperationsTest
             return (properties, source, nameToken, cursor);
         }
 
-        private static IEnumerable<(FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, int AbsolutePosition, 
-            (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) ExpectedResult)> GetSource()
+        private static IEnumerable<TestItem> GetSource()
         {
             {
                 var (properties, source, name, cursor) = GetValues("first|");
-                yield return (properties, source, cursor, (name, PositionWithinArray.Name, "first", "", properties[name]));
-                
+                yield return new(properties, source, cursor, (name, PositionWithinArray.Name, "first", "", properties[name]));
+
                 (properties, source, name, cursor) = GetValues(" alfa|");
-                yield return (properties, source, cursor, (name, PositionWithinArray.Name, "alfa", "", properties[name]));
-                
+                yield return new(properties, source, cursor, (name, PositionWithinArray.Name, "alfa", "", properties[name]));
+
                 (properties, source, name, cursor) = GetValues(" alfa|, ");
-                yield return (properties, source, cursor, (name, PositionWithinArray.Name, "alfa", "", properties[name]));
+                yield return new(properties, source, cursor, (name, PositionWithinArray.Name, "alfa", "", properties[name]));
                 (properties, source, name, cursor) = GetValues(" alfa,| ");
-                yield return (properties, source, cursor, (null, PositionWithinArray.Name, "", "", null));
+                yield return new(properties, source, cursor, (null, PositionWithinArray.Name, "", "", null));
 
                 (properties, source, name, cursor) = GetValues("one=|, ");
-                yield return (properties, source, cursor, (name, PositionWithinArray.Value, "", "", properties[name]));
+                yield return new(properties, source, cursor, (name, PositionWithinArray.Value, "", "", properties[name]));
                 (properties, source, name, cursor) = GetValues("one=xx|y, ");
-                yield return (properties, source, cursor, (name, PositionWithinArray.Value, "xx", "xxy", properties[name]));
+                yield return new(properties, source, cursor, (name, PositionWithinArray.Value, "xx", "xxy", properties[name]));
                 (properties, source, name, cursor) = GetValues("pre,one=xx|y, ", 2);
-                yield return (properties, source, cursor, (name, PositionWithinArray.Value, "xx", "xxy", properties[name]));
+                yield return new(properties, source, cursor, (name, PositionWithinArray.Value, "xx", "xxy", properties[name]));
             }
         }
 
         [TestCaseSource(nameof(GetSource))]
-        public void GivenSample_ReturnsExpectedResult((FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, int AbsolutePosition,
-            (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) ExpectedResult) td)
+        public void GivenSample_ReturnsExpectedResult(TestItem td)
         {
             var actual = TokenListOperations.GetColumnPositionData(td.Properties, td.Content, td.AbsolutePosition);
             

@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Dfa;
@@ -83,7 +84,7 @@ public static partial class TokenListOperations
     /// </summary>
     /// <param name="properties">Array properties usually obtained with <see cref="GetArrayProperties"/></param>
     /// <param name="content">File text content</param>
-    /// <param name="absolutePosition">Absolute cursor position</param>
+    /// <param name="absolutePosition">Absolute cursor position -1 based</param>
     /// <returns>Returns property name, type of position, text left of the position and entire value.</returns>
     internal static (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) 
         GetColumnPositionData(FrozenDictionary<IToken, ArrayPropertyMeta> properties, ReadOnlySpan<char> content, int absolutePosition)
@@ -102,7 +103,7 @@ public static partial class TokenListOperations
             bool isWithinProperty;
             if (comma is not null)
             {
-                isWithinProperty = name.StartIndex <= absolutePosition && comma.StopIndex >= absolutePosition;
+                isWithinProperty = name.StartIndex <= absolutePosition && comma.StopIndex > absolutePosition;
             }
             else
             {
@@ -115,17 +116,17 @@ public static partial class TokenListOperations
                 string value = meta.GetValue(content);
                 if (assignment is null)
                 {
-                    return (pair.Key, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), value, meta);
+                    return (pair.Key, PositionWithinArray.Name, content[name.StartIndex..(absolutePosition+1)].ToString(), value, meta);
                 }
                 else
                 {
                     if (absolutePosition < assignment.StartIndex)
                     {
-                        return (name, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), value, meta);
+                        return (name, PositionWithinArray.Name, content[name.StartIndex..(absolutePosition+1)].ToString(), value, meta);
                     }
                     else
                     {
-                        return (name, PositionWithinArray.Value, meta.GetValue(content, absolutePosition), value, meta);
+                        return (name, PositionWithinArray.Value, meta.GetValue(content, (absolutePosition+1)), value, meta);
                     }
                 }
             }
@@ -151,7 +152,7 @@ public static partial class TokenListOperations
         IToken? valueStartToken = null;
         IToken? assignmentToken = null;
         int index = 0;
-        while (index < tokens.Length && tokens[index].Type is not (CLOSE_BRACKET or EOL or KickAssemblerLexer.Eof))
+        while (index < tokens.Length && tokens[index].Type is not (CLOSE_BRACKET or EOL or KickAssemblerLexer.Eof) && state is not GetArrayPropertiesState.OpenString)
         {
             var token = tokens[index];
             switch (state)
@@ -193,6 +194,10 @@ public static partial class TokenListOperations
                             state = GetArrayPropertiesState.Comma;
                             nameToken = null;
                             break;
+                        case DOUBLE_QUOTE:
+                            valueStartToken = token;
+                            state = GetArrayPropertiesState.OpenString;
+                            break;
                         default:
                             valueStartToken = token;
                             state = GetArrayPropertiesState.Value;
@@ -227,6 +232,9 @@ public static partial class TokenListOperations
             case GetArrayPropertiesState.Value:
                 result.Add(nameToken!, new ArrayPropertyMeta(assignmentToken!, valueStartToken!, tokens[index-1]));
                 break;
+            case GetArrayPropertiesState.OpenString:
+                result.Add(nameToken!, new ArrayPropertyMeta(assignmentToken!, valueStartToken!, tokens[^1]));
+                break;
         }
 
         return result.ToFrozenDictionary();
@@ -237,6 +245,7 @@ public static partial class TokenListOperations
         Name,
         Assignment,
         Value,
+        OpenString,
         Comma,
     }
     
@@ -431,6 +440,33 @@ public static partial class TokenListOperations
     }
 
     /// <summary>
+    /// Looks for given token type in the current line. Starts from end.
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <param name="type"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    internal static bool GetLastIndexOf(this ReadOnlySpan<IToken> tokens, int type, [NotNullWhen(true)]out int? index)
+    {
+        for (int i = tokens.Length - 1; i >= 0; i--)
+        {
+            if (tokens[i].Type == type)
+            {
+                index = i;
+                return true;
+            }
+            else if (tokens[i].Type == EOL)
+            {
+                break;
+            }
+        }
+
+        index = null;
+        return false;
+    }
+    
+    // internal static int? 
+    /// <summary>
     /// Finds array open bracket from the end of the tokens towards start.
     /// If array is malformed, null is returned.
     /// </summary>
@@ -443,16 +479,27 @@ public static partial class TokenListOperations
             return null;
         }
 
+        // there can be only a single DOUBLE_QUOTE type within the line, others would be STRINGs
+        if (tokens.GetLastIndexOf(DOUBLE_QUOTE, out var lastDoubleQuoteIndex))
+        {
+            if (lastDoubleQuoteIndex == 0)
+            {
+                return null;
+            }
+
+            tokens = tokens[..lastDoubleQuoteIndex.Value];
+        }
+
         if (tokens.Length == 1)
         {
             if (tokens[0].Type == OPEN_BRACKET)
             {
                 return 0;
             }
-
+    
             return null;
         }
-
+        
         var previousToken = tokens[^2];
         FindArrayOpenBracketState state;
         var current = tokens[^1];
@@ -462,6 +509,8 @@ public static partial class TokenListOperations
             {
                 ASSIGNMENT => FindArrayOpenBracketState.StringValue,
                 COMMA or OPEN_BRACKET => FindArrayOpenBracketState.PropertyName,
+                // TODO eventually handle properly " since going backward is unclear whether it's a string or not, i.e. [seg="oo
+                DOUBLE_QUOTE => FindArrayOpenBracketState.OpenStringValue,
                 _ => FindArrayOpenBracketState.Invalid,
             };
         }
@@ -472,7 +521,8 @@ public static partial class TokenListOperations
                 ASSIGNMENT => FindArrayOpenBracketState.Assignment,
                 COMMA => FindArrayOpenBracketState.Comma,
                 OPEN_BRACKET => FindArrayOpenBracketState.OpenBracket,
-                _ =>  IsPropertyValueType(current) ? FindArrayOpenBracketState.Value :  FindArrayOpenBracketState.Invalid,
+                DOUBLE_QUOTE => FindArrayOpenBracketState.Value,
+                _ => IsPropertyValueType(current) ? FindArrayOpenBracketState.Value : FindArrayOpenBracketState.Invalid,
             };
         }
 
@@ -501,9 +551,16 @@ public static partial class TokenListOperations
                                 {
                                     state = FindArrayOpenBracketState.Invalid;
                                 }
-
+    
                                 break;
                         }
+                        break;
+                    case FindArrayOpenBracketState.OpenStringValue:
+                        state = token.Type switch
+                        {
+                            DOUBLE_QUOTE => FindArrayOpenBracketState.Value,
+                            _ => state,
+                        };
                         break;
                     case FindArrayOpenBracketState.StringValue:
                         state = token.Type switch
@@ -513,7 +570,7 @@ public static partial class TokenListOperations
                             OPEN_BRACKET => FindArrayOpenBracketState.OpenBracket,
                             _ => FindArrayOpenBracketState.Invalid,
                         };
-
+    
                         break;
                     case FindArrayOpenBracketState.Assignment:
                         if (token.IsTextType())
@@ -524,7 +581,7 @@ public static partial class TokenListOperations
                         {
                             state = FindArrayOpenBracketState.Invalid;
                         }
-
+    
                         break;
                     case FindArrayOpenBracketState.PropertyName:
                         state = token.Type switch
@@ -548,12 +605,12 @@ public static partial class TokenListOperations
                                 _ => FindArrayOpenBracketState.Invalid
                             };
                         }
-
+    
                         break;
                 }
             }
         }
-
+    
         switch (state)
         {
             case FindArrayOpenBracketState.OpenBracket:
@@ -563,14 +620,16 @@ public static partial class TokenListOperations
                 return null;
         }
     }
-
+    
     private enum FindArrayOpenBracketState
     {
         Invalid,
         Value,
-
+    
         // text without double or any quotes
         StringValue,
+        // value starting with " but not ending
+        OpenStringValue,
         Assignment,
         Comma,
         PropertyName,

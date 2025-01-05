@@ -30,7 +30,7 @@ public static partial class DirectiveCompletionOptions
                 if (fileExtensions.Count > 0)
                 {
                     var suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, fileExtensions, excluded, context.ProjectServices);
-                    return new CompletionOption(root, replacementLength, string.Empty, suggestions.ToFrozenSet());
+                    return new CompletionOption(root, replacementLength, string.Empty, string.Empty, suggestions.ToFrozenSet());
                 }
             }
 

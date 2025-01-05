@@ -53,7 +53,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     }
 
     /// <inheritdoc />
-    public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column,
+    public override CompletionOption? GetCompletionOption(TextChangeTrigger trigger, TriggerChar triggerChar, int line, int column,
         string text, int textStart, int textLength, CompletionOptionContext context)
     {
         if (IsLineIgnoredContent(line))
@@ -61,15 +61,39 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             Debug.WriteLine($"Line {line} is within ignored content");
             return null;
         }
-        return GetCompletionOption(Tokens, AllTokensByLineMap, trigger, line, column, text, textStart, textLength, context);
+
+        return GetCompletionOption(Tokens, AllTokensByLineMap, trigger, triggerChar, line, column, text, textStart, textLength, context);
     }
 
+    internal static bool ArePreconditionsValid(TextChangeTrigger trigger, TriggerChar triggerChar, int column, ReadOnlySpan<IToken> lineTokensToCursor)
+    {
+        switch (trigger)
+        {
+            case TextChangeTrigger.CharacterTyped:
+                switch (triggerChar)
+                {
+                    case TriggerChar.DoubleQuote:
+                        var lastToken = lineTokensToCursor[^1]; 
+                        if (lastToken.Type == KickAssemblerLexer.STRING && lastToken.EndColumn() <= column + 1)
+                        {
+                            return false;
+                        }
+
+                        break;
+                }
+                break;
+        }
+
+        return true;
+    }
+    
     /// <summary>
     /// 
     /// </summary>
     /// <param name="tokens">Tokens from default channel</param>
     /// <param name="allTokensByLineMap"></param>
     /// <param name="trigger"></param>
+    /// <param name="triggerChar">Character that triggered request, only valid when <see cref="trigger"/> is <see cref="TextChangeTrigger.CharacterTyped"/></param>
     /// <param name="lineNumber"></param>
     /// <param name="column"></param>
     /// <param name="text"></param>
@@ -78,7 +102,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetCompletionOption(ImmutableArray<IToken> tokens,
-        FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, int lineNumber,
+        FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, TriggerChar triggerChar, int lineNumber,
         int column, string text, int textStart, int textLength, CompletionOptionContext context)
     {
         if (!allTokensByLineMap.TryGetValue(lineNumber, out var tokensAtLine))
@@ -87,6 +111,23 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         }
 
         var lineToCursor = text.AsSpan().Slice(textStart, column+1);
+        if (lineToCursor.IsEmpty)
+        {
+            return null;
+        }
+        
+        var columnTokenIndex = TokenListOperations.GetTokenIndexAtColumn(tokensAtLine.AsSpan(), textStart, column);
+        if (columnTokenIndex is null)
+        {
+            return null;
+        }
+        
+        var lineTokensToCursor = tokensAtLine.AsSpan()[..(columnTokenIndex.Value+1)];
+        if (!ArePreconditionsValid(trigger, triggerChar, column, lineTokensToCursor))
+        {
+            return null;
+        }
+
         var line = text.AsSpan()[textStart..(textStart + textLength)];
         var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context)
                      ?? PreprocessorDirectivesCompletionOptions.GetOption(line, trigger, column)

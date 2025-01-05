@@ -79,13 +79,15 @@ public abstract class ParsedSourceFile
     /// Checks if there are completion options available at document position defined by <param name="line"/> and <param name="column"/>.
     /// </summary>
     /// <param name="trigger"></param>
+    /// <param name="triggerChar"></param>
     /// <param name="line">0 based line index</param>
     /// <param name="column">0 based column index</param>
     /// <param name="text">Source text</param>
     /// <param name="textStart">Start index for text</param>
     /// <param name="textLength">Text length</param>
+    /// <param name="context"></param>
     /// <returns></returns>
-    public virtual CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int line, int column, 
+    public virtual CompletionOption? GetCompletionOption(TextChangeTrigger trigger, TriggerChar triggerChar, int line, int column,
         string text, int textStart, int textLength, CompletionOptionContext context) => null;
 
     /// <summary>

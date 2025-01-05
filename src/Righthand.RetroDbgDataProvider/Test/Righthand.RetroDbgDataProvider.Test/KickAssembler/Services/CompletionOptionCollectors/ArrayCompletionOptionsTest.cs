@@ -52,12 +52,12 @@ public class ArrayCompletionOptionsTest
         return [..tokens];
     }
 
-    private static GetOptionTestCase CreateCase(string text, int start, int end, CompletionOption? expectedResult = null)
+    private static GetOptionTestCase CreateCase(string text, int start, CompletionOption? expectedResult = null)
     {
         Debug.Assert(text.Count(c => c == '|') == 1, "Exactly one cursor | is allowed within text");
-        int cursor = Math.Max(text.IndexOf('|') - 1, 0);
+        int cursor = text.IndexOf('|') - 1;
         text = text.Replace("|", "");
-        return (GetAllTokens(text), text, start, end, cursor, expectedResult);
+        return (GetAllTokens(text), text, start, text.Length, cursor, expectedResult);
     }
 
     [TestFixture]
@@ -69,11 +69,12 @@ public class ArrayCompletionOptionsTest
                 .Select(s => new StandardSuggestion(SuggestionOrigin.PropertyName, s))
                 .Cast<Suggestion>()
                 .ToFrozenSet();
-            yield return CreateCase(".disk { [hide|", 0, 0, new CompletionOption("hide", 0, "", []));
-            yield return CreateCase(".disk { [|", 0, 0, new CompletionOption("", 0, "", defaultSuggestions));
-            yield return CreateCase(".disk { [hide|x", 0, 0, new CompletionOption("hide", 1, "", []));
-            yield return CreateCase(".disk { [name=1,hide|", 0, 0, new CompletionOption("hide", 0, "", []));
+            yield return CreateCase(".disk { [hide|", 0, new CompletionOption("hide", 0, "", "", []));
+            yield return CreateCase(".disk { [|", 0, new CompletionOption("", 0, "", "", defaultSuggestions));
+            yield return CreateCase(".disk { [hide|x", 0, new CompletionOption("hide", 1, "", "", []));
+            yield return CreateCase(".disk { [name=1,hide|", 0, new CompletionOption("hide", 0, "", "", []));
         }
+
         [TestCaseSource(nameof(GetTestCasesForNameWithExpectedResult))]
         public void GivenSampleForName_ReturnsExpectedResult(GetOptionTestCase td)
         {
@@ -91,17 +92,18 @@ public class ArrayCompletionOptionsTest
                 .Select(s => new StandardSuggestion(SuggestionOrigin.PropertyValue, s))
                 .Cast<Suggestion>()
                 .ToFrozenSet();
-            yield return CreateCase(".disk { [hide=\"|x", 0, 0, new CompletionOption("\"", 2, "", []));
+            yield return CreateCase(".disk { [hide=\"|x", 0, new CompletionOption("\"", 1, "", "", []));
             yield return CreateCase("""
                                     .disk {
                                         [hide=|
-                                    """, 0, 0, new CompletionOption( "",  0,"", defaultSuggestions));
+                                    """, 0, new CompletionOption("", 0, "", "", defaultSuggestions));
             yield return CreateCase("""
                                     .disk {
                                         [shema = 4, tubo],
                                         [hide=|
-                                    """, 0, 0, new CompletionOption( "",  0, "", defaultSuggestions));
+                                    """, 0, new CompletionOption("", 0, "", "", defaultSuggestions));
         }
+
         [TestCaseSource(nameof(GetTestCasesForValueWithExpectedResult))]
         public void GivenSampleForValue_ReturnsExpectedResult(GetOptionTestCase td)
         {
@@ -112,11 +114,11 @@ public class ArrayCompletionOptionsTest
 
         private static IEnumerable<GetOptionTestCase> GetTestCasesForNameWithoutExpectedResult()
         {
-            yield return CreateCase("|", 0, 0);
-            yield return CreateCase("[hide=|", 0, 0);
+            yield return CreateCase("|", 0);
+            yield return CreateCase("[hide=|", 0);
             yield return CreateCase("""
                                     [t=|
-                                    """, 0, 0);
+                                    """, 0);
         }
 
         [TestCaseSource(nameof(GetTestCasesForNameWithoutExpectedResult))]
@@ -171,7 +173,6 @@ public class ArrayCompletionOptionsTest
         public void GivenTestCaseForSegments_ReturnsCorrectSuggestions(string root, string propertyName, string value, 
             string expectedResult)
         {
-
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.CollectSegments().Returns(["sx1", "sy2"]);
             var arrayProperty = new ValuesArrayProperty("segments", ArrayPropertyType.Segments);
@@ -180,14 +181,67 @@ public class ArrayCompletionOptionsTest
             var endValueToken = Substitute.For<IToken>();
             endValueToken.StopIndex.Returns(value.Length);
             var matchingProperty = new ArrayPropertyMeta(null, startValueToken, endValueToken, null);
-            
+
             var actual = ArrayCompletionOptions
-                .CreateSuggestionsForArrayValue(root, $"\"{value}\"", root.Length, ".file", null ,matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
+                .CreateSuggestionsForArrayValue(root, $"\"{value}\"", root.Length, ".file", null, matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
 
             Assert.That(actual, Is.EqualTo(expected));
+        }
+    }
+
+    [TestFixture]
+    public class GetRootValue : ArrayCompletionOptionsTest
+    {
+        public record TestItem(ImmutableArray<(string Text, int StartIndex)> Values, int RelativeColumn, string Expected)
+        {
+            public (string, string) ExpectedResult
+            {
+                get
+                {
+                    var expectedTexts = Expected.Split(',');
+                    return (expectedTexts[0], expectedTexts[1]);
+                }
+            }
+        }
+        private static IEnumerable<TestItem> GetSource()
+        {
+            yield return new ([], -1, ",");
+            // source: |"o
+            yield return new ([new ("o", 1)], -1, ",");
+            // source: "|o
+            yield return new ([new ("o", 1)], 0, ",o");
+            // source: "o|
+            yield return new ([new ("o", 1)], 1, "o,o");
+            // source: "o|o
+            yield return new ([new ("oo", 1)], 1, "o,oo");
+            // source: "oo|
+            yield return new ([new ("oo", 1)], 2, "oo,oo");
+            // source: "o|,bb
+            yield return new ([new ("o", 1), new ("bb", 3)], 1, "o,o");
+            // source: "o,|bb
+            yield return new ([new ("o", 1), new ("bb", 3)], 2, ",bb");
+            // source: "o,b|b
+            yield return new ([new ("o", 1), new ("bb", 3)], 3, "b,bb");
+            // source: "o,bb|
+            yield return new ([new ("o", 1), new ("bb", 3)], 4, "bb,bb");
+            // '"obu '
+            yield return new ([new ("obu ", 1)], 2, "ob,obu"); // shall end value even within non terminated string
+            // '"obu,'
+            yield return new ([new ("obu]", 1)], 2, "ob,obu"); // shall end value even within non terminated string
+            // '"obu]'
+            yield return new ([new ("obu,", 1)], 2, "ob,obu"); // shall end value even within non terminated string
+        }
+
+        [TestCaseSource(nameof(GetSource))]
+        public void GivenTestCase_ReturnsResult(TestItem td)
+        {
+            var actual = ArrayCompletionOptions.GetRootValue(td.Values, td.RelativeColumn);
+           
+            
+            Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
     }
 

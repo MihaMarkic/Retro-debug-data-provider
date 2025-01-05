@@ -16,7 +16,7 @@ public static class ArrayCompletionOptions
     /// <param name="content">All text</param>
     /// <param name="lineStart"></param>
     /// <param name="lineLength"></param>
-    /// <param name="column"></param>
+    /// <param name="column">Cursor position, -1 based</param>
     /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens, string content, int lineStart, int lineLength,
@@ -81,19 +81,19 @@ public static class ArrayCompletionOptions
         }
 
         var arrayProperties = TokenListOperations.GetArrayProperties(tokens[(openBracketIndex.Value + 1)..]);
-        int absoluteColumn = lineStart + column + 1;
+        int absoluteColumn = lineStart + column;
         var (name, position, root, value, matchingArrayProperty) = TokenListOperations.GetColumnPositionData(arrayProperties, content, absoluteColumn);
 
         switch (position)
         {
             case PositionWithinArray.Name:
-                var replacementLength = name is not null ? name.StopIndex - absoluteColumn + 1 : 0;
+                var replacementLength = name is not null ? name.StopIndex - absoluteColumn : 0;
                 var suggestedValues = ArrayProperties
                     .GetNames(arrayOwner, root)
                     .Select(v => new StandardSuggestion(SuggestionOrigin.PropertyName, v))
                     .Cast<Suggestion>()
                     .ToFrozenSet();
-                return new CompletionOption(root, replacementLength, "", suggestedValues);
+                return new CompletionOption(root, replacementLength, string.Empty, string.Empty, suggestedValues);
             case PositionWithinArray.Value:
                 if (ArrayProperties.GetProperty(arrayOwner, name!.Text, out var propertyMeta))
                 {
@@ -124,19 +124,10 @@ public static class ArrayCompletionOptions
         ArrayPropertyMeta? matchingProperty, ArrayProperty arrayProperty,
         CompletionOptionContext context)
     {
-        int replacementLength = value?.Length ?? 0;
-        bool endsWithDoubleQuote;
-        // if (root.StartsWith('"'))
-        // {
-        //     root = root.Substring(1);
-        //     replacementLength--;
-        //     endsWithDoubleQuote = root.EndsWith('"');
-        // }
-        // else
-        {
-            endsWithDoubleQuote = false;
-        }
+        int replacementLength = value is not null ? value.AsSpan().Trim('"').Length : 0;
 
+        bool endsWithDoubleQuote = false;
+        bool prependDoubleQuote = false;
         FrozenSet<string> suggestionTexts;
         FrozenSet<Suggestion> suggestions = [];
         switch (arrayProperty.Type)
@@ -170,17 +161,33 @@ public static class ArrayCompletionOptions
             {
                 if (matchingProperty?.StartValue is not null && value is not null)
                 {
-                    var values = GetArrayValues(value);
                     bool startsWithDoubleQuote = value.StartsWith('\"');
-                    string valueRoot = GetRootValue(values, absoluteColumn - matchingProperty.StartValue.StartIndex + (startsWithDoubleQuote ? 1 : 0));
-                    var valueTexts = values.Select(v => v.Text).ToImmutableArray();
-                    if (!string.IsNullOrWhiteSpace(option))
+                    // shall not suggest when segments=|"...
+                    bool isCursorAtStart = absoluteColumn < matchingProperty.StartValue.StartIndex;
+                    if (startsWithDoubleQuote && !isCursorAtStart)
                     {
-                        valueTexts = valueTexts.Add(option);
+                        var values = GetArrayValues(value);
+                        var (valueRoot, valueTextAtCaret) = GetRootValue(values, absoluteColumn - matchingProperty.StartValue.StartIndex);
+                        replacementLength = valueTextAtCaret.Length;
+                        root = valueRoot;
+                        var valueTexts = values.Select(v => v.Text).ToImmutableArray();
+                        if (!string.IsNullOrWhiteSpace(option))
+                        {
+                            valueTexts = valueTexts.Add(option);
+                        }
+
+                        var excluded = valueTexts.Distinct().ToFrozenSet();
+                        suggestionTexts = CompletionOptionCollectorsCommon.CollectSegmentsSuggestions(valueRoot, excluded, context.ProjectServices);
+                        suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(valueRoot, suggestionTexts, SuggestionOrigin.PropertyValue);
+                        prependDoubleQuote = !startsWithDoubleQuote;
                     }
-                    var excluded = valueTexts.Distinct().ToFrozenSet();
-                    suggestionTexts = CompletionOptionCollectorsCommon.CollectSegmentsSuggestions(valueRoot, excluded, context.ProjectServices);
-                    suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(valueRoot, suggestionTexts, SuggestionOrigin.PropertyValue);
+                }
+                else
+                {
+                    // there is no value and no valueRoot
+                    suggestionTexts = CompletionOptionCollectorsCommon.CollectSegmentsSuggestions("", [], context.ProjectServices);
+                    suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts("", suggestionTexts, SuggestionOrigin.PropertyValue);
+                    prependDoubleQuote = true;
                 }
 
                 break;
@@ -193,20 +200,54 @@ public static class ArrayCompletionOptions
                 break;
             }
         }
-        return new CompletionOption(root, replacementLength, endsWithDoubleQuote ? "\"" : "", suggestions);
+
+        return new CompletionOption(root, replacementLength, prependDoubleQuote ? "\"" : string.Empty, endsWithDoubleQuote ? "\"" : string.Empty, suggestions);
     }
 
-    internal static string GetRootValue(ImmutableArray<(string Text, int StartIndex)> values, int relativeColumn)
+    /// <summary>
+    /// Gets active value and root value left of the <param name="relativeColumn"/>. Stops upon space, comma and close bracket.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <param name="relativeColumn"></param>
+    /// <returns></returns>
+    internal static (string Root, string Value) GetRootValue(ImmutableArray<(string Text, int StartIndex)> values, int relativeColumn)
     {
         foreach (var v in values)
         {
-            if (v.StartIndex <= relativeColumn && v.StartIndex + v.Text.Length >= relativeColumn)
+            bool isInsideValue = v.StartIndex <= relativeColumn + 1 && v.StartIndex + v.Text.Length > relativeColumn; 
+            if (isInsideValue)
             {
-                return v.Text[..(relativeColumn - v.StartIndex)];
+                int spaceIndex = v.Text.IndexOf(' ', StringComparison.Ordinal);
+                int commaIndex = v.Text.IndexOf(',', StringComparison.Ordinal);
+                int closeBracketIndex = v.Text.IndexOf(']', StringComparison.Ordinal);
+                int endingIndex = GetMinPosition(v.Text.Length, spaceIndex, commaIndex, closeBracketIndex);
+                var trimmedValue = v.Text[..endingIndex];
+                
+                return (trimmedValue[..(relativeColumn - v.StartIndex + 1)], trimmedValue);
             }
         }
 
-        return string.Empty;
+        return (string.Empty, String.Empty);
+    }
+
+    /// <summary>
+    /// Gets minimum position of given <param name="values" /> starting with <param name="defaultEnding" />.
+    /// Negative values are ignored.
+    /// </summary>
+    /// <param name="defaultEnding"></param>
+    /// <param name="values"></param>
+    /// <returns></returns>
+    internal static int GetMinPosition(int defaultEnding, params ReadOnlySpan<int> values)
+    {
+        var min = defaultEnding;
+        foreach (var v in values)
+        {
+            if (v >= 0 && v < min)
+            {
+                min = v;
+            }
+        }
+        return min;
     }
 
     internal static ImmutableArray<(string Text, int StartIndex)> GetArrayValues(string? value)

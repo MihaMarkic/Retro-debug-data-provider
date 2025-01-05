@@ -13,7 +13,7 @@ public static partial class PreprocessorDirectivesCompletionOptions
         {
             var suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, KickAssemblerLexer.PreprocessorDirectives,
                 SuggestionOrigin.PreprocessorDirective);
-            return new CompletionOption(root, replaceableText.Length + 1, string.Empty, suggestions);
+            return new CompletionOption(root, replaceableText.Length + 1, string.Empty, string.Empty, suggestions);
         }
 
         return null;
