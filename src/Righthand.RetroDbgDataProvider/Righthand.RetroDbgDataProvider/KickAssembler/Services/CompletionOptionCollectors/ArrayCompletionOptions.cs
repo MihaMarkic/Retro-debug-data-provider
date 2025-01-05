@@ -87,9 +87,11 @@ public static class ArrayCompletionOptions
         switch (position)
         {
             case PositionWithinArray.Name:
-                var replacementLength = name is not null ? name.StopIndex - absoluteColumn : 0;
+                var replacementLength = name?.StopIndex - absoluteColumn ?? 0;
+                var excluded = arrayProperties.Select(a => a.Key.Text).Distinct().ToFrozenSet(StringComparer.OrdinalIgnoreCase);
                 var suggestedValues = ArrayProperties
                     .GetNames(arrayOwner, root)
+                    .Where(n => !excluded.Contains(n))
                     .Select(v => new StandardSuggestion(SuggestionOrigin.PropertyName, v))
                     .Cast<Suggestion>()
                     .ToFrozenSet();
@@ -195,6 +197,15 @@ public static class ArrayCompletionOptions
             case ArrayPropertyType.FileNames:
             {
                 var excluded = GetArrayValues(value).Select(v => v.Text).Distinct().ToFrozenSet();
+                var property = (FileArrayProperty)arrayProperty;
+                suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, property.ValidExtensions, excluded, context.ProjectServices);
+                break;
+            }
+            case ArrayPropertyType.FileName:
+            {
+                var excluded = !string.IsNullOrEmpty(value) ? new HashSet<string>([value.Trim('\"')]).ToFrozenSet(): [];
+                prependDoubleQuote = !value?.StartsWith('\"') ?? true;
+                endsWithDoubleQuote = !value?.EndsWith('\"') ?? true;
                 var property = (FileArrayProperty)arrayProperty;
                 suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, property.ValidExtensions, excluded, context.ProjectServices);
                 break;

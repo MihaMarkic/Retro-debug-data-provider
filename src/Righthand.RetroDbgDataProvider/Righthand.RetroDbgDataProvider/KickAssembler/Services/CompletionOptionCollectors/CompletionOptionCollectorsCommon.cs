@@ -45,12 +45,13 @@ public static class CompletionOptionCollectorsCommon
         {
             foreach (var f in p.Value)
             {
-                builder.Add(new FileSuggestion( Path.GetFileName(f), p.Key));
+                builder.Add(new FileSuggestion(f, p.Key));
             }
         }
+
         return builder.ToFrozenSet();
     }
-    
+
     /// <summary>
     /// Extracts text of left caret, entire replaceable length and whether it ends with double quote or not
     /// </summary>

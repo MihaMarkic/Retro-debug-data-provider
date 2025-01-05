@@ -180,8 +180,43 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
         private static CompletionOptionContext CreateContext(ImmutableArray<string> segments)
         {
+            var files = new Dictionary<string, FrozenSet<string>>
+            {
+                {
+                    "Project",
+                    [
+                        "one.prg", "two.prg", "sub1/one.prg", "sub2/two.prg",
+                        "sidOne.sid", "tubo.bin"
+                    ]                
+                }
+            }.ToFrozenDictionary();
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.CollectSegments().Returns(segments);
+            projectServices.GetMatchingFiles(Arg.Any<string>(), Arg.Any<FrozenSet<string>>(), Arg.Any<ICollection<string>>())
+                .Returns(a =>
+                {
+                    var source = files["Project"];
+                    var set = new HashSet<string>();
+                    foreach (var f in source)
+                    {
+                        var filter = a.ArgAt<string>(0);
+                        var extensions =  a.ArgAt<FrozenSet<string>>(1);
+                        var excluded = a.ArgAt<ICollection<string>>(2).ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+                        if (f.StartsWith(filter, StringComparison.Ordinal))
+                        {
+                            var fileExtension = Path.GetExtension(f).Trim('.');
+                            if (extensions.Contains("*") || extensions.Contains(fileExtension))
+                            {
+                                if (!excluded.Contains(f))
+                                {
+                                    set.Add(f);
+                                }
+                            }
+                        }
+                    }
+
+                    return new Dictionary<string, FrozenSet<string>> { { "Project", set.ToFrozenSet(StringComparer.OrdinalIgnoreCase) } }.ToFrozenDictionary();
+                });
             return new(projectServices);
         }
 
@@ -225,128 +260,156 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             return actual;
         }
 
-        [TestCase(".segmentdef Base [segments=\"|\"]", "one1,one2,two1")]
-        [TestCase(".segmentdef Base [segments=|\"", "")]
-        [TestCase(".segmentdef Base [segments=\"o|\"]", "one1,one2")]
-        [TestCase(".segmentdef Base [segments=\"t,o|\"]", "one1,one2")]
-        [TestCase(".segmentdef Base [segments=\"t\"|", null)]
-        [TestCase(".segmentdef Base [segments=\"|]", "one1,one2,two1")]
-        public void GivenTestCaseForCharacterTypedTriggerA_ReturnsSuggestedTexts(string text, string? expectedText)
+        [TestFixture]
+        public class ArrayPropertyNames : GetCompletionOption
         {
-            var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+            [TestCase(".file [|", "mbfiles,name,type,segments")]
+            [TestCase(".file [mbfiles|", "")]
+            [TestCase(".file [m|", "mbfiles")]
+            [TestCase(".file [mbfiles,|", "name,type,segments")]
+            [TestCase(".file [mbfiles,type, name,|", "segments")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedTexts(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
 
-            var actual = actualOption?.Suggestions.Select(s => s.Text).ToImmutableArray();
-            var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
+                var actual = actualOption?.Suggestions.Select(s => s.Text).ToImmutableArray();
+                var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
 
-            Assert.That(actual, Is.EqualTo(expected));
+                Assert.That(actual, Is.EqualTo(expected));
+            }
         }
 
-        [TestCase(".segmentdef Base [segments=\"|\"]", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "o")]
-        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "o")]
-        [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
-        public string? GivenTestCaseForCharacterTypedTriggerA_ReturnsValueRoot(string text)
+        [TestFixture]
+        public class SegmentArrayPropertyValues : GetCompletionOption
         {
-            var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
 
-            return actualOption?.RootText;
+            [TestCase(".segmentdef Base [segments=\"|\"]", "one1,one2,two1")]
+            [TestCase(".segmentdef Base [segments=|\"", "")]
+            [TestCase(".segmentdef Base [segments=\"o|\"]", "one1,one2")]
+            [TestCase(".segmentdef Base [segments=\"t,o|\"]", "one1,one2")]
+            [TestCase(".segmentdef Base [segments=\"t\"|", null)]
+            [TestCase(".segmentdef Base [segments=\"|]", "one1,one2,two1")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedTexts(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                var actual = actualOption?.Suggestions.Select(s => s.Text).ToImmutableArray();
+                var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
+
+                Assert.That(actual, Is.EqualTo(expected));
+            }
+
+            [TestCase(".segmentdef Base [segments=\"|\"]", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "o")]
+            [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "o")]
+            [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
+            public string? GivenTestCaseForCharacterTypedTrigger_ReturnsValueRoot(string text)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                return actualOption?.RootText;
+            }
+
+            [TestCase(".segmentdef Base [segments=|", ExpectedResult = "\"")]
+            [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "")]
+            public string? GivenTestCaseForCharacterTypedTrigger_PrependsDoubleQuotesWhenExpected(string text)
+            {
+                var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                return actual?.PrependText;
+            }
+
+            [TestCase(".segmentdef Base [segments=|", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "")]
+            [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
+            public string? GivenTestCaseForCharacterTypedTrigger_AppendsDoubleQuotesWhenExpected(string text)
+            {
+                var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                return actual?.AppendText;
+            }
+
+            [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = 1)]
+            [TestCase(".segmentdef Base [segments=\"|o\"]", ExpectedResult = 1)]
+            [TestCase(".segmentdef Base [segments=|\"o\"]", ExpectedResult = 1)]
+            [TestCase(".segmentdef Base [segments=\"o|]", ExpectedResult = 1)]
+            [TestCase(".segmentdef Base [segments=\"|o]", ExpectedResult = 1)]
+            [TestCase(".segmentdef Base [segments=\"|", ExpectedResult = 0)]
+            [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = 1)]
+            [TestCase(".segmentdef Base [segments=\"t,o|x\"]", ExpectedResult = 2)]
+            [TestCase(".segmentdef Base [segments=\"t,o|x,\"]", ExpectedResult = 2)]
+            [TestCase(".segmentdef Base [segments=\"t,o|x\"", ExpectedResult = 2)]
+            [TestCase(".segmentdef Base [segments=\"t,o|x,\"", ExpectedResult = 2)]
+            [TestCase(".segmentdef Base [segments=\"t,o|x", ExpectedResult = 2)]
+            [TestCase(".segmentdef Base [segments=\"t,o|x,", ExpectedResult = 2)]
+            [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = 0)]
+            public int? GivenTestCaseForCharacterTypedTrigger_ReplacementLengthIsCorrect(string text)
+            {
+                var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                return actual?.ReplacementLength;
+            }
         }
-
-        [TestCase(".segmentdef Base [segments=|", ExpectedResult = "\"")]
-        [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "")]
-        public string? GivenTestCase_PrependsDoubleQuotesWhenExpected(string text)
+        [TestFixture]
+        public class FileArrayPropertyValues : GetCompletionOption
         {
-            var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
 
-            return actual?.PrependText;
-        }
+            [TestCase(".file [name=|", "one.prg,two.prg,sub1/one.prg,sub2/two.prg")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedTexts(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
 
-        [TestCase(".segmentdef Base [segments=|", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=|\"", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = "")]
-        [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
-        public string? GivenTestCase_AppendsDoubleQuotesWhenExpected(string text)
-        {
-            var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+                var actual = actualOption?.Suggestions.Select(s => s.Text).ToImmutableArray();
+                var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
 
-            return actual?.AppendText;
-        }
-        
-        [TestCase(".segmentdef Base [segments=\"o|\"]", ExpectedResult = 1)]
-        [TestCase(".segmentdef Base [segments=\"|o\"]", ExpectedResult = 1)]
-        [TestCase(".segmentdef Base [segments=|\"o\"]", ExpectedResult = 1)]
-        [TestCase(".segmentdef Base [segments=\"o|]", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"|o]", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"|", ExpectedResult = 0)]
-        [TestCase(".segmentdef Base [segments=\"t,o|\"]", ExpectedResult = 1)]
-        [TestCase(".segmentdef Base [segments=\"t,o|x\"]", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"t,o|x,\"]", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"t,o|x\"", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"t,o|x,\"", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"t,o|x", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"t,o|x,", ExpectedResult = 2)]
-        [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = 0)]
-        public int? GivenTestCase_ReplacementLenghtIsCorrect(string text)
-        {
-            var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+                Assert.That(actual, Is.EqualTo(expected));
+            }
 
-            return actual?.ReplacementLength;
+            // [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
+            // public string? GivenTestCaseForCharacterTypedTrigger_ReturnsValueRoot(string text)
+            // {
+            //     var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+            //
+            //     return actualOption?.RootText;
+            // }
+
+            [TestCase(".file [name=|", ExpectedResult = "\"")]
+            public string? GivenTestCaseForCharacterTypedTrigger_PrependsDoubleQuotesWhenExpected(string text)
+            {
+                var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                return actual?.PrependText;
+            }
+            [TestCase(".file [name=|", ExpectedResult = "\"")]
+            public string? GivenTestCaseForCharacterTypedTrigger_AppendsDoubleQuotesWhenExpected(string text)
+            {
+                var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                return actual?.AppendText;
+            }
+
+            // [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
+            // public string? GivenTestCaseForCharacterTypedTrigger_AppendsDoubleQuotesWhenExpected(string text)
+            // {
+            //     var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+            //
+            //     return actual?.AppendText;
+            // }
+            //
+            // [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = 0)]
+            // public int? GivenTestCaseForCharacterTypedTrigger_ReplacementLengthIsCorrect(string text)
+            // {
+            //     var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+            //
+            //     return actual?.ReplacementLength;
+            // }
         }
     }
-// [TestFixture]
-    // public class GetCompletionOption : KickAssemblerParsedSourceFileTest
-    // {
-    //     [Test]
-    //     public void WhenNoTokens_ReturnsNull()
-    //     {
-    //         var input = GetParsed("");
-    //         
-    //         var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-    //             FrozenSet<string>.Empty, FrozenSet<string>.Empty,
-    //             _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
-    //             input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
-    //
-    //         var actual = target.GetCompletionOption(TextChangeTrigger.CompletionRequested, 0);
-    //         
-    //         Assert.That(actual, Is.Null);
-    //     }
-    //     [Test]
-    //     public void WhenRequestedAndOnlyDoubleQuote_ReturnsNull()
-    //     {
-    //         var input = GetParsed("\"");
-    //         
-    //         var target = new KickAssemblerParsedSourceFile("fileName", FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-    //             FrozenSet<string>.Empty, FrozenSet<string>.Empty,
-    //             _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
-    //             input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
-    //
-    //         var actual = target.GetCompletionOption(TextChangeTrigger.CompletionRequested, 1);
-    //
-    //         Assert.That(actual, Is.Null);
-    //     }
-    //
-    //     [Test]
-    //     public void WhenImportAndOnlyDoubleQuote_ReturnsValidOption()
-    //     {
-    //         var input = GetParsed("#import \"");
-    //
-    //         var target = new KickAssemblerParsedSourceFile("fileName",
-    //             FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-    //             FrozenSet<string>.Empty, FrozenSet<string>.Empty,
-    //             _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
-    //             input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
-    //
-    //         var actual = target.GetCompletionOption(TextChangeTrigger.CompletionRequested, 9);
-    //
-    //         Assert.That(actual.Value,
-    //             Is.EqualTo(new CompletionOption(CompletionOptionType.FileReference, "", EndsWithDoubleQuote: false)));
-    //     }
-    // }
-
     [TestFixture]
     public class GetTokenIndexAtLocation : KickAssemblerParsedSourceFileTest
     {
