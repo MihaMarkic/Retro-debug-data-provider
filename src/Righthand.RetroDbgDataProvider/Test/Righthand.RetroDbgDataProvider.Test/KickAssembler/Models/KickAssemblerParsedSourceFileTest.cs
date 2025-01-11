@@ -185,8 +185,17 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 {
                     "Project",
                     [
-                        "one.prg", "two.prg", "sub1/one.prg", "sub2/two.prg",
+                        "one.prg", "two.prg", "sub1/one.prg".ToPath(), "sub2/two.prg".ToPath(),
                         "sidOne.sid", "tubo.bin"
+                    ]                
+                }
+            }.ToFrozenDictionary();
+            var directories = new Dictionary<string, FrozenSet<string>>
+            {
+                {
+                    "Project",
+                    [
+                        "sub1", "sub2", "anotherSub", "sub1/nested"
                     ]                
                 }
             }.ToFrozenDictionary();
@@ -196,26 +205,48 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 .Returns(a =>
                 {
                     var source = files["Project"];
-                    var set = new HashSet<string>();
+                    var fileSet = new HashSet<string>();
+                    var filter = a.ArgAt<string>(0);
+                    string filterDirectory = Path.GetDirectoryName(filter) ?? "";
                     foreach (var f in source)
                     {
-                        var filter = a.ArgAt<string>(0);
                         var extensions =  a.ArgAt<FrozenSet<string>>(1);
-                        var excluded = a.ArgAt<ICollection<string>>(2).ToFrozenSet(StringComparer.OrdinalIgnoreCase);
-                        if (f.StartsWith(filter, StringComparison.Ordinal))
+                        string fileDirectory = Path.GetDirectoryName(f) ?? "";
+                        if (fileDirectory.Equals(filterDirectory))
                         {
-                            var fileExtension = Path.GetExtension(f).Trim('.');
-                            if (extensions.Contains("*") || extensions.Contains(fileExtension))
+                            var excluded = a.ArgAt<ICollection<string>>(2).ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+                            if (f.StartsWith(filter, StringComparison.Ordinal))
                             {
-                                if (!excluded.Contains(f))
+                                var fileExtension = Path.GetExtension(f);
+                                if (extensions.Contains("*") || extensions.Contains(fileExtension))
                                 {
-                                    set.Add(f);
+                                    if (!excluded.Contains(f))
+                                    {
+                                        fileSet.Add(f);
+                                    }
                                 }
                             }
                         }
                     }
-
-                    return new Dictionary<string, FrozenSet<string>> { { "Project", set.ToFrozenSet(StringComparer.OrdinalIgnoreCase) } }.ToFrozenDictionary();
+            
+                    return new Dictionary<ProjectFileKey, FrozenSet<string>> { { new(ProjectFileOrigin.Project, ""), fileSet.ToFrozenSet(StringComparer.OrdinalIgnoreCase) } }
+                        .ToFrozenDictionary();
+                });
+            projectServices.GetMatchingDirectories(Arg.Any<string>())
+                .Returns(a =>
+                {
+                    var source = directories["Project"];
+                    var filter = a.ArgAt<string>(0)!;
+                    var startDirectory = Path.GetDirectoryName(filter) ?? "";
+                    var rootDirectoryName = Path.GetFileName(filter);
+                    var fileSet = source
+                        .Where(d => 
+                            Path.GetFileName(d)!.StartsWith(rootDirectoryName, StringComparison.Ordinal)
+                            && Path.GetDirectoryName(d)!.Equals(startDirectory, StringComparison.Ordinal))
+                        .Distinct()
+                        .ToFrozenSet();
+                    return new Dictionary<ProjectFileKey, FrozenSet<string>> { { new(ProjectFileOrigin.Project, ""), fileSet.ToFrozenSet(StringComparer.OrdinalIgnoreCase) } }
+                        .ToFrozenDictionary();
                 });
             return new(projectServices);
         }
@@ -359,26 +390,37 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public class FileArrayPropertyValues : GetCompletionOption
         {
 
-            [TestCase(".file [name=|", "one.prg,two.prg,sub1/one.prg,sub2/two.prg")]
-            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedTexts(string text, string? expectedText)
+            [TestCase(".file [name=|", "one.prg,two.prg")]
+            [TestCase(".file [name=\"o|", "one.prg")]
+            [TestCase(".file [name=\"one|", "one.prg")]
+            [TestCase(".file [name=\"one.|", "one.prg")]
+            [TestCase(".file [name=\"one.p|", "one.prg")]
+            [TestCase(".file [name=\"one.x|", "")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedFileTexts(string text, string? expectedText)
             {
                 var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
 
-                var actual = actualOption?.Suggestions.Select(s => s.Text).ToImmutableArray();
+                var actual = actualOption?.Suggestions.OfType<FileSuggestion>().Select(s => s.Text).ToImmutableArray();
                 var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
 
                 Assert.That(actual, Is.EqualTo(expected));
             }
 
-            // [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
-            // public string? GivenTestCaseForCharacterTypedTrigger_ReturnsValueRoot(string text)
-            // {
-            //     var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
-            //
-            //     return actualOption?.RootText;
-            // }
+            [TestCase(".file [name=\"one.x|", "")]
+            [TestCase(".file [name=\"s|", "sub1,sub2")]
+            [TestCase(".file [name=\"sub|", "sub1,sub2")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedDirectoryTexts(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                var actual = actualOption?.Suggestions.OfType<DirectorySuggestion>().Select(s => s.Text).ToImmutableArray();
+                var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
+
+                Assert.That(actual, Is.EqualTo(expected));
+            }
 
             [TestCase(".file [name=|", ExpectedResult = "\"")]
+            [TestCase(".file [name=\"|", ExpectedResult = "")]
             public string? GivenTestCaseForCharacterTypedTrigger_PrependsDoubleQuotesWhenExpected(string text)
             {
                 var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
@@ -386,6 +428,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 return actual?.PrependText;
             }
             [TestCase(".file [name=|", ExpectedResult = "\"")]
+            [TestCase(".file [name=|\"", ExpectedResult = "")]
             public string? GivenTestCaseForCharacterTypedTrigger_AppendsDoubleQuotesWhenExpected(string text)
             {
                 var actual = RunTest(text, TextChangeTrigger.CharacterTyped);

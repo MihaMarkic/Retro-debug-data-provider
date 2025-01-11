@@ -1,6 +1,7 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Antlr4.Runtime;
@@ -166,16 +167,17 @@ public class TokenListOperationsTest
         private static IEnumerable<TestItem> GetSource()
         {
             yield return new (ImmutableArray<IToken>.Empty, FrozenDictionary<IToken, ArrayPropertyMeta>.Empty);
-            yield return new (CreateTokens(DISK), FrozenDictionary<IToken, ArrayPropertyMeta>.Empty);
-            yield return CreateCase(CreateTokens(UNQUOTED_STRING), (0, ArrayPropertyMetaBuilder.Empty));
-            yield return CreateCase(CreateTokens(UNQUOTED_STRING, COMMA), (0, new ArrayPropertyMetaBuilder(CommaIndex: 1)));
+            yield return new (CreateTokens(DISK, EOL), FrozenDictionary<IToken, ArrayPropertyMeta>.Empty);
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, EOL), (0, ArrayPropertyMetaBuilder.Empty));
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, COMMA, EOL), (0, new ArrayPropertyMetaBuilder(CommaIndex: 1)));
             yield return CreateCase(
-                CreateTokens(UNQUOTED_STRING, COMMA, UNQUOTED_STRING), 
+                CreateTokens(UNQUOTED_STRING, COMMA, UNQUOTED_STRING, EOL), 
                 (0, new ArrayPropertyMetaBuilder(CommaIndex: 1)), (2, ArrayPropertyMetaBuilder.Empty));
-            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, COMMA), (0, new ArrayPropertyMetaBuilder(1, CommaIndex: 2)));
-            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, STRING, COMMA), (0, new ArrayPropertyMetaBuilder(1, 2, 2, CommaIndex: 3)));
-            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, STRING), (0, new ArrayPropertyMetaBuilder(1, 2, 2)));
-            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, DOUBLE_QUOTE, STRING, ASSIGNMENT), (0, new ArrayPropertyMetaBuilder(1, 2, 4)));
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, COMMA, EOL), (0, new ArrayPropertyMetaBuilder(1, CommaIndex: 2)));
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, STRING, COMMA, EOL), (0, new ArrayPropertyMetaBuilder(1, 2, 2, CommaIndex: 3)));
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, STRING, EOL), (0, new ArrayPropertyMetaBuilder(1, 2, 2)));
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, DOUBLE_QUOTE, STRING, ASSIGNMENT, EOL), (0, new ArrayPropertyMetaBuilder(1, 2, 4)));
+            yield return CreateCase(CreateTokens(UNQUOTED_STRING, ASSIGNMENT, DOUBLE_QUOTE, EOL, DOUBLE_QUOTE, EOL), (0, new ArrayPropertyMetaBuilder(1, 2, 2)));
         }
 
         [TestCaseSource(nameof(GetSource))]

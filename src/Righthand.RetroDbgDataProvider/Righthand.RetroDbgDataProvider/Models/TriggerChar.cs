@@ -7,4 +7,5 @@ public enum TriggerChar
     Comma,
     Dot,
     Hash,
+    Assignment
 }

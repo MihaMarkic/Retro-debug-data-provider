@@ -82,7 +82,8 @@ public static class ArrayCompletionOptions
 
         var arrayProperties = TokenListOperations.GetArrayProperties(tokens[(openBracketIndex.Value + 1)..]);
         int absoluteColumn = lineStart + column;
-        var (name, position, root, value, matchingArrayProperty) = TokenListOperations.GetColumnPositionData(arrayProperties, content, absoluteColumn);
+        var contentUpToLineEnd = content.AsSpan()[..(lineStart+lineLength)];
+        var (name, position, root, value, matchingArrayProperty) = TokenListOperations.GetColumnPositionData(arrayProperties, contentUpToLineEnd, absoluteColumn);
 
         switch (position)
         {
@@ -198,7 +199,7 @@ public static class ArrayCompletionOptions
             {
                 var excluded = GetArrayValues(value).Select(v => v.Text).Distinct().ToFrozenSet();
                 var property = (FileArrayProperty)arrayProperty;
-                suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, property.ValidExtensions, excluded, context.ProjectServices);
+                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root.TrimStart('\"'), property.ValidExtensions, excluded, context.ProjectServices);
                 break;
             }
             case ArrayPropertyType.FileName:
@@ -207,7 +208,7 @@ public static class ArrayCompletionOptions
                 prependDoubleQuote = !value?.StartsWith('\"') ?? true;
                 endsWithDoubleQuote = !value?.EndsWith('\"') ?? true;
                 var property = (FileArrayProperty)arrayProperty;
-                suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, property.ValidExtensions, excluded, context.ProjectServices);
+                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root.TrimStart('\"'), property.ValidExtensions, excluded, context.ProjectServices);
                 break;
             }
         }

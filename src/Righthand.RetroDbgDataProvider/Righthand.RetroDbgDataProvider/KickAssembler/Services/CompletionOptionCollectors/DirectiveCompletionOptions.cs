@@ -29,7 +29,7 @@ public static partial class DirectiveCompletionOptions
                 FrozenSet<string> excluded = [currentValue];
                 if (fileExtensions.Count > 0)
                 {
-                    var suggestions = CompletionOptionCollectorsCommon.CollectFileSuggestions(root, fileExtensions, excluded, context.ProjectServices);
+                    var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root, fileExtensions, excluded, context.ProjectServices);
                     return new CompletionOption(root, replacementLength, string.Empty, string.Empty, suggestions.ToFrozenSet());
                 }
             }

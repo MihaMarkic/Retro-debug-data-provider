@@ -25,8 +25,10 @@ public static class Extensions
                 return false;
             }
         }
+
         return true;
     }
+
     /// <summary>
     /// Makes new line chars cross-platform.
     /// </summary>
@@ -37,4 +39,11 @@ public static class Extensions
     {
         return text?.Replace("\r\n", "\n");
     }
+
+    /// <summary>
+    /// Converts slash delimited path to the OS' one (i.e. to \ for Windows)
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string ToPath(this string path) => path.Replace('/', Path.DirectorySeparatorChar);
 }

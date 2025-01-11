@@ -233,7 +233,13 @@ public static partial class TokenListOperations
                 result.Add(nameToken!, new ArrayPropertyMeta(assignmentToken!, valueStartToken!, tokens[index-1]));
                 break;
             case GetArrayPropertiesState.OpenString:
-                result.Add(nameToken!, new ArrayPropertyMeta(assignmentToken!, valueStartToken!, tokens[^1]));
+                // in case of open string take everything up to end of line (or EOF)
+                int endOfLine = index;
+                while (tokens[endOfLine].Type is not (EOL or KickAssemblerLexer.Eof))
+                {
+                    endOfLine++;
+                }
+                result.Add(nameToken!, new ArrayPropertyMeta(assignmentToken!, valueStartToken!, tokens[endOfLine-1]));
                 break;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
+using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Models.Parsing;
 
@@ -14,6 +15,7 @@ public enum SuggestionOrigin
 {
     PreprocessorDirective,
     File,
+    Directory,
     PropertyName,
     PropertyValue,
 }
@@ -21,7 +23,9 @@ public enum SuggestionOrigin
 public abstract record Suggestion(SuggestionOrigin Origin, string Text, int Priority);
 
 public record StandardSuggestion(SuggestionOrigin Origin, string Text, int Priority = 0) : Suggestion(Origin, Text, Priority);
-public record FileSuggestion(string Text, string AdditionalInfo, int Priority = 0) : Suggestion(SuggestionOrigin.File, Text, Priority);
+public abstract record FileSystemSuggestion(SuggestionOrigin Origin, string Text, ProjectFileOrigin FileOrigin, string OriginPath, int Priority = 0) : Suggestion(Origin, Text, Priority);
+public record FileSuggestion(string Text, ProjectFileOrigin FileOrigin, string OriginPath, int Priority = 0) : FileSystemSuggestion(SuggestionOrigin.File, Text, FileOrigin, OriginPath, Priority);
+public record DirectorySuggestion(string Text, ProjectFileOrigin FileOrigin, string OriginPath, int Priority = 0) : FileSystemSuggestion(SuggestionOrigin.Directory, Text, FileOrigin, OriginPath, Priority);
 
 /// <summary>
 /// Represents a completion option containing valid suggestions.

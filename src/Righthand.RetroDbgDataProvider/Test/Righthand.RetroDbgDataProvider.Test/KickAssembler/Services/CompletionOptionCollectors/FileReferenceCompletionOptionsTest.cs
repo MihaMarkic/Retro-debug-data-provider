@@ -67,7 +67,8 @@ public class FileReferenceCompletionOptionsTest
         public bool GivenTestCase_ReturnsWhetherCompletionOptionHasBeenFound(string input)
         {
             var projectServices = Substitute.For<IProjectServices>();
-            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<string, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingDirectories(null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             var context = new CompletionOptionContext(projectServices);
 
             var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
@@ -96,7 +97,8 @@ public class FileReferenceCompletionOptionsTest
         public bool CompletionRequestedTypedCases(string input)
         {
             var projectServices = Substitute.For<IProjectServices>();
-            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<string, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingDirectories(null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             var context = new CompletionOptionContext(projectServices);
 
             var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
