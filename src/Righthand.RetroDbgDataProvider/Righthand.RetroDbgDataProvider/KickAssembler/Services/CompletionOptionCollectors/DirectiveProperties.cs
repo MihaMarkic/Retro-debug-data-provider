@@ -15,16 +15,26 @@ public static class DirectiveProperties
         var temp = new Dictionary<string, Directive>(StringComparer.OrdinalIgnoreCase);
         temp.AddWithType(".import", CreateTypeValues(
                 ("c64", [new FileDirectiveValueType(".c64")]),
-                ("txt", [new FileDirectiveValueType(".txt")]),
-                ("bin", [new FileDirectiveValueType(".bin")])
+                ("text", [new FileDirectiveValueType(".txt")]),
+                ("binary", [new FileDirectiveValueType(".bin")]),
+                ("source", [new FileDirectiveValueType(".asm")])
             )
         );
+        temp.AddWithoutTypeEnumerableValues(".encoding", "ascii", "petscii_mixed", "petscii_upper", "screencode_mixed", "screencode_upper");
         Data = temp.ToFrozenDictionary();
     }
 
     private static void AddWithType(this Dictionary<string, Directive> source, string directiveName, FrozenDictionary<string, FrozenSet<DirectiveValueType>> valueTypes)
     {
         source.Add(directiveName, new DirectiveWithType(directiveName, valueTypes));   
+    }
+    private static void AddWithoutType(this Dictionary<string, Directive> source, string directiveName, FrozenSet<DirectiveValueType> directiveValueTypes)
+    {
+        source.Add(directiveName, new DirectiveWithoutType(directiveName, directiveValueTypes));   
+    }
+    private static void AddWithoutTypeEnumerableValues(this Dictionary<string, Directive> source, string directiveName, params FrozenSet<string> values)
+    {
+        source.AddWithoutType(directiveName, [..values.Select(v => new EnumerableDirectiveValueType(v))]);   
     }
     private static FrozenDictionary<string, FrozenSet<DirectiveValueType>> CreateTypeValues<T>(params (string Name, FrozenSet<T> ValueTypes)[] types)
         where T: DirectiveValueType
@@ -74,3 +84,4 @@ public record DirectiveWithoutType(string Name, FrozenSet<DirectiveValueType> Va
 public abstract record DirectiveValueType();
 
 public record FileDirectiveValueType(string FileExtension) : DirectiveValueType();
+public record EnumerableDirectiveValueType(string Value) : DirectiveValueType();

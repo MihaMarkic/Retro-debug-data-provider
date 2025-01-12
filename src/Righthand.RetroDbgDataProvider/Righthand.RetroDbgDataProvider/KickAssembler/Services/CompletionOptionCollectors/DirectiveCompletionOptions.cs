@@ -29,11 +29,27 @@ public static partial class DirectiveCompletionOptions
                         var fileExtensions = directiveValues.Items.OfType<FileDirectiveValueType>()
                             .Select(vt => vt.FileExtension)
                             .ToFrozenSet();
-                        FrozenSet<string> excluded = [currentValue];
-                        if (fileExtensions.Count > 0)
+                        if (fileExtensions.Any())
                         {
-                            var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root, fileExtensions, excluded, context.ProjectServices);
-                            return new CompletionOption(root, replacementLength, string.Empty, hasEndDelimiter ? "": "\"", suggestions.ToFrozenSet());
+                            FrozenSet<string> excluded = [currentValue];
+                            if (fileExtensions.Count > 0)
+                            {
+                                var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root, fileExtensions, excluded, context.ProjectServices);
+                                return new CompletionOption(root, replacementLength, string.Empty, hasEndDelimiter ? "" : "\"", suggestions.ToFrozenSet());
+                            }
+                        }
+                        else
+                        {
+                            var enumerationValues = directiveValues.Items.OfType<EnumerableDirectiveValueType>().ToFrozenSet();
+                            if (enumerationValues.Any())
+                            {
+                                var suggestions = enumerationValues
+                                    .Where(v => v.Value.StartsWith(root))
+                                    .Select(v => new StandardSuggestion(SuggestionOrigin.DirectiveOption, v.Value))
+                                    .Cast<Suggestion>()
+                                    .ToFrozenSet();
+                                return new CompletionOption(root, replacementLength, string.Empty, hasEndDelimiter ? "" : "\"", suggestions.ToFrozenSet());
+                            }
                         }
                     }
 
@@ -214,7 +230,7 @@ public static partial class DirectiveCompletionOptions
     // }
 #endregion
     [GeneratedRegex("""
-                    (?<FullKeyWord>\.(?<KeyWord>(import)))(?<ParameterSpace>\s+(?<Parameter>\w*)\s*)?(?<Value>(?<StartDoubleQuote>")(?<CurrentValue>[^"]+)?(?<EndDoubleQuote>")?)?
+                    (?<FullKeyWord>\.(?<KeyWord>([a-zA-Z]+)))(?<ParameterSpace>\s+(?<Parameter>\w*)\s*)?(?<Value>(?<StartDoubleQuote>")(?<CurrentValue>[^"]+)?(?<EndDoubleQuote>")?)?
                     """, RegexOptions.Singleline)]
     private static partial Regex QuotedValueTemplateRegex();
 
@@ -258,7 +274,7 @@ public static partial class DirectiveCompletionOptions
             {
                 positionType = PositionType.Value;
                 currentValue = currentValueGroup.Value;
-                var length = lineCursor-currentValueGroup.Index+1;
+                var length = absoluteCursor - currentValueGroup.Index+1;
                 root = currentValueGroup.Value[..length];
                 replacementLength = currentValue.Length;
                 hasEndDelimiter =  match.Groups["EndDoubleQuote"].Success;

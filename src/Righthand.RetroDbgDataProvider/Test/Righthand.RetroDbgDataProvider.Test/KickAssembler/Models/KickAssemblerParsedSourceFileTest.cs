@@ -466,6 +466,23 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 Assert.That(actualOption, Is.Null);
             }
         }
+
+        [TestFixture]
+        public class EnumerableValuesInDirective : GetCompletionOption
+        {
+            [TestCase(".encoding \"|", "ascii,petscii_mixed,petscii_upper,screencode_mixed,screencode_upper")]
+            [TestCase(".encoding \"a|", "ascii")]
+            [TestCase(".encoding \"screencode_|", "screencode_mixed,screencode_upper")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedFileTexts(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                var actual = actualOption?.Suggestions.Select(s => s.Text).ToFrozenSet();
+                var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
+
+                Assert.That(actual, Is.EquivalentTo(expected));
+            }
+        }
         [TestFixture]
         public class DirectiveOptions : GetCompletionOption
         {

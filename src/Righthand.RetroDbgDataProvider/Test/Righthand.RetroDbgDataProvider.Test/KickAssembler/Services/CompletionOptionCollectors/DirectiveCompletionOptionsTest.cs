@@ -26,7 +26,6 @@ public class DirectiveCompletionOptionsTest
         }
         [TestCase(".import c64 [\"|")]
         [TestCase(".import c64 x \"xx/p|")]
-        [TestCase("label: .print c64 \"|")]
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNullResult(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
@@ -81,6 +80,8 @@ public class DirectiveCompletionOptionsTest
         [TestCase(".import c|64 \"test2\"", ExpectedResult = DirectiveCompletionOptions.PositionType.Type)]
         [TestCase(".import |c64 \"test2\"", ExpectedResult = DirectiveCompletionOptions.PositionType.Type)]
         [TestCase(".import |", ExpectedResult = DirectiveCompletionOptions.PositionType.Type)]
+        [TestCase(".encoding |", ExpectedResult = DirectiveCompletionOptions.PositionType.Type)]
+        [TestCase(".encoding \"|", ExpectedResult = DirectiveCompletionOptions.PositionType.Value)]
         public DirectiveCompletionOptions.PositionType? GivenSampleInputWithCursorInBetween_ReturnsCorrectPositionType(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();

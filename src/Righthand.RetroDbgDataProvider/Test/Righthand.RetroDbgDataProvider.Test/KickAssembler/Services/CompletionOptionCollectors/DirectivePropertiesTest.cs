@@ -17,7 +17,7 @@ public class DirectivePropertiesTest
                 .Select(fd => fd.FileExtension)
                 .ToFrozenSet();
 
-            FrozenSet<string> expected = [".bin", ".txt", ".c64"];
+            FrozenSet<string> expected = [".bin", ".txt", ".c64", ".asm"];
             Assert.That(actual, Is.EquivalentTo(expected));
         }
         [Test]
