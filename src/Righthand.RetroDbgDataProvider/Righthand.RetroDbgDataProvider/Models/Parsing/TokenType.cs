@@ -18,4 +18,5 @@ public enum TokenType
     /// References a file, typically from #import or #import if directive
     /// </summary>
     FileReference,
+    Other,
 }

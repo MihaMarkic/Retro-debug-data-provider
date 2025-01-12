@@ -473,7 +473,22 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             [TestCase(".encoding \"|", "ascii,petscii_mixed,petscii_upper,screencode_mixed,screencode_upper")]
             [TestCase(".encoding \"a|", "ascii")]
             [TestCase(".encoding \"screencode_|", "screencode_mixed,screencode_upper")]
-            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedFileTexts(string text, string? expectedText)
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedEnumerableValues(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                var actual = actualOption?.Suggestions.Select(s => s.Text).ToFrozenSet();
+                var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
+
+                Assert.That(actual, Is.EquivalentTo(expected));
+            }
+        }
+
+        [TestFixture]
+        public class DirectiveNameCompletion : GetCompletionOption
+        {
+            [TestCase(".enc|", ".encoding")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedDirectiveNames(string text, string? expectedText)
             {
                 var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
 

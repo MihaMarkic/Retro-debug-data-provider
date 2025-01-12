@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
+using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -15,11 +16,21 @@ public static partial class DirectiveCompletionOptions
         {
             return null;
         }
-
-        var cursorWithinValue = GetMetaInformation(text, lineStart, lineLength, column);
-        if (cursorWithinValue is not null)
+        
+        var cursorTokenIndex = TokenListOperations.GetTokenIndexAtColumn(lineTokens, 0, column);
+        if (cursorTokenIndex is not null)
         {
-            var (position, keyword, parameter, root, currentValue, replacementLength, hasEndDelimiter) = cursorWithinValue.Value;
+            var currentToken = lineTokens[cursorTokenIndex.Value];
+            if (currentToken.Text.StartsWith('.'))
+            {
+                
+            }
+        }
+
+        var lineMeta = GetMetaInformation(lineTokens, text, lineStart, lineLength, column);
+        if (lineMeta is not null)
+        {
+            var (position, keyword, parameter, root, currentValue, replacementLength, hasEndDelimiter) = lineMeta.Value;
             switch (position)
             {
                 case PositionType.Value:
@@ -90,151 +101,121 @@ public static partial class DirectiveCompletionOptions
 
     public enum PositionType
     {
+        Directive,
         Type,
         Value,
     }
 
-    #region tokenized approach
+    internal static LineMeta? GetMetaInformation(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int lineCursor)
+    {
+        var cursorTokenIndex = TokenListOperations.GetTokenIndexAtColumn(lineTokens, 0, lineCursor);
+        if (cursorTokenIndex is not null)
+        {
+            int index = cursorTokenIndex.Value;
+            var currentToken = lineTokens[index];
+            var previousToken = index > 0 ? lineTokens[index - 1] : null;
+            if (currentToken.Type != DOT || previousToken?.Type == DOT && currentToken.IsTextType())
+            {
+                int startOfStringIndex = -1;
+                if (currentToken.Type is DOUBLE_QUOTE or STRING)
+                {
+                    startOfStringIndex = index;
+                }
+                else
+                {
+                    var upToCursorTokens = lineTokens[..index];
+                    if (upToCursorTokens.GetLastIndexOf(DOUBLE_QUOTE, out var temp))
+                    {
+                        startOfStringIndex = temp.Value;
+                    }
+                }
 
-    // internal static (PositionType PositionType, string DirectiveName, int DirectiveType, string? Parameter, string? Root, string? CurrentFileValue)? 
-    //     GetStatus(ReadOnlySpan<IToken> lineTokens, string text, int cursor)
-    // {
-    //     var cursorTokenIndex = TokenListOperations.GetTokenIndexAtColumn(lineTokens, 0, cursor);
-    //     if (cursorTokenIndex is not null)
-    //     {
-    //         int index = cursorTokenIndex.Value;
-    //         var currentToken = lineTokens[index];
-    //         // first find candidate for start analyse
-    //         while (index >= 0 && currentToken.Type is not (DOUBLE_QUOTE or STRING or UNQUOTED_STRING))
-    //         {
-    //             index--;
-    //             currentToken = lineTokens[index];
-    //         }
-    //
-    //         if (index < 0)
-    //         {
-    //             return null;
-    //         }
-    //
-    //         // Unquoted string is problematic because it's not obvious whether belongs inside an open string or not
-    //         if (currentToken.Type == UNQUOTED_STRING)
-    //         {
-    //             if (lineTokens[..index].GetLastIndexOf(DOUBLE_QUOTE, out var lastDoubleQuotesOnLeft))
-    //             {
-    //                 index = lastDoubleQuotesOnLeft.Value;
-    //                 currentToken = lineTokens[index];
-    //             }
-    //         }
-    //         switch (currentToken.Type)
-    //         {
-    //             case DOUBLE_QUOTE:
-    //                 if (index > 1)
-    //                 {
-    //                     var previousToken = lineTokens[index - 1];
-    //                     if (previousToken.Type == UNQUOTED_STRING)
-    //                     {
-    //                         var firstToken = lineTokens[index - 2];
-    //                         if (firstToken.IsDirectiveType())
-    //                         {
-    //                             return (PositionType.Type, firstToken.Text, firstToken.Type, previousToken.Text, "", "");
-    //                         }
-    //                     }
-    //                 }
-    //                 break;
-    //             case STRING:
-    //                 if (index > 1)
-    //                 {
-    //                     var previousToken = lineTokens[index - 1];
-    //                     if (previousToken.Type == UNQUOTED_STRING)
-    //                     {
-    //                         var firstToken = lineTokens[index - 2];
-    //                         if (firstToken.IsDirectiveType())
-    //                         {
-    //                             var currentValue = currentToken.Text.Trim('\"');
-    //                             string root = currentToken.Text[1..(cursor - currentToken.StartIndex)];
-    //                             return (PositionType.Type, firstToken.Text, firstToken.Type, previousToken.Text, root, currentValue);
-    //                         }
-    //                     }
-    //                 }
-    //                 break;
-    //             case UNQUOTED_STRING:
-    //                 if (index > 0)
-    //                 {
-    //                     var previousToken = lineTokens[index - 1];
-    //                     if (previousToken.IsDirectiveType())
-    //                     {
-    //                         string? currentValue = null;
-    //                         if (index < lineTokens.Length - 1)
-    //                         {
-    //                             var nextToken = lineTokens[index + 1];
-    //                             switch (nextToken.Type)
-    //                             {
-    //                                 case STRING:
-    //                                     currentValue = nextToken.Text.Trim('\"');
-    //                                     break;
-    //                                 case DOUBLE_QUOTE:
-    //                                     currentValue = ExtractOpenString(text, nextToken.StopIndex, lineTokens[^1].StopIndex);
-    //                                     break;
-    //                             }
-    //                         }
-    //
-    //                         string root = currentToken.Text[0..(cursor - currentToken.StartIndex)];
-    //                         return (PositionType.Type, previousToken.Text, previousToken.Type, currentToken.Text, root, currentValue);
-    //                     }
-    //                 }
-    //
-    //                 break;
-    //         }
-    //     }
-    //     return null;
-    // }
-    //
-    // internal static string? ExtractOpenString(string text, int startIndex, int endIndex)
-    // {
-    //     return text[startIndex..endIndex];
-    // }
-    
-    
+                ReadOnlySpan<IToken> upToDoubleQuote = startOfStringIndex < 0 ? lineTokens[..index] : lineTokens[..startOfStringIndex];
+                index = upToDoubleQuote.Length - 1;
+                while (index >= 0 && !upToDoubleQuote[index].IsDirectiveType())
+                {
+                    index--;
+                }
 
-    // [GeneratedRegex("""
-    //                 (?<KeyWord>(\.import))\s+(?<Parameter>\w*)?
-    //                 """, RegexOptions.Singleline)]
-    // private static partial Regex CursorOnDirectiveType();
-    // [GeneratedRegex("""
-    //                 ^(?<Parameter>\w*)?\s*(?<StartDoubleQuote>")(?<CurrentValue>[^"]+)?
-    //                 """, RegexOptions.Singleline)]
-    // private static partial Regex CursorOnFullDirectiveType();
-    // internal static (string Keyword, string? Parameter, string? Root, string? CurrentFileValue)? IsCursorOnParameterType(string text, int lineStart, int lineLength,
-    //     int cursor)
-    // {
-    //     var match = CursorOnDirectiveType().Match(text, lineStart, cursor + 1);
-    //     if (match.Success)
-    //     {
-    //         int lineEnd = lineStart + lineLength;
-    //         var keyword = match.Groups["KeyWord"].Value;
-    //         string? root = null;
-    //         var parameterGroup = match.Groups["Parameter"];
-    //         int parameterStart = cursor;
-    //         if (parameterGroup is not null)
-    //         {
-    //             root = parameterGroup.Value;
-    //             parameterStart = cursor - root.Length;
-    //         }
-    //         var fullMatch = CursorOnFullDirectiveType().Match(text, parameterStart, lineEnd-parameterStart);
-    //         var parameter = fullMatch.Groups["Parameter"].Value;
-    //         var currentValue = fullMatch.Groups["CurrentValue"].Value;
-    //         return (keyword, parameter, root, currentValue);
-    //     }
-    //
-    //     return null;
-    // }
-#endregion
+                if (index < 0)
+                {
+                    return null;
+                }
+            }
+            
+            var directiveToken = lineTokens[index];
+            int absoluteLineCursor = lineStart + lineCursor;
+            if (!directiveToken.IsDirectiveType())
+            {
+                var length = absoluteLineCursor - directiveToken.StartIndex;
+                var root = directiveToken.Text[..length];
+                return new(PositionType.Directive, directiveToken.Text, null, root, "", directiveToken.Text.Length, false);
+            }
+            else
+            {
+                index++;
+                var nextToken = lineTokens[index];
+                IToken? paramsToken = null;
+                PositionType? positionType = null;
+                var root = "";
+                if (nextToken.IsTextType())
+                {
+                    paramsToken = nextToken;
+                    index++;
+                }
+
+                string value = "";
+                nextToken = lineTokens[index];
+                int replacementLength = 0;
+                bool hasEndDelimiter = false;
+                switch (nextToken.Type)
+                {
+                    case STRING:
+                        value = nextToken.Text.Trim('\"');
+                        if (nextToken.ContainsColumn(absoluteLineCursor))
+                        {
+                            positionType = PositionType.Value;
+                            root = nextToken.TextUpToColumn(absoluteLineCursor);
+                            replacementLength = value.Length;
+                            hasEndDelimiter = true;
+                        }
+
+                        break;
+                    case DOUBLE_QUOTE:
+                        var lastToken = lineTokens[^1];
+                        value = text[(nextToken.StartIndex + 1)..(lastToken.StopIndex)];
+                        if (nextToken.StopIndex < absoluteLineCursor)
+                        {
+                            positionType = PositionType.Value;
+                            root = text[(nextToken.StartIndex + 1)..absoluteLineCursor];
+                            replacementLength = value.Length;
+                        }
+
+                        break;
+                }
+
+                if (positionType is null)
+                {
+                    positionType = PositionType.Type;
+                    if (paramsToken?.ContainsColumn(absoluteLineCursor) ?? false)
+                    {
+                        root = paramsToken.TextUpToColumn(absoluteLineCursor);
+                        replacementLength = paramsToken.Text.Length;
+                    }
+                }
+
+                return new(positionType!.Value, directiveToken.Text, paramsToken?.Text, root, value, replacementLength, hasEndDelimiter);
+            }
+        }
+
+        return null;
+    }
     [GeneratedRegex("""
                     (?<FullKeyWord>\.(?<KeyWord>([a-zA-Z]+)))(?<ParameterSpace>\s+(?<Parameter>\w*)\s*)?(?<Value>(?<StartDoubleQuote>")(?<CurrentValue>[^"]+)?(?<EndDoubleQuote>")?)?
                     """, RegexOptions.Singleline)]
     private static partial Regex QuotedValueTemplateRegex();
 
-    internal static LineMeta? GetMetaInformation(string text, int lineStart, int lineLength,
+    internal static LineMeta? GetMetaInformationX(string text, int lineStart, int lineLength,
         int lineCursor)
     {
         Debug.WriteLine($"Searching IsCursorWithinNonArray in: '{text.Substring(lineStart, lineLength)}'");

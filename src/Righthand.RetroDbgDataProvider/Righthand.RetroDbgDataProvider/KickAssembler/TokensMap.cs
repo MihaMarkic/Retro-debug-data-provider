@@ -143,6 +143,10 @@ public static class TokensMap
           { KickAssemblerLexer.HASHIMPORT, TokenType.PreprocessorDirective },
           { KickAssemblerLexer.HASHIMPORTONCE, TokenType.PreprocessorDirective },
           { KickAssemblerLexer.HASHIMPORTIF, TokenType.PreprocessorDirective },
+          // Other
+          { KickAssemblerLexer.BYTE, TokenType.Other },
+          { KickAssemblerLexer.WORD, TokenType.Other },
+          { KickAssemblerLexer.DWORD, TokenType.Other },
           // Directives
           { KickAssemblerLexer.DOTTEXT, TokenType.Directive },
           { KickAssemblerLexer.DOTIMPORT, TokenType.Directive },
@@ -150,9 +154,6 @@ public static class TokensMap
           { KickAssemblerLexer.DOTFILL, TokenType.Directive },
           { KickAssemblerLexer.DOTFILLWORD, TokenType.Directive },
           { KickAssemblerLexer.DOTLOHIFILL, TokenType.Directive },
-          { KickAssemblerLexer.BYTE, TokenType.Directive },
-          { KickAssemblerLexer.WORD, TokenType.Directive },
-          { KickAssemblerLexer.DWORD, TokenType.Directive },
           { KickAssemblerLexer.DOTCPU, TokenType.Directive },
           { KickAssemblerLexer.CPU6502NOILLEGALS, TokenType.Directive },
           { KickAssemblerLexer.CPU6502, TokenType.Directive },

@@ -2,6 +2,7 @@ using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
+using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
@@ -54,7 +55,7 @@ public static partial class TokenListOperations
 
     public static readonly FrozenSet<int> TextTypes =
     [
-        UNQUOTED_STRING, ONLYA
+        UNQUOTED_STRING, ONLYA, C64, BINARY, TEXT, SOURCE,
     ];
 
     public static readonly FrozenSet<int> PropertyValueTypes =

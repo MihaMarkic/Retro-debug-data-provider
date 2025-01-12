@@ -66,6 +66,7 @@ BINARY: 'binary';
 C64: 'c64';
 DOTTEXT: '.text';
 TEXT: 'text';
+SOURCE: 'source';
 DOTENCODING: '.encoding';
 DOTFILL: '.fill';
 DOTFILLWORD: '.fillword'; 

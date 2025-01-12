@@ -1,4 +1,6 @@
-﻿using System.Collections.Frozen;
+﻿using Righthand.RetroDbgDataProvider.Models.Parsing;
+using System.Collections.Frozen;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
@@ -21,6 +23,16 @@ public static class DirectiveProperties
             )
         );
         temp.AddWithoutTypeEnumerableValues(".encoding", "ascii", "petscii_mixed", "petscii_upper", "screencode_mixed", "screencode_upper");
+        var query = TokensMap.Map
+            .Where(p => p.Value == TokenType.Directive && p.Key is not (KickAssemblerLexer.DOTIMPORT or KickAssemblerLexer.DOTENCODING))
+            .Select(p => p.Key);
+        foreach (var ti in query)
+        {
+            var text = KickAssemblerLexer.DefaultVocabulary.GetLiteralName(ti);
+            Debug.WriteLine(text);
+            temp.AddWithoutType(text);
+        }
+
         Data = temp.ToFrozenDictionary();
     }
 
@@ -31,6 +43,10 @@ public static class DirectiveProperties
     private static void AddWithoutType(this Dictionary<string, Directive> source, string directiveName, FrozenSet<DirectiveValueType> directiveValueTypes)
     {
         source.Add(directiveName, new DirectiveWithoutType(directiveName, directiveValueTypes));   
+    }
+    private static void AddWithoutType(this Dictionary<string, Directive> source, string directiveName)
+    {
+        source.Add(directiveName, new DirectiveWithoutType(directiveName, []));
     }
     private static void AddWithoutTypeEnumerableValues(this Dictionary<string, Directive> source, string directiveName, params FrozenSet<string> values)
     {

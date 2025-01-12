@@ -8,6 +8,15 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionO
 
 public class DirectiveCompletionOptionsTest
 {
+    private static ImmutableArray<IToken> GetAllTokens(string text)
+    {
+        var input = new AntlrInputStream(text);
+        var lexer = new KickAssemblerLexer(input);
+        var stream = new BufferedTokenStream(lexer);
+        stream.Fill();
+        var tokens = stream.GetTokens().Where(t => t.Channel == 0);
+        return [..tokens];
+    }
     [TestFixture]
     public class GetMetaInformation : DirectiveCompletionOptionsTest
     {
@@ -19,8 +28,9 @@ public class DirectiveCompletionOptionsTest
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
             var actual =
-                DirectiveCompletionOptions.GetMetaInformation(replaced, 0, replaced.Length, cursor);
+                DirectiveCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
 
             Assert.That(actual, Is.Not.Null);
         }
@@ -29,8 +39,9 @@ public class DirectiveCompletionOptionsTest
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNullResult(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
             var actual =
-                DirectiveCompletionOptions.GetMetaInformation(replaced, 0, replaced.Length, cursor);
+                DirectiveCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
 
             Assert.That(actual, Is.Null);
         }
@@ -41,8 +52,9 @@ public class DirectiveCompletionOptionsTest
         public string? GivenSampleInputWithOnlyPrefix_ReturnsCorrectRoot(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
             var actual =
-                DirectiveCompletionOptions.GetMetaInformation(replaced, 0, replaced.Length, cursor);
+                DirectiveCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
             return actual?.Root;
         }
         [TestCase(".import c64 \"x|x/p", ExpectedResult = "x")]
@@ -55,8 +67,9 @@ public class DirectiveCompletionOptionsTest
         public string? GivenSampleInputWithCursorInBetween_ReturnsCorrectRoot(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
             var actual =
-                DirectiveCompletionOptions.GetMetaInformation(replaced, 0, replaced.Length, cursor);
+                DirectiveCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
             return actual?.Root;
         }
         [TestCase("label: .import c6|4 \"xx/p", ExpectedResult = 3)]
@@ -68,8 +81,9 @@ public class DirectiveCompletionOptionsTest
         public int? GivenSampleInputWithCursorInBetween_ReturnsCorrectReplacementLength(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
             var actual =
-                DirectiveCompletionOptions.GetMetaInformation(replaced, 0, replaced.Length, cursor);
+                DirectiveCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
             return actual?.ReplacementLength;
         }
         [TestCase(".import c64 \"x|x/p", ExpectedResult = DirectiveCompletionOptions.PositionType.Value)]
@@ -85,8 +99,9 @@ public class DirectiveCompletionOptionsTest
         public DirectiveCompletionOptions.PositionType? GivenSampleInputWithCursorInBetween_ReturnsCorrectPositionType(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
             var actual =
-                DirectiveCompletionOptions.GetMetaInformation(replaced, 0, replaced.Length, cursor);
+                DirectiveCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
             return actual?.PositionType;
         }
         [TestCase(".import c|6 \"test2\"", ExpectedResult = false)]
@@ -96,8 +111,9 @@ public class DirectiveCompletionOptionsTest
         public bool? GivenSampleInputWithCursorInBetween_ReturnsCorrectHasEndDelimiter(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
             var actual =
-                DirectiveCompletionOptions.GetMetaInformation(replaced, 0, replaced.Length, cursor);
+                DirectiveCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
             return actual?.HasEndDelimiter;
         }
     }
