@@ -1,10 +1,7 @@
 using System.Collections.Frozen;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Dfa;
-using Righthand.RetroDbgDataProvider.Models.Parsing;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;

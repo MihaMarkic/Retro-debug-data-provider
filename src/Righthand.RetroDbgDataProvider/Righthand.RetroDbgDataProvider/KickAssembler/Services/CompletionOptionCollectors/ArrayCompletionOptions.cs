@@ -197,8 +197,9 @@ public static class ArrayCompletionOptions
             }
             case ArrayPropertyType.FileNames:
             {
-                var excluded = GetArrayValues(value).Select(v => v.Text).Distinct().ToFrozenSet();
+                FrozenSet<string> excluded = [..GetArrayValues(value).Select(v => v.Text)];
                 var property = (FileArrayProperty)arrayProperty;
+                prependDoubleQuote = !value?.StartsWith('\"') ?? true;
                 suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root.TrimStart('\"'), property.ValidExtensions, excluded, context.ProjectServices);
                 break;
             }

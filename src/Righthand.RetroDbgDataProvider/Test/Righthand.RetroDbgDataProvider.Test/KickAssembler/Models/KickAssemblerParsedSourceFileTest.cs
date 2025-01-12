@@ -186,7 +186,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                     "Project",
                     [
                         "one.prg", "two.prg", "sub1/one.prg".ToPath(), "sub2/two.prg".ToPath(),
-                        "sidOne.sid", "tubo.bin"
+                        "sidOne.sid", 
+                        "tubo.bin", "tubo2.bin",
+                        "alfa.c64", "beta.c64",
+                        "bingo.txt", "beta.txt", "delta.txt"
                     ]                
                 }
             }.ToFrozenDictionary();
@@ -401,9 +404,9 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
 
                 var actual = actualOption?.Suggestions.OfType<FileSuggestion>().Select(s => s.Text).ToImmutableArray();
-                var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
+                var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
 
-                Assert.That(actual, Is.EqualTo(expected));
+                Assert.That(actual, Is.EquivalentTo(expected));
             }
 
             [TestCase(".file [name=\"one.x|", "")]
@@ -435,21 +438,55 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
                 return actual?.AppendText;
             }
+        }
 
-            // [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = "")]
-            // public string? GivenTestCaseForCharacterTypedTrigger_AppendsDoubleQuotesWhenExpected(string text)
+        [TestFixture]
+        public class FileNamesInDirective : GetCompletionOption
+        {
+            [TestCase(".import \"|", "tubo.bin,tubo2.bin,alfa.c64,beta.c64,bingo.txt,beta.txt,delta.txt")]
+            [TestCase(".import c64 \"|", "alfa.c64,beta.c64")]
+            //[TestCase(".import c64 |", "alfa.c64,beta.c64")] // not supporting typing without double quotes
+            [TestCase(".import c64 \"a|", "alfa.c64")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedFileTexts(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                var actual = actualOption!.Value.Suggestions.OfType<FileSuggestion>().Select(s => s.Text).ToFrozenSet();
+                var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
+
+                Assert.That(actual, Is.EquivalentTo(expected));
+            }
+            [TestCase(".import c64x \"|")]
+            [TestCase(".importx c64 \"|")]
+            [TestCase(".importx \"|")]
+            public void GivenInvalidTestCaseForCharacterTypedTrigger_ReturnsNull(string text)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                Assert.That(actualOption, Is.Null);
+            }
+        }
+        [TestFixture]
+        public class DirectiveOptions : GetCompletionOption
+        {
+            [TestCase(".import c| \"alfa.c64", "c64")]
+            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedFileTexts(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                var actual = actualOption!.Value.Suggestions.Select(s => s.Text).ToFrozenSet();
+                var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
+
+                Assert.That(actual, Is.EquivalentTo(expected));
+            }
+            // [TestCase(".import c64x \"|")]
+            // [TestCase(".importx c64 \"|")]
+            // [TestCase(".importx \"|")]
+            // public void GivenInvalidTestCaseForCharacterTypedTrigger_ReturnsNull(string text)
             // {
-            //     var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
+            //     var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
             //
-            //     return actual?.AppendText;
-            // }
-            //
-            // [TestCase(".segmentdef Base [segments=\"|]", ExpectedResult = 0)]
-            // public int? GivenTestCaseForCharacterTypedTrigger_ReplacementLengthIsCorrect(string text)
-            // {
-            //     var actual = RunTest(text, TextChangeTrigger.CharacterTyped);
-            //
-            //     return actual?.ReplacementLength;
+            //     Assert.That(actualOption, Is.Null);
             // }
         }
     }

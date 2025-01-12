@@ -18,10 +18,13 @@ public enum SuggestionOrigin
     Directory,
     PropertyName,
     PropertyValue,
+    DirectiveOption
 }
 
-public abstract record Suggestion(SuggestionOrigin Origin, string Text, int Priority);
-
+public abstract record Suggestion(SuggestionOrigin Origin, string Text, int Priority)
+{
+    public bool IsDefault { get; init; }
+}
 public record StandardSuggestion(SuggestionOrigin Origin, string Text, int Priority = 0) : Suggestion(Origin, Text, Priority);
 public abstract record FileSystemSuggestion(SuggestionOrigin Origin, string Text, ProjectFileOrigin FileOrigin, string OriginPath, int Priority = 0) : Suggestion(Origin, Text, Priority);
 public record FileSuggestion(string Text, ProjectFileOrigin FileOrigin, string OriginPath, int Priority = 0) : FileSystemSuggestion(SuggestionOrigin.File, Text, FileOrigin, OriginPath, Priority);

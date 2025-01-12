@@ -23,7 +23,7 @@ public static class ArrayProperties
                 [
                     new ArrayProperty("mbfiles", Bool),
                     new FileArrayProperty("name", FileName, [".prg"]),
-                    new ValuesArrayProperty("type", QuotedEnumerable, [".prg", ".bin"]),
+                    new ValuesArrayProperty("type", QuotedEnumerable, ["prg", "bin"]),
                     new ArrayProperty("segments", Segments),
                 ]
             },

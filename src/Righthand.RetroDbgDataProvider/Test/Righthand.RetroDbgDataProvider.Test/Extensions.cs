@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System;
 public static class Extensions
@@ -46,4 +47,11 @@ public static class Extensions
     /// <param name="path"></param>
     /// <returns></returns>
     public static string ToPath(this string path) => path.Replace('/', Path.DirectorySeparatorChar);
+
+    public static (string Replaced, int Caret) ExtractCaret(this string text)
+    {
+        Debug.Assert(text.Count(c => c == '|') == 1, "Exactly one cursor | is allowed within text");
+        int cursor = text.IndexOf('|') - 1;
+        return(text.Replace("|", ""), cursor);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -13,9 +14,9 @@ public static class DirectiveProperties
     {
         var temp = new Dictionary<string, Directive>(StringComparer.OrdinalIgnoreCase);
         temp.AddWithType(".import", CreateTypeValues(
-                ("c64", [new FileDirectiveValueType("prg")]),
-                ("text", [new FileDirectiveValueType("txt")]),
-                ("binary", [new FileDirectiveValueType("bin")])
+                ("c64", [new FileDirectiveValueType(".c64")]),
+                ("txt", [new FileDirectiveValueType(".txt")]),
+                ("bin", [new FileDirectiveValueType(".bin")])
             )
         );
         Data = temp.ToFrozenDictionary();
@@ -30,8 +31,10 @@ public static class DirectiveProperties
     {
         return types.ToFrozenDictionary(v => v.Name, v => v.ValueTypes.OfType<DirectiveValueType>().ToFrozenSet(), StringComparer.OrdinalIgnoreCase);
     }
+    
+    public static bool TryGetDirective(string key, [NotNullWhen(true)]out Directive? directive) => Data.TryGetValue(key, out directive);
 
-    public static FrozenSet<DirectiveValueType>? GetValueType(string directiveName, string? directiveType)
+    public static FrozenSet<DirectiveValueType>? GetValueTypes(string directiveName, string? directiveType)
     {
         if (Data.TryGetValue(directiveName, out var directive))
         {
@@ -44,6 +47,11 @@ public static class DirectiveProperties
                         {
                             return directiveValues;
                         }
+                    }
+                    else
+                    {
+                        // if type is not specified, return all values
+                        return [..directiveWithType.ValueTypes.SelectMany(vt => vt.Value)];
                     }
 
                     break;
