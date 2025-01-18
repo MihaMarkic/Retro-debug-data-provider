@@ -25,7 +25,7 @@ public class TokenListOperationsTest
         => [..tokenTypes.Select((t, i) => CreateToken(t.Type, t.Text, i))];
 
     [TestFixture]
-    public class GetTokenAtColumn : TokenListOperationsTest
+    public class GetTokenIndexAtColumn : TokenListOperationsTest
     {
         [TestCase("[test=4,", 7, ExpectedResult = COMMA)]
         [TestCase("[test=4,", 0, ExpectedResult = OPEN_BRACKET)]
@@ -33,6 +33,25 @@ public class TokenListOperationsTest
         {
             var tokens = LexerTest.GetTokens<LexerErrorListener>(input, out _);
             var actual = TokenListOperations.GetTokenIndexAtColumn(tokens.AsSpan(), 0, column);
+            if (actual.HasValue)
+            {
+                var token = tokens[actual.Value];
+
+                return token.Type;
+            }
+
+            return null;
+        }
+    }
+    [TestFixture]
+    public class GetTokenIndexToTheLeftOfColumn : TokenListOperationsTest
+    {
+        [TestCase("[test=4,", 7, ExpectedResult = DEC_NUMBER)]
+        [TestCase("[test=4,", 0, ExpectedResult = null)]
+        public int? GivenSample_ReturnsActual(string input, int column)
+        {
+            var tokens = LexerTest.GetTokens<LexerErrorListener>(input, out _);
+            var actual = TokenListOperations.GetTokenIndexToTheLeftOfColumn(tokens.AsSpan(), 0, column);
             if (actual.HasValue)
             {
                 var token = tokens[actual.Value];

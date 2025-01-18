@@ -11,11 +11,17 @@ public static class TokenExtensions
 
     public static bool ContainsColumn(this IToken token, int absoluteColumn)
     {
-        return token.StartIndex <= absoluteColumn && token.StopIndex > absoluteColumn;
+        return token.StartIndex <= absoluteColumn && token.StopIndex >= absoluteColumn;
+    }
+
+    public static bool ContainsColumnWithInclusiveEdge(this IToken token, int absoluteColumn)
+    {
+        return token.StartIndex <= absoluteColumn + 1 && token.StopIndex >= absoluteColumn;
     }
 
     public static string TextUpToColumn(this IToken token, int absoluteColumn)
     {
-        return token.Text[..absoluteColumn];
+        var endIndex = absoluteColumn - token.StartIndex + 1;
+        return token.Text[..endIndex];
     }
 }

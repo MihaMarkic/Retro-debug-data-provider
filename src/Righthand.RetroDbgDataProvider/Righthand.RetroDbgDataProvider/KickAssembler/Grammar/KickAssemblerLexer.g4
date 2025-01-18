@@ -211,7 +211,7 @@ fragment DEC_DIGIT: [0-9] ;
 fragment HEX_DIGIT: [0-9a-fA-F] ;
 fragment BIN_DIGIT: '0' | '1';
 CHAR: '\'' . '\'' ;
-STRING:  '"' ~[\n\r]* '"' ;
+STRING:  '"' ('\\"' | ~[\n\r"])* '"' ;
 DOUBLE_QUOTE: '"';
 //SYMBOL: '.'? [a-zA-Z0-9_]+ ;
 SINGLE_LINE_COMMENT : '//' .*? EOL  -> channel(COMMENTS_CHANNEL);

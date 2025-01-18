@@ -60,6 +60,11 @@ public static class DirectiveProperties
     
     public static bool TryGetDirective(string key, [NotNullWhen(true)]out Directive? directive) => Data.TryGetValue(key, out directive);
 
+    public static FrozenSet<string> GetDirectives(string root)
+    {
+        return [..Data.Keys.Where(k => k.StartsWith(root, StringComparison.OrdinalIgnoreCase))];
+    }
+
     public static FrozenSet<DirectiveValueType>? GetValueTypes(string directiveName, string? directiveType)
     {
         if (Data.TryGetValue(directiveName, out var directive))

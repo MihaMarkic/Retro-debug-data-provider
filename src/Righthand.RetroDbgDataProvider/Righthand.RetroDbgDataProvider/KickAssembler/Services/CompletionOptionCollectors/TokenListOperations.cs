@@ -640,6 +640,13 @@ public static partial class TokenListOperations
         OpenBracket,
     }
 
+    /// <summary>
+    /// Returns token index containing <param name="column"/>. 
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <param name="lineStart"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
     internal static int? GetTokenIndexAtColumn(ReadOnlySpan<IToken> tokens, int lineStart, int column)
     {
         int position = lineStart + column;
@@ -654,6 +661,20 @@ public static partial class TokenListOperations
             if (t.StopIndex >= position)
             {
                 return i;
+            }
+        }
+
+        return null;
+    }
+    internal static int? GetTokenIndexToTheLeftOfColumn(ReadOnlySpan<IToken> tokens, int lineStart, int column)
+    {
+        int position = lineStart + column;
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            var t = tokens[i];
+            if (t.StopIndex >= position)
+            {
+                return i > 0 ? i - 1 : null;
             }
         }
 

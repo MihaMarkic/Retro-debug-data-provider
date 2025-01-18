@@ -579,6 +579,59 @@ public class LexerTest
     }
 
     [TestFixture]
+    public class String : LexerTest
+    {
+        [Test]
+        public void WhenOnlyNormalString_ReturnsString()
+        {
+            const string input = """
+                                 "test.asm"
+                                 """;
+
+            var actual = GetAllTokens(input);
+
+            var expected = GetTokenTypes(
+                STRING,
+                KickAssemblerLexer.Eof
+            );
+            
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenStringWithNestedDoubleQuote_ReturnsStringAndRestAsUnquotedStringEndingWithDoubleQuote()
+        {
+            const string input = """
+                                 ""test"
+                                 """;
+
+            var actual = GetAllTokens(input);
+
+            var expected = GetTokenTypes(
+                STRING, UNQUOTED_STRING, DOUBLE_QUOTE,
+                KickAssemblerLexer.Eof
+            );
+            
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+        [Test]
+        public void WhenStringWithEscapedDoubleQuote_ReturnsString()
+        {
+            const string input = """
+                                 "te\"st"
+                                 """;
+
+            var actual = GetAllTokens(input);
+
+            var expected = GetTokenTypes(
+                STRING,
+                KickAssemblerLexer.Eof
+            );
+            
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+    }
+    
+    [TestFixture]
     public class HashDefine : LexerTest
     {
         [Test]

@@ -62,6 +62,7 @@ public class DirectiveCompletionOptionsTest
         [TestCase(".import c64 \"test2|\"", ExpectedResult = "test2")]
         [TestCase("label: .import c6|4 \"xx/p", ExpectedResult = "c6")]
         [TestCase(".import c|64 \"test2\"", ExpectedResult = "c")]
+        [TestCase(".import c| \"alfa.c64", ExpectedResult = "c")]
         [TestCase(".import |c64 \"test2\"", ExpectedResult = "")]
         [TestCase(".import |", ExpectedResult = "")]
         public string? GivenSampleInputWithCursorInBetween_ReturnsCorrectRoot(string line)
@@ -96,6 +97,8 @@ public class DirectiveCompletionOptionsTest
         [TestCase(".import |", ExpectedResult = DirectiveCompletionOptions.PositionType.Type)]
         [TestCase(".encoding |", ExpectedResult = DirectiveCompletionOptions.PositionType.Type)]
         [TestCase(".encoding \"|", ExpectedResult = DirectiveCompletionOptions.PositionType.Value)]
+        [TestCase(".encoding|", ExpectedResult = DirectiveCompletionOptions.PositionType.Directive)]
+        [TestCase(".enc|", ExpectedResult = DirectiveCompletionOptions.PositionType.Directive)]
         public DirectiveCompletionOptions.PositionType? GivenSampleInputWithCursorInBetween_ReturnsCorrectPositionType(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
