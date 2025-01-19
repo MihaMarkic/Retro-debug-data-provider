@@ -511,15 +511,6 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
                 Assert.That(actual, Is.EquivalentTo(expected));
             }
-            // [TestCase(".import c64x \"|")]
-            // [TestCase(".importx c64 \"|")]
-            // [TestCase(".importx \"|")]
-            // public void GivenInvalidTestCaseForCharacterTypedTrigger_ReturnsNull(string text)
-            // {
-            //     var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
-            //
-            //     Assert.That(actualOption, Is.Null);
-            // }
         }
     }
     [TestFixture]

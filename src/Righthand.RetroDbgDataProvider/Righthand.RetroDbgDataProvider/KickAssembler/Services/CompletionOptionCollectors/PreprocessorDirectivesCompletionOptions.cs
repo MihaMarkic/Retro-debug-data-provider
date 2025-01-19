@@ -1,54 +1,56 @@
-﻿using System.Collections.Frozen;
-using System.Text.RegularExpressions;
+﻿using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
+using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
 public static partial class PreprocessorDirectivesCompletionOptions
 {
-    internal static CompletionOption? GetOption(ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int column, CompletionOptionContext context)
     {
-        var (isMatch, root, replaceableText) = GetPreprocessorDirectiveSuggestion(line, trigger, column);
+        var (isMatch, root, replacementLength) = GetMetaInformation(lineTokens, text, lineStart, lineLength, column);
         if (isMatch)
         {
             var suggestions = CompletionOptionCollectorsCommon.CreateSuggestionsFromTexts(root, KickAssemblerLexer.PreprocessorDirectives,
                 SuggestionOrigin.PreprocessorDirective);
-            return new CompletionOption(root, replaceableText.Length + 1, string.Empty, string.Empty, suggestions);
+            return new CompletionOption(root, replacementLength, string.Empty, string.Empty, suggestions);
         }
 
         return null;
     }
 
-
-    [GeneratedRegex("""
-                    ^\s*#(?<import>[a-zA-Z]*)$
-                    """, RegexOptions.Singleline)]
-    internal static partial Regex PreprocessorDirectiveRegex();
-
+    
     /// <summary>
     /// Returns possible completion for preprocessor directives.
     /// </summary>
-    /// <param name="line"></param>
-    /// <param name="trigger"></param>
-    /// <param name="column">Caret column</param>
+    /// <param name="lineTokens"></param>
+    /// <param name="text"></param>
+    /// <param name="lineStart"></param>
+    /// <param name="lineLength"></param>
+    /// <param name="lineCursor"></param>
     /// <returns></returns>
-    internal static (bool IsMatch, string Root, string ReplaceableText) GetPreprocessorDirectiveSuggestion(
-        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column)
+    internal static (bool IsMatch, string Root, int ReplacementLength) GetMetaInformation(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int lineCursor)
     {
-        // check obvious conditions
-        if (line.Length == 0 || trigger == TextChangeTrigger.CharacterTyped && line[^1] != '#')
+        int absoluteLineCursor = lineStart + lineCursor;
+        var cursorTokenIndex = TokenListOperations.GetTokenIndexAtColumn(lineTokens, 0, absoluteLineCursor);
+        if (cursorTokenIndex is null)
         {
-            return (false, string.Empty, string.Empty);
+            return (false, "", -1);
+        }
+        
+        string root;
+        int replacementLength;
+        var currentToken = lineTokens[cursorTokenIndex.Value];
+        if (currentToken.IsPreprocessorDirectiveType())
+        {
+            root = currentToken.TextUpToColumn(absoluteLineCursor);
+            replacementLength = currentToken.Length();
+        }
+        else if (currentToken.Type == HASH)
+        {
+            
         }
 
-        var match = PreprocessorDirectiveRegex().Match(line.ToString());
-        if (match.Success)
-        {
-            int indexOfHash = line.IndexOf('#');
-            string root = line[(indexOfHash + 1)..(column + 1)].ToString();
-            return (true, root, match.Groups["import"].Value);
-        }
-
-        return (false, string.Empty, string.Empty);
+        return (false, "", 0);
     }
 }

@@ -2,7 +2,6 @@ using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
-using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
@@ -62,9 +61,13 @@ public static partial class TokenListOperations
     [
         STRING, BIN_NUMBER, HEX_NUMBER, DEC_NUMBER, UNQUOTED_STRING, TRUE, FALSE,
     ];
+
+    public static readonly FrozenSet<int> PreprocessorDirectiveTypes =
+        [HASHIF, HASHELIF, HASHELSE, HASHENDIF, HASHDEFINE, HASHUNDEF, HASHIMPORT, HASHIMPORTIF, HASHIMPORTONCE];
     
     public static bool IsTextType(this IToken token) => TextTypes.Contains(token.Type);
     public static bool IsDirectiveType(this IToken token) => DirectiveTypes.Contains(token.Type);
+    public static bool IsPreprocessorDirectiveType(this IToken token) => PreprocessorDirectiveTypes.Contains(token.Type);
     public static bool IsPropertyValueType(this IToken token) => PropertyValueTypes.Contains(token.Type);
 
     internal static TokenTypeFamily GetTokenTypeFamily(IToken token)
