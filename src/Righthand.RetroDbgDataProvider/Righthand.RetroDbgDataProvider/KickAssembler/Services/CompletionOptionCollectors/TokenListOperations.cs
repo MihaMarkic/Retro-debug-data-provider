@@ -195,7 +195,7 @@ public static partial class TokenListOperations
                             state = GetArrayPropertiesState.Comma;
                             nameToken = null;
                             break;
-                        case DOUBLE_QUOTE:
+                        case OPEN_STRING:
                             valueStartToken = token;
                             state = GetArrayPropertiesState.OpenString;
                             break;
@@ -487,7 +487,7 @@ public static partial class TokenListOperations
         }
 
         // there can be only a single DOUBLE_QUOTE type within the line, others would be STRINGs
-        if (tokens.GetLastIndexOf(DOUBLE_QUOTE, out var lastDoubleQuoteIndex))
+        if (tokens.GetLastIndexOf(OPEN_STRING, out var lastDoubleQuoteIndex))
         {
             if (lastDoubleQuoteIndex == 0)
             {
@@ -517,7 +517,7 @@ public static partial class TokenListOperations
                 ASSIGNMENT => FindArrayOpenBracketState.StringValue,
                 COMMA or OPEN_BRACKET => FindArrayOpenBracketState.PropertyName,
                 // TODO eventually handle properly " since going backward is unclear whether it's a string or not, i.e. [seg="oo
-                DOUBLE_QUOTE => FindArrayOpenBracketState.OpenStringValue,
+                OPEN_STRING => FindArrayOpenBracketState.OpenStringValue,
                 _ => FindArrayOpenBracketState.Invalid,
             };
         }
@@ -528,7 +528,7 @@ public static partial class TokenListOperations
                 ASSIGNMENT => FindArrayOpenBracketState.Assignment,
                 COMMA => FindArrayOpenBracketState.Comma,
                 OPEN_BRACKET => FindArrayOpenBracketState.OpenBracket,
-                DOUBLE_QUOTE => FindArrayOpenBracketState.Value,
+                OPEN_STRING => FindArrayOpenBracketState.Value,
                 _ => IsPropertyValueType(current) ? FindArrayOpenBracketState.Value : FindArrayOpenBracketState.Invalid,
             };
         }
@@ -565,7 +565,7 @@ public static partial class TokenListOperations
                     case FindArrayOpenBracketState.OpenStringValue:
                         state = token.Type switch
                         {
-                            DOUBLE_QUOTE => FindArrayOpenBracketState.Value,
+                            OPEN_STRING => FindArrayOpenBracketState.Value,
                             _ => state,
                         };
                         break;

@@ -212,7 +212,7 @@ fragment HEX_DIGIT: [0-9a-fA-F] ;
 fragment BIN_DIGIT: '0' | '1';
 CHAR: '\'' . '\'' ;
 STRING:  '"' ('\\"' | ~[\n\r"])* '"' ;
-DOUBLE_QUOTE: '"';
+OPEN_STRING: '"' ~[\n\r"]* ;
 //SYMBOL: '.'? [a-zA-Z0-9_]+ ;
 SINGLE_LINE_COMMENT : '//' .*? EOL  -> channel(COMMENTS_CHANNEL);
 MULTI_LINE_COMMENT  : '/*' .*? '*/' -> channel(COMMENTS_CHANNEL);
@@ -771,9 +771,9 @@ REFERENCED_FILEPATH
     ->type(STRING),PopMode
     ;
     
-IM_DOUBLE_QUOTE
-    : DOUBLE_QUOTE
-    -> type(DOUBLE_QUOTE)
+IM_OPEN_STRING
+    : OPEN_STRING
+    -> type(OPEN_STRING)
     ;
     
 IM_UNQUOTED_STRING
