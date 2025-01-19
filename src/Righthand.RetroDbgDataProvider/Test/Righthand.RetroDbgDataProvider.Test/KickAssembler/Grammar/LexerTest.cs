@@ -61,7 +61,7 @@ public class LexerTest
     {
         private static IEnumerable<(string Input, ImmutableArray<int> ExpectedTokens, string? Message)> GetTestCases()
         {
-            yield return new("\"", [DOUBLE_QUOTE], "Given double quotes returns DOUBLE_QUOTE");
+            yield return new("\"", [OPEN_STRING], "Given double quotes returns DOUBLE_QUOTE");
         }
 
         [TestCaseSource(nameof(GetTestCases))]
@@ -519,7 +519,7 @@ public class LexerTest
             var actual = GetAllTokens(input);
             
             var expected = GetTokenTypes(
-                HASHIMPORT, WS, DOUBLE_QUOTE, EOL,
+                HASHIMPORT, WS, OPEN_STRING, EOL,
                 HASHIF,
                 KickAssemblerLexer.Eof
             );
@@ -537,7 +537,7 @@ public class LexerTest
             var actual = GetAllTokens(input);
             
             var expected = GetTokenTypes(
-                HASHIMPORT, WS, DOUBLE_QUOTE, EOL,
+                HASHIMPORT, WS, OPEN_STRING, EOL,
                 HASHIMPORT, WS, STRING,
                 KickAssemblerLexer.Eof
             );
@@ -607,7 +607,7 @@ public class LexerTest
             var actual = GetAllTokens(input);
 
             var expected = GetTokenTypes(
-                STRING, UNQUOTED_STRING, DOUBLE_QUOTE,
+                STRING, UNQUOTED_STRING, OPEN_STRING,
                 KickAssemblerLexer.Eof
             );
             

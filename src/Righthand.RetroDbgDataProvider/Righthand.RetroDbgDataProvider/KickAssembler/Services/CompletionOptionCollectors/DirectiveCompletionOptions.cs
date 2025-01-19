@@ -135,14 +135,14 @@ public static class DirectiveCompletionOptions
         }
 
         int startOfStringIndex = -1;
-        if (currentToken.Type is DOUBLE_QUOTE or STRING)
+        if (currentToken.Type is OPEN_STRING or STRING)
         {
             startOfStringIndex = index;
         }
         else
         {
             var upToCursorTokens = lineTokens[..index];
-            if (upToCursorTokens.GetLastIndexOf(DOUBLE_QUOTE, out var temp))
+            if (upToCursorTokens.GetLastIndexOf(OPEN_STRING, out var temp))
             {
                 startOfStringIndex = temp.Value;
             }
@@ -189,14 +189,14 @@ public static class DirectiveCompletionOptions
                 }
 
                 break;
-            case DOUBLE_QUOTE:
-                var lastToken = lineTokens[^1];
-                value = text[(nextToken.StartIndex + 1)..(lastToken.StopIndex+1)];
-                if (nextToken.StopIndex <= absoluteLineCursor)
+            case OPEN_STRING:
+                value = nextToken.Text.TrimStart('\"');
+                if (nextToken.ContainsColumn(absoluteLineCursor))
                 {
                     positionType = PositionType.Value;
-                    root = text[(nextToken.StartIndex + 1)..(absoluteLineCursor+1)];
+                    root = nextToken.TextUpToColumn(absoluteLineCursor).TrimStart('\"');
                     replacementLength = value.Length;
+                    hasEndDelimiter = false;
                 }
 
                 break;
