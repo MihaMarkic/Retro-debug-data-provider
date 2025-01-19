@@ -683,4 +683,25 @@ public static partial class TokenListOperations
 
         return null;
     }
+
+    /// <summary>
+    /// Returns token to the left of last token but only if it is attached to it (no space in between).
+    /// </summary>
+    /// <param name="tokens"></param>
+    /// <returns></returns>
+    internal static int? GetAttachedTokenToTheLeft(ReadOnlySpan<IToken> tokens)
+    {
+        if (tokens.Length < 2)
+        {
+            return null;
+        }
+        var current = tokens[^1];
+        var previous = tokens[^2];
+        if (current.StartIndex == previous.StopIndex + 1)
+        {
+            return tokens.Length - 2;
+        }
+
+        return null;
+    }
 }

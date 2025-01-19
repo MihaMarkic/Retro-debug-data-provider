@@ -95,7 +95,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="trigger"></param>
     /// <param name="triggerChar">Character that triggered request, only valid when <see cref="trigger"/> is <see cref="TextChangeTrigger.CharacterTyped"/></param>
     /// <param name="lineNumber"></param>
-    /// <param name="column"></param>
+    /// <param name="column">Column within selected line</param>
     /// <param name="text"></param>
     /// <param name="textStart"></param>
     /// <param name="textLength"></param>
@@ -105,10 +105,11 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, TriggerChar triggerChar, int lineNumber,
         int column, string text, int textStart, int textLength, CompletionOptionContext context)
     {
-        if (!allTokensByLineMap.TryGetValue(lineNumber, out var tokensAtLine))
+        if (!allTokensByLineMap.TryGetValue(lineNumber, out var allTokensAtLine))
         {
             return null;
         }
+        ImmutableArray<IToken> tokensAtLine = [..allTokensAtLine.Where(t => t.Channel == 0)];
 
         var lineToCursor = text.AsSpan().Slice(textStart, column+1);
         if (lineToCursor.IsEmpty)
@@ -133,7 +134,8 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context)
                      ?? PreprocessorDirectivesCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
                      ?? DirectiveCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
-                     ?? FileReferenceCompletionOptions.GetOption(lineTokens, line, trigger, column, context);
+                     ?? FileReferenceCompletionOptions.GetOption(lineTokens, line, trigger, column, context)
+                     ?? GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context);
 
         // var lineToCursor = text.AsSpan().Slice(textStart, column+1);
         // var syntaxStateAtColumn = CompletionOptionCollectorsCommon.GetSyntaxStatusAtThenEnd(lineToCursor);

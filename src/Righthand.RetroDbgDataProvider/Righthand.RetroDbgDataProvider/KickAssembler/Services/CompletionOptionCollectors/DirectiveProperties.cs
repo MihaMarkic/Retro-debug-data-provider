@@ -65,6 +65,8 @@ public static class DirectiveProperties
         return [..Data.Keys.Where(k => k.StartsWith(root, StringComparison.OrdinalIgnoreCase))];
     }
 
+    public static ImmutableArray<string> AllDirectives => Data.Keys;
+
     public static FrozenSet<DirectiveValueType>? GetValueTypes(string directiveName, string? directiveType)
     {
         if (Data.TryGetValue(directiveName, out var directive))

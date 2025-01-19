@@ -6,12 +6,8 @@ using NSubstitute;
 using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
-using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
-using GetOptionTestCase =
-    (System.Collections.Immutable.ImmutableArray<Antlr4.Runtime.IToken> Tokens, string Content, int Start, int End, int Column,
-    Righthand.RetroDbgDataProvider.Models.Parsing.CompletionOption? ExpectedResult);
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -57,7 +53,7 @@ public class ArrayCompletionOptionsTest
         Debug.Assert(text.Count(c => c == '|') == 1, "Exactly one cursor | is allowed within text");
         int cursor = text.IndexOf('|') - 1;
         text = text.Replace("|", "");
-        return (GetAllTokens(text), text, start, text.Length, cursor, expectedResult);
+        return new(GetAllTokens(text), text, start, text.Length, cursor, expectedResult);
     }
 
     [TestFixture]
