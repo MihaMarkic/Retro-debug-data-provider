@@ -19,7 +19,13 @@ public abstract class ParsedSourceFile
 {
     public string FileName { get; }
     public ImmutableArray<ReferencedFileInfo> ReferencedFiles { get; private set; }
+    /// <summary>
+    /// Preprocessor symbol names defined to include this file.
+    /// </summary>
     public FrozenSet<string> InDefines { get; }
+    /// <summary>
+    /// Preprocessor symbol names defined in this file.
+    /// </summary>
     public FrozenSet<string> OutDefines { get; }
     public DateTimeOffset LastModified { get; }
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions { get; }

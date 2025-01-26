@@ -17,11 +17,16 @@ public interface IProjectServices
      /// <summary>
      /// Collects segment names from entire project.
      /// </summary>
-     /// <returns></returns>
+     /// <returns>All segment names</returns>
      IEnumerable<string> CollectSegments();
+     /// <summary>
+     /// Collects preprocessor symbols from entire project.
+     /// </summary>
+     /// <returns></returns>
+     FrozenSet<string> CollectPreprocessorSymbols();
 }
 
-public record struct ProjectFileKey(ProjectFileOrigin Origin, string Path) : IEqualityComparer<ProjectFileKey>
+public readonly record struct ProjectFileKey(ProjectFileOrigin Origin, string Path) : IEqualityComparer<ProjectFileKey>
 {
     bool IEqualityComparer<ProjectFileKey>.Equals(ProjectFileKey x, ProjectFileKey y)
     {

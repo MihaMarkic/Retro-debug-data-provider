@@ -18,12 +18,12 @@ public static class FileReferenceCompletionOptions
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens,
         ReadOnlySpan<char> line, TextChangeTrigger trigger, int column, CompletionOptionContext context)
     {
-        var leftLinePart = line[..(column + 1)];
+        var leftLinePart = line[..column];
         var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(lineTokens, leftLinePart, trigger);
         if (isMatch)
         {
             var suggestionLine = line[(doubleQuoteColumn + 1)..];
-            var (rootText, length, endsWithDoubleQuote) = CompletionOptionCollectorsCommon.GetSuggestionTextInDoubleQuotes(suggestionLine, column - doubleQuoteColumn);
+            var (rootText, length, endsWithDoubleQuote) = suggestionLine.GetSuggestionTextInDoubleQuotes(column - doubleQuoteColumn - 1);
             FrozenSet<string> excluded = [suggestionLine.Slice(0, length).ToString()];
             FrozenSet<string> fileExtensions = ["asm"];
             var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(rootText, fileExtensions, excluded, context.ProjectServices);

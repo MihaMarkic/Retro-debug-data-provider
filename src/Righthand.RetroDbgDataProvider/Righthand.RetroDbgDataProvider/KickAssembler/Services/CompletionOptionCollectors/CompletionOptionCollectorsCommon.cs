@@ -66,8 +66,7 @@ public static class CompletionOptionCollectorsCommon
     /// <param name="line">Text right to first double quote</param>
     /// <param name="caret">Caret position within line</param>
     /// <returns></returns>
-    internal static (string RootText, int Length, bool EndsWithDoubleQuote) GetSuggestionTextInDoubleQuotes(
-        ReadOnlySpan<char> line, int caret)
+    internal static (string RootText, int Length, bool EndsWithDoubleQuote) GetSuggestionTextInDoubleQuotes(this ReadOnlySpan<char> line, int caret)
     {
         if (caret > line.Length || caret < 0)
         {

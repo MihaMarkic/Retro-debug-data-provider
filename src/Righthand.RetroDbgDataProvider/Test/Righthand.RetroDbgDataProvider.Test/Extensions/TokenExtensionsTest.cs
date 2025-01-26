@@ -8,8 +8,8 @@ public class TokenExtensionsTest
     [TestFixture]
     public class TextUpToColumn : TokenExtensionsTest
     {
-        [TestCase("Test2", 0, 2, ExpectedResult = "Tes")]
-        [TestCase("Test2", 10, 12, ExpectedResult = "Tes")]
+        [TestCase("Test2", 0, 2, ExpectedResult = "Te")]
+        [TestCase("Test2", 10, 12, ExpectedResult = "Te")]
         public string GivenSampleCase_ReturnsCorrectText(string text, int startIndex, int absoluteColumnIndex)
         {
             var token = new MockToken

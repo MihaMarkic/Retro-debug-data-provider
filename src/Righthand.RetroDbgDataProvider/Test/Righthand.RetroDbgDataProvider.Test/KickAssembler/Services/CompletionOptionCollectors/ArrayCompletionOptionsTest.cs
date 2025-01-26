@@ -51,7 +51,7 @@ public class ArrayCompletionOptionsTest
     private static GetOptionTestCase CreateCase(string text, int start, CompletionOption? expectedResult = null)
     {
         Debug.Assert(text.Count(c => c == '|') == 1, "Exactly one cursor | is allowed within text");
-        int cursor = text.IndexOf('|') - 1;
+        int cursor = text.IndexOf('|');
         text = text.Replace("|", "");
         return new(GetAllTokens(text), text, start, text.Length, cursor, expectedResult);
     }
@@ -179,7 +179,7 @@ public class ArrayCompletionOptionsTest
             var matchingProperty = new ArrayPropertyMeta(null, startValueToken, endValueToken, null);
 
             var actual = ArrayCompletionOptions
-                .CreateSuggestionsForArrayValue(root, $"\"{value}\"", root.Length, ".file", null, matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
+                .CreateSuggestionsForArrayValue(root, $"\"{value}\"", root.Length+1, ".file", null, matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
@@ -206,29 +206,29 @@ public class ArrayCompletionOptionsTest
         {
             yield return new ([], -1, ",");
             // source: |"o
-            yield return new ([new ("o", 1)], -1, ",");
+            yield return new ([new ("o", 1)], 0, ",");
             // source: "|o
-            yield return new ([new ("o", 1)], 0, ",o");
+            yield return new ([new ("o", 1)], 1, ",o");
             // source: "o|
-            yield return new ([new ("o", 1)], 1, "o,o");
+            yield return new ([new ("o", 1)], 2, "o,o");
             // source: "o|o
-            yield return new ([new ("oo", 1)], 1, "o,oo");
+            yield return new ([new ("oo", 1)], 2, "o,oo");
             // source: "oo|
-            yield return new ([new ("oo", 1)], 2, "oo,oo");
+            yield return new ([new ("oo", 1)], 3, "oo,oo");
             // source: "o|,bb
-            yield return new ([new ("o", 1), new ("bb", 3)], 1, "o,o");
+            yield return new ([new ("o", 1), new ("bb", 3)], 2, "o,o");
             // source: "o,|bb
-            yield return new ([new ("o", 1), new ("bb", 3)], 2, ",bb");
+            yield return new ([new ("o", 1), new ("bb", 3)], 3, ",bb");
             // source: "o,b|b
-            yield return new ([new ("o", 1), new ("bb", 3)], 3, "b,bb");
+            yield return new ([new ("o", 1), new ("bb", 3)], 4, "b,bb");
             // source: "o,bb|
-            yield return new ([new ("o", 1), new ("bb", 3)], 4, "bb,bb");
+            yield return new ([new ("o", 1), new ("bb", 3)], 5, "bb,bb");
             // '"obu '
-            yield return new ([new ("obu ", 1)], 2, "ob,obu"); // shall end value even within non terminated string
+            yield return new ([new ("obu ", 1)], 3, "ob,obu"); // shall end value even within non terminated string
             // '"obu,'
-            yield return new ([new ("obu]", 1)], 2, "ob,obu"); // shall end value even within non terminated string
+            yield return new ([new ("obu]", 1)], 3, "ob,obu"); // shall end value even within non terminated string
             // '"obu]'
-            yield return new ([new ("obu,", 1)], 2, "ob,obu"); // shall end value even within non terminated string
+            yield return new ([new ("obu,", 1)], 3, "ob,obu"); // shall end value even within non terminated string
         }
 
         [TestCaseSource(nameof(GetSource))]

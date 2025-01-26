@@ -27,12 +27,14 @@ public class TokenListOperationsTest
     [TestFixture]
     public class GetTokenIndexAtColumn : TokenListOperationsTest
     {
-        [TestCase("[test=4,", 7, ExpectedResult = COMMA)]
+        [TestCase("[test=4,", 8, ExpectedResult = COMMA)]
+        [TestCase("[test=4,", 7, ExpectedResult = DEC_NUMBER)]
+        [TestCase("[test=\"],", 7, ExpectedResult = OPEN_STRING)]
         [TestCase("[test=4,", 0, ExpectedResult = OPEN_BRACKET)]
         public int? GivenSample_ReturnsActual(string input, int column)
         {
             var tokens = LexerTest.GetTokens<LexerErrorListener>(input, out _);
-            var actual = TokenListOperations.GetTokenIndexAtColumn(tokens.AsSpan(), 0, column);
+            var actual = tokens.AsSpan().GetTokenIndexAtColumn(0, column);
             if (actual.HasValue)
             {
                 var token = tokens[actual.Value];
@@ -51,7 +53,7 @@ public class TokenListOperationsTest
         public int? GivenSample_ReturnsActual(string input, int column)
         {
             var tokens = LexerTest.GetTokens<LexerErrorListener>(input, out _);
-            var actual = TokenListOperations.GetTokenIndexToTheLeftOfColumn(tokens.AsSpan(), 0, column);
+            var actual = tokens.AsSpan().GetTokenIndexToTheLeftOfColumn(0, column);
             if (actual.HasValue)
             {
                 var token = tokens[actual.Value];
@@ -198,7 +200,7 @@ public class TokenListOperationsTest
         [TestCaseSource(nameof(GetSource))]
         public void GivenSample_ReturnsExpectedResult(TestItem td)
         {
-            var actual = TokenListOperations.GetArrayProperties(td.Tokens.AsSpan());
+            var actual = td.Tokens.AsSpan().GetArrayProperties();
 
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
@@ -230,7 +232,7 @@ public class TokenListOperationsTest
         private static (FrozenDictionary<IToken, ArrayPropertyMeta> Properties, string Content, IToken Name, int Cursor) GetValues(string source, int? tokenNameIndex = null,
             int skipTokensCount = 0)
         {
-            var cursor = source.IndexOf('|') - 1;
+            var cursor = source.IndexOf('|');
             source = source.Replace("|", "");
             var tokens = GetAllTokens(source);
             var nameToken = tokenNameIndex is not null ? tokens[tokenNameIndex.Value] : tokens.First(t => t.Text != "\"" && !string.IsNullOrWhiteSpace(t.Text));
@@ -264,7 +266,7 @@ public class TokenListOperationsTest
         [TestCaseSource(nameof(GetSource))]
         public void GivenSample_ReturnsExpectedResult(TestItem td)
         {
-            var actual = TokenListOperations.GetColumnPositionData(td.Properties, td.Content, td.AbsolutePosition);
+            var actual = td.Properties.GetColumnPositionData(td.Content, td.AbsolutePosition);
             
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }

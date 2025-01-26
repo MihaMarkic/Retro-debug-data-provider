@@ -22,7 +22,7 @@ public static class ArrayCompletionOptions
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens, string content, int lineStart, int lineLength,
         int column, CompletionOptionContext context)
     {
-        var columnTokenIndex = TokenListOperations.GetTokenIndexAtColumn(tokens, lineStart, column);
+        var columnTokenIndex = tokens.GetTokenIndexAtColumn(lineStart, column);
         if (columnTokenIndex is null)
         {
             return null;
@@ -30,7 +30,7 @@ public static class ArrayCompletionOptions
 
         var columnToken = tokens[columnTokenIndex.Value];
         int? openBracketIndex = columnToken.Type == KickAssemblerLexer.OPEN_BRACKET 
-            ? columnTokenIndex.Value: TokenListOperations.FindWithinArrayOpenBracket(tokens[..columnTokenIndex.Value]);
+            ? columnTokenIndex.Value: tokens[..columnTokenIndex.Value].FindWithinArrayOpenBracket();
         if (openBracketIndex is null)
         {
             Debug.WriteLine("Couldn't find array open bracket");
@@ -80,15 +80,15 @@ public static class ArrayCompletionOptions
             arrayOwner = directiveToken.Text;
         }
 
-        var arrayProperties = TokenListOperations.GetArrayProperties(tokens[(openBracketIndex.Value + 1)..]);
+        var arrayProperties = tokens[(openBracketIndex.Value + 1)..].GetArrayProperties();
         int absoluteColumn = lineStart + column;
         var contentUpToLineEnd = content.AsSpan()[..(lineStart+lineLength)];
-        var (name, position, root, value, matchingArrayProperty) = TokenListOperations.GetColumnPositionData(arrayProperties, contentUpToLineEnd, absoluteColumn);
+        var (name, position, root, value, matchingArrayProperty) = arrayProperties.GetColumnPositionData(contentUpToLineEnd, absoluteColumn);
 
         switch (position)
         {
             case PositionWithinArray.Name:
-                var replacementLength = name?.StopIndex - absoluteColumn ?? 0;
+                var replacementLength = name?.StopIndex - absoluteColumn + 1 ?? 0;
                 var excluded = arrayProperties.Select(a => a.Key.Text).Distinct().ToFrozenSet(StringComparer.OrdinalIgnoreCase);
                 var suggestedValues = ArrayProperties
                     .GetNames(arrayOwner, root)
@@ -166,7 +166,7 @@ public static class ArrayCompletionOptions
                 {
                     bool startsWithDoubleQuote = value.StartsWith('\"');
                     // shall not suggest when segments=|"...
-                    bool isCursorAtStart = absoluteColumn < matchingProperty.StartValue.StartIndex;
+                    bool isCursorAtStart = absoluteColumn <= matchingProperty.StartValue.StartIndex;
                     if (startsWithDoubleQuote && !isCursorAtStart)
                     {
                         var values = GetArrayValues(value);
@@ -227,7 +227,7 @@ public static class ArrayCompletionOptions
     {
         foreach (var v in values)
         {
-            bool isInsideValue = v.StartIndex <= relativeColumn + 1 && v.StartIndex + v.Text.Length > relativeColumn; 
+            bool isInsideValue = v.StartIndex <= relativeColumn && v.StartIndex + v.Text.Length >= relativeColumn; 
             if (isInsideValue)
             {
                 int spaceIndex = v.Text.IndexOf(' ', StringComparison.Ordinal);
@@ -236,7 +236,7 @@ public static class ArrayCompletionOptions
                 int endingIndex = GetMinPosition(v.Text.Length, spaceIndex, commaIndex, closeBracketIndex);
                 var trimmedValue = v.Text[..endingIndex];
                 
-                return (trimmedValue[..(relativeColumn - v.StartIndex + 1)], trimmedValue);
+                return (trimmedValue[..(relativeColumn - v.StartIndex)], trimmedValue);
             }
         }
 

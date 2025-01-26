@@ -16,7 +16,7 @@ partial class KickAssemblerLexer
     /// <summary>
     /// Ordered list of preprocessor directives.
     /// </summary>
-    public static FrozenSet<string> PreprocessorDirectives =
+    public static readonly FrozenSet<string> PreprocessorDirectives =
         ["#define", "#elif", "#else", "#endif", "#if", "#import", "#importif", "#importonce", "#undef"];
 
     

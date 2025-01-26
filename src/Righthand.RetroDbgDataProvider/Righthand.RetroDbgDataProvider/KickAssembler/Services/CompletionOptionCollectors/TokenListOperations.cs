@@ -88,7 +88,7 @@ public static partial class TokenListOperations
     /// <param name="absolutePosition">Absolute cursor position -1 based</param>
     /// <returns>Returns property name, type of position, text left of the position and entire value.</returns>
     internal static (IToken? Name, PositionWithinArray Position, string Root, string Value, ArrayPropertyMeta? MatchingProperty) 
-        GetColumnPositionData(FrozenDictionary<IToken, ArrayPropertyMeta> properties, ReadOnlySpan<char> content, int absolutePosition)
+        GetColumnPositionData(this FrozenDictionary<IToken, ArrayPropertyMeta> properties, ReadOnlySpan<char> content, int absolutePosition)
     {
         // when no properties, it has to be on an empty one
         if (properties.Count == 0)
@@ -104,7 +104,7 @@ public static partial class TokenListOperations
             bool isWithinProperty;
             if (comma is not null)
             {
-                isWithinProperty = name.StartIndex <= absolutePosition && comma.StopIndex > absolutePosition;
+                isWithinProperty = name.StartIndex < absolutePosition && comma.StopIndex >= absolutePosition;
             }
             else
             {
@@ -117,17 +117,17 @@ public static partial class TokenListOperations
                 string value = meta.GetValue(content);
                 if (assignment is null)
                 {
-                    return (pair.Key, PositionWithinArray.Name, content[name.StartIndex..(absolutePosition+1)].ToString(), value, meta);
+                    return (pair.Key, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), value, meta);
                 }
                 else
                 {
                     if (absolutePosition < assignment.StartIndex)
                     {
-                        return (name, PositionWithinArray.Name, content[name.StartIndex..(absolutePosition+1)].ToString(), value, meta);
+                        return (name, PositionWithinArray.Name, content[name.StartIndex..absolutePosition].ToString(), value, meta);
                     }
                     else
                     {
-                        return (name, PositionWithinArray.Value, meta.GetValue(content, (absolutePosition+1)), value, meta);
+                        return (name, PositionWithinArray.Value, meta.GetValue(content, absolutePosition), value, meta);
                     }
                 }
             }
@@ -140,7 +140,7 @@ public static partial class TokenListOperations
     /// </summary>
     /// <param name="tokens">Array tokens excluding open bracket</param>
     /// <returns></returns>
-    internal static FrozenDictionary<IToken, ArrayPropertyMeta> GetArrayProperties(ReadOnlySpan<IToken> tokens)
+    internal static FrozenDictionary<IToken, ArrayPropertyMeta> GetArrayProperties(this ReadOnlySpan<IToken> tokens)
     {
         if (tokens.IsEmpty)
         {
@@ -479,7 +479,7 @@ public static partial class TokenListOperations
     /// </summary>
     /// <param name="tokens"></param>
     /// <returns></returns>
-    internal static int? FindWithinArrayOpenBracket(ReadOnlySpan<IToken> tokens)
+    internal static int? FindWithinArrayOpenBracket(this ReadOnlySpan<IToken> tokens)
     {
         if (tokens.IsEmpty)
         {
@@ -644,13 +644,14 @@ public static partial class TokenListOperations
     }
 
     /// <summary>
-    /// Returns token index containing <param name="column"/>. 
+    /// Returns token index containing <param name="column"/>.
+    /// When cursor is right in front of token, such as |4, it returns token 4 but only when there is space/tab to the left. 
     /// </summary>
     /// <param name="tokens"></param>
     /// <param name="lineStart"></param>
     /// <param name="column"></param>
     /// <returns></returns>
-    internal static int? GetTokenIndexAtColumn(ReadOnlySpan<IToken> tokens, int lineStart, int column)
+    internal static int? GetTokenIndexAtColumn(this ReadOnlySpan<IToken> tokens, int lineStart, int column)
     {
         int position = lineStart + column;
         for (int i = 0; i < tokens.Length; i++)
@@ -661,15 +662,28 @@ public static partial class TokenListOperations
                 break;
             }
 
-            if (t.StopIndex >= position)
+            if (t.StopIndex >= position - 1)
             {
-                return i;
+                // check situation 
+                if (i > 0 && t.StartIndex == position)
+                {
+                    var previous = tokens[i - 1];
+                    if (previous.StopIndex < t.StartIndex - 1)
+                    {
+                        return i;
+                    }
+                }
+                else
+                {
+                    return i;
+                }
             }
         }
 
         return null;
     }
-    internal static int? GetTokenIndexToTheLeftOfColumn(ReadOnlySpan<IToken> tokens, int lineStart, int column)
+
+    internal static int? GetTokenIndexToTheLeftOfColumn(this ReadOnlySpan<IToken> tokens, int lineStart, int column)
     {
         int position = lineStart + column;
         for (int i = 0; i < tokens.Length; i++)

@@ -178,7 +178,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             Substitute.For<IProjectServices>()
         );
 
-        private static CompletionOptionContext CreateContext(ImmutableArray<string> segments)
+        private static CompletionOptionContext CreateContext(ImmutableArray<string> segments, FrozenSet<string> preprocessorSymbols)
         {
             var files = new Dictionary<string, FrozenSet<string>>
             {
@@ -204,6 +204,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             }.ToFrozenDictionary();
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.CollectSegments().Returns(segments);
+            projectServices.CollectPreprocessorSymbols().Returns(preprocessorSymbols);
             projectServices.GetMatchingFiles(Arg.Any<string>(), Arg.Any<FrozenSet<string>>(), Arg.Any<ICollection<string>>())
                 .Returns(a =>
                 {
@@ -270,7 +271,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 if (caretIndex >= 0)
                 {
                     // 1 should be subtracted from line length because of caret
-                    return (index + caretIndex - 1, i, index, index + lineText.Length - 1, text.Replace("|", ""), lineText.Length - 1);
+                    return (index + caretIndex, i, index, index + lineText.Length - 1, text.Replace("|", ""), lineText.Length - 1);
                 }
 
                 if (index > 0)
@@ -288,7 +289,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         {
             var (tokens, tokensByLine) = GetTokens(text);
             var (column, lineNumber, lineTextStart, lineTextEnd, realText, textLength) = GetPosition(text);
-            var context = CreateContext(["one1", "one2", "two1"]);
+            var context = CreateContext(["one1", "one2", "two1"], ["ALFA", "BETA", "BFTA"]);
             var actual = KickAssemblerParsedSourceFile.GetCompletionOption(tokens, tokensByLine, trigger, TriggerChar.DoubleQuote, lineNumber, column, realText, lineTextStart,
                 textLength, context);
             return actual;
@@ -502,13 +503,33 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public class DirectiveOptions : GetCompletionOption
         {
             [TestCase(".import c| \"alfa.c64", "c64")]
-            public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedFileTexts(string text, string? expectedText)
+            public void GivenTest_ReturnsSuggestedFileTexts(string text, string? expectedText)
             {
                 var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
 
                 var actual = actualOption!.Value.Suggestions.Select(s => s.Text).ToFrozenSet();
                 var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
 
+                Assert.That(actual, Is.EquivalentTo(expected));
+            }
+        }
+
+        [TestFixture]
+        public class PreprocessorIfExpressions : GetCompletionOption
+        {
+            [TestCase("#if A|", "ALFA")]
+            [TestCase("#if B|", "BETA,BFTA")]
+            [TestCase("#if BE|", "BETA")]
+            [TestCase("#if A+B|", "BETA,BFTA")]
+            [TestCase("#if A+|", "ALFA,BETA,BFTA")]
+            [TestCase("#if ALFA|", "")]
+            public void GivenTestCase_ReturnsSuggestedSymbolNames(string text, string? expectedText)
+            {
+                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+
+                var actual = actualOption!.Value.Suggestions.Select(s => s.Text).ToFrozenSet();
+                var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
+                
                 Assert.That(actual, Is.EquivalentTo(expected));
             }
         }

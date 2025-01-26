@@ -5,7 +5,7 @@ using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public class GenericCompletionOptions
+public static class GenericCompletionOptions
 {
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int lineCursor, CompletionOptionContext context)
     {
@@ -16,7 +16,7 @@ public class GenericCompletionOptions
         if (currentTokenIndex is not null)
         {
             var currentToken = lineTokens[currentTokenIndex.Value];
-            if (currentToken.Type is (STRING or OPEN_STRING))
+            if (currentToken.Type is (STRING or OPEN_STRING or IIF_CONDITION or IF_CONDITION))
             {
                 return null;
             }

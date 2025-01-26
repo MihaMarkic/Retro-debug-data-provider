@@ -51,7 +51,7 @@ public static class Extensions
     public static (string Replaced, int Caret) ExtractCaret(this string text)
     {
         Debug.Assert(text.Count(c => c == '|') == 1, "Exactly one cursor | is allowed within text");
-        int cursor = text.IndexOf('|') - 1;
+        int cursor = text.IndexOf('|');
         return(text.Replace("|", ""), cursor);
     }
 }

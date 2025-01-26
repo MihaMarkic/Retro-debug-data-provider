@@ -1,6 +1,4 @@
 ﻿using System.Collections.Frozen;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
@@ -102,8 +100,8 @@ public static class DirectiveCompletionOptions
     internal static LineMeta? GetMetaInformation(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int lineCursor)
     {
         int absoluteLineCursor = lineStart + lineCursor;
-        var cursorTokenIndex = TokenListOperations.GetTokenIndexAtColumn(lineTokens, 0, absoluteLineCursor);
-        cursorTokenIndex ??= TokenListOperations.GetTokenIndexToTheLeftOfColumn(lineTokens, 0, absoluteLineCursor);
+        var cursorTokenIndex = lineTokens.GetTokenIndexAtColumn(0, absoluteLineCursor);
+        cursorTokenIndex ??= lineTokens.GetTokenIndexToTheLeftOfColumn(0, absoluteLineCursor);
         if (cursorTokenIndex is null)
         {
             return null;
@@ -245,86 +243,4 @@ public static class DirectiveCompletionOptions
         string CurrentValue,
         int ReplacementLength,
         bool HasEndDelimiter);
-    // [GeneratedRegex("""
-    //                 (?<FullKeyWord>\.(?<KeyWord>([a-zA-Z]+)))(?<ParameterSpace>\s+(?<Parameter>\w*)\s*)?(?<Value>(?<StartDoubleQuote>")(?<CurrentValue>[^"]+)?(?<EndDoubleQuote>")?)?
-    //                 """, RegexOptions.Singleline)]
-    // private static partial Regex QuotedValueTemplateRegex();
-    //
-    // internal static LineMeta? GetMetaInformationX(string text, int lineStart, int lineLength,
-    //     int lineCursor)
-    // {
-    //     Debug.WriteLine($"Searching IsCursorWithinNonArray in: '{text.Substring(lineStart, lineLength)}'");
-    //     int lineEnd = lineStart + lineLength;
-    //     int absoluteCursor = lineStart + lineCursor;
-    //     // tries to match against text left of cursor
-    //     int matchStart = lineStart;
-    //     Match match;
-    //     do
-    //     {
-    //         match = QuotedValueTemplateRegex().Match(text, matchStart, lineEnd-matchStart);
-    //         matchStart = match.Index + 1;
-    //         
-    //     } while (match.Success && !(match.Index <= absoluteCursor && match.Index + match.Length >= absoluteCursor));
-    //     if (match.Success)
-    //     {
-    //         var line = text.AsSpan()[lineStart..lineEnd];
-    //         var parameterSpaceGroup = match.Groups["ParameterSpace"];
-    //         var currentValueGroup = match.Groups["CurrentValue"];
-    //         bool hasEndDelimiter;
-    //         var valueGroup = match.Groups["Value"];
-    //         ReadOnlySpan<char> currentValue;
-    //         PositionType positionType;
-    //         string root;
-    //         int replacementLength;
-    //         if (parameterSpaceGroup.IsWithin(absoluteCursor))
-    //         {
-    //             positionType = PositionType.Type;
-    //             currentValue = currentValueGroup?.Value;
-    //             var length = absoluteCursor - parameterSpaceGroup.Index + 1;
-    //             root = parameterSpaceGroup.Value[..length].TrimStart();
-    //             var parameterLength = match.Groups["Parameter"]?.Value.Length ?? 0;
-    //             replacementLength = parameterLength;
-    //             hasEndDelimiter = false;
-    //         }
-    //         else if (currentValueGroup.IsWithin(absoluteCursor))
-    //         {
-    //             positionType = PositionType.Value;
-    //             currentValue = currentValueGroup.Value;
-    //             var length = absoluteCursor - currentValueGroup.Index+1;
-    //             root = currentValueGroup.Value[..length];
-    //             replacementLength = currentValue.Length;
-    //             hasEndDelimiter =  match.Groups["EndDoubleQuote"].Success;
-    //         }
-    //         else if (valueGroup.IsWithin(absoluteCursor))
-    //         {
-    //             positionType = PositionType.Value;
-    //             currentValue = "";
-    //             replacementLength = 0;
-    //             root = "";
-    //             hasEndDelimiter =  match.Groups["EndDoubleQuote"].Success;
-    //         }
-    //         else
-    //         {
-    //             return null;
-    //         }
-    //
-    //         Debug.WriteLine($"Found a match with current being '{currentValue}'");
-    //
-    //         return new LineMeta(
-    //             positionType,
-    //             match.Groups["FullKeyWord"].Value,
-    //             match.Groups["Parameter"].Value,
-    //             root,
-    //             currentValue.ToString(),
-    //             ReplacementLength: replacementLength,
-    //             HasEndDelimiter: hasEndDelimiter
-    //         );
-    //     }
-    //     else
-    //     {
-    //         Debug.WriteLine("Doesn't match");
-    //     }
-    //
-    //     return null;
-    // }
 }

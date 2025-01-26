@@ -28,7 +28,7 @@ public abstract class CompletionOptionTestBase
     protected static GetOptionTestCase CreateCase(string text, int start, CompletionOption? expectedResult = null)
     {
         Debug.Assert(text.Count(c => c == '|') == 1, "Exactly one cursor | is allowed within text");
-        int cursor = text.IndexOf('|') - 1;
+        int cursor = text.IndexOf('|');
         text = text.Replace("|", "");
         return new GetOptionTestCase(GetAllTokens(text), text, start, text.Length, cursor, expectedResult);
     }

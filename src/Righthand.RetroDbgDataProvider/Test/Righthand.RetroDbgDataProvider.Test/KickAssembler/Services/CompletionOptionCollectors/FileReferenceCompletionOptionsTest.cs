@@ -41,7 +41,7 @@ public class FileReferenceCompletionOptionsTest
         private (int ZeroBasedColumnIndex, int TokenIndex, ImmutableArray<IToken> Tokens) GetColumnAndTokenIndex(
             string input)
         {
-            int zeroBasedColumn = input.IndexOf('|') - 1;
+            int zeroBasedColumn = input.IndexOf('|');
 
             var tokens = AntlrTestUtils.GetAllChannelTokens(input.Replace("|", ""));
             var token = tokens.FirstOrDefault(t => t.StartIndex <= zeroBasedColumn && t.StopIndex >= zeroBasedColumn) ??
