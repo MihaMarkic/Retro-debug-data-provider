@@ -14,42 +14,29 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
 public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 {
-    public KickAssemblerLexer Lexer { get; init; }
-    public CommonTokenStream CommonTokenStream { get; init; }
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
-    public KickAssemblerParser Parser { get; init; }
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
-    public KickAssemblerParserListener ParserListener { get; init; }
-    public KickAssemblerLexerErrorListener LexerErrorListener { get; init; }
-    public KickAssemblerParserErrorListener ParserErrorListener { get; init; }
     public FrozenDictionary<IToken, ReferencedFileInfo> ReferencedFilesMap { get; init; }
+    public ImmutableArray<KickAssemblerLexerError> LexerErrors { get; }
+    public ImmutableArray<KickAssemblerParserError> ParserErrors { get; }
     public bool IsImportOnce { get; }
 
     public KickAssemblerParsedSourceFile(
-        string fileName,
+        string fileName, 
+        ImmutableArray<IToken> allTokens,
         FrozenDictionary<IToken, ReferencedFileInfo> referencedFilesMap,
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
         FrozenSet<SegmentDefinitionInfo> segmentDefinitions,
         DateTimeOffset lastModified,
         string? liveContent,
-        KickAssemblerLexer lexer,
-        CommonTokenStream commonTokenStream,
-        KickAssemblerParser parser,
-        KickAssemblerParserListener parserListener,
-        KickAssemblerLexerErrorListener lexerErrorListener,
-        KickAssemblerParserErrorListener parserErrorListener,
-        bool isImportOnce
-    ) : base(fileName, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, lastModified, liveContent)
+        bool isImportOnce,
+        ImmutableArray<KickAssemblerLexerError> lexerErrors,
+        ImmutableArray<KickAssemblerParserError> parserErrors
+    ) : base(fileName, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, lastModified, liveContent)
     {
-        Lexer = lexer;
-        CommonTokenStream = commonTokenStream;
-        Parser = parser;
-        ParserListener = parserListener;
-        LexerErrorListener = lexerErrorListener;
-        ParserErrorListener = parserErrorListener;
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;
+        LexerErrors = lexerErrors;
+        ParserErrors = parserErrors;
     }
 
     /// <inheritdoc />
@@ -182,17 +169,12 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <summary>
     /// Creates an array of <see cref="IToken"/> and map by 0 based line index with tokens from all channels.
     /// </summary>
-    protected override (ImmutableArray<IToken> AllTokens, FrozenDictionary<int, ImmutableArray<IToken>>
-        AllTokensByLineMap) GetAllTokens()
+    protected override FrozenDictionary<int, ImmutableArray<IToken>> GetAllTokensPerLine()
     {
-        Lexer.Reset();
-        var stream = new BufferedTokenStream(Lexer);
-        stream.Fill();
-        ImmutableArray<IToken> allTokens = [..stream.GetTokens()];
-        var allTokensByLineMap = allTokens
+        var allTokensByLineMap = AllTokens
             .GroupBy(t => t.Line - 1)
             .ToFrozenDictionary(g => g.Key, g => g.OrderBy(t => t.Column).ToImmutableArray());
-        return (allTokens, allTokensByLineMap);
+        return allTokensByLineMap;
     }
     /// <summary>
     /// Returns token at location defined by <param name="line"/> and <param name="column"/>.
@@ -232,7 +214,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         var builder = ImmutableArray.CreateBuilder<MultiLineTextRange>();
         IToken? startToken = null;
         IToken? previousToken = null;
-        foreach (var t in CommonTokenStream.GetTokens()
+        foreach (var t in AllTokens
                      .Where(t => t.Channel == KickAssemblerLexer.IGNORED))
         {
             if (startToken is null || previousToken is null)
@@ -307,7 +289,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     // ReSharper disable once UnusedParameter.Local
     private ImmutableArray<LexerBasedSyntaxResult> GetLexerBasedSyntaxLines(CancellationToken ct)
     {
-        var tokens = CommonTokenStream.GetTokens();
+        var tokens = AllTokens;
         var linesCount = tokens.Count(t => t.Type == KickAssemblerLexer.EOL) + 1;
         var lines = GetLexerBasedTokens(linesCount, tokens, CancellationToken.None);
         return lines;
@@ -315,9 +297,9 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     protected override FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct)
     {
-        List<SyntaxError> builder = new(LexerErrorListener.Errors.Length + ParserErrorListener.Errors.Length);
-        builder.AddRange(LexerErrorListener.Errors.Select(ConvertLexerError));
-        builder.AddRange(ParserErrorListener.Errors.Select(ConvertParserError));
+        List<SyntaxError> builder = new(LexerErrors.Length + ParserErrors.Length);
+        builder.AddRange(LexerErrors.Select(ConvertLexerError));
+        builder.AddRange(ParserErrors.Select(ConvertParserError));
         builder.AddRange(CreateMissingReferencedFilesErrors());
         return builder.GroupBy(i => i.Line)
             .ToFrozenDictionary(
@@ -405,7 +387,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
     public override SingleLineTextRange? GetTokenRangeAt(int line, int column)
     {
-        var tokens = Lexer.GetAllTokens();
+        var tokens = AllTokens;
         var token = tokens.FirstOrDefault(t =>
             t.Line - 1 == line && t.Column <= column && t.Column + t.Text.Length >= column);
         if (token is not null)

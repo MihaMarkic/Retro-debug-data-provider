@@ -10,7 +10,6 @@ public record FileSyntaxInfo(
     FrozenDictionary<int, SyntaxLine> SyntaxLines,
     ImmutableArray<MultiLineTextRange> IgnoredDefineContent,
     FrozenDictionary<int, SyntaxErrorLine> SyntaxErrorLines,
-    ImmutableArray<IToken> AllTokens, 
     FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap);
 
 public record SegmentDefinitionInfo(string Name, int Line);
@@ -33,7 +32,7 @@ public abstract class ParsedSourceFile
     /// <summary>
     /// All tokens regardless of channel.
     /// </summary>
-    public ImmutableArray<IToken> AllTokens { get; private set; }
+    public ImmutableArray<IToken> AllTokens { get; }
     /// <summary>
     /// All tokens from default channel.
     /// </summary>
@@ -59,17 +58,19 @@ public abstract class ParsedSourceFile
     protected abstract FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct);
     private FrozenDictionary<int, SyntaxErrorLine>? _syntaxErrors;
     
-    protected ParsedSourceFile(string fileName, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
+    protected ParsedSourceFile(string fileName, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
         FrozenSet<string> outDefines, FrozenSet<SegmentDefinitionInfo> segmentDefinitions, DateTimeOffset lastModified, string? liveContent)
     {
         FileName = fileName;
+        AllTokens = allTokens;
         ReferencedFiles = referencedFiles;
         InDefines = inDefines;
         OutDefines = outDefines;
         SegmentDefinitions = segmentDefinitions;
         LastModified = lastModified;
         LiveContent = liveContent;
-        AllTokens = Tokens = ImmutableArray<IToken>.Empty;
+        // these two properties below are populated asynchronously through GetSyntaxInfoAsync function
+        Tokens = ImmutableArray<IToken>.Empty;
         AllTokensByLineMap = FrozenDictionary<int, ImmutableArray<IToken>>.Empty;
     }
 
@@ -100,9 +101,9 @@ public abstract class ParsedSourceFile
     /// Returns all tokens regardless of channels.
     /// </summary>
     /// <returns>A tuple consisting of all tokens and all tokens mapped by 0 based line index.</returns>
-    protected virtual (ImmutableArray<IToken> AllTokens, FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap) GetAllTokens()
+    protected virtual FrozenDictionary<int, ImmutableArray<IToken>> GetAllTokensPerLine()
     {
-        return (ImmutableArray<IToken>.Empty, FrozenDictionary<int, ImmutableArray<IToken>>.Empty);
+        return FrozenDictionary<int, ImmutableArray<IToken>>.Empty;
     }
 
     /// <summary>
@@ -126,7 +127,7 @@ public abstract class ParsedSourceFile
                 Debug.WriteLine("Reusing old task");
             }
 
-            (_syntaxLines, var ignoredDefineContent, _syntaxErrors, AllTokens, AllTokensByLineMap) =
+            (_syntaxLines, var ignoredDefineContent, _syntaxErrors, AllTokensByLineMap) =
                 await _syntaxInfoInitTask;
             Tokens = [..AllTokens.Where(t => t.Channel == 0)];
             // since assigning a non-nullable value to nullable field results in warning, I'll do it through a variable instead
@@ -135,21 +136,21 @@ public abstract class ParsedSourceFile
         }
 
         return new FileSyntaxInfo(_syntaxLines, _ignoredDefineContent.Value,
-            _syntaxErrors ?? FrozenDictionary<int, SyntaxErrorLine>.Empty, AllTokens, AllTokensByLineMap);
+            _syntaxErrors ?? FrozenDictionary<int, SyntaxErrorLine>.Empty, AllTokensByLineMap);
     }
 
     private async Task<FileSyntaxInfo> InitForSyntaxInfoCoreAsync(CancellationToken ct)
     {
-        var initializeForSyntaxParsingTask = Task.Run(GetAllTokens, ct).ConfigureAwait(false);
+        var initializeForSyntaxParsingTask = Task.Run(GetAllTokensPerLine, ct).ConfigureAwait(false);
         var syntaxLinesTask = Task.Run(async () => await GetSyntaxLinesAsync(ct).ConfigureAwait(false), ct)
             .ConfigureAwait(false);
         var ignoredDefineContent = await Task.Run(() => GetIgnoredDefineContent(ct), ct).ConfigureAwait(false);
         var syntaxErrorsTask = Task.Run(() => GetSyntaxErrors(ct), ct).ConfigureAwait(false);
         var syntaxErrors = await syntaxErrorsTask;
         var syntaxLines = await syntaxLinesTask;
-        var (allTokens, allTokensByLineMap) = await initializeForSyntaxParsingTask;
+        var allTokensByLineMap = await initializeForSyntaxParsingTask;
         return new FileSyntaxInfo(syntaxLines, ignoredDefineContent,
-            syntaxErrors, allTokens, allTokensByLineMap);
+            syntaxErrors, allTokensByLineMap);
     }
 
     public void UpdateReferencedFileInfo(ReferencedFileInfo old, ReferencedFileInfo @new)

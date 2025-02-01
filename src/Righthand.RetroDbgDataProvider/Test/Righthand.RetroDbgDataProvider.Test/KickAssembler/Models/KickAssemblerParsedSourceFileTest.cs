@@ -23,7 +23,8 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
     static (KickAssemblerLexer Lexer, CommonTokenStream TokenStream, KickAssemblerParser Parser,
         KickAssemblerParserListener ParserListener,
-        KickAssemblerLexerErrorListener LexerErrorListener, KickAssemblerParserErrorListener ParserErrorListener)
+        KickAssemblerLexerErrorListener LexerErrorListener, KickAssemblerParserErrorListener ParserErrorListener,
+        ImmutableArray<IToken> AllTokens)
         GetParsed(string text, params string[] definitions)
     {
         var input = new AntlrInputStream(text);
@@ -39,12 +40,13 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         parser.AddParseListener(parserListener);
         parser.AddErrorListener(parserErrorListener);
         stream.Fill();
-        return (lexer, stream, parser, parserListener, lexerErrorListener, parserErrorListener);
+        ImmutableArray<IToken> allTokens = [..stream.GetTokens()];
+        return (lexer, stream, parser, parserListener, lexerErrorListener, parserErrorListener, allTokens);
     }
 
     static (ImmutableArray<IToken> Tokens, FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap) GetTokens(string text, params string[] definitions)
     {
-        var (_, tokenStream, _, _, _, _) = GetParsed(text.Replace("|", ""), definitions);
+        var (_, tokenStream, _, _, _, _, _) = GetParsed(text.Replace("|", ""), definitions);
         ImmutableArray<IToken> tokens = [..tokenStream.GetTokens().Where(t => t.Channel == 0)];
         var allTokensByLineMap = tokens
             .GroupBy(t => t.Line - 1)
@@ -59,11 +61,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public void WhenEmptySource_ReturnsEmptyArray()
         {
             var input = GetParsed("");
-            var target = new KickAssemblerParsedSourceFile("fileName",
+            var target = new KickAssemblerParsedSourceFile("fileName", [],
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
-                input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
+                _lastModified, liveContent: null, isImportOnce: false,
+                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 
             var actual = target.GetIgnoredDefineContent(CancellationToken.None);
 
@@ -78,11 +80,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                     bla bla
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName",
+            var target = new KickAssemblerParsedSourceFile("fileName", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
-                input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
+                _lastModified, liveContent: null, isImportOnce: false,
+                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 
             var actual = target.GetIgnoredDefineContent(CancellationToken.None);
 
@@ -100,11 +102,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                     yada yada
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName",
+            var target = new KickAssemblerParsedSourceFile("fileName", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                _lastModified, liveContent: null, input.Lexer, input.TokenStream, input.Parser, input.ParserListener,
-                input.LexerErrorListener, input.ParserErrorListener, isImportOnce: false);
+                _lastModified, liveContent: null, isImportOnce: false,
+                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 
             var actual = target.GetIgnoredDefineContent(CancellationToken.None);
 

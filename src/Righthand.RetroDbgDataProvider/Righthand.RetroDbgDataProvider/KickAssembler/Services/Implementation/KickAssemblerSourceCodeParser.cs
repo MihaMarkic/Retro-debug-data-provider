@@ -322,12 +322,11 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             _logger.LogWarning(ex,
                 "Failed parsing source code for file {FileName} probably because of bad conditional directives #else #endif #elif",
                 fileName);
-            return new KickAssemblerParsedSourceFile(fileName,
+            return new KickAssemblerParsedSourceFile(fileName, [],
                 MapReferencedFilesToDictionary(lexer.ReferencedFiles, tokenStream.GetTokens()),
                 inDefines, outDefines: inDefines, parserListener.SegmentDefinitions, 
-                lastModified, liveContent, lexer, tokenStream, parser, parserListener,
-                lexerErrorListener, parserErrorListener,
-                lexer.IsImportOnce);
+                lastModified, liveContent, 
+                lexer.IsImportOnce, lexerErrorListener.Errors, parserErrorListener.Errors);
         }
         finally
         {
@@ -339,14 +338,16 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         var listener = new KickAssemblerSourceCodeListener();
         ParseTreeWalker.Default.Walk(listener, tree);
 
+        ImmutableArray<IToken> allTokens = [..tokenStream.GetTokens()];
         var absoluteReferencePaths =
             FillAbsolutePaths(Path.GetDirectoryName(fileName)!, [..lexer.ReferencedFiles], libraryDirectories);
-        return new KickAssemblerParsedSourceFile(fileName,
-            MapReferencedFilesToDictionary(absoluteReferencePaths, tokenStream.GetTokens()),
+        return new KickAssemblerParsedSourceFile(fileName, allTokens,
+            MapReferencedFilesToDictionary(absoluteReferencePaths, allTokens),
             inDefines, lexer.DefinedSymbols.ToFrozenSet(), 
             parserListener.SegmentDefinitions,
             lastModified, liveContent,
-            lexer, tokenStream, parser, parserListener, lexerErrorListener, parserErrorListener, lexer.IsImportOnce);
+            lexer.IsImportOnce,
+            lexerErrorListener.Errors, parserErrorListener.Errors);
     }
 
     internal FrozenDictionary<IToken, ReferencedFileInfo> MapReferencedFilesToDictionary(
