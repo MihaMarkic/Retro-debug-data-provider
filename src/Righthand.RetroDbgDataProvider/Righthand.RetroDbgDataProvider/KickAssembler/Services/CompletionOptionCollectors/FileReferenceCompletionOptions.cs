@@ -25,7 +25,7 @@ public static class FileReferenceCompletionOptions
             var suggestionLine = line[(doubleQuoteColumn + 1)..];
             var (rootText, length, endsWithDoubleQuote) = suggestionLine.GetSuggestionTextInDoubleQuotes(column - doubleQuoteColumn - 1);
             FrozenSet<string> excluded = [suggestionLine.Slice(0, length).ToString()];
-            FrozenSet<string> fileExtensions = ["asm"];
+            FrozenSet<string> fileExtensions = [".asm"];
             var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(rootText, fileExtensions, excluded, context.ProjectServices);
             return new CompletionOption(rootText, length, string.Empty, endsWithDoubleQuote ? "" : "\"", suggestions);
         }
