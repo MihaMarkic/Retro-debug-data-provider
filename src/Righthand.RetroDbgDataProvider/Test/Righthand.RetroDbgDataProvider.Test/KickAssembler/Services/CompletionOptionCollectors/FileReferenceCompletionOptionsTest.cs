@@ -9,7 +9,7 @@ using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionOptionCollectors;
 
-public class FileReferenceCompletionOptionsTest
+public class FileReferenceCompletionOptionsTest: CompletionOptionTestBase
 {
     [TestFixture]
     public class GetFileReferenceSuggestion : FileReferenceCompletionOptionsTest
@@ -20,17 +20,17 @@ public class FileReferenceCompletionOptionsTest
         /// <param name="input"></param>
         /// <param name="trigger"></param>
         /// <returns></returns>
-        [TestCase("#import \"", TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
-        [TestCase("#import \"xxx", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
-        [TestCase("#import \" \"", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
-        [TestCase("#importx \"", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
-        [TestCase("#import x \"", TextChangeTrigger.CharacterTyped, ExpectedResult = false)]
-        [TestCase("#importif x \"", TextChangeTrigger.CharacterTyped, ExpectedResult = true)]
-        public bool GivenSample_ReturnsCorrectMatchCriteria(string input, TextChangeTrigger trigger)
+        [TestCase("#import \"|", ExpectedResult = true)]
+        [TestCase("#import \"xxx|", ExpectedResult = false)]
+        [TestCase("#import \" \"|", ExpectedResult = false)]
+        [TestCase("#importx \"|", ExpectedResult = false)]
+        [TestCase("#import x \"|", ExpectedResult = false)]
+        [TestCase("#importif x \"|", ExpectedResult = true)]
+        public bool GivenSample_ReturnsCorrectMatchCriteria(string input)
         {
-            var tokens = AntlrTestUtils.GetAllChannelTokens(input);
+            var tc = CreateCase(input, 0);
 
-            var actual = FileReferenceCompletionOptions.GetFileReferenceSuggestion(tokens.AsSpan(), input, trigger);
+            var actual = FileReferenceCompletionOptions.GetFileReferenceSuggestion(tc.Tokens.AsSpan(), tc.Content.AsSpan(), TextChangeTrigger.CharacterTyped);
 
             return actual.IsMatch;
         }
@@ -57,6 +57,8 @@ public class FileReferenceCompletionOptionsTest
         /// <returns></returns>
         [TestCase("#import \"|", ExpectedResult = true)]
         [TestCase("  #import \"|", ExpectedResult = true)]
+        [TestCase("  #import \"src/|", ExpectedResult = true)]
+        [TestCase("  #import \"src/|\"", ExpectedResult = true)]
         [TestCase("#import |\"", ExpectedResult = false)]
         [TestCase("#import x \"|", ExpectedResult = false)]
         [TestCase("#importif \"|", ExpectedResult = true)]
@@ -71,12 +73,9 @@ public class FileReferenceCompletionOptionsTest
             projectServices.GetMatchingDirectories(null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             var context = new CompletionOptionContext(projectServices);
 
-            var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
-            
-            var actual =
-                FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input.Replace("|", ""),
-                    TextChangeTrigger.CharacterTyped,
-                    zeroBasedColumn, context);
+            var tc = CreateCase(input, 0);
+
+            var actual = FileReferenceCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content.AsSpan(), TextChangeTrigger.CompletionRequested, tc.Column, context);
 
             return actual is not null;
         }
@@ -101,13 +100,10 @@ public class FileReferenceCompletionOptionsTest
             projectServices.GetMatchingDirectories(null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             var context = new CompletionOptionContext(projectServices);
 
-            var (zeroBasedColumn, _, tokens) = GetColumnAndTokenIndex(input);
-            
-            var actual =
-                FileReferenceCompletionOptions.GetOption(tokens.AsSpan(), input.Replace("|", ""),
-                    TextChangeTrigger.CompletionRequested,
-                    zeroBasedColumn, context);
+            var tc = CreateCase(input, 0);
 
+            var actual = FileReferenceCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content.AsSpan(), TextChangeTrigger.CharacterTyped, tc.Column, context);
+            
             return actual is not null;
         }
     }

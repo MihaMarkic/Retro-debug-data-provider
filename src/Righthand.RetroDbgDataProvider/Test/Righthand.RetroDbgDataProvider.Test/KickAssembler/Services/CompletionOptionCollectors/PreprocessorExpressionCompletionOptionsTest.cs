@@ -32,6 +32,17 @@ public class PreprocessorExpressionCompletionOptionsTest
         
             return PreprocessorExpressionCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor)?.Root;
         }
+
+        [TestCase("#impo|")]
+        public void GivenTestCase_ReturnsNull(string line)
+        {
+            var (replaced, cursor) = line.ExtractCaret();
+            var tokens = GetAllTokens(replaced);
+        
+            var actual = PreprocessorExpressionCompletionOptions.GetMetaInformation(tokens.AsSpan(), replaced, 0, replaced.Length, cursor);
+            
+            Assert.That(actual, Is.Null);
+        }
     }
 
     [TestFixture]

@@ -576,6 +576,26 @@ public class LexerTest
 
             Assert.That(actual, Is.Empty);
         }
+        [Test]
+        public void FirstNextLineToken_ShouldNotBeHashImport()
+        {
+            const string input = """
+                                 #importif DEFINED "test"
+                                 #impo
+                                 #define ONE
+                                 """;
+            
+            var actual = GetAllTokens(input);
+
+            var expected = GetTokenTypes(
+                HASHIMPORTIF, IIF_CONDITION, STRING, EOL,
+                HASH, UNQUOTED_STRING, EOL,
+                HASHDEFINE, HD_WS,DEFINED_TOKEN,
+                KickAssemblerLexer.Eof
+            );
+            
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
     }
 
     [TestFixture]

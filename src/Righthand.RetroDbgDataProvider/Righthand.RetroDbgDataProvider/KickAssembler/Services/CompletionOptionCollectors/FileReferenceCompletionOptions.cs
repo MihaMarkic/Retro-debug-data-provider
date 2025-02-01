@@ -1,6 +1,8 @@
 ﻿using System.Collections.Frozen;
+using System.Diagnostics;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
+using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -18,6 +20,7 @@ public static class FileReferenceCompletionOptions
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens,
         ReadOnlySpan<char> line, TextChangeTrigger trigger, int column, CompletionOptionContext context)
     {
+        Debug.WriteLine($"Trying {nameof(FileReferenceCompletionOptions)}");
         var leftLinePart = line[..column];
         var (isMatch, doubleQuoteColumn) = GetFileReferenceSuggestion(lineTokens, leftLinePart, trigger);
         if (isMatch)
@@ -85,22 +88,26 @@ public static class FileReferenceCompletionOptions
             // when #import tolerate only WS tokens between keyword and double quotes
             case KickAssemblerLexer.HASHIMPORT:
             {
-                if (secondToken.Type != KickAssemblerLexer.WS)
+                if (secondToken.Type is not (STRING or OPEN_STRING))
                 {
                     return (false, -1);
                 }
-                int start = secondToken.Column + secondToken.Length();
-                int end = doubleQuoteIndex - 1;
-                if (end > start)
-                {
-                    foreach (char c in line[start..end])
-                    {
-                        if (c is not (' ' or '\t'))
-                        {
-                            return (false, -1);
-                        }
-                    }
-                }
+                // if (secondToken.Type != KickAssemblerLexer.WS)
+                // {
+                //     return (false, -1);
+                // }
+                // int start = secondToken.Column + secondToken.Length();
+                // int end = doubleQuoteIndex - 1;
+                // if (end > start)
+                // {
+                //     foreach (char c in line[start..end])
+                //     {
+                //         if (c is not (' ' or '\t'))
+                //         {
+                //             return (false, -1);
+                //         }
+                //     }
+                // }
 
                 break;
             }

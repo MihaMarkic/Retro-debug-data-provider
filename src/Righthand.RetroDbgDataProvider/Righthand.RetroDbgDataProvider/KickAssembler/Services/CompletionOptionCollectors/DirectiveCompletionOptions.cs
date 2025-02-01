@@ -1,4 +1,5 @@
 ﻿using System.Collections.Frozen;
+using System.Diagnostics;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
@@ -9,6 +10,7 @@ public static class DirectiveCompletionOptions
 {
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int column, CompletionOptionContext context)
     {
+        Debug.WriteLine($"Trying {nameof(DirectiveCompletionOptions)}");
         var line = text.AsSpan()[lineStart..(lineStart + lineLength)];
         if (line.Length == 0)
         {

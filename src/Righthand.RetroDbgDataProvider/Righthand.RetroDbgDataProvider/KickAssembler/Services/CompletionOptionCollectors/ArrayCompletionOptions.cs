@@ -1,9 +1,7 @@
 ﻿using System.Collections.Frozen;
 using System.Diagnostics;
 using Antlr4.Runtime;
-using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
-using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -22,6 +20,7 @@ public static class ArrayCompletionOptions
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens, string content, int lineStart, int lineLength,
         int column, CompletionOptionContext context)
     {
+        Debug.WriteLine($"Trying {nameof(ArrayCompletionOptions)}");
         var columnTokenIndex = tokens.GetTokenIndexAtColumn(lineStart, column);
         if (columnTokenIndex is null)
         {

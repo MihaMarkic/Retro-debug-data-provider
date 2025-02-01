@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
@@ -10,6 +11,7 @@ public static class PreprocessorExpressionCompletionOptions
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int column,
         CompletionOptionContext context)
     {
+        Debug.WriteLine($"Trying {nameof(PreprocessorExpressionCompletionOptions)}");
         var line = text.AsSpan()[lineStart..(lineStart + lineLength)];
         if (line.Length == 0)
         {

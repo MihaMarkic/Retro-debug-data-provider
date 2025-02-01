@@ -1,4 +1,5 @@
 ﻿using System.Collections.Frozen;
+using System.Diagnostics;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
@@ -9,6 +10,7 @@ public static class GenericCompletionOptions
 {
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int lineCursor, CompletionOptionContext context)
     {
+        Debug.WriteLine($"Trying {nameof(GenericCompletionOptions)}");
         int absoluteLineCursor = lineStart + lineCursor;
         var currentTokenIndex = TokenListOperations.GetTokenIndexAtColumn(lineTokens, 0, absoluteLineCursor);
         string root = "";
