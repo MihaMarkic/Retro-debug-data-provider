@@ -17,6 +17,10 @@ public record SegmentDefinitionInfo(string Name, int Line);
 public abstract class ParsedSourceFile
 {
     public string FileName { get; }
+    /// <summary>
+    /// Relative path to either project or library, depends on file origin
+    /// </summary>
+    public string RelativePath { get; }
     public ImmutableArray<ReferencedFileInfo> ReferencedFiles { get; private set; }
     /// <summary>
     /// Preprocessor symbol names defined to include this file.
@@ -58,10 +62,11 @@ public abstract class ParsedSourceFile
     protected abstract FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct);
     private FrozenDictionary<int, SyntaxErrorLine>? _syntaxErrors;
     
-    protected ParsedSourceFile(string fileName, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
+    protected ParsedSourceFile(string fileName, string relativePath, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
         FrozenSet<string> outDefines, FrozenSet<SegmentDefinitionInfo> segmentDefinitions, DateTimeOffset lastModified, string? liveContent)
     {
         FileName = fileName;
+        RelativePath = relativePath;
         AllTokens = allTokens;
         ReferencedFiles = referencedFiles;
         InDefines = inDefines;

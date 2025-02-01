@@ -36,7 +36,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
         [Test]
         public void WhenEmptyContent_ResultWithCorrectNameAndNoReferencesIsReturned()
         {
-            var actual = Target.ParseStream("d:/root/test.asm", new AntlrInputStream(), _now,
+            var actual = Target.ParseStream("d:/root/test.asm", "", new AntlrInputStream(), _now,
                 FrozenSet<string>.Empty, [], liveContent: null);
 
             Assert.That(actual.FileName, Is.EqualTo("d:/root/test.asm"));
@@ -49,7 +49,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             const string sample = """
                                   lda #5                            
                                   """;
-            var actual = Target.ParseStream("test.asm", new AntlrInputStream(sample),
+            var actual = Target.ParseStream("test.asm", "", new AntlrInputStream(sample),
                 _now, FrozenSet<string>.Empty, [], liveContent: null);
 
             Assert.That(actual.ReferencedFiles, Is.Empty);
@@ -67,7 +67,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var myLibraryPath = Path.Combine("d:", "root", "MyLibrary.asm");
             fileService.FileExists(myLibraryPath).Returns(true);
             var rootFile = Path.Combine("d:", "root", "test.asm");
-            var actual = Target.ParseStream(rootFile, new AntlrInputStream(sample),
+            var actual = Target.ParseStream(rootFile, "", new AntlrInputStream(sample),
                     _now, FrozenSet<string>.Empty, [], liveContent: null)
                 .ReferencedFiles
                 .Select(r => r.FullFilePath)
@@ -85,7 +85,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
         {
             const string code = "lda #5";
             var inMemoryContent = new InMemoryFileContent("filename.asm", code, _now);
-            var actual = Target.ParseFileFromMemoryContent("filename.asm", inMemoryContent, FrozenSet<string>.Empty,
+            var actual = Target.ParseFileFromMemoryContent("filename.asm", "", inMemoryContent, FrozenSet<string>.Empty,
                 ImmutableArray<string>.Empty, oldState: null);
 
             Assert.That(actual.LiveContent, Is.EqualTo(code));
@@ -299,7 +299,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var mainParsed = GetParser("""
                                        lda #5
                                        """);
-            var source = new KickAssemblerParsedSourceFile("main.asm", mainParsed.AllTokens,
+            var source = new KickAssemblerParsedSourceFile("main.asm", "", mainParsed.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty, FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty, _now,
                 liveContent: null, isImportOnce: false, 
@@ -329,7 +329,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                     new ReferencedFileInfo(2, 0, "test.asm", FrozenSet<string>.Empty, "test.asm")
                 }
             }.ToFrozenDictionary();
-            var source = new KickAssemblerParsedSourceFile("main.asm", mainParsed.AllTokens,
+            var source = new KickAssemblerParsedSourceFile("main.asm", "", mainParsed.AllTokens,
                 referencedFiles,
                 FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty, _now,

@@ -19,8 +19,23 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     public ImmutableArray<KickAssemblerParserError> ParserErrors { get; }
     public bool IsImportOnce { get; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fileName">Full file name</param>
+    /// <param name="relativePath">Relative to either project or library, based on file origin</param>
+    /// <param name="allTokens"></param>
+    /// <param name="referencedFilesMap"></param>
+    /// <param name="inDefines"></param>
+    /// <param name="outDefines"></param>
+    /// <param name="segmentDefinitions"></param>
+    /// <param name="lastModified"></param>
+    /// <param name="liveContent"></param>
+    /// <param name="isImportOnce"></param>
+    /// <param name="lexerErrors"></param>
+    /// <param name="parserErrors"></param>
     public KickAssemblerParsedSourceFile(
-        string fileName, 
+        string fileName, string relativePath, 
         ImmutableArray<IToken> allTokens,
         FrozenDictionary<IToken, ReferencedFileInfo> referencedFilesMap,
         FrozenSet<string> inDefines,
@@ -31,7 +46,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         bool isImportOnce,
         ImmutableArray<KickAssemblerLexerError> lexerErrors,
         ImmutableArray<KickAssemblerParserError> parserErrors
-    ) : base(fileName, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, lastModified, liveContent)
+    ) : base(fileName, relativePath, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, lastModified, liveContent)
     {
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;
@@ -49,7 +64,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             return null;
         }
 
-        return GetCompletionOption(Tokens, AllTokensByLineMap, trigger, triggerChar, line, column, text, textStart, textLength, context);
+        return GetCompletionOption(Tokens, AllTokensByLineMap, trigger, triggerChar, line, column, text, textStart, textLength, RelativePath, context);
     }
 
     internal static bool ArePreconditionsValid(TextChangeTrigger trigger, TriggerChar triggerChar, int column, ReadOnlySpan<IToken> lineTokensToCursor)
@@ -73,7 +88,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         return true;
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -86,11 +101,12 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="text"></param>
     /// <param name="textStart"></param>
     /// <param name="textLength"></param>
+    /// <param name="relativePath">Relative path to either project or library, depends on the file origin</param>
     /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetCompletionOption(ImmutableArray<IToken> tokens,
         FrozenDictionary<int, ImmutableArray<IToken>> allTokensByLineMap, TextChangeTrigger trigger, TriggerChar triggerChar, int lineNumber,
-        int column, string text, int textStart, int textLength, CompletionOptionContext context)
+        int column, string text, int textStart, int textLength, string relativePath, CompletionOptionContext context)
     {
         if (!allTokensByLineMap.TryGetValue(lineNumber, out var allTokensAtLine))
         {
@@ -121,7 +137,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context)
                      ?? PreprocessorDirectivesCompletionOptionsObsolete.GetOption(lineTokens, text, textStart, textLength, column, context)
                      ?? DirectiveCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
-                     ?? FileReferenceCompletionOptions.GetOption(lineTokens, line, trigger, column, context)
+                     ?? FileReferenceCompletionOptions.GetOption(lineTokens, line, trigger, column, relativePath, context)
                      ?? PreprocessorExpressionCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
                      ?? GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context);
         return result;

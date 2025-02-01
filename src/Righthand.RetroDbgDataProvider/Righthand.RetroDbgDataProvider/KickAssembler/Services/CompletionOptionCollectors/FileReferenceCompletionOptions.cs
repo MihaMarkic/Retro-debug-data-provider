@@ -15,10 +15,11 @@ public static class FileReferenceCompletionOptions
     /// <param name="line"></param>
     /// <param name="trigger"></param>
     /// <param name="column"></param>
+    /// <param name="relativePath">Relative path to either project or library, depends on the file origin</param>
     /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens,
-        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column, CompletionOptionContext context)
+        ReadOnlySpan<char> line, TextChangeTrigger trigger, int column, string relativePath, CompletionOptionContext context)
     {
         Debug.WriteLine($"Trying {nameof(FileReferenceCompletionOptions)}");
         var leftLinePart = line[..column];
@@ -29,7 +30,8 @@ public static class FileReferenceCompletionOptions
             var (rootText, length, endsWithDoubleQuote) = suggestionLine.GetSuggestionTextInDoubleQuotes(column - doubleQuoteColumn - 1);
             FrozenSet<string> excluded = [suggestionLine.Slice(0, length).ToString()];
             FrozenSet<string> fileExtensions = [".asm"];
-            var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(rootText, fileExtensions, excluded, context.ProjectServices);
+            var rootPath = Path.Combine(relativePath, rootText);
+            var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(rootPath, fileExtensions, excluded, context.ProjectServices);
             return new CompletionOption(rootText, length, string.Empty, endsWithDoubleQuote ? "" : "\"", suggestions);
         }
 

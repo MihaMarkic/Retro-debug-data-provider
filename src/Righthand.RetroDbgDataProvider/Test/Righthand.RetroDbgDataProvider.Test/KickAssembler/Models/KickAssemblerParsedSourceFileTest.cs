@@ -61,7 +61,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public void WhenEmptySource_ReturnsEmptyArray()
         {
             var input = GetParsed("");
-            var target = new KickAssemblerParsedSourceFile("fileName", [],
+            var target = new KickAssemblerParsedSourceFile("fileName", "", [],
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 _lastModified, liveContent: null, isImportOnce: false,
@@ -80,7 +80,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                     bla bla
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", input.AllTokens,
+            var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 _lastModified, liveContent: null, isImportOnce: false,
@@ -102,7 +102,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                     yada yada
                                   #endif
                                   """.FixLineEndings());
-            var target = new KickAssemblerParsedSourceFile("fileName", input.AllTokens,
+            var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 _lastModified, liveContent: null, isImportOnce: false,
