@@ -37,10 +37,11 @@ public static class CompletionOptionCollectorsCommon
             .ToFrozenSet();
         return result;
     }
-    internal static FrozenSet<Suggestion> CollectFileSystemSuggestions(string rootText, FrozenSet<string> fileExtensions, FrozenSet<string> excluded, IProjectServices projectServices)
+    internal static FrozenSet<Suggestion> CollectFileSystemSuggestions(string relativeFilePath, string rootText, FrozenSet<string> fileExtensions, FrozenSet<string> excluded, IProjectServices projectServices)
     {
         var builder = new HashSet<Suggestion>();
-        var files = projectServices.GetMatchingFiles(rootText, fileExtensions, excluded);
+        var normalizedRootText = OsDependent.NormalizePath(rootText);
+        var files = projectServices.GetMatchingFiles(relativeFilePath, normalizedRootText, fileExtensions, excluded);
         foreach (var p in files)
         {
             foreach (var f in p.Value)
@@ -48,7 +49,7 @@ public static class CompletionOptionCollectorsCommon
                 builder.Add(new FileSuggestion(f, p.Key.Origin, p.Key.Path));
             }
         }
-        var directories = projectServices.GetMatchingDirectories(rootText);
+        var directories = projectServices.GetMatchingDirectories(relativeFilePath, normalizedRootText);
         foreach (var p in directories)
         {
             foreach (var d in p.Value)

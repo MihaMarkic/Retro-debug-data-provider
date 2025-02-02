@@ -231,7 +231,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             // when not, it has to be parsed
             else if (!parsed.ContainsKey(referencedFile.FullFilePath!, referencedFile.InDefines))
             {
-                var relativeToProjectOrLibrary = Path.GetDirectoryName(referencedFile.RelativeFilePath)!;
+                var relativeToProjectOrLibrary = Path.GetDirectoryName(referencedFile.NormalizedRelativeFilePath)!;
                 var referencedParsedFile = await ParseAllFilesAsync(parsed, referencedFile.FullFilePath!, relativeToProjectOrLibrary,
                     inMemoryFilesContent, referencedFile.InDefines,
                     libraryDirectories, oldState, ct).ConfigureAwait(false);
@@ -337,7 +337,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         finally
         {
             _logger.LogInformation("Lexed file {FileName} has these relative references {References}", fileName,
-                string.Join(",", lexer.ReferencedFiles.Select(l => l.RelativeFilePath)));
+                string.Join(",", lexer.ReferencedFiles.Select(l => l.NormalizedRelativeFilePath)));
         }
 
         var tree = parser.program();
@@ -374,10 +374,10 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         foreach (var reference in relativeReferences)
         {
             var directory = allDirectories.FirstOrDefault(d =>
-                _fileService.FileExists(Path.Combine(d, reference.RelativeFilePath)));
+            _fileService.FileExists(Path.Combine(d, reference.NormalizedRelativeFilePath)));
             if (directory is not null)
             {
-                builder.Add(reference with { FullFilePath = Path.Combine(directory, reference.RelativeFilePath) });
+                builder.Add(reference with { FullFilePath = Path.Combine(directory, reference.NormalizedRelativeFilePath) });
             }
             else
             {

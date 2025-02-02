@@ -75,7 +75,7 @@ public class FileReferenceCompletionOptionsTest: CompletionOptionTestBase
 
             var tc = CreateCase(input, 0);
 
-            var actual = FileReferenceCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content.AsSpan(), TextChangeTrigger.CompletionRequested, tc.Column, context);
+            var actual = FileReferenceCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content.AsSpan(), TextChangeTrigger.CompletionRequested, tc.Column, "", context);
 
             return actual is not null;
         }
@@ -102,7 +102,7 @@ public class FileReferenceCompletionOptionsTest: CompletionOptionTestBase
 
             var tc = CreateCase(input, 0);
 
-            var actual = FileReferenceCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content.AsSpan(), TextChangeTrigger.CharacterTyped, tc.Column, context);
+            var actual = FileReferenceCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content.AsSpan(), TextChangeTrigger.CharacterTyped, tc.Column, "", context);
             
             return actual is not null;
         }

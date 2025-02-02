@@ -74,7 +74,7 @@ public class ArrayCompletionOptionsTest
         [TestCaseSource(nameof(GetTestCasesForNameWithExpectedResult))]
         public void GivenSampleForName_ReturnsExpectedResult(GetOptionTestCase td)
         {
-            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
+            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, "", NoOpContext);
 
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
@@ -103,7 +103,7 @@ public class ArrayCompletionOptionsTest
         [TestCaseSource(nameof(GetTestCasesForValueWithExpectedResult))]
         public void GivenSampleForValue_ReturnsExpectedResult(GetOptionTestCase td)
         {
-            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
+            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, "", NoOpContext);
 
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
@@ -120,7 +120,7 @@ public class ArrayCompletionOptionsTest
         [TestCaseSource(nameof(GetTestCasesForNameWithoutExpectedResult))]
         public void GivenSample_ReturnsNullExpectedResult(GetOptionTestCase td)
         {
-            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, NoOpContext);
+            var actual = ArrayCompletionOptions.GetOption(td.Tokens.AsSpan(), td.Content, td.Start, td.End, td.Column, "", NoOpContext);
 
             Assert.That(actual, Is.Null);
         }
@@ -138,7 +138,8 @@ public class ArrayCompletionOptionsTest
         {
             var arrayProperty = new ValuesArrayProperty("hide", ArrayPropertyType.Bool, ArrayPropertyValues.BoolValues.ToFrozenSet());
 
-            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, value, 0, ".file", null,null, arrayProperty, NoOpContext)
+            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(
+                    "", root, value, 0, ".file", null,null, arrayProperty, NoOpContext)
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
@@ -154,7 +155,8 @@ public class ArrayCompletionOptionsTest
             var arrayProperty = new ValuesArrayProperty("hide", ArrayPropertyType.QuotedEnumerable,
                 new HashSet<string> { "prg", "bin" }.ToFrozenSet());
 
-            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(root, value, 0, ".file", null, null, arrayProperty, NoOpContext)
+            var actual = ArrayCompletionOptions.CreateSuggestionsForArrayValue(
+                    "", root, value, 0, ".file", null, null, arrayProperty, NoOpContext)
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);
@@ -179,7 +181,8 @@ public class ArrayCompletionOptionsTest
             var matchingProperty = new ArrayPropertyMeta(null, startValueToken, endValueToken, null);
 
             var actual = ArrayCompletionOptions
-                .CreateSuggestionsForArrayValue(root, $"\"{value}\"", root.Length+1, ".file", null, matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
+                .CreateSuggestionsForArrayValue(
+                    "", root, $"\"{value}\"", root.Length+1, ".file", null, matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);

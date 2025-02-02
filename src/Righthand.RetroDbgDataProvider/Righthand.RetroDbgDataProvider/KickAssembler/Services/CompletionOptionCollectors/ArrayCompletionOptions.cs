@@ -15,10 +15,11 @@ public static class ArrayCompletionOptions
     /// <param name="lineStart"></param>
     /// <param name="lineLength"></param>
     /// <param name="column">Cursor position, -1 based</param>
+    /// <param name="relativePath">Relative path to either project or library, depends on the file origin</param>
     /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> tokens, string content, int lineStart, int lineLength,
-        int column, CompletionOptionContext context)
+        int column, string relativePath, CompletionOptionContext context)
     {
         Debug.WriteLine($"Trying {nameof(ArrayCompletionOptions)}");
         var columnTokenIndex = tokens.GetTokenIndexAtColumn(lineStart, column);
@@ -99,7 +100,7 @@ public static class ArrayCompletionOptions
             case PositionWithinArray.Value:
                 if (ArrayProperties.GetProperty(arrayOwner, name!.Text, out var propertyMeta))
                 {
-                    return CreateSuggestionsForArrayValue(root, value, absoluteColumn, arrayOwner, statement.Value.OptionToken?.Text, matchingArrayProperty, propertyMeta, context);
+                    return CreateSuggestionsForArrayValue(relativePath, root, value, absoluteColumn, arrayOwner, statement.Value.OptionToken?.Text, matchingArrayProperty, propertyMeta, context);
                 }
 
                 break;
@@ -113,6 +114,7 @@ public static class ArrayCompletionOptions
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="relativePath">Relative path to either project or library, depends on the file origin</param>
     /// <param name="root"></param>
     /// <param name="value"></param>
     /// <param name="absoluteColumn"></param>
@@ -122,7 +124,7 @@ public static class ArrayCompletionOptions
     /// <param name="arrayProperty"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    internal static CompletionOption CreateSuggestionsForArrayValue(string root, string? value, int absoluteColumn, string arrayOwner, string? option,
+    internal static CompletionOption CreateSuggestionsForArrayValue(string relativePath,string root, string? value, int absoluteColumn, string arrayOwner, string? option,
         ArrayPropertyMeta? matchingProperty, ArrayProperty arrayProperty,
         CompletionOptionContext context)
     {
@@ -199,7 +201,8 @@ public static class ArrayCompletionOptions
                 FrozenSet<string> excluded = [..GetArrayValues(value).Select(v => v.Text)];
                 var property = (FileArrayProperty)arrayProperty;
                 prependDoubleQuote = !value?.StartsWith('\"') ?? true;
-                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root.TrimStart('\"'), property.ValidExtensions, excluded, context.ProjectServices);
+                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(
+                    relativePath, root.TrimStart('\"'), property.ValidExtensions, excluded, context.ProjectServices);
                 break;
             }
             case ArrayPropertyType.FileName:
@@ -208,7 +211,8 @@ public static class ArrayCompletionOptions
                 prependDoubleQuote = !value?.StartsWith('\"') ?? true;
                 endsWithDoubleQuote = !value?.EndsWith('\"') ?? true;
                 var property = (FileArrayProperty)arrayProperty;
-                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root.TrimStart('\"'), property.ValidExtensions, excluded, context.ProjectServices);
+                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(
+                    relativePath, root.TrimStart('\"'), property.ValidExtensions, excluded, context.ProjectServices);
                 break;
             }
         }

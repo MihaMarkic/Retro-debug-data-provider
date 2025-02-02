@@ -134,9 +134,9 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         var line = text.AsSpan()[textStart..(textStart + textLength)];
         var lineTokens = tokensAtLine.AsSpan();
-        var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, context)
+        var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, relativePath, context)
                      ?? PreprocessorDirectivesCompletionOptionsObsolete.GetOption(lineTokens, text, textStart, textLength, column, context)
-                     ?? DirectiveCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
+                     ?? DirectiveCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, relativePath, context)
                      ?? FileReferenceCompletionOptions.GetOption(lineTokens, line, trigger, column, relativePath, context)
                      ?? PreprocessorExpressionCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
                      ?? GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context);

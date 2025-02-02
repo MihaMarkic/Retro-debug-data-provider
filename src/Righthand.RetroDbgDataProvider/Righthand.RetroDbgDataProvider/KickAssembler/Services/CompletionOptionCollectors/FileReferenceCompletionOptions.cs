@@ -30,8 +30,16 @@ public static class FileReferenceCompletionOptions
             var (rootText, length, endsWithDoubleQuote) = suggestionLine.GetSuggestionTextInDoubleQuotes(column - doubleQuoteColumn - 1);
             FrozenSet<string> excluded = [suggestionLine.Slice(0, length).ToString()];
             FrozenSet<string> fileExtensions = [".asm"];
-            var rootPath = Path.Combine(relativePath, rootText);
-            var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(rootPath, fileExtensions, excluded, context.ProjectServices);
+            string rootPath;
+            if (string.IsNullOrEmpty(rootText) && !string.IsNullOrEmpty(relativePath))
+            {
+                rootPath = $"{relativePath}{Path.DirectorySeparatorChar}";
+            }
+            else
+            {
+                rootPath = Path.Combine(relativePath, rootText);
+            }
+            var suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(relativePath, rootPath, fileExtensions, excluded, context.ProjectServices);
             return new CompletionOption(rootText, length, string.Empty, endsWithDoubleQuote ? "" : "\"", suggestions);
         }
 

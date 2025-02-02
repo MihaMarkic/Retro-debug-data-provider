@@ -11,8 +11,8 @@ public interface IProjectServices
      /// <param name="extensions">File extension to watch for.</param>
      /// <param name="excludedFiles">Full file names to exclude from results</param>
      /// <returns>A dictionary with source as key and relative file names to <see cref="Path"/> array as value. For project level files, the value is 'Project'.</returns>
-     FrozenDictionary<ProjectFileKey, FrozenSet<string>> GetMatchingFiles(string filter, FrozenSet<string> extensions, ICollection<string> excludedFiles);
-     FrozenDictionary<ProjectFileKey, FrozenSet<string>> GetMatchingDirectories(string filter);
+     FrozenDictionary<ProjectFileKey, FrozenSet<string>> GetMatchingFiles(string relativeFilePath, string filter, FrozenSet<string> extensions, ICollection<string> excludedFiles);
+     FrozenDictionary<ProjectFileKey, FrozenSet<string>> GetMatchingDirectories(string relativeFilePath, string filter);
 
      /// <summary>
      /// Collects segment names from entire project.

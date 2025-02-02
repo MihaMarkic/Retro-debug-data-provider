@@ -8,7 +8,19 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOption
 
 public static class DirectiveCompletionOptions
 {
-    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int column, CompletionOptionContext context)
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="lineTokens"></param>
+    /// <param name="text"></param>
+    /// <param name="lineStart"></param>
+    /// <param name="lineLength"></param>
+    /// <param name="column"></param>
+    /// <param name="relativePath">Relative path to either project or library, depends on the file origin</param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int column, string relativePath, CompletionOptionContext context)
     {
         Debug.WriteLine($"Trying {nameof(DirectiveCompletionOptions)}");
         var line = text.AsSpan()[lineStart..(lineStart + lineLength)];
@@ -38,7 +50,7 @@ public static class DirectiveCompletionOptions
                             FrozenSet<string> excluded = [currentValue];
                             if (fileExtensions.Count > 0)
                             {
-                                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(root, fileExtensions, excluded, context.ProjectServices);
+                                suggestions = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions(relativePath, root, fileExtensions, excluded, context.ProjectServices);
                                 return new CompletionOption(root, replacementLength, string.Empty, hasEndDelimiter ? "" : "\"", suggestions);
                             }
                         }

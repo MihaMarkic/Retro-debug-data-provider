@@ -104,7 +104,9 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             fileService.FileExists(myLibraryPath).Returns(true);
 
             var actual = Target.FillAbsolutePaths(rootPath,
-                    [new ReferencedFileInfo(0, 0, "MyLibrary.asm", FrozenSet<string>.Empty)], [])
+                    [
+                        new ReferencedFileInfo(0, 0, "MyLibrary.asm","MyLibrary.asm", FrozenSet<string>.Empty)
+                    ], [])
                 .Select(r => r.FullFilePath)
                 .ToImmutableArray();
 
@@ -326,7 +328,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             {
                 {
                     Fixture.Create<IToken>(),
-                    new ReferencedFileInfo(2, 0, "test.asm", FrozenSet<string>.Empty, "test.asm")
+                    new ReferencedFileInfo(2, 0, "test.asm","test.asm", FrozenSet<string>.Empty, "test.asm")
                 }
             }.ToFrozenDictionary();
             var source = new KickAssemblerParsedSourceFile("main.asm", "", mainParsed.AllTokens,

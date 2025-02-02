@@ -11,4 +11,16 @@ public static class OsDependent
     public static StringComparer FileStringComparer { get; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
         ? StringComparer.CurrentCultureIgnoreCase
         : StringComparer.CurrentCulture;
+
+    public static string NormalizePath(string path)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return path.Replace("/", "\\");
+        }
+        else
+        {
+            return path.Replace("\\", "/");
+        }
+    }
 }

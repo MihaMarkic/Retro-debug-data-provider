@@ -8,6 +8,7 @@ namespace Righthand.RetroDbgDataProvider.Models;
 /// <param name="TokenStartLine"></param>
 /// <param name="TokenStartColumn"></param>
 /// <param name="RelativeFilePath"></param>
+/// <param name="NormalizedRelativeFilePath"></param>
 /// <param name="InDefines"></param>
 /// <param name="FullFilePath"></param>
 /// <param name="InDefinesOverrideForImportOnce">
@@ -19,6 +20,7 @@ public record ReferencedFileInfo(
     int TokenStartLine,
     int TokenStartColumn,
     string RelativeFilePath,
+    string NormalizedRelativeFilePath,
     FrozenSet<string> InDefines,
     string? FullFilePath = null,
     FrozenSet<string>? InDefinesOverrideForImportOnce = null);

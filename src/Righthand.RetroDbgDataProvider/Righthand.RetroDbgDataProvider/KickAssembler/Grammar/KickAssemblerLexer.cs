@@ -1,7 +1,6 @@
-using System.Collections.Frozen;
-using System.Diagnostics;
 using Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition;
 using Righthand.RetroDbgDataProvider.Models;
+using System.Collections.Frozen;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler;
 
@@ -38,7 +37,10 @@ partial class KickAssemblerLexer
     }
     private void AddReferencedFileInfo(int tokenStartLine, int tokenStartColumn, string text)
     {
-        var info = new ReferencedFileInfo(tokenStartLine, tokenStartColumn, text.Trim('"'),
+        var relativeFileName = text.Trim('"');
+        string normalizedRelativeFileName = OsDependent.NormalizePath(relativeFileName);
+        var info = new ReferencedFileInfo(tokenStartLine, tokenStartColumn, relativeFileName,
+            normalizedRelativeFileName,
             DefinedSymbols.ToFrozenSet());
         ReferencedFiles.Add(info);
     }

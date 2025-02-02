@@ -159,7 +159,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             var fileReferences = new Dictionary<IToken, ReferencedFileInfo>
             {
-                { secondToken, new ReferencedFileInfo(0, 0, "file.asm", FrozenSet<string>.Empty) }
+                { secondToken, new ReferencedFileInfo(0, 0, "file.asm","file.asm", FrozenSet<string>.Empty) }
             }.ToFrozenDictionary();
 
             var actual =
@@ -293,7 +293,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var (column, lineNumber, lineTextStart, lineTextEnd, realText, textLength) = GetPosition(text);
             var context = CreateContext(["one1", "one2", "two1"], ["ALFA", "BETA", "BFTA"]);
             var actual = KickAssemblerParsedSourceFile.GetCompletionOption(tokens, tokensByLine, trigger, TriggerChar.DoubleQuote, lineNumber, column, realText, lineTextStart,
-                textLength, context);
+                textLength, "", context);
             return actual;
         }
 
