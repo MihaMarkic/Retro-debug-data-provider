@@ -69,8 +69,8 @@ public class FileReferenceCompletionOptionsTest: CompletionOptionTestBase
         public bool GivenTestCase_ReturnsWhetherCompletionOptionHasBeenFound(string input)
         {
             var projectServices = Substitute.For<IProjectServices>();
-            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
-            projectServices.GetMatchingDirectories(null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingFiles(null!, null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingDirectories(null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             var context = new CompletionOptionContext(projectServices);
 
             var tc = CreateCase(input, 0);
@@ -96,8 +96,8 @@ public class FileReferenceCompletionOptionsTest: CompletionOptionTestBase
         public bool CompletionRequestedTypedCases(string input)
         {
             var projectServices = Substitute.For<IProjectServices>();
-            projectServices.GetMatchingFiles(null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
-            projectServices.GetMatchingDirectories(null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingFiles(null!, null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
+            projectServices.GetMatchingDirectories(null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             var context = new CompletionOptionContext(projectServices);
 
             var tc = CreateCase(input, 0);

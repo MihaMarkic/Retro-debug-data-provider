@@ -200,23 +200,23 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 {
                     "Project",
                     [
-                        "sub1", "sub2", "anotherSub", "sub1/nested"
+                        "sub1", "sub2", "anotherSub", "sub1/nested".ToPath()
                     ]                
                 }
             }.ToFrozenDictionary();
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.CollectSegments().Returns(segments);
             projectServices.CollectPreprocessorSymbols().Returns(preprocessorSymbols);
-            projectServices.GetMatchingFiles(Arg.Any<string>(), Arg.Any<FrozenSet<string>>(), Arg.Any<ICollection<string>>())
+            projectServices.GetMatchingFiles(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<FrozenSet<string>>(), Arg.Any<ICollection<string>>())
                 .Returns(a =>
                 {
                     var source = files["Project"];
                     var fileSet = new HashSet<string>();
-                    var filter = a.ArgAt<string>(0);
+                    var filter = a.ArgAt<string>(1);
                     string filterDirectory = Path.GetDirectoryName(filter) ?? "";
                     foreach (var f in source)
                     {
-                        var extensions =  a.ArgAt<FrozenSet<string>>(1);
+                        var extensions =  a.ArgAt<FrozenSet<string>>(2);
                         string fileDirectory = Path.GetDirectoryName(f) ?? "";
                         if (fileDirectory.Equals(filterDirectory))
                         {
@@ -238,11 +238,11 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                     return new Dictionary<ProjectFileKey, FrozenSet<string>> { { new(ProjectFileOrigin.Project, ""), fileSet.ToFrozenSet(StringComparer.OrdinalIgnoreCase) } }
                         .ToFrozenDictionary();
                 });
-            projectServices.GetMatchingDirectories(Arg.Any<string>())
+            projectServices.GetMatchingDirectories(Arg.Any<string>(), Arg.Any<string>())
                 .Returns(a =>
                 {
                     var source = directories["Project"];
-                    var filter = a.ArgAt<string>(0)!;
+                    var filter = a.ArgAt<string>(1)!;
                     var startDirectory = Path.GetDirectoryName(filter) ?? "";
                     var rootDirectoryName = Path.GetFileName(filter);
                     var fileSet = source
