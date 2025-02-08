@@ -151,10 +151,8 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
 
             ImmutableArray<KickAssemblerParsedSourceFile.LexerBasedSyntaxResult> source =
             [
-                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, firstToken,
-                    new SyntaxItem(0, 0, TokenType.Number)),
-                new KickAssemblerParsedSourceFile.LexerBasedSyntaxResult(0, secondToken,
-                    new SyntaxItem(0, 0, TokenType.String))
+                new(0, firstToken, new SyntaxItem(0, 0, TokenType.Number)),
+                new(0, secondToken, new SyntaxItem(0, 0, TokenType.String))
             ];
 
             var fileReferences = new Dictionary<IToken, ReferencedFileInfo>

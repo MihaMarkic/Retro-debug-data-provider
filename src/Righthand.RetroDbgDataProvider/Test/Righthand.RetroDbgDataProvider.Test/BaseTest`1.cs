@@ -8,7 +8,7 @@ namespace Righthand.RetroDbgDataProvider.Test;
 public abstract class BaseTest<T>
     where T : class
 {
-    protected Fixture Fixture = default!;
+    protected Fixture Fixture = null!;
     private T? _target;
 
     protected T Target

@@ -2,6 +2,7 @@
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
+using Righthand.RetroDbgDataProvider.Services.Implementation;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -37,6 +38,16 @@ public static class CompletionOptionCollectorsCommon
             .ToFrozenSet();
         return result;
     }
+    /// <summary>
+    /// Collects both files and directories that match input arguments.
+    /// Returned suggestions always contain non windows delimited paths.
+    /// </summary>
+    /// <param name="relativeFilePath"></param>
+    /// <param name="rootText"></param>
+    /// <param name="fileExtensions"></param>
+    /// <param name="excluded"></param>
+    /// <param name="projectServices"></param>
+    /// <returns></returns>
     internal static FrozenSet<Suggestion> CollectFileSystemSuggestions(string relativeFilePath, string rootText, FrozenSet<string> fileExtensions, FrozenSet<string> excluded, IProjectServices projectServices)
     {
         var builder = new HashSet<Suggestion>();
@@ -46,7 +57,7 @@ public static class CompletionOptionCollectorsCommon
         {
             foreach (var f in p.Value)
             {
-                builder.Add(new FileSuggestion(f, p.Key.Origin, p.Key.Path));
+                builder.Add(new FileSuggestion(f.ToNonWindowsPath(), p.Key.Origin, p.Key.Path));
             }
         }
         var directories = projectServices.GetMatchingDirectories(relativeFilePath, normalizedRootText);
@@ -54,12 +65,14 @@ public static class CompletionOptionCollectorsCommon
         {
             foreach (var d in p.Value)
             {
-                builder.Add(new DirectorySuggestion(d, p.Key.Origin, p.Key.Path));
+                builder.Add(new DirectorySuggestion(d.ToNonWindowsPath(), p.Key.Origin, p.Key.Path));
             }
         }
 
         return builder.ToFrozenSet();
     }
+
+    internal static string ToNonWindowsPath(this string path) => path.Replace(@"\", "/");
 
     /// <summary>
     /// Extracts text of left caret, entire replaceable length and whether it ends with double quote or not

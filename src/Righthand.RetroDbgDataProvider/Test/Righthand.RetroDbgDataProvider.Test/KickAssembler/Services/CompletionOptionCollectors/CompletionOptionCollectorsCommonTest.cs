@@ -1,17 +1,20 @@
 ﻿using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using Antlr4.Runtime;
+using NSubstitute;
 using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
-using Righthand.RetroDbgDataProvider.Test.KickAssembler.Models;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
+using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionOptionCollectors;
 
 public class CompletionOptionCollectorsCommonTest
 {
     [TestFixture]
-    public class TrimWhitespaces : KickAssemblerParsedSourceFileTest
+    public class TrimWhitespaces : CompletionOptionCollectorsCommonTest
     {
         [TestCaseSource(typeof(GivenSampleTrimsProperlySource))]
         public void GivenSample_TrimsProperly(ImmutableArray<IToken> data, ImmutableArray<IToken> expected)
@@ -21,7 +24,7 @@ public class CompletionOptionCollectorsCommonTest
             Assert.That(actual.ToImmutableArray(), Is.EquivalentTo(expected));
         }
 
-        public class GivenSampleTrimsProperlySource : IEnumerable
+        private class GivenSampleTrimsProperlySource : IEnumerable
         {
             private static ImmutableArray<IToken> GetArray(
                 params (int TokenType, int Channel)[] tokens) =>
@@ -42,7 +45,7 @@ public class CompletionOptionCollectorsCommonTest
         }
 
         [TestFixture]
-        public class GetSuggestionTextInDoubleQuotes : KickAssemblerParsedSourceFileTest
+        public class GetSuggestionTextInDoubleQuotes : CompletionOptionCollectorsCommonTest
         {
             [TestCase("", 0, ExpectedResult = "")]
             [TestCase("xys", 0, ExpectedResult = "")]
@@ -74,7 +77,33 @@ public class CompletionOptionCollectorsCommonTest
             }
         }
 
-        public record TrimWhitespacesToken : IToken
+        [TestFixture]
+        public class CollectFileSystemSuggestions : CompletionOptionCollectorsCommonTest
+        {
+            [Test]
+            public void WhenSourceFileIsInRootAndSubdirectoryIsFound_ReturnsFullRelativePath()
+            {
+                var directory = new Dictionary<ProjectFileKey, FrozenSet<string>>
+                {
+                    { new (ProjectFileOrigin.Project, "project_path"), ["xxx/ddd"] }
+                }.ToFrozenDictionary();
+                var projectServices = Substitute.For<IProjectServices>();
+                projectServices
+                    .GetMatchingFiles("", "", [], [])
+                    .ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
+                projectServices
+                    .GetMatchingDirectories("", "")
+                    .ReturnsForAnyArgs(directory);
+                
+                var actual = CompletionOptionCollectorsCommon.CollectFileSystemSuggestions("", "xxx/", [], [], projectServices);
+
+                var expected = new DirectorySuggestion("xxx/ddd", ProjectFileOrigin.Project, "project_path");
+                
+                Assert.That(actual.Single(), Is.EqualTo(expected));
+            }
+        }
+
+        private record TrimWhitespacesToken : IToken
         {
             public string Text => "N/A";
             public int Type { get; }
