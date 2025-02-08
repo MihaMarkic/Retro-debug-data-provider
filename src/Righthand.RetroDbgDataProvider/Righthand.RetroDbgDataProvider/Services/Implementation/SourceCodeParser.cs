@@ -10,20 +10,25 @@ public abstract class SourceCodeParser<T> : DisposableObject
     /// <inheritdoc cref="ISourcecodeParser"/>
     public event EventHandler<FilesChangedEventArgs>? FilesChanged;
     public IParsedFilesIndex<T> AllFiles { get; private set; }
-    private void OnFilesChanged(FilesChangedEventArgs e) => FilesChanged?.Invoke(this, e);
-
+    /// <inheritdoc />
+    public Task? ParsingTask { get; protected set; }
     protected SourceCodeParser(IParsedFilesIndex<T> allFiles)
     {
         AllFiles = allFiles;
     }
+    private async ValueTask OnFilesChangedAsync(FilesChangedEventArgs e)
+    {
+        FilesChanged?.Invoke(this, e);
+        await e.WaitAllClientTasksAsync();
+    }
 
-    protected void AssignNewFiles(IParsedFilesIndex<T> newFiles)
+    protected async Task AssignNewFilesAsync(IParsedFilesIndex<T> newFiles, CancellationToken ct)
     {
         if (!ReferenceEquals(newFiles, AllFiles))
         {
-            var changes = ExtractFileChanges(AllFiles, newFiles);
+            var changes = ExtractFileChanges(AllFiles, newFiles, ct);
             AllFiles = newFiles;
-            OnFilesChanged(changes);
+            await OnFilesChangedAsync(changes);
         }
     }
 
@@ -33,7 +38,8 @@ public abstract class SourceCodeParser<T> : DisposableObject
     /// <param name="existingFiles"></param>
     /// <param name="newFiles"></param>
     /// <returns></returns>
-    internal FilesChangedEventArgs ExtractFileChanges(IParsedFilesIndex<T> existingFiles, IParsedFilesIndex<T> newFiles)
+    internal FilesChangedEventArgs ExtractFileChanges(IParsedFilesIndex<T> existingFiles, IParsedFilesIndex<T> newFiles,
+        CancellationToken ct)
     {
         var addedFiles = new HashSet<string>(OsDependent.FileStringComparer);
         var modifiedFiles = new HashSet<string>(OsDependent.FileStringComparer);
@@ -59,7 +65,7 @@ public abstract class SourceCodeParser<T> : DisposableObject
         }
 
         return new FilesChangedEventArgs(addedFiles.ToFrozenSet(), modifiedFiles.ToFrozenSet(),
-            deletedFiles.ToFrozenSet());
+            deletedFiles.ToFrozenSet(), ct);
     }
 
     /// <summary>

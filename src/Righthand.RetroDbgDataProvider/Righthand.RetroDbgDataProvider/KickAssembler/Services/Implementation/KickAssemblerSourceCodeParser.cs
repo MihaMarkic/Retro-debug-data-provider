@@ -23,7 +23,6 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
     private CancellationTokenSource? _parsingCts;
     private string? _projectDirectory;
     private string? _mainFile;
-    private Task? _parsingTask;
 
     /// <summary>
     /// Creates a new instance of <see cref="KickAssemblerSourceCodeParser"/>.
@@ -63,8 +62,8 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             throw new Exception("KickAssemblerSourceCodeParser has not been initialized");
         }
 
-        _parsingTask = ParseInternalAsync(_mainFile, inMemoryFilesContent, inDefines, libraryDirectories, ct);
-        return _parsingTask;
+        ParsingTask = ParseInternalAsync(_mainFile, inMemoryFilesContent, inDefines, libraryDirectories, ct);
+        return ParsingTask;
     }
 
     /// <summary>
@@ -92,7 +91,8 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
                 ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile> parsed = new();
                 await ParseAllFilesAsync(parsed, mainFile, "", inMemoryFilesContent, inDefines, libraryDirectories,
                     AllFiles, linkedCancellationSource.Token);
-                AssignNewFiles(parsed.ToImmutable());
+                await AssignNewFilesAsync(parsed.ToImmutable(), ct);
+                _logger.LogInformation("Done parsing");
             }
         }
         catch (OperationCanceledException)
@@ -116,11 +116,11 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             _parsingCts = null;
         }
 
-        if (_parsingTask is not null)
+        if (ParsingTask is not null)
         {
             _logger.LogInformation("Waiting for parser task to finish");
             // _parsingTask shouldn't throw
-            await _parsingTask;
+            await ParsingTask;
             _logger.LogInformation("Parsing task stopped");
         }
     }

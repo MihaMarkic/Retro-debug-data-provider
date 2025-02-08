@@ -18,6 +18,10 @@ public interface ISourceCodeParser<out T>: IDisposable, IAsyncDisposable
     /// <remarks><see cref="AllFilesChanged"/> is triggered on each change.</remarks>
     IParsedFilesIndex<T> AllFiles { get; }
     /// <summary>
+    /// Returns parsing <see cref="Task"/>.
+    /// </summary>
+    Task? ParsingTask { get; }
+    /// <summary>
     /// Starts initial parsing of entire project.
     /// </summary>
     /// <param name="projectDirectory"></param>
