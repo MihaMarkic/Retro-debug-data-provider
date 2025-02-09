@@ -41,6 +41,11 @@ public interface IProjectServices
      /// </summary>
      /// <returns></returns>
      ImmutableList<Constant> CollectConstants();
+     /// <summary>
+     /// Collects enum value definitions.
+     /// </summary>
+     /// <returns></returns>
+     ImmutableList<EnumValues> CollectEnumValues(); 
 }
 
 public readonly record struct ProjectFileKey(ProjectFileOrigin Origin, string Path) : IEqualityComparer<ProjectFileKey>

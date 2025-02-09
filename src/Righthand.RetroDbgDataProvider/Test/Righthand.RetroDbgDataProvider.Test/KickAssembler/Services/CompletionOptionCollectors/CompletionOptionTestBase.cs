@@ -18,6 +18,9 @@ public abstract class CompletionOptionTestBase
     {
         var projectServices = Substitute.For<IProjectServices>();
         projectServices.CollectLabels().ReturnsForAnyArgs([]);
+        projectServices.CollectVariables().ReturnsForAnyArgs([]);
+        projectServices.CollectConstants().ReturnsForAnyArgs([]);
+        //projectServices.CollectEnumValues().ReturnsForAnyArgs([]);
         NoOpContext = new CompletionOptionContext(projectServices);
     }
     protected static ImmutableArray<IToken> GetAllTokens(string text)

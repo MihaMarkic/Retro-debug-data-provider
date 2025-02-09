@@ -252,5 +252,28 @@ public class ParserTest: ParserBootstrap<ParserTest>
                 return actual.SingleOrDefault()?.Value;
             }
         }
+
+        [TestFixture]
+        public class EnumValues : DataParsing
+        {
+            [TestCase(".enum { one, two }", ExpectedResult = "one,two")]
+            [TestCase(".enum { one=5, two=$8 }", ExpectedResult = "one,two")]
+            public string? GivenInput_ExtractsEnumValueNames(string input)
+            {
+                var actual = Run(input, p => p.@enum(), out ErrorListener _)
+                    .EnumValuesDefinitions;
+                
+                return string.Join(",", actual.SingleOrDefault()?.Values.Select(v => v.Name) ?? []);
+            }
+
+            [Test]
+            public void WhenNoEnumValues_DoesNotAddRecord()
+            {
+                var actual = Run(".enum {}", p => p.@enum(), out ErrorListener _)
+                    .EnumValuesDefinitions;
+                
+                Assert.That(actual, Is.Empty); 
+            }
+        }
     }
 }

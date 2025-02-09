@@ -152,7 +152,7 @@ watchArguments
     | expression COMMA expression
     | expression COMMA expression? COMMA STRING;
 enum
-    : OPEN_BRACE enumValues CLOSE_BRACE;
+    : ENUM OPEN_BRACE enumValues? CLOSE_BRACE;
 enumValues
     : enumValue (COMMA enumValue)*;
 enumValue

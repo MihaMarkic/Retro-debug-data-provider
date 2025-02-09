@@ -58,6 +58,9 @@ public static class GenericCompletionOptions
         FrozenSet<string> constantNames = [.. context.ProjectServices.CollectConstants().Select(l => l.Name)];
         Add(builder, root, SuggestionOrigin.Constant, constantNames);
 
+        FrozenSet<string> enumValueNames = [.. context.ProjectServices.CollectEnumValues().SelectMany(l => l.Values.Select(v => v.Name))];
+        Add(builder, root, SuggestionOrigin.EnumValue, enumValueNames);
+
         if (builder.Count > 0)
         {
             var suggestions = builder.ToFrozenSet();

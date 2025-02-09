@@ -95,6 +95,7 @@ IF: '.if';
 ELSE: 'else';
 ERRORIF: '.errorif';
 EVAL: '.eval';
+ENUM: '.enum';
 FOR: '.for';
 WHILE: '.while';
 STRUCT: '.struct';

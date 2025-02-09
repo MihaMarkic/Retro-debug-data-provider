@@ -307,6 +307,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty, FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
+                ImmutableList<EnumValues>.Empty, 
                 _now, liveContent: null, isImportOnce: false, 
                 mainParsed.LexerErrorListener.Errors, mainParsed.ParserErrorListener.Errors);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
@@ -339,6 +340,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                 FrozenSet<string>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
+                ImmutableList<EnumValues>.Empty, 
                 _now,
                 liveContent: null, 
                 isImportOnce: false, 

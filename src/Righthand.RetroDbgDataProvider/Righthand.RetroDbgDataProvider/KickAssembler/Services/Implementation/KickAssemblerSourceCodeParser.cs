@@ -331,7 +331,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             return new KickAssemblerParsedSourceFile(fileName, relativePath, [],
                 MapReferencedFilesToDictionary(lexer.ReferencedFiles, tokenStream.GetTokens()),
                 inDefines, outDefines: inDefines, parserListener.SegmentDefinitions, parserListener.LabelDefinitions,
-                parserListener.VariableDefinitions, parserListener.ConstantDefinitions,
+                parserListener.VariableDefinitions, parserListener.ConstantDefinitions, parserListener.EnumValuesDefinitions,
                 lastModified, liveContent,
                 lexer.IsImportOnce, lexerErrorListener.Errors, parserErrorListener.Errors);
         }
@@ -353,6 +353,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             inDefines, lexer.DefinedSymbols.ToFrozenSet(),
             parserListener.SegmentDefinitions, parserListener.LabelDefinitions,
             parserListener.VariableDefinitions, parserListener.ConstantDefinitions,
+            parserListener.EnumValuesDefinitions,
             lastModified, liveContent,
             lexer.IsImportOnce,
             lexerErrorListener.Errors, parserErrorListener.Errors);
