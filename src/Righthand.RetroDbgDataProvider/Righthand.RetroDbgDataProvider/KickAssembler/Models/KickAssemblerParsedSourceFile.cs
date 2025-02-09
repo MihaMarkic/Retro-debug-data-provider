@@ -29,6 +29,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="inDefines"></param>
     /// <param name="outDefines"></param>
     /// <param name="segmentDefinitions"></param>
+    /// <param name="labelDefinitions"></param>
     /// <param name="lastModified"></param>
     /// <param name="liveContent"></param>
     /// <param name="isImportOnce"></param>
@@ -41,12 +42,14 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
         FrozenSet<SegmentDefinitionInfo> segmentDefinitions,
+        ImmutableList<Righthand.RetroDbgDataProvider.Models.Parsing.Label> labelDefinitions,
         DateTimeOffset lastModified,
         string? liveContent,
         bool isImportOnce,
         ImmutableArray<KickAssemblerLexerError> lexerErrors,
         ImmutableArray<KickAssemblerParserError> parserErrors
-    ) : base(fileName, relativePath, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, lastModified, liveContent)
+    ) : base(fileName, relativePath, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, labelDefinitions, 
+        lastModified, liveContent)
     {
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;
@@ -113,11 +116,11 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             return null;
         }
         ImmutableArray<IToken> tokensAtLine = [..allTokensAtLine.Where(t => t.Channel == 0)];
-
+        var lineTokens = tokensAtLine.AsSpan();
         var lineToCursor = text.AsSpan().Slice(textStart, column);
         if (lineToCursor.IsEmpty)
         {
-            return null;
+            return GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context);
         }
         
         var columnTokenIndex = tokensAtLine.AsSpan().GetTokenIndexAtColumn(textStart, column);
@@ -133,7 +136,6 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         }
 
         var line = text.AsSpan()[textStart..(textStart + textLength)];
-        var lineTokens = tokensAtLine.AsSpan();
         var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, relativePath, context)
                      ?? PreprocessorDirectivesCompletionOptionsObsolete.GetOption(lineTokens, text, textStart, textLength, column, context)
                      ?? DirectiveCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, relativePath, context)

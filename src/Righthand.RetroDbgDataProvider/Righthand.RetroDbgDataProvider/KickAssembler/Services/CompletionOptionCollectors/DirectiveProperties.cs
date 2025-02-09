@@ -28,8 +28,7 @@ public static class DirectiveProperties
             .Select(p => p.Key);
         foreach (var ti in query)
         {
-            var text = KickAssemblerLexer.DefaultVocabulary.GetLiteralName(ti);
-            Debug.WriteLine(text);
+            var text = KickAssemblerLexer.DefaultVocabulary.GetLiteralName(ti).Trim('\'');
             temp.AddWithoutType(text);
         }
 

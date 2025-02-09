@@ -10,6 +10,7 @@ using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
+using Label = Righthand.RetroDbgDataProvider.Models.Parsing.Label;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.Implementation;
 
@@ -303,8 +304,9 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                                        """);
             var source = new KickAssemblerParsedSourceFile("main.asm", "", mainParsed.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty, FrozenSet<string>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty, _now,
-                liveContent: null, isImportOnce: false, 
+                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
+                ImmutableList<Label>.Empty, 
+                _now, liveContent: null, isImportOnce: false, 
                 mainParsed.LexerErrorListener.Errors, mainParsed.ParserErrorListener.Errors);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
             var oldState =
@@ -334,7 +336,9 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var source = new KickAssemblerParsedSourceFile("main.asm", "", mainParsed.AllTokens,
                 referencedFiles,
                 FrozenSet<string>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty, _now,
+                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
+                ImmutableList<Label>.Empty, 
+                _now,
                 liveContent: null, 
                 isImportOnce: false, 
                 mainParsed.LexerErrorListener.Errors, mainParsed.ParserErrorListener.Errors);

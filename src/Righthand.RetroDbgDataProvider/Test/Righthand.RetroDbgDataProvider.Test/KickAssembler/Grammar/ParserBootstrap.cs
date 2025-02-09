@@ -2,22 +2,26 @@
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Righthand.RetroDbgDataProvider.KickAssembler;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
 public abstract class ParserBootstrap<T> : BaseTest<T>
     where T : class
 {
-    protected void Run<TContext, TParserErrorListener>(string text, Func<KickAssemblerParser, TContext> run,
+    protected KickAssemblerParserListener Run<TContext, TParserErrorListener>(string text, Func<KickAssemblerParser, TContext> run,
         out TParserErrorListener errors, params string[] defineSymbols)
         where TContext : ParserRuleContext
         where TParserErrorListener : BaseErrorListener, new()
     {
-        Run<KickAssemblerParserBaseListener, TParserErrorListener, TContext>(text, run, out errors);
+        return Run<KickAssemblerParserListener, TParserErrorListener, TContext>(text, run, out errors);
     }
 
-    protected TListener Run<TListener, TParserErrorListener, TContext>(string text,
-        Func<KickAssemblerParser, TContext> run, out TParserErrorListener errors, params string[] defineSymbols)
+    protected TListener Run<TListener, TParserErrorListener, TContext>(
+        string text,
+        Func<KickAssemblerParser, TContext> run, 
+        out TParserErrorListener errors, 
+        params string[] defineSymbols)
         where TListener : KickAssemblerParserBaseListener, new()
         where TParserErrorListener : BaseErrorListener, new()
         where TContext : ParserRuleContext

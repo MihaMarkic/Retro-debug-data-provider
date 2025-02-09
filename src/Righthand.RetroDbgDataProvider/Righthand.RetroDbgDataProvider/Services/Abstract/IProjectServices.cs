@@ -1,4 +1,5 @@
 ﻿using System.Collections.Frozen;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.Services.Abstract;
 
@@ -7,6 +8,7 @@ public interface IProjectServices
      /// <summary>
      /// Searches for matching files in project and all libraries.
      /// </summary>
+     /// <param name="relativeFilePath">Relative file's directory to either project or library</param>
      /// <param name="filter">Relative file path without extension or *, just the directory and file name part</param>
      /// <param name="extensions">File extension to watch for.</param>
      /// <param name="excludedFiles">Full file names to exclude from results</param>
@@ -24,6 +26,11 @@ public interface IProjectServices
      /// </summary>
      /// <returns></returns>
      FrozenSet<string> CollectPreprocessorSymbols();
+     /// <summary>
+     /// Collects label definitions.
+     /// </summary>
+     /// <returns></returns>
+     ImmutableList<Label> CollectLabels();
 }
 
 public readonly record struct ProjectFileKey(ProjectFileOrigin Origin, string Path) : IEqualityComparer<ProjectFileKey>

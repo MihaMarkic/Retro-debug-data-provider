@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
+// Generated from D:/GitProjects/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -6749,30 +6749,77 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class LabelNameContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BANG() { return GetToken(KickAssemblerParser.BANG, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public AtNameContext atName() {
-			return GetRuleContext<AtNameContext>(0);
-		}
 		public LabelNameContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_labelName; } }
+	 
+		public LabelNameContext() { }
+		public virtual void CopyFrom(LabelNameContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class MultiLabelContext : LabelNameContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BANG() { return GetToken(KickAssemblerParser.BANG, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
+		public MultiLabelContext(LabelNameContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
-			if (typedListener != null) typedListener.EnterLabelName(this);
+			if (typedListener != null) typedListener.EnterMultiLabel(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
-			if (typedListener != null) typedListener.ExitLabelName(this);
+			if (typedListener != null) typedListener.ExitMultiLabel(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitLabelName(this);
+			if (typedVisitor != null) return typedVisitor.VisitMultiLabel(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class MultiAnonymousLabelContext : LabelNameContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BANG() { return GetToken(KickAssemblerParser.BANG, 0); }
+		public MultiAnonymousLabelContext(LabelNameContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterMultiAnonymousLabel(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitMultiAnonymousLabel(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitMultiAnonymousLabel(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class AtNameLabelContext : LabelNameContext {
+		[System.Diagnostics.DebuggerNonUserCode] public AtNameContext atName() {
+			return GetRuleContext<AtNameContext>(0);
+		}
+		public AtNameLabelContext(LabelNameContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterAtNameLabel(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitAtNameLabel(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAtNameLabel(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -6786,6 +6833,7 @@ public partial class KickAssemblerParser : Parser {
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,52,Context) ) {
 			case 1:
+				_localctx = new MultiLabelContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 831;
@@ -6795,6 +6843,7 @@ public partial class KickAssemblerParser : Parser {
 				}
 				break;
 			case 2:
+				_localctx = new MultiAnonymousLabelContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 833;
@@ -6802,6 +6851,7 @@ public partial class KickAssemblerParser : Parser {
 				}
 				break;
 			case 3:
+				_localctx = new AtNameLabelContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 834;

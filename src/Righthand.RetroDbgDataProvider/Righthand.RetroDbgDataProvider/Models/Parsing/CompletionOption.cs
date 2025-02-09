@@ -18,7 +18,8 @@ public enum SuggestionOrigin
     Directory,
     PropertyName,
     PropertyValue,
-    DirectiveOption
+    DirectiveOption,
+    Label,
 }
 
 public abstract record Suggestion(SuggestionOrigin Origin, string Text, int Priority)

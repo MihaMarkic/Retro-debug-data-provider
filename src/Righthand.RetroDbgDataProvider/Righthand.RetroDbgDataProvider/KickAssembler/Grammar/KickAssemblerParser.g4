@@ -312,9 +312,10 @@ importDataDirective
     ;
 	
 labelName
-    : BANG UNQUOTED_STRING
-    | BANG
-    | atName;
+    : BANG UNQUOTED_STRING      #MultiLabel
+    | BANG                      #MultiAnonymousLabel
+    | atName                    #AtNameLabel
+    ;               
 
 atName                                      // @ prefixed name, used with macro, label and function names
     : AT UNQUOTED_STRING

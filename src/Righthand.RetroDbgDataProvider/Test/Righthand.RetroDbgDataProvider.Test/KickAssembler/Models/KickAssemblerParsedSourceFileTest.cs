@@ -14,6 +14,7 @@ using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Models.Program;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 using CommonTokenStream = Antlr4.Runtime.CommonTokenStream;
+using Label = Righthand.RetroDbgDataProvider.Models.Parsing.Label;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Models;
 
@@ -64,6 +65,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var target = new KickAssemblerParsedSourceFile("fileName", "", [],
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
+                ImmutableList<Label>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 
@@ -83,6 +85,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
+                ImmutableList<Label>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 
@@ -105,6 +108,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
+                ImmutableList<Label>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 

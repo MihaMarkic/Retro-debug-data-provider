@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Models.Program;
+using Label = Righthand.RetroDbgDataProvider.Models.Parsing.Label;
 
 namespace Righthand.RetroDbgDataProvider.Models;
 
@@ -32,6 +33,7 @@ public abstract class ParsedSourceFile
     public FrozenSet<string> OutDefines { get; }
     public DateTimeOffset LastModified { get; }
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions { get; }
+    public ImmutableList<Label> LabelDefinitions { get; }
     public string? LiveContent { get; }
     /// <summary>
     /// All tokens regardless of channel.
@@ -63,7 +65,8 @@ public abstract class ParsedSourceFile
     private FrozenDictionary<int, SyntaxErrorLine>? _syntaxErrors;
     
     protected ParsedSourceFile(string fileName, string relativePath, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
-        FrozenSet<string> outDefines, FrozenSet<SegmentDefinitionInfo> segmentDefinitions, DateTimeOffset lastModified, string? liveContent)
+        FrozenSet<string> outDefines, FrozenSet<SegmentDefinitionInfo> segmentDefinitions, ImmutableList<Label> labelDefinitions, 
+        DateTimeOffset lastModified, string? liveContent)
     {
         FileName = fileName;
         RelativePath = relativePath;
@@ -72,6 +75,7 @@ public abstract class ParsedSourceFile
         InDefines = inDefines;
         OutDefines = outDefines;
         SegmentDefinitions = segmentDefinitions;
+        LabelDefinitions = labelDefinitions;
         LastModified = lastModified;
         LiveContent = liveContent;
         // these two properties below are populated asynchronously through GetSyntaxInfoAsync function

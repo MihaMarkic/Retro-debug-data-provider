@@ -107,6 +107,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
             Assert.DoesNotThrow(() => Run(input, p => p.labelName(), out ErrorListener _));
         }
     }
+
     [TestFixture]
     public class CpuDirectiveName : ParserTest
     {
@@ -186,5 +187,37 @@ public class ParserTest: ParserBootstrap<ParserTest>
             
             Assert.That(actual.Errors.Length, Is.EqualTo(2));
         }
+    }
+
+    /// <summary>
+    /// Tests data collection such as labels
+    /// </summary>
+    public class DataParsing : ParserTest
+    {
+        [TestFixture]
+        public class Label : DataParsing
+        {
+            [TestCase("!:", ExpectedResult = "")]
+            [TestCase("!tubo:", ExpectedResult = "tubo")]
+            [TestCase("tubo:", ExpectedResult = "tubo")]
+            public string? GivenInput_ExtractsLabelName(string input)
+            {
+                var actual = Run(input, p => p.label(), out ErrorListener _)
+                    .LabelDefinitions;
+
+                return actual.SingleOrDefault()?.Name;
+            }
+            [TestCase("!:", ExpectedResult = true)]
+            [TestCase("!tubo:", ExpectedResult = true)]
+            [TestCase("tubo:", ExpectedResult = false)]
+            public bool? GivenInput_ExtractsIsMultiOccurence(string input)
+            {
+                var actual = Run(input, p => p.label(), out ErrorListener _)
+                    .LabelDefinitions;
+
+                return actual.SingleOrDefault()?.IsMultiOccurence;
+            }
+        }
+
     }
 }

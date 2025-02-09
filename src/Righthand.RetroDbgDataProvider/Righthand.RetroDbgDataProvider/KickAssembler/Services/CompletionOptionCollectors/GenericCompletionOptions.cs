@@ -12,7 +12,7 @@ public static class GenericCompletionOptions
     {
         Debug.WriteLine($"Trying {nameof(GenericCompletionOptions)}");
         int absoluteLineCursor = lineStart + lineCursor;
-        var currentTokenIndex = TokenListOperations.GetTokenIndexAtColumn(lineTokens, 0, absoluteLineCursor);
+        var currentTokenIndex = lineTokens.GetTokenIndexAtColumn(0, absoluteLineCursor);
         string root = "";
         int replacementLength = 0;
         if (currentTokenIndex is not null)
@@ -29,14 +29,14 @@ public static class GenericCompletionOptions
                 if (attachedTokenOnLeftIndex is not null)
                 {
                     var attachedTokenOnLeft = lineTokens[attachedTokenOnLeftIndex.Value];
-                    rootPrefix = attachedTokenOnLeft.Type is (DOT or HASH) ? attachedTokenOnLeft.Text : "";
+                    rootPrefix = attachedTokenOnLeft.Type is (DOT or HASH or BANG) ? attachedTokenOnLeft.Text : "";
                 }
 
                 var partialText = currentToken.TextUpToColumn(absoluteLineCursor);
                 root = $"{rootPrefix}{partialText}";
                 replacementLength = rootPrefix.Length + currentToken.Length();
             }
-            else if (currentToken.Type is (DOT or HASH))
+            else if (currentToken.Type is (DOT or HASH or BANG))
             {
                 root = currentToken.Text;
                 replacementLength = 1;
@@ -47,6 +47,9 @@ public static class GenericCompletionOptions
 
         Add(builder, root, SuggestionOrigin.PreprocessorDirective, PreprocessorDirectives);
         Add(builder, root, SuggestionOrigin.DirectiveOption, DirectiveProperties.AllDirectives);
+        FrozenSet<Label> allUniqueLabels = [..context.ProjectServices.CollectLabels()];
+        FrozenSet<string> labelNames = [..allUniqueLabels.Select(l =>  l.FullName)];
+        Add(builder, root, SuggestionOrigin.Label, labelNames);
         
         if (builder.Count > 0)
         {

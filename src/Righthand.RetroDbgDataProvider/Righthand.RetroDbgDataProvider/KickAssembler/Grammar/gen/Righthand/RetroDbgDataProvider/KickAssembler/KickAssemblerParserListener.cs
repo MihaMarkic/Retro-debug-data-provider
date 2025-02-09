@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
+// Generated from D:/GitProjects/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -872,15 +872,41 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitImportDataDirective([NotNull] KickAssemblerParser.ImportDataDirectiveContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.labelName"/>.
+	/// Enter a parse tree produced by the <c>MultiLabel</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.labelName"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterLabelName([NotNull] KickAssemblerParser.LabelNameContext context);
+	void EnterMultiLabel([NotNull] KickAssemblerParser.MultiLabelContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.labelName"/>.
+	/// Exit a parse tree produced by the <c>MultiLabel</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.labelName"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitLabelName([NotNull] KickAssemblerParser.LabelNameContext context);
+	void ExitMultiLabel([NotNull] KickAssemblerParser.MultiLabelContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>MultiAnonymousLabel</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.labelName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMultiAnonymousLabel([NotNull] KickAssemblerParser.MultiAnonymousLabelContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>MultiAnonymousLabel</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.labelName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMultiAnonymousLabel([NotNull] KickAssemblerParser.MultiAnonymousLabelContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>AtNameLabel</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.labelName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAtNameLabel([NotNull] KickAssemblerParser.AtNameLabelContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>AtNameLabel</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.labelName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAtNameLabel([NotNull] KickAssemblerParser.AtNameLabelContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.atName"/>.
 	/// </summary>
