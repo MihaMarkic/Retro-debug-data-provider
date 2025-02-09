@@ -99,14 +99,14 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
                             // in case of last error, path is relative
                             // thus it is necessary to add directory in front as client expects full paths
                             string path = Path.Combine(projectDirectory, lastErrorLocationMatch.Groups["file"].Value);
-                            int errorLine = int.Parse(lastErrorLocationMatch.Groups["line"].Value);
-                            int errorColumn = int.Parse(lastErrorLocationMatch.Groups["column"].Value);
+                            int errorLine = int.Parse(lastErrorLocationMatch.Groups["line"].Value)-1;
+                            int errorColumn = int.Parse(lastErrorLocationMatch.Groups["column"].Value)-1;
                             (int offset, int errorTextLength) = ExtrapolateErrorLength(lastErrorText);
                             errorsBuilder.Add((
                                 path,
                                 new SyntaxError(
                                     lastErrorText,
-                                    null, errorLine-1, new SingleLineTextRange(errorColumn + offset, errorColumn + offset + errorTextLength),
+                                    null, errorLine, new SingleLineTextRange(errorColumn + offset, errorColumn + offset + errorTextLength),
                                     SyntaxErrorCompiledFileSource.Default)
                                 ));
                         }
@@ -121,8 +121,8 @@ public partial class KickAssemblerCompiler : IKickAssemblerCompiler
                         var errorMatch = CompilerErrorRegex().Match(line);
                         if (errorMatch.Success)
                         {
-                            int errorLine = int.Parse(errorMatch.Groups["line"].Value);
-                            int errorColumn = int.Parse(errorMatch.Groups["column"].Value);
+                            int errorLine = int.Parse(errorMatch.Groups["line"].Value)-1;
+                            int errorColumn = int.Parse(errorMatch.Groups["column"].Value)-1;
                             string errorText = errorMatch.Groups["error"].Value.Trim();
                             (int offset, int errorTextLength) = ExtrapolateErrorLength(errorText);
                             errorsBuilder.Add((

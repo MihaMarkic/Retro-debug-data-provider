@@ -111,7 +111,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         if (_parsingCts is not null)
         {
             _logger.LogInformation("Issuing cancellation");
-            await _parsingCts.CancelAsync();
+            _parsingCts.Cancel();
             _parsingCts.Dispose();
             _parsingCts = null;
         }
