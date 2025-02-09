@@ -20,7 +20,7 @@ public abstract class CompletionOptionTestBase
         projectServices.CollectLabels().ReturnsForAnyArgs([]);
         projectServices.CollectVariables().ReturnsForAnyArgs([]);
         projectServices.CollectConstants().ReturnsForAnyArgs([]);
-        //projectServices.CollectEnumValues().ReturnsForAnyArgs([]);
+        projectServices.CollectEnumValues().ReturnsForAnyArgs([]);
         NoOpContext = new CompletionOptionContext(projectServices);
     }
     protected static ImmutableArray<IToken> GetAllTokens(string text)

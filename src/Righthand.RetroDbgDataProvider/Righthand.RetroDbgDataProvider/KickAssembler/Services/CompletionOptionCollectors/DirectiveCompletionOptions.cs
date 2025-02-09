@@ -73,6 +73,16 @@ public static class DirectiveCompletionOptions
                 case PositionType.Type:
                     switch (keyword)
                     {
+                        case ".const":
+                        case ".var":
+                        case ".enum":
+                        case ".break":
+                        case ".macro":
+                        case ".namespace":
+                        case ".segment":
+                        case ".while":
+                            // disables completion where it doesn't make sense
+                            return CompletionOption.Empty;
                         case ".import":
                             if (DirectiveProperties.TryGetDirective(".import", out var directive) && directive is DirectiveWithType directiveWithType)
                             {

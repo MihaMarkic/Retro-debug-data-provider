@@ -137,12 +137,6 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             _enumValuesDefinitions.Add(new EnumValues([.._tempEnumValues]));
         }
     }
-
-    public override void EnterEnumValue(EnumValueContext context)
-    {
-        base.EnterEnumValue(context);
-        
-    }
     public override void ExitEnumValue([NotNull] EnumValueContext context)
     {
         base.ExitEnumValue(context);

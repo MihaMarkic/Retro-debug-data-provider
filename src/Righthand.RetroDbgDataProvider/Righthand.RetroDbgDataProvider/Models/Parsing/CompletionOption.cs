@@ -1,6 +1,5 @@
 ﻿using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Mime;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Models.Parsing;
@@ -42,6 +41,7 @@ public record DirectorySuggestion(string Text, ProjectFileOrigin FileOrigin, str
 /// </remarks>
 public readonly struct CompletionOption
 {
+    public static CompletionOption Empty => new CompletionOption("", 0, "", "", []);
     /// <summary>
     /// Text to the left of the caret to be replaced.
     /// </summary>
