@@ -13,9 +13,14 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    private readonly Dictionary<IToken, string> _fileReferences = new();
    private readonly HashSet<SegmentDefinitionInfo> _segmentDefinitions = new();
    private readonly List<Label> _labelDefinitions = new();
+   private readonly List<string> _variableDefinitions = new();
+   private readonly List<Constant> _constantDefinitions = new();
    public FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions => [.. _segmentDefinitions];
    public ImmutableList<Label> LabelDefinitions => [.._labelDefinitions];
+   public ImmutableList<string> VariableDefinitions => [.._variableDefinitions];
+   public ImmutableList<Constant> ConstantDefinitions => [.._constantDefinitions];
+   
    public override void EnterPreprocessorImport(PreprocessorImportContext context)
    {
       var fileReference = context.fileReference;
@@ -56,7 +61,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
         }
     }
 
-    internal static Label? CreateLabel(LabelNameContext context)
+    private static Label? CreateLabel(LabelNameContext context)
     {
         switch (context.GetChild(0))
         {
@@ -72,6 +77,45 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
                 break;
             case AtNameContext atName when atName.ChildCount == 1 && atName.GetChild(0) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING:
                 return new Label(nameNode.GetText(), IsMultiOccurrence: false);
+        }
+
+        return null;
+    }
+
+    public override void ExitVar(VarContext context)
+    {
+        base.ExitVar(context);
+        var assignmentContext = context.assignment_expression();
+        if (assignmentContext is not null)
+        {
+            var data = GetAssignment(assignmentContext);
+            if (data is not null)
+            {
+                _variableDefinitions.Add(data.Value.Left);
+            }
+        }
+    }
+    public override void ExitConst(ConstContext context)
+    {
+        base.ExitConst(context);
+        var assignmentContext = context.assignment_expression();
+        if (assignmentContext is not null)
+        {
+            var data = GetAssignment(assignmentContext);
+            if (data is not null)
+            {
+                _constantDefinitions.Add(new Constant(data.Value.Left, data.Value.Right));
+            }
+        }
+    }
+
+    private static (string Left, string Right)? GetAssignment(Assignment_expressionContext context)
+    {
+        if (context.ChildCount == 3 
+            && context.GetChild(0) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING
+            && context.GetChild(2) is ExpressionContext expressionContext)
+        {
+            return (nameNode.GetText(), expressionContext.GetText());
         }
 
         return null;

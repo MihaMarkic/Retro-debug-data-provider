@@ -12,9 +12,14 @@ public record struct GetOptionTestCase(ImmutableArray<IToken> Tokens, string Con
     CompletionOption? ExpectedResult);
 public abstract class CompletionOptionTestBase
 {
-    protected static CompletionOptionContext NoOpContext { get; } = new CompletionOptionContext(
-        Substitute.For<IProjectServices>()
-    );
+    protected static CompletionOptionContext NoOpContext { get; }
+
+    static CompletionOptionTestBase()
+    {
+        var projectServices = Substitute.For<IProjectServices>();
+        projectServices.CollectLabels().ReturnsForAnyArgs([]);
+        NoOpContext = new CompletionOptionContext(projectServices);
+    }
     protected static ImmutableArray<IToken> GetAllTokens(string text)
     {
         var input = new AntlrInputStream(text);

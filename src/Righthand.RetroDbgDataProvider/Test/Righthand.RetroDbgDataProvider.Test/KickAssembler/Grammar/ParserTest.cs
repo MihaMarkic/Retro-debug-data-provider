@@ -215,9 +215,42 @@ public class ParserTest: ParserBootstrap<ParserTest>
                 var actual = Run(input, p => p.label(), out ErrorListener _)
                     .LabelDefinitions;
 
-                return actual.SingleOrDefault()?.IsMultiOccurence;
+                return actual.SingleOrDefault()?.IsMultiOccurrence;
             }
         }
 
+        [TestFixture]
+        public class Var : DataParsing
+        {
+            [TestCase(".var tubo=5", ExpectedResult = "tubo")]
+            public string? GivenInput_ExtractsVarName(string input)
+            {
+                var actual = Run(input, p => p.var(), out ErrorListener _)
+                    .VariableDefinitions;
+                
+                return actual.SingleOrDefault();
+            }
+        }
+        [TestFixture]
+        public class Const : DataParsing
+        {
+            [TestCase(".const tubo=5", ExpectedResult = "tubo")]
+            public string? GivenInput_ExtractsConstName(string input)
+            {
+                var actual = Run(input, p => p.@const(), out ErrorListener _)
+                    .ConstantDefinitions;
+                
+                return actual.SingleOrDefault()?.Name;
+            }
+            [TestCase(".const tubo=5", ExpectedResult = "5")]
+            [TestCase(".const tubo= \"pingo\"", ExpectedResult = "\"pingo\"")]
+            public string? GivenInput_ExtractsAssignment(string input)
+            {
+                var actual = Run(input, p => p.@const(), out ErrorListener _)
+                    .ConstantDefinitions;
+                
+                return actual.SingleOrDefault()?.Value;
+            }
+        }
     }
 }

@@ -34,6 +34,8 @@ public abstract class ParsedSourceFile
     public DateTimeOffset LastModified { get; }
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions { get; }
     public ImmutableList<Label> LabelDefinitions { get; }
+    public ImmutableList<string> VariableDefinitions { get; }
+    public ImmutableList<Constant> ConstantDefinitions { get; }
     public string? LiveContent { get; }
     /// <summary>
     /// All tokens regardless of channel.
@@ -65,7 +67,9 @@ public abstract class ParsedSourceFile
     private FrozenDictionary<int, SyntaxErrorLine>? _syntaxErrors;
     
     protected ParsedSourceFile(string fileName, string relativePath, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
-        FrozenSet<string> outDefines, FrozenSet<SegmentDefinitionInfo> segmentDefinitions, ImmutableList<Label> labelDefinitions, 
+        FrozenSet<string> outDefines, 
+        FrozenSet<SegmentDefinitionInfo> segmentDefinitions, ImmutableList<Label> labelDefinitions,
+        ImmutableList<string> variableDefinitions, ImmutableList<Constant> constantDefinitions,
         DateTimeOffset lastModified, string? liveContent)
     {
         FileName = fileName;
@@ -76,6 +80,8 @@ public abstract class ParsedSourceFile
         OutDefines = outDefines;
         SegmentDefinitions = segmentDefinitions;
         LabelDefinitions = labelDefinitions;
+        VariableDefinitions = variableDefinitions;
+        ConstantDefinitions = constantDefinitions;
         LastModified = lastModified;
         LiveContent = liveContent;
         // these two properties below are populated asynchronously through GetSyntaxInfoAsync function

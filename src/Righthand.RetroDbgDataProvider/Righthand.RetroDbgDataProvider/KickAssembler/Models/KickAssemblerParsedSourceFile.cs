@@ -30,6 +30,8 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="outDefines"></param>
     /// <param name="segmentDefinitions"></param>
     /// <param name="labelDefinitions"></param>
+    /// <param name="variableDefinitions"></param>
+    /// <param name="constantDefinitions"></param>
     /// <param name="lastModified"></param>
     /// <param name="liveContent"></param>
     /// <param name="isImportOnce"></param>
@@ -43,13 +45,15 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         FrozenSet<string> outDefines,
         FrozenSet<SegmentDefinitionInfo> segmentDefinitions,
         ImmutableList<Righthand.RetroDbgDataProvider.Models.Parsing.Label> labelDefinitions,
+        ImmutableList<string> variableDefinitions, 
+        ImmutableList<Constant> constantDefinitions,
         DateTimeOffset lastModified,
         string? liveContent,
         bool isImportOnce,
         ImmutableArray<KickAssemblerLexerError> lexerErrors,
         ImmutableArray<KickAssemblerParserError> parserErrors
     ) : base(fileName, relativePath, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, labelDefinitions, 
-        lastModified, liveContent)
+        variableDefinitions,constantDefinitions, lastModified, liveContent)
     {
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;

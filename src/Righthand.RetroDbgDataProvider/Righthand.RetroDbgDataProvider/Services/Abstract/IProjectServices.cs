@@ -31,6 +31,16 @@ public interface IProjectServices
      /// </summary>
      /// <returns></returns>
      ImmutableList<Label> CollectLabels();
+     /// <summary>
+     /// Collects variable definitions.
+     /// </summary>
+     /// <returns></returns>
+     ImmutableList<string> CollectVariables();
+     /// <summary>
+     /// Collects constant definitions.
+     /// </summary>
+     /// <returns></returns>
+     ImmutableList<Constant> CollectConstants();
 }
 
 public readonly record struct ProjectFileKey(ProjectFileOrigin Origin, string Path) : IEqualityComparer<ProjectFileKey>
