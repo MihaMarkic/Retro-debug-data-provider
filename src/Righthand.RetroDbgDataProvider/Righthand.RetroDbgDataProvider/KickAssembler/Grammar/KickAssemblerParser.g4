@@ -4,12 +4,17 @@ options {
     tokenVocab = KickAssemblerLexer;
 }
 
-program: units;
+program: units EOF;
              // unit is a basic unit separated by newline or semicolon
 
 // needs a lot of love
-
-units: ((EOL | SEMICOLON)* unit)+;
+// zero or more units separated by either EOL os SEMICOLON
+units
+    : unit SEMICOLON+ units
+    | unit EOL+ units
+    | unit
+    |
+    ;
 
 unit
     : instruction
@@ -160,11 +165,18 @@ enumValue
 for: FOR OPEN_PARENS var? SEMICOLON condition SEMICOLON expression CLOSE_PARENS unit;
 while: WHILE OPEN_PARENS condition CLOSE_PARENS unit;
 struct: STRUCT UNQUOTED_STRING OPEN_BRACE variableList CLOSE_BRACE;
-variableList: UNQUOTED_STRING (COMMA UNQUOTED_STRING)*;
+variableList
+    : variable (COMMA variable)*
+    |
+    ;
+variable: UNQUOTED_STRING;
 define: variableList scope;
 functionDefine: FUNCTION atName OPEN_PARENS variableList CLOSE_PARENS scope;
 return: RETURN expression;
-macroDefine: MACRO atName OPEN_PARENS variableList CLOSE_PARENS scope;
+macroDefine 
+    : MACRO atName OPEN_PARENS variableList CLOSE_PARENS scope              #MacroWithArguments
+    | MACRO atName scope                                                    #MacroWithoutArguments
+    ;
 pseudoCommandDefine: PSEUDOCOMMAND UNQUOTED_STRING pseudoCommandDefineArguments;
 pseudoCommandDefineArguments: UNQUOTED_STRING (COLON UNQUOTED_STRING)*;
 namespace

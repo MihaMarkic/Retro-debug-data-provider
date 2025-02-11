@@ -33,6 +33,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="variableDefinitions"></param>
     /// <param name="constantDefinitions"></param>
     /// <param name="enumValuesDefinitions"></param>
+    /// <param name="macroDefinitions"></param>
     /// <param name="lastModified"></param>
     /// <param name="liveContent"></param>
     /// <param name="isImportOnce"></param>
@@ -49,13 +50,15 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         ImmutableList<string> variableDefinitions, 
         ImmutableList<Constant> constantDefinitions,
         ImmutableList<EnumValues> enumValuesDefinitions,
+        ImmutableList<Macro> macroDefinitions,
         DateTimeOffset lastModified,
         string? liveContent,
         bool isImportOnce,
         ImmutableArray<KickAssemblerLexerError> lexerErrors,
         ImmutableArray<KickAssemblerParserError> parserErrors
     ) : base(fileName, relativePath, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, labelDefinitions, 
-        variableDefinitions,constantDefinitions, enumValuesDefinitions, lastModified, liveContent)
+        variableDefinitions,constantDefinitions, enumValuesDefinitions, macroDefinitions, 
+        lastModified, liveContent)
     {
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;

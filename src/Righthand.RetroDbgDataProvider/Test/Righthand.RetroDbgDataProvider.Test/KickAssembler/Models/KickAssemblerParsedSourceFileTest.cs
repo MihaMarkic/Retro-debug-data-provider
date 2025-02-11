@@ -66,7 +66,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, 
+                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 
@@ -87,7 +87,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, 
+                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 
@@ -111,7 +111,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
                 ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, 
+                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
 

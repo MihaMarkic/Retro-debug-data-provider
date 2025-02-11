@@ -155,7 +155,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
     [TestFixture]
     public class Errors : ParserTest
     {
-        protected KickAssemblerParserErrorListener RunProgram(string text,
+        private KickAssemblerParserErrorListener RunProgram(string text,
             params string[] defineSymbols)
         {
             Run<KickAssemblerParserBaseListener, KickAssemblerParserErrorListener, KickAssemblerParser.ProgramContext>(
@@ -185,7 +185,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
 
             var actual = RunProgram(input);
             
-            Assert.That(actual.Errors.Length, Is.EqualTo(2));
+            Assert.That(actual.Errors.Length, Is.EqualTo(1));
         }
     }
 
@@ -273,6 +273,30 @@ public class ParserTest: ParserBootstrap<ParserTest>
                     .EnumValuesDefinitions;
                 
                 Assert.That(actual, Is.Empty); 
+            }
+        }
+
+        [TestFixture]
+        public class Macros : DataParsing
+        {
+            [TestCase(".macro Tubo(one) { }", ExpectedResult = "Tubo")]
+            [TestCase(".macro Tubo { }", ExpectedResult = "Tubo")]
+            public string? GivenInput_ExtractsMacroName(string input)
+            {
+                var actual = Run(input, p => p.macroDefine(), out ErrorListener _)
+                    .MacroDefinitions;
+
+                return actual.SingleOrDefault()?.Name;
+            }
+            [TestCase(".macro Tubo { }", ExpectedResult = "")]
+            [TestCase(".macro Tubo(one) { }", ExpectedResult = "one")]
+            [TestCase(".macro Tubo(one,two) { }", ExpectedResult = "one,two")]
+            public string? GivenInput_ExtractsArgumentsCorrectly(string input)
+            {
+                var actual = Run(input, p => p.macroDefine(), out ErrorListener _)
+                    .MacroDefinitions;
+
+                return string.Join(",", actual.SingleOrDefault()?.Arguments ?? []);
             }
         }
     }

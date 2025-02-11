@@ -249,6 +249,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitVariableList([NotNull] KickAssemblerParser.VariableListContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.variable"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitVariable([NotNull] KickAssemblerParser.VariableContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.define"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -267,11 +273,19 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitReturn([NotNull] KickAssemblerParser.ReturnContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
+	/// Visit a parse tree produced by the <c>MacroWithArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context);
+	Result VisitMacroWithArguments([NotNull] KickAssemblerParser.MacroWithArgumentsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>MacroWithoutArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMacroWithoutArguments([NotNull] KickAssemblerParser.MacroWithoutArgumentsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefine"/>.
 	/// </summary>

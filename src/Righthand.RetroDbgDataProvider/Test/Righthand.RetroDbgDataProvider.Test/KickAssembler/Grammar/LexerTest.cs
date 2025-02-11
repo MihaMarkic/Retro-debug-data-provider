@@ -709,6 +709,27 @@ public class LexerTest
             Assert.That((error.Line, error.CharPositionInLine), Is.EqualTo((1, 3)));
         }
     }
+
+    [TestFixture]
+    public class Macro : LexerTest
+    {
+        [Test]
+        public void WhenSimpleOneLineMacro_ReturnsCorrectTokens()
+        {
+            const string input = """
+                                 .macro Tubo(one) { }
+                                 """;
+
+            var actual = GetTokens<LexerErrorListener>(input, out _);
+
+            var expected = GetTokenTypes(
+                MACRO, UNQUOTED_STRING, OPEN_PARENS, UNQUOTED_STRING, CLOSE_PARENS, OPEN_BRACE, CLOSE_BRACE,
+                KickAssemblerLexer.Eof
+            );
+
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+    }
 }
 
 public static class LexerTestExtensions

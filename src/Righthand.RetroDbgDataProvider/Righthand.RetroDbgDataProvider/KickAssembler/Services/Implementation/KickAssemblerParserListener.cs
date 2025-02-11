@@ -4,6 +4,7 @@ using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
+using Righthand.RetroDbgDataProvider.Extensions;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerParser;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
@@ -16,12 +17,15 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    private readonly List<string> _variableDefinitions = new();
    private readonly List<Constant> _constantDefinitions = new();
    private readonly List<EnumValues> _enumValuesDefinitions = new();
+   private readonly List<Macro> _macroDefinitions = new();
    public FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions => [.. _segmentDefinitions];
    public ImmutableList<Label> LabelDefinitions => [.._labelDefinitions];
    public ImmutableList<string> VariableDefinitions => [.._variableDefinitions];
    public ImmutableList<Constant> ConstantDefinitions => [.._constantDefinitions];
    public ImmutableList<EnumValues> EnumValuesDefinitions => [.._enumValuesDefinitions];
+   public ImmutableList<Macro> MacroDefinitions => [.._macroDefinitions];
+   private readonly Stack<VariablesScope> _variableScopes = new();
    public override void EnterPreprocessorImport(PreprocessorImportContext context)
    {
       var fileReference = context.fileReference;
@@ -41,11 +45,6 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
       }
 
       base.ExitSegmentDef(context);
-   }
-
-   public override void EnterLabel(LabelContext context)
-   {
-      base.EnterLabel(context);
    }
 
     public override void ExitLabel([NotNull] LabelContext context)
@@ -137,7 +136,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             _enumValuesDefinitions.Add(new EnumValues([.._tempEnumValues]));
         }
     }
-    public override void ExitEnumValue([NotNull] EnumValueContext context)
+    public override void ExitEnumValue(EnumValueContext context)
     {
         base.ExitEnumValue(context);
         if (context.GetChild(0) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING)
@@ -153,5 +152,66 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
                 _tempEnumValues.Add(enumValue);
             }
         }
+    }
+
+    public override void ExitMacroWithoutArguments(MacroWithoutArgumentsContext context)
+    {
+        base.ExitMacroWithoutArguments(context);
+        var atNameContext = context.atName();
+        if (atNameContext is not null)
+        {
+            var atName = CreateAtName(atNameContext);
+            if (atName is not null)
+            {
+                _macroDefinitions.Add(new (atName.Value.Name, atName.Value.IsScopeEsc, []));
+            }
+        }
+    }
+
+    public override void EnterMacroWithArguments(MacroWithArgumentsContext context)
+    {
+        _variableScopes.Push();
+        base.EnterMacroWithArguments(context);
+    }
+
+    public override void ExitMacroWithArguments(MacroWithArgumentsContext context)
+    {
+        base.ExitMacroWithArguments(context);
+        var scope = _variableScopes.Pop();
+        var atNameContext = context.atName();
+        if (atNameContext is not null)
+        {
+            var atName = CreateAtName(atNameContext);
+            if (atName is not null)
+            {
+                _macroDefinitions.Add(new(atName.Value.Name, atName.Value.IsScopeEsc, [..scope.VariableNames]));
+            }
+        }
+    }
+
+    public override void ExitVariable(VariableContext context)
+    {
+        base.ExitVariable(context);
+        if (context.GetChild(0) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING)
+        {
+            var scope = _variableScopes.Peek();
+            scope.VariableNames.Add(nameNode.GetText());
+        }
+    }
+
+    private static AtName? CreateAtName(AtNameContext context)
+    {
+        return context.ChildCount switch
+        {
+            1 => new AtName(context.GetChild(0).GetText(), false),
+            2 => new AtName(context.GetChild(1).GetText(), true),
+            _ => null
+        };
+    }
+    private readonly record struct AtName(string Name, bool IsScopeEsc);
+
+    private class VariablesScope
+    {
+        public List<string> VariableNames { get; } = new List<string>();
     }
 }

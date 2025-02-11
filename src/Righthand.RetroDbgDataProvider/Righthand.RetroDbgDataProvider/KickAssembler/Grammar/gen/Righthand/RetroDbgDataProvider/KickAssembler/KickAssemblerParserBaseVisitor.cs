@@ -396,6 +396,16 @@ public partial class KickAssemblerParserBaseVisitor<Result> : AbstractParseTreeV
 	/// <return>The visitor result.</return>
 	public virtual Result VisitVariableList([NotNull] KickAssemblerParser.VariableListContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.variable"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariable([NotNull] KickAssemblerParser.VariableContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.define"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -426,7 +436,8 @@ public partial class KickAssemblerParserBaseVisitor<Result> : AbstractParseTreeV
 	/// <return>The visitor result.</return>
 	public virtual Result VisitReturn([NotNull] KickAssemblerParser.ReturnContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
+	/// Visit a parse tree produced by the <c>MacroWithArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -434,7 +445,18 @@ public partial class KickAssemblerParserBaseVisitor<Result> : AbstractParseTreeV
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context) { return VisitChildren(context); }
+	public virtual Result VisitMacroWithArguments([NotNull] KickAssemblerParser.MacroWithArgumentsContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>MacroWithoutArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMacroWithoutArguments([NotNull] KickAssemblerParser.MacroWithoutArgumentsContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefine"/>.
 	/// <para>

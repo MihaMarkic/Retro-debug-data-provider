@@ -22,6 +22,7 @@ public enum SuggestionOrigin
     Variable,
     Constant,
     EnumValue,
+    Macro,
 }
 
 public abstract record Suggestion(SuggestionOrigin Origin, string Text, int Priority)

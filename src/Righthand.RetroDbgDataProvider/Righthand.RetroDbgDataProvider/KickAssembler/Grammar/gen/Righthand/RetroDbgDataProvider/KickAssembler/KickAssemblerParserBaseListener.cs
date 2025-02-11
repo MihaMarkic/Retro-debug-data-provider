@@ -469,6 +469,18 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVariableList([NotNull] KickAssemblerParser.VariableListContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.variable"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterVariable([NotNull] KickAssemblerParser.VariableContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.variable"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitVariable([NotNull] KickAssemblerParser.VariableContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.define"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -505,17 +517,33 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitReturn([NotNull] KickAssemblerParser.ReturnContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
+	/// Enter a parse tree produced by the <c>MacroWithArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context) { }
+	public virtual void EnterMacroWithArguments([NotNull] KickAssemblerParser.MacroWithArgumentsContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
+	/// Exit a parse tree produced by the <c>MacroWithArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context) { }
+	public virtual void ExitMacroWithArguments([NotNull] KickAssemblerParser.MacroWithArgumentsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>MacroWithoutArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMacroWithoutArguments([NotNull] KickAssemblerParser.MacroWithoutArgumentsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>MacroWithoutArguments</c>
+	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMacroWithoutArguments([NotNull] KickAssemblerParser.MacroWithoutArgumentsContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefine"/>.
 	/// <para>The default implementation does nothing.</para>

@@ -21,9 +21,11 @@ public abstract class CompletionOptionTestBase
         projectServices.CollectVariables().ReturnsForAnyArgs([]);
         projectServices.CollectConstants().ReturnsForAnyArgs([]);
         projectServices.CollectEnumValues().ReturnsForAnyArgs([]);
+        projectServices.CollectMacros().ReturnsForAnyArgs([]);
         NoOpContext = new CompletionOptionContext(projectServices);
     }
-    protected static ImmutableArray<IToken> GetAllTokens(string text)
+
+    private static ImmutableArray<IToken> GetAllTokens(string text)
     {
         var input = new AntlrInputStream(text);
         var lexer = new KickAssemblerLexer(input);

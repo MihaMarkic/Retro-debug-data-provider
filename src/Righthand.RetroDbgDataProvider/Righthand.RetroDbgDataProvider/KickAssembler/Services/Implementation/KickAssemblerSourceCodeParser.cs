@@ -316,7 +316,6 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         {
             BuildParseTree = true,
         };
-        parser.AddParseListener(parserListener);
         parser.AddErrorListener(parserErrorListener);
         try
         {
@@ -332,6 +331,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
                 MapReferencedFilesToDictionary(lexer.ReferencedFiles, tokenStream.GetTokens()),
                 inDefines, outDefines: inDefines, parserListener.SegmentDefinitions, parserListener.LabelDefinitions,
                 parserListener.VariableDefinitions, parserListener.ConstantDefinitions, parserListener.EnumValuesDefinitions,
+                parserListener.MacroDefinitions,
                 lastModified, liveContent,
                 lexer.IsImportOnce, lexerErrorListener.Errors, parserErrorListener.Errors);
         }
@@ -342,8 +342,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         }
 
         var tree = parser.program();
-        var listener = new KickAssemblerSourceCodeListener();
-        ParseTreeWalker.Default.Walk(listener, tree);
+        ParseTreeWalker.Default.Walk(parserListener, tree);
 
         ImmutableArray<IToken> allTokens = [..tokenStream.GetTokens()];
         var absoluteReferencePaths =
@@ -353,7 +352,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             inDefines, lexer.DefinedSymbols.ToFrozenSet(),
             parserListener.SegmentDefinitions, parserListener.LabelDefinitions,
             parserListener.VariableDefinitions, parserListener.ConstantDefinitions,
-            parserListener.EnumValuesDefinitions,
+            parserListener.EnumValuesDefinitions, parserListener.MacroDefinitions,
             lastModified, liveContent,
             lexer.IsImportOnce,
             lexerErrorListener.Errors, parserErrorListener.Errors);
