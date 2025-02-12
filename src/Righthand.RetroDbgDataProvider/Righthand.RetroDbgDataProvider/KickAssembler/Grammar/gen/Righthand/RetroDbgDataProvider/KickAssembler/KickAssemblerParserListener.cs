@@ -432,29 +432,15 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitReturn([NotNull] KickAssemblerParser.ReturnContext context);
 	/// <summary>
-	/// Enter a parse tree produced by the <c>MacroWithArguments</c>
-	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterMacroWithArguments([NotNull] KickAssemblerParser.MacroWithArgumentsContext context);
+	void EnterMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context);
 	/// <summary>
-	/// Exit a parse tree produced by the <c>MacroWithArguments</c>
-	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.macroDefine"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitMacroWithArguments([NotNull] KickAssemblerParser.MacroWithArgumentsContext context);
-	/// <summary>
-	/// Enter a parse tree produced by the <c>MacroWithoutArguments</c>
-	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterMacroWithoutArguments([NotNull] KickAssemblerParser.MacroWithoutArgumentsContext context);
-	/// <summary>
-	/// Exit a parse tree produced by the <c>MacroWithoutArguments</c>
-	/// labeled alternative in <see cref="KickAssemblerParser.macroDefine"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitMacroWithoutArguments([NotNull] KickAssemblerParser.MacroWithoutArgumentsContext context);
+	void ExitMacroDefine([NotNull] KickAssemblerParser.MacroDefineContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.pseudoCommandDefine"/>.
 	/// </summary>

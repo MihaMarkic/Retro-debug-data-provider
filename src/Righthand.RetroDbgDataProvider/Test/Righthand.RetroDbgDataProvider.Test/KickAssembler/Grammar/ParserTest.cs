@@ -280,7 +280,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
         public class Macros : DataParsing
         {
             [TestCase(".macro Tubo(one) { }", ExpectedResult = "Tubo")]
-            [TestCase(".macro Tubo { }", ExpectedResult = "Tubo")]
+            [TestCase(".macro Tubo() { }", ExpectedResult = "Tubo")]
             public string? GivenInput_ExtractsMacroName(string input)
             {
                 var actual = Run(input, p => p.macroDefine(), out ErrorListener _)
@@ -288,7 +288,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
 
                 return actual.SingleOrDefault()?.Name;
             }
-            [TestCase(".macro Tubo { }", ExpectedResult = "")]
+            [TestCase(".macro Tubo() { }", ExpectedResult = "")]
             [TestCase(".macro Tubo(one) { }", ExpectedResult = "one")]
             [TestCase(".macro Tubo(one,two) { }", ExpectedResult = "one,two")]
             public string? GivenInput_ExtractsArgumentsCorrectly(string input)

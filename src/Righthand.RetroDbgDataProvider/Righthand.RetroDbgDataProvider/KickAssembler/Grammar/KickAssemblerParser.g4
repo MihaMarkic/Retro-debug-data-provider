@@ -173,10 +173,7 @@ variable: UNQUOTED_STRING;
 define: variableList scope;
 functionDefine: FUNCTION atName OPEN_PARENS variableList CLOSE_PARENS scope;
 return: RETURN expression;
-macroDefine 
-    : MACRO atName OPEN_PARENS variableList CLOSE_PARENS scope              #MacroWithArguments
-    | MACRO atName scope                                                    #MacroWithoutArguments
-    ;
+macroDefine: MACRO atName OPEN_PARENS variableList CLOSE_PARENS scope;
 pseudoCommandDefine: PSEUDOCOMMAND UNQUOTED_STRING pseudoCommandDefineArguments;
 pseudoCommandDefineArguments: UNQUOTED_STRING (COLON UNQUOTED_STRING)*;
 namespace

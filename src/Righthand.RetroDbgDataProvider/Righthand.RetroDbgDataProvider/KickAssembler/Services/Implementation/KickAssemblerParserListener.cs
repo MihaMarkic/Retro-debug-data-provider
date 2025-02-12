@@ -153,30 +153,15 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             }
         }
     }
-
-    public override void ExitMacroWithoutArguments(MacroWithoutArgumentsContext context)
-    {
-        base.ExitMacroWithoutArguments(context);
-        var atNameContext = context.atName();
-        if (atNameContext is not null)
-        {
-            var atName = CreateAtName(atNameContext);
-            if (atName is not null)
-            {
-                _macroDefinitions.Add(new (atName.Value.Name, atName.Value.IsScopeEsc, []));
-            }
-        }
-    }
-
-    public override void EnterMacroWithArguments(MacroWithArgumentsContext context)
+    public override void EnterMacroDefine(MacroDefineContext context)
     {
         _variableScopes.Push();
-        base.EnterMacroWithArguments(context);
+        base.EnterMacroDefine(context);
     }
 
-    public override void ExitMacroWithArguments(MacroWithArgumentsContext context)
+    public override void ExitMacroDefine(MacroDefineContext context)
     {
-        base.ExitMacroWithArguments(context);
+        base.ExitMacroDefine(context);
         var scope = _variableScopes.Pop();
         var atNameContext = context.atName();
         if (atNameContext is not null)
