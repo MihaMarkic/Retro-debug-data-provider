@@ -38,6 +38,7 @@ public abstract class ParsedSourceFile
     public ImmutableList<Constant> ConstantDefinitions { get; }
     public ImmutableList<EnumValues> EnumValuesDefinitions { get; }
     public ImmutableList<Macro> MacroDefinitions { get; }
+    public ImmutableList<Function> FunctionDefinitions { get; }
     public string? LiveContent { get; }
     /// <summary>
     /// All tokens regardless of channel.
@@ -74,6 +75,7 @@ public abstract class ParsedSourceFile
         ImmutableList<string> variableDefinitions, ImmutableList<Constant> constantDefinitions,
         ImmutableList<EnumValues> enumValuesDefinitions,
         ImmutableList<Macro> macroDefinitions,
+        ImmutableList<Function> functionDefinitions,
         DateTimeOffset lastModified, string? liveContent)
     {
         FileName = fileName;
@@ -88,6 +90,7 @@ public abstract class ParsedSourceFile
         ConstantDefinitions = constantDefinitions;
         EnumValuesDefinitions = enumValuesDefinitions;
         MacroDefinitions = macroDefinitions;
+        FunctionDefinitions = functionDefinitions;
         LastModified = lastModified;
         LiveContent = liveContent;
         // these two properties below are populated asynchronously through GetSyntaxInfoAsync function

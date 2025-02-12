@@ -299,5 +299,28 @@ public class ParserTest: ParserBootstrap<ParserTest>
                 return string.Join(",", actual.SingleOrDefault()?.Arguments ?? []);
             }
         }
+        [TestFixture]
+        public class Functions : DataParsing
+        {
+            [TestCase(".function Tubo(one) { }", ExpectedResult = "Tubo")]
+            [TestCase(".function Tubo() { }", ExpectedResult = "Tubo")]
+            public string? GivenInput_ExtractsMacroName(string input)
+            {
+                var actual = Run(input, p => p.functionDefine(), out ErrorListener _)
+                    .FunctionDefinitions;
+
+                return actual.SingleOrDefault()?.Name;
+            }
+            [TestCase(".function Tubo() { }", ExpectedResult = "")]
+            [TestCase(".function Tubo(one) { }", ExpectedResult = "one")]
+            [TestCase(".function Tubo(one,two) { }", ExpectedResult = "one,two")]
+            public string? GivenInput_ExtractsArgumentsCorrectly(string input)
+            {
+                var actual = Run(input, p => p.functionDefine(), out ErrorListener _)
+                    .FunctionDefinitions;
+
+                return string.Join(",", actual.SingleOrDefault()?.Arguments ?? []);
+            }
+        }
     }
 }

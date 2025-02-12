@@ -22,6 +22,7 @@ public abstract class CompletionOptionTestBase
         projectServices.CollectConstants().ReturnsForAnyArgs([]);
         projectServices.CollectEnumValues().ReturnsForAnyArgs([]);
         projectServices.CollectMacros().ReturnsForAnyArgs([]);
+        projectServices.CollectFunctions().ReturnsForAnyArgs([]);
         NoOpContext = new CompletionOptionContext(projectServices);
     }
 

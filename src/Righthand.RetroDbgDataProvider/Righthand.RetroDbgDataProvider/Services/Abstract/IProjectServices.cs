@@ -50,7 +50,12 @@ public interface IProjectServices
      /// Collects macro definitions.
      /// </summary>
      /// <returns></returns>
-     ImmutableList<Macro> CollectMacros(); 
+     ImmutableList<Macro> CollectMacros();
+     /// <summary>
+     /// Collects function definitions.
+     /// </summary>
+     /// <returns></returns>
+     ImmutableList<Function> CollectFunctions(); 
 }
 
 public readonly record struct ProjectFileKey(ProjectFileOrigin Origin, string Path) : IEqualityComparer<ProjectFileKey>

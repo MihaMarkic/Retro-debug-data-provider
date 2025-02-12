@@ -63,6 +63,9 @@ public static class GenericCompletionOptions
 
         FrozenSet<string> macroNames = [.. context.ProjectServices.CollectMacros().Select(m => m.Name)];
         Add(builder, root, SuggestionOrigin.Macro, macroNames);
+        
+        FrozenSet<string> functionNames = [.. context.ProjectServices.CollectFunctions().Select(m => m.Name)];
+        Add(builder, root, SuggestionOrigin.Function, functionNames);
 
         if (builder.Count > 0)
         {

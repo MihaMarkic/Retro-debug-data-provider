@@ -18,6 +18,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    private readonly List<Constant> _constantDefinitions = new();
    private readonly List<EnumValues> _enumValuesDefinitions = new();
    private readonly List<Macro> _macroDefinitions = new();
+   private readonly List<Function> _functionDefinitions = new();
    public FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions => [.. _segmentDefinitions];
    public ImmutableList<Label> LabelDefinitions => [.._labelDefinitions];
@@ -25,6 +26,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    public ImmutableList<Constant> ConstantDefinitions => [.._constantDefinitions];
    public ImmutableList<EnumValues> EnumValuesDefinitions => [.._enumValuesDefinitions];
    public ImmutableList<Macro> MacroDefinitions => [.._macroDefinitions];
+   public ImmutableList<Function> FunctionDefinitions => [.._functionDefinitions];
    private readonly Stack<VariablesScope> _variableScopes = new();
    public override void EnterPreprocessorImport(PreprocessorImportContext context)
    {
@@ -170,6 +172,27 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             if (atName is not null)
             {
                 _macroDefinitions.Add(new(atName.Value.Name, atName.Value.IsScopeEsc, [..scope.VariableNames]));
+            }
+        }
+    }
+
+    public override void EnterFunctionDefine(FunctionDefineContext context)
+    {
+        _variableScopes.Push();
+        base.EnterFunctionDefine(context);
+    }
+
+    public override void ExitFunctionDefine(FunctionDefineContext context)
+    {
+        base.ExitFunctionDefine(context);
+        var scope = _variableScopes.Pop();
+        var atNameContext = context.atName();
+        if (atNameContext is not null)
+        {
+            var atName = CreateAtName(atNameContext);
+            if (atName is not null)
+            {
+                _functionDefinitions.Add(new(atName.Value.Name, atName.Value.IsScopeEsc, [..scope.VariableNames]));
             }
         }
     }
