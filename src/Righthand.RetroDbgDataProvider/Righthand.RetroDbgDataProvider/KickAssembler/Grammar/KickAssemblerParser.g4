@@ -60,6 +60,8 @@ expression
 	| expression DIV expression
 	| expression PLUS expression
 	| expression MINUS expression
+	| expression OP_INC
+	| expression OP_DEC
 	| PLUS expression
 	| MINUS expression
 	| expression compareop expression
@@ -83,9 +85,9 @@ binaryop
     | OP_RIGHT_SHIFT;
 	
 assignment_expression
-    : UNQUOTED_STRING ASSIGNMENT expression;
+    : name=anyString ASSIGNMENT expression;
 shorthand_assignment_expression
-    : UNQUOTED_STRING unary_operator;
+    : name=anyString unary_operator;
         
 unary_operator
     : PLUS PLUS
@@ -145,7 +147,12 @@ compiler_statement
 
 print: PRINT expression;
 printnow: PRINTNOW expression;
-var: VAR assignment_expression;
+forInit
+    : forVar
+    | assignment_expression
+    ;
+forVar: VAR assignment_expression;
+var: DOTVAR assignment_expression;
 const: CONST assignment_expression;
 if: IF OPEN_PARENS expression CLOSE_PARENS unit (ELSE unit)?;
 errorif: ERRORIF OPEN_PARENS expression CLOSE_PARENS COMMA STRING;
@@ -162,7 +169,7 @@ enumValues
     : enumValue (COMMA enumValue)*;
 enumValue
     : UNQUOTED_STRING (ASSIGNMENT number)?;
-for: FOR OPEN_PARENS var? SEMICOLON condition SEMICOLON expression CLOSE_PARENS unit;
+for: FOR OPEN_PARENS forInit? SEMICOLON condition? SEMICOLON expression? CLOSE_PARENS unit?;
 while: WHILE OPEN_PARENS condition CLOSE_PARENS unit;
 struct: STRUCT UNQUOTED_STRING OPEN_BRACE variableList CLOSE_BRACE;
 variableList
@@ -327,8 +334,8 @@ labelName
     ;               
 
 atName                                      // @ prefixed name, used with macro, label and function names
-    : AT UNQUOTED_STRING
-    | UNQUOTED_STRING; 
+    : AT anyString
+    | anyString; 
 
 file
     : STRING
@@ -357,6 +364,12 @@ boolean: TRUE | FALSE;
 opcodeExtension
     : ONLYA
     | ABS;
+    
+anyString
+    : UNQUOTED_STRING
+    | ONLYA
+    | ABS
+    ;
 
 fullOpcode
     : opcode

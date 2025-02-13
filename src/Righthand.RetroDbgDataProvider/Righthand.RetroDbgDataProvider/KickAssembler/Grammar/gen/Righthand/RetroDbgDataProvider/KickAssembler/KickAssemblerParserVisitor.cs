@@ -159,6 +159,18 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitPrintnow([NotNull] KickAssemblerParser.PrintnowContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.forInit"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForInit([NotNull] KickAssemblerParser.ForInitContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.forVar"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForVar([NotNull] KickAssemblerParser.ForVarContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.var"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -635,6 +647,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitOpcodeExtension([NotNull] KickAssemblerParser.OpcodeExtensionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAnyString([NotNull] KickAssemblerParser.AnyStringContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.fullOpcode"/>.
 	/// </summary>

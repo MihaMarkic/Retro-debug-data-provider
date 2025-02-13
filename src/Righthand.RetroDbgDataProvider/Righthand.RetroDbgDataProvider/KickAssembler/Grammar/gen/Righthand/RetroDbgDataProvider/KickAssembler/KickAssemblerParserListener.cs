@@ -242,6 +242,26 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitPrintnow([NotNull] KickAssemblerParser.PrintnowContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.forInit"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterForInit([NotNull] KickAssemblerParser.ForInitContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.forInit"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitForInit([NotNull] KickAssemblerParser.ForInitContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.forVar"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterForVar([NotNull] KickAssemblerParser.ForVarContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.forVar"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitForVar([NotNull] KickAssemblerParser.ForVarContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.var"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -1037,6 +1057,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitOpcodeExtension([NotNull] KickAssemblerParser.OpcodeExtensionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAnyString([NotNull] KickAssemblerParser.AnyStringContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAnyString([NotNull] KickAssemblerParser.AnyStringContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.fullOpcode"/>.
 	/// </summary>

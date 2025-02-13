@@ -77,7 +77,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
                     return new Label(nameNode.GetText(), IsMultiOccurrence: true);
                 }
                 break;
-            case AtNameContext atName when atName.ChildCount == 1 && atName.GetChild(0) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING:
+            case AtNameContext { ChildCount: 1 } atName when atName.GetChild(0) is AnyStringContext nameNode:
                 return new Label(nameNode.GetText(), IsMultiOccurrence: false);
         }
 
@@ -114,7 +114,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
     private static (string Left, string Right)? GetAssignment(Assignment_expressionContext context)
     {
         if (context.ChildCount == 3 
-            && context.GetChild(0) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING
+            && context.GetChild(0) is AnyStringContext nameNode
             && context.GetChild(2) is ExpressionContext expressionContext)
         {
             return (nameNode.GetText(), expressionContext.GetText());
