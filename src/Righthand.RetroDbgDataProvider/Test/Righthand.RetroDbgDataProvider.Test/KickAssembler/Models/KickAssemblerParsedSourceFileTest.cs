@@ -502,6 +502,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
         public class DirectiveNameCompletion : GetCompletionOption
         {
             [TestCase(".enc|", ".encoding")]
+            [TestCase(".print|", ".printnow")]
             public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedDirectiveNames(string text, string? expectedText)
             {
                 var actualOption = RunTest(text, TextChangeTrigger.CompletionRequested);

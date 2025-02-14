@@ -134,13 +134,11 @@ public static class DirectiveCompletionOptions
         int index = cursorTokenIndex.Value;
         var currentToken = lineTokens[index];
         var previousToken = index > 0 ? lineTokens[index - 1] : null;
-        IToken? nextToken;
-        string root;
 
         // first check whether current token is .
         if (currentToken.Type == DOT_UNQUOTED_STRING)
         {
-            return new(PositionType.Directive, "", null, currentToken.Text, "", currentToken.Length() + 1, false);
+            return new(PositionType.Directive, "", null, currentToken.Text, "", currentToken.Length(), false);
         }
 
         int startOfStringIndex = -1;
@@ -171,10 +169,10 @@ public static class DirectiveCompletionOptions
 
         var directiveToken = lineTokens[index];
         index++;
-        nextToken = lineTokens[index];
+        var nextToken = lineTokens[index];
         IToken? paramsToken = null;
         PositionType? positionType = null;
-        root = "";
+        var root = "";
         if (nextToken.IsTextType())
         {
             paramsToken = nextToken;
@@ -229,6 +227,11 @@ public static class DirectiveCompletionOptions
             else
             {
                 positionType = directiveToken.ContainsColumnWithInclusiveEdge(absoluteLineCursor) ? PositionType.Directive: PositionType.Type;
+                if (positionType == PositionType.Directive)
+                {
+                    root = directiveToken.Text;
+                    replacementLength = root.Length;
+                }
             }
         }
 

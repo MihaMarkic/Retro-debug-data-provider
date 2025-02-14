@@ -59,9 +59,14 @@ public static class DirectiveProperties
     
     public static bool TryGetDirective(string key, [NotNullWhen(true)]out Directive? directive) => Data.TryGetValue(key, out directive);
 
+    /// <summary>
+    /// Returns directives that match the common root, but not equals.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
     public static FrozenSet<string> GetDirectives(string root)
     {
-        return [..Data.Keys.Where(k => k.StartsWith(root, StringComparison.OrdinalIgnoreCase))];
+        return [..Data.Keys.Where(k => k.Length > root.Length && k.StartsWith(root, StringComparison.OrdinalIgnoreCase))];
     }
 
     public static ImmutableArray<string> AllDirectives => Data.Keys;

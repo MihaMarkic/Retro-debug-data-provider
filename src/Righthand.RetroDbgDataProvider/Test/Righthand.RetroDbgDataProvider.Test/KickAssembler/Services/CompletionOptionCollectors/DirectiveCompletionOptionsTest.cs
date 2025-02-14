@@ -65,6 +65,8 @@ public class DirectiveCompletionOptionsTest
         [TestCase(".import c| \"alfa.c64", ExpectedResult = "c")]
         [TestCase(".import |c64 \"test2\"", ExpectedResult = "")]
         [TestCase(".import |", ExpectedResult = "")]
+        [TestCase(".print|", ExpectedResult = ".print")]
+        [TestCase(".pr|", ExpectedResult = ".pr")]
         public string? GivenSampleInputWithCursorInBetween_ReturnsCorrectRoot(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
@@ -79,6 +81,8 @@ public class DirectiveCompletionOptionsTest
         [TestCase(".import |c6 \"test2\"", ExpectedResult = 2)]
         [TestCase(".import c|6 \"test2\"", ExpectedResult = 2)]
         [TestCase(".import |", ExpectedResult = 0)]
+        [TestCase(".print|", ExpectedResult = 6)]
+        [TestCase(".printno|", ExpectedResult = 8)]
         public int? GivenSampleInputWithCursorInBetween_ReturnsCorrectReplacementLength(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();
@@ -98,6 +102,7 @@ public class DirectiveCompletionOptionsTest
         [TestCase(".encoding |", ExpectedResult = DirectiveCompletionOptions.PositionType.Type)]
         [TestCase(".encoding \"|", ExpectedResult = DirectiveCompletionOptions.PositionType.Value)]
         [TestCase(".encoding|", ExpectedResult = DirectiveCompletionOptions.PositionType.Directive)]
+        [TestCase(".print|", ExpectedResult = DirectiveCompletionOptions.PositionType.Directive)]
         [TestCase(".enc|", ExpectedResult = DirectiveCompletionOptions.PositionType.Directive)]
         public DirectiveCompletionOptions.PositionType? GivenSampleInputWithCursorInBetween_ReturnsCorrectPositionType(string line)
         {
@@ -120,32 +125,4 @@ public class DirectiveCompletionOptionsTest
             return actual?.HasEndDelimiter;
         }
     }
-
-    // [TestFixture]
-    // public class GetStatus : DirectiveCompletionOptionsTest
-    // {
-    //     private static (ImmutableArray<IToken> Tokens, int Caret) GetAllTokens(string text)
-    //     {
-    //         var (corrected, caret) = text.ExtractCaret();
-    //         var input = new AntlrInputStream(corrected);
-    //         var lexer = new KickAssemblerLexer(input);
-    //         var stream = new BufferedTokenStream(lexer);
-    //         stream.Fill();
-    //         var tokens = stream.GetTokens().Where(t => t.Channel == 0);
-    //         return ([..tokens], caret);
-    //     }
-    //     
-    //     [TestCase(".import c64 \"|")]
-    //     [TestCase(".import c64 \"xx/p|")]
-    //     [TestCase("label: .import c64 \"xx/p|")]
-    //     [TestCase("\"\".import c64 \"|")]
-    //     [TestCase("\"xxx\".import c64 \"|")]
-    //     public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
-    //     {
-    //         var (allTokens, cursor) = GetAllTokens(line);
-    //         var actual = DirectiveCompletionOptions.GetStatus(allTokens.AsSpan(), line, cursor);
-    //
-    //         Assert.That(actual, Is.Not.Null);
-    //     }
-    // }
 }
