@@ -22,8 +22,6 @@ public static class TokensMap
             { KickAssemblerLexer.STRING, TokenType.String },
             { KickAssemblerLexer.SINGLE_LINE_COMMENT, TokenType.Comment },
             { KickAssemblerLexer.MULTI_LINE_COMMENT, TokenType.Comment },
-            { KickAssemblerLexer.ONLYA, TokenType.InstructionExtension },
-            { KickAssemblerLexer.ABS, TokenType.InstructionExtension },
           // Instructions
           { KickAssemblerLexer.ADC, TokenType.Instruction },
           { KickAssemblerLexer.AND, TokenType.Instruction },

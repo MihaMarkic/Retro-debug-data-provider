@@ -312,6 +312,16 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitEval([NotNull] KickAssemblerParser.EvalContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.evalAssignment"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEvalAssignment([NotNull] KickAssemblerParser.EvalAssignmentContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.evalAssignment"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEvalAssignment([NotNull] KickAssemblerParser.EvalAssignmentContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.break"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -1057,16 +1067,6 @@ public interface IKickAssemblerParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitOpcodeExtension([NotNull] KickAssemblerParser.OpcodeExtensionContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterAnyString([NotNull] KickAssemblerParser.AnyStringContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitAnyString([NotNull] KickAssemblerParser.AnyStringContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.fullOpcode"/>.
 	/// </summary>

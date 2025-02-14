@@ -54,7 +54,7 @@ public static partial class TokenListOperations
 
     public static readonly FrozenSet<int> TextTypes =
     [
-        UNQUOTED_STRING, ONLYA, C64, BINARY, TEXT, SOURCE,
+        UNQUOTED_STRING, C64, BINARY, TEXT, SOURCE,
     ];
 
     public static readonly FrozenSet<int> PropertyValueTypes =

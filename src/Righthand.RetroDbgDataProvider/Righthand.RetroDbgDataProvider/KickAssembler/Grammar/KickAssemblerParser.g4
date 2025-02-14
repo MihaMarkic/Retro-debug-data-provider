@@ -85,9 +85,9 @@ binaryop
     | OP_RIGHT_SHIFT;
 	
 assignment_expression
-    : name=anyString ASSIGNMENT expression;
+    : name=UNQUOTED_STRING ASSIGNMENT expression;
 shorthand_assignment_expression
-    : name=anyString unary_operator;
+    : name=UNQUOTED_STRING unary_operator;
         
 unary_operator
     : PLUS PLUS
@@ -156,7 +156,11 @@ var: DOTVAR assignment_expression;
 const: CONST assignment_expression;
 if: IF OPEN_PARENS expression CLOSE_PARENS unit (ELSE unit)?;
 errorif: ERRORIF OPEN_PARENS expression CLOSE_PARENS COMMA STRING;
-eval: EVAL shorthand_assignment_expression;
+eval: EVAL evalAssignment;
+evalAssignment
+    : assignment_expression
+    | shorthand_assignment_expression
+    ;
 break: BREAK STRING?;
 watch: WATCH watchArguments;
 watchArguments
@@ -334,8 +338,8 @@ labelName
     ;               
 
 atName                                      // @ prefixed name, used with macro, label and function names
-    : AT anyString
-    | anyString; 
+    : AT UNQUOTED_STRING
+    | UNQUOTED_STRING; 
 
 file
     : STRING
@@ -362,14 +366,7 @@ binNumber: BIN_NUMBER ;      // testing
 boolean: TRUE | FALSE;
 
 opcodeExtension
-    : ONLYA
-    | ABS;
-    
-anyString
-    : UNQUOTED_STRING
-    | ONLYA
-    | ABS
-    ;
+    : UNQUOTED_STRING;
 
 fullOpcode
     : opcode

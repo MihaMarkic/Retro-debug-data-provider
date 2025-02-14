@@ -201,6 +201,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitEval([NotNull] KickAssemblerParser.EvalContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.evalAssignment"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEvalAssignment([NotNull] KickAssemblerParser.EvalAssignmentContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.break"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -647,12 +653,6 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitOpcodeExtension([NotNull] KickAssemblerParser.OpcodeExtensionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitAnyString([NotNull] KickAssemblerParser.AnyStringContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.fullOpcode"/>.
 	/// </summary>

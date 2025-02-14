@@ -59,9 +59,6 @@ HASHIMPORTIF
     -> PushMode(IMPORTIF_MODE)
     ;
 
-ONLYA: 'a' ;
-ABS: 'abs';
-
 BINARY: 'binary';
 C64: 'c64';
 DOTTEXT: '.text';

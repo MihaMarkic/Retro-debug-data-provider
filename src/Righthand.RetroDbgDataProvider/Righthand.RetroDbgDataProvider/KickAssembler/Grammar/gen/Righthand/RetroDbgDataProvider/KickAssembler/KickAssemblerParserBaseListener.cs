@@ -373,6 +373,18 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitEval([NotNull] KickAssemblerParser.EvalContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.evalAssignment"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEvalAssignment([NotNull] KickAssemblerParser.EvalAssignmentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.evalAssignment"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEvalAssignment([NotNull] KickAssemblerParser.EvalAssignmentContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.break"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -1266,18 +1278,6 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitOpcodeExtension([NotNull] KickAssemblerParser.OpcodeExtensionContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterAnyString([NotNull] KickAssemblerParser.AnyStringContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.anyString"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitAnyString([NotNull] KickAssemblerParser.AnyStringContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.fullOpcode"/>.
 	/// <para>The default implementation does nothing.</para>
