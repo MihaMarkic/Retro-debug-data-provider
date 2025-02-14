@@ -65,7 +65,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var target = new KickAssemblerParsedSourceFile("fileName", "", [],
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
+                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
                 ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, ImmutableList<Function>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
@@ -86,7 +86,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
+                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
                 ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty,ImmutableList<Function>.Empty,  
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
@@ -110,7 +110,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
                 FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<string>.Empty, ImmutableList<Constant>.Empty, 
+                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
                 ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, ImmutableList<Function>.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
                 input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);

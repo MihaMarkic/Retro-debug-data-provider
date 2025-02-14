@@ -228,7 +228,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
                 var actual = Run(input, p => p.var(), out ErrorListener _)
                     .VariableDefinitions;
                 
-                return actual.SingleOrDefault();
+                return actual.SingleOrDefault()?.Name;
             }
         }
         [TestFixture]

@@ -1,9 +1,6 @@
 ﻿using System.Collections.Frozen;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 using Antlr4.Runtime;
-using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models;
@@ -47,8 +44,8 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
         FrozenSet<SegmentDefinitionInfo> segmentDefinitions,
-        ImmutableList<Righthand.RetroDbgDataProvider.Models.Parsing.Label> labelDefinitions,
-        ImmutableList<string> variableDefinitions, 
+        ImmutableList<RetroDbgDataProvider.Models.Parsing.Label> labelDefinitions,
+        ImmutableList<Variable> variableDefinitions, 
         ImmutableList<Constant> constantDefinitions,
         ImmutableList<EnumValues> enumValuesDefinitions,
         ImmutableList<Macro> macroDefinitions,

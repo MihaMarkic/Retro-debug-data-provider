@@ -14,7 +14,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    private readonly Dictionary<IToken, string> _fileReferences = new();
    private readonly HashSet<SegmentDefinitionInfo> _segmentDefinitions = new();
    private readonly List<Label> _labelDefinitions = new();
-   private readonly List<string> _variableDefinitions = new();
+   private readonly List<Variable> _variableDefinitions = new();
    private readonly List<Constant> _constantDefinitions = new();
    private readonly List<EnumValues> _enumValuesDefinitions = new();
    private readonly List<Macro> _macroDefinitions = new();
@@ -22,7 +22,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    public FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions => [.. _segmentDefinitions];
    public ImmutableList<Label> LabelDefinitions => [.._labelDefinitions];
-   public ImmutableList<string> VariableDefinitions => [.._variableDefinitions];
+   public ImmutableList<Variable> VariableDefinitions => [.._variableDefinitions];
    public ImmutableList<Constant> ConstantDefinitions => [.._constantDefinitions];
    public ImmutableList<EnumValues> EnumValuesDefinitions => [.._enumValuesDefinitions];
    public ImmutableList<Macro> MacroDefinitions => [.._macroDefinitions];
@@ -93,7 +93,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var data = GetAssignment(assignmentContext);
             if (data is not null)
             {
-                _variableDefinitions.Add(data.Value.Left);
+                _variableDefinitions.Add(new (data.Value.Left, Range: null));
             }
         }
     }

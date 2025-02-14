@@ -34,7 +34,7 @@ public abstract class ParsedSourceFile
     public DateTimeOffset LastModified { get; }
     public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions { get; }
     public ImmutableList<Label> LabelDefinitions { get; }
-    public ImmutableList<string> VariableDefinitions { get; }
+    public ImmutableList<Variable> VariableDefinitions { get; }
     public ImmutableList<Constant> ConstantDefinitions { get; }
     public ImmutableList<EnumValues> EnumValuesDefinitions { get; }
     public ImmutableList<Macro> MacroDefinitions { get; }
@@ -72,7 +72,7 @@ public abstract class ParsedSourceFile
     protected ParsedSourceFile(string fileName, string relativePath, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
         FrozenSet<string> outDefines, 
         FrozenSet<SegmentDefinitionInfo> segmentDefinitions, ImmutableList<Label> labelDefinitions,
-        ImmutableList<string> variableDefinitions, ImmutableList<Constant> constantDefinitions,
+        ImmutableList<Variable> variableDefinitions, ImmutableList<Constant> constantDefinitions,
         ImmutableList<EnumValues> enumValuesDefinitions,
         ImmutableList<Macro> macroDefinitions,
         ImmutableList<Function> functionDefinitions,
