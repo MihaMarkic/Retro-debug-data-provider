@@ -66,6 +66,8 @@ public static class GenericCompletionOptions
         
         FrozenSet<string> functionNames = [.. context.ProjectServices.CollectFunctions().Select(m => m.Name)];
         Add(builder, root, SuggestionOrigin.Function, functionNames);
+        
+        Add(builder, root, SuggestionOrigin.Color, ColorConstants.Colors);
 
         if (builder.Count > 0)
         {

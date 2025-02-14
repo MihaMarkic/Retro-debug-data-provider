@@ -138,22 +138,9 @@ public static class DirectiveCompletionOptions
         string root;
 
         // first check whether current token is .
-        if (currentToken.Type == DOT)
+        if (currentToken.Type == DOT_UNQUOTED_STRING)
         {
-            nextToken = index + 1 < lineTokens.Length ? lineTokens[index + 1] : null;
-            if (nextToken is not null && nextToken.StartIndex == currentToken.StopIndex && nextToken.IsTextType())
-            {
-                return new(PositionType.Directive, "", null, ".", "", nextToken.Length() + 1, false);
-            }
-            return new(PositionType.Directive, "", null, ".", "", 1, false);
-        }
-
-        // then check whether previous is . and current is text like .something
-        if (previousToken is not null && previousToken.Type == DOT && previousToken.StopIndex == currentToken.StartIndex - 1)
-        {
-            string rootDirectiveName = currentToken.TextUpToColumn(lineStart + lineCursor);
-            root = $".{rootDirectiveName}";
-            return new(PositionType.Directive, "", null, root, "", root.Length, false);
+            return new(PositionType.Directive, "", null, currentToken.Text, "", currentToken.Length() + 1, false);
         }
 
         int startOfStringIndex = -1;

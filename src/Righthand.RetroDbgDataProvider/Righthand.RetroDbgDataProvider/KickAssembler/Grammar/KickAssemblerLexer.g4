@@ -151,7 +151,6 @@ LIGHT_BLUE: 'LIGHT_BLUE';
 LIGHT_GRAY: 'LIGHT_GRAY';
 LIGHT_GREY: 'LIGHT_GREY';
 
-
 OPEN_BRACE               : '{' ; //{ this.OnOpenBrace(); };
 CLOSE_BRACE              : '}' ; //{ this.OnCloseBrace(); };
 OPEN_BRACKET             : '[';
@@ -580,7 +579,10 @@ TYA_CONST: 'TYA';
 WAI_CONST: 'WAI';
 XAA_IMM_CONST: 'XAA_IMM';
 
-UNQUOTED_STRING: [a-zA-Z0-9_]+ ;
+fragment INTERNAL_STRING: [a-zA-Z0-9_]+ ;
+
+UNQUOTED_STRING: INTERNAL_STRING;
+DOT_UNQUOTED_STRING: '.' INTERNAL_STRING;
 
 mode HASHDEFINE_MODE;
 

@@ -670,6 +670,22 @@ public class LexerTest
             Assert.That(actual.InDefines, Is.EquivalentTo(expected));
         }
         [Test]
+        public void WhenSimpleDefinition_ShouldNotEatSpace()
+        {
+            const string input = """
+                                 #define ONE
+                                 """;
+            
+            var actual = GetAllTokens(input);
+
+            var expected = GetTokenTypes(
+                HASHDEFINE, HD_WS,DEFINED_TOKEN,
+                KickAssemblerLexer.Eof
+            );
+            
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+        [Test]
         public void WhenTwoImportsOfSameFile_AndDefineSymbolsAreDifferent_ReferencedFileContainsDifferentDefines()
         {
             const string input = """
@@ -724,6 +740,64 @@ public class LexerTest
 
             var expected = GetTokenTypes(
                 MACRO, UNQUOTED_STRING, OPEN_PARENS, UNQUOTED_STRING, CLOSE_PARENS, OPEN_BRACE, CLOSE_BRACE,
+                KickAssemblerLexer.Eof
+            );
+
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+    }
+
+    [TestFixture]
+    public class Print : LexerTest
+    {
+        // [Test]
+        // public void WhenSimpleExtendText_ReturnsDotAndUnquotedString()
+        // {
+        //     const string input = """
+        //                          .printno
+        //                          """;
+        //
+        //     var actual = GetTokens<LexerErrorListener>(input, out _);
+        //
+        //     var expected = GetTokenTypes(
+        //         DOT_UNQUOTED_STRING,
+        //         KickAssemblerLexer.Eof
+        //     );
+        //
+        //     Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        // }
+        [Test]
+        public void WhenSimplePrint_ReturnsCorrectTokens()
+        {
+            const string input = """
+                                 .print 1
+                                 """;
+
+            var actual = GetTokens<LexerErrorListener>(input, out _);
+
+            var expected = GetTokenTypes(
+                PRINT, DEC_NUMBER,
+                KickAssemblerLexer.Eof
+            );
+
+            Assert.That(actual.GetTokenTypes(), Is.EquivalentTo(expected));
+        }
+    }
+
+    [TestFixture]
+    public class File : LexerTest
+    {
+        [Test]
+        public void WhenSimpleFile_ReturnsCorrectTokens()
+        {
+            const string input = """
+                                 .file [mbfiles]
+                                 """;
+
+            var actual = GetTokens<LexerErrorListener>(input, out _);
+
+            var expected = GetTokenTypes(
+                FILE, OPEN_BRACKET, UNQUOTED_STRING, CLOSE_BRACKET,
                 KickAssemblerLexer.Eof
             );
 

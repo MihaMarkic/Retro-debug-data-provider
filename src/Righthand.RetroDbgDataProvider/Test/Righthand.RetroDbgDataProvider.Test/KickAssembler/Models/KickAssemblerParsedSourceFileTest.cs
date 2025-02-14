@@ -211,6 +211,12 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             }.ToFrozenDictionary();
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.CollectSegments().Returns(segments);
+            projectServices.CollectLabels().Returns([]);
+            projectServices.CollectVariables().Returns([]);
+            projectServices.CollectFunctions().Returns([]);
+            projectServices.CollectMacros().Returns([]);
+            projectServices.CollectConstants().Returns([]);
+            projectServices.CollectEnumValues().Returns([]);
             projectServices.CollectPreprocessorSymbols().Returns(preprocessorSymbols);
             projectServices.GetMatchingFiles(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<FrozenSet<string>>(), Arg.Any<ICollection<string>>())
                 .Returns(a =>
@@ -312,7 +318,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             [TestCase(".file [mbfiles,type, name,|", "segments")]
             public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedTexts(string text, string? expectedText)
             {
-                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+                var actualOption = RunTest(text, TextChangeTrigger.CompletionRequested);
 
                 var actual = actualOption?.Suggestions.Select(s => s.Text).ToImmutableArray();
                 var expected = expectedText?.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToImmutableArray();
@@ -483,7 +489,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             [TestCase(".encoding \"screencode_|", "screencode_mixed,screencode_upper")]
             public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedEnumerableValues(string text, string? expectedText)
             {
-                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+                var actualOption = RunTest(text, TextChangeTrigger.CompletionRequested);
 
                 var actual = actualOption?.Suggestions.Select(s => s.Text).ToFrozenSet();
                 var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
@@ -498,7 +504,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             [TestCase(".enc|", ".encoding")]
             public void GivenTestCaseForCharacterTypedTrigger_ReturnsSuggestedDirectiveNames(string text, string? expectedText)
             {
-                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+                var actualOption = RunTest(text, TextChangeTrigger.CompletionRequested);
 
                 var actual = actualOption?.Suggestions.Select(s => s.Text).ToFrozenSet();
                 var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
@@ -512,7 +518,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             [TestCase(".import c| \"alfa.c64", "c64")]
             public void GivenTest_ReturnsSuggestedFileTexts(string text, string? expectedText)
             {
-                var actualOption = RunTest(text, TextChangeTrigger.CharacterTyped);
+                var actualOption = RunTest(text, TextChangeTrigger.CompletionRequested);
 
                 var actual = actualOption!.Value.Suggestions.Select(s => s.Text).ToFrozenSet();
                 var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();

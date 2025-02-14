@@ -1,7 +1,7 @@
-﻿using Righthand.RetroDbgDataProvider.Models.Parsing;
-using System.Collections.Frozen;
-using System.Diagnostics;
+﻿using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
+using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
@@ -23,14 +23,11 @@ public static class DirectiveProperties
             )
         );
         temp.AddWithoutTypeEnumerableValues(".encoding", "ascii", "petscii_mixed", "petscii_upper", "screencode_mixed", "screencode_upper");
-        var query = TokensMap.Map
-            .Where(p => p.Value == TokenType.Directive && p.Key is not (KickAssemblerLexer.DOTIMPORT or KickAssemblerLexer.DOTENCODING))
-            .Select(p => p.Key);
-        foreach (var ti in query)
-        {
-            var text = KickAssemblerLexer.DefaultVocabulary.GetLiteralName(ti).Trim('\'');
-            temp.AddWithoutType(text);
-        }
+        temp.AddWithoutType(".text", ".fill", ".fillword", ".lohifill", ".cpu",
+            "_6502NoIllegals", "_6502", "dtv", "_65c02", ".assert", ".asserterror", ".print", ".printnow", ".var",
+            ".const", ".if", "else", ".errorif", ".eval", ".enum", ".for", ".while", ".struct", ".defint", ".function",
+            ".return", ".macro", ".pseudocommand", ".pseudopc", ".namespace", ".segment", ".segmentdef", ".segmentout",
+            ".modify", ".fileModify", ".plugin", ".label", ".file", ".disk", ".pc", ".break", ".watch", ".zp");
 
         Data = temp.ToFrozenDictionary();
     }
@@ -43,9 +40,12 @@ public static class DirectiveProperties
     {
         source.Add(directiveName, new DirectiveWithoutType(directiveName, directiveValueTypes));   
     }
-    private static void AddWithoutType(this Dictionary<string, Directive> source, string directiveName)
+    private static void AddWithoutType(this Dictionary<string, Directive> source, params ImmutableArray<string> directiveNames)
     {
-        source.Add(directiveName, new DirectiveWithoutType(directiveName, []));
+        foreach (var dn in directiveNames)
+        {
+            source.Add(dn, new DirectiveWithoutType(dn, []));
+        }
     }
     private static void AddWithoutTypeEnumerableValues(this Dictionary<string, Directive> source, string directiveName, params FrozenSet<string> values)
     {
