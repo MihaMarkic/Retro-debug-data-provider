@@ -52,7 +52,7 @@ public static class GenericCompletionOptions
         FrozenSet<string> labelNames = [..allUniqueLabels.Select(l =>  l.FullName)];
         Add(builder, root, SuggestionOrigin.Label, labelNames);
 
-        FrozenSet<string> variableNames = [.. context.ProjectServices.CollectVariables()];
+        FrozenSet<string> variableNames = [.. context.ProjectServices.CollectVariables().Select(v => v.Name)];
         Add(builder, root, SuggestionOrigin.Variable, variableNames);
 
         FrozenSet<string> constantNames = [.. context.ProjectServices.CollectConstants().Select(l => l.Name)];

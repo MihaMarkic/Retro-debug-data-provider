@@ -35,7 +35,7 @@ public interface IProjectServices
      /// Collects variable definitions.
      /// </summary>
      /// <returns></returns>
-     ImmutableList<string> CollectVariables();
+     ImmutableList<Variable> CollectVariables();
      /// <summary>
      /// Collects constant definitions.
      /// </summary>
