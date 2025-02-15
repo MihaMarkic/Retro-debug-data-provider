@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
+using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
@@ -320,6 +321,34 @@ public class ParserTest: ParserBootstrap<ParserTest>
                     .FunctionDefinitions;
 
                 return string.Join(",", actual.SingleOrDefault()?.Arguments ?? []);
+            }
+        }
+
+        [TestFixture]
+        public class ForVariables : DataParsing
+        {
+            [TestCase(".for (var x=0;;) { }", ExpectedResult = "x")]
+            public string? GivenInput_ExtractsVariableName(string input)
+            {
+                var actual = Run(input, p => p.@for(), out ErrorListener _)
+                    .VariableDefinitions;
+
+                return actual.SingleOrDefault()?.Name;
+            }
+
+            public record ExtractVariableRangeTestItem(string Input, RangeInFile Expected);
+
+            public static IEnumerable<ExtractVariableRangeTestItem> GetExtractsVariableRangeItems()
+            {
+                yield return new(".for (var x=0;;) { }", new (new (0,0, 0), new (0, 20, 14)));
+            }
+            [TestCaseSource(nameof(GetExtractsVariableRangeItems))]
+            public void GivenInput_ExtractsVariableRange(ExtractVariableRangeTestItem td)
+            {
+                var actual = Run(td.Input, p => p.@for(), out ErrorListener _)
+                    .VariableDefinitions.SingleOrDefault()?.Range;
+
+                Assert.That(actual, Is.EqualTo(td.Expected));
             }
         }
     }

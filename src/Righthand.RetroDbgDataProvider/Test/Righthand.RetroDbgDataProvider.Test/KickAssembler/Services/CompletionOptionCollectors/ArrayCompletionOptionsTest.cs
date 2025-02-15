@@ -6,6 +6,7 @@ using NSubstitute;
 using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
+using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 
@@ -14,7 +15,7 @@ namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionO
 public class ArrayCompletionOptionsTest
 {
     private static CompletionOptionContext NoOpContext { get; } = new CompletionOptionContext(
-        Substitute.For<IProjectServices>()
+        Substitute.For<IProjectServices>(), Substitute.For<IParsedSourceFile>()
     );
     
     private static FrozenSet<T> CreateExpectedResult<T>(string values, Func<string, T> create)
@@ -179,10 +180,12 @@ public class ArrayCompletionOptionsTest
             var endValueToken = Substitute.For<IToken>();
             endValueToken.StopIndex.Returns(value.Length);
             var matchingProperty = new ArrayPropertyMeta(null, startValueToken, endValueToken, null);
+            var parsedSourceFile = Substitute.For<IParsedSourceFile>();
 
             var actual = ArrayCompletionOptions
                 .CreateSuggestionsForArrayValue(
-                    "", root, $"\"{value}\"", root.Length+1, ".file", null, matchingProperty, arrayProperty, new CompletionOptionContext(projectServices))
+                    "", root, $"\"{value}\"", root.Length+1, ".file", null, matchingProperty, arrayProperty, 
+                    new CompletionOptionContext(projectServices, parsedSourceFile))
                 .Suggestions;
 
             var expected = CreateExpectedResult(expectedResult);

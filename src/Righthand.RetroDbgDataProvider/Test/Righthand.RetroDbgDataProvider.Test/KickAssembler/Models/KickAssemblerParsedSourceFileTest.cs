@@ -182,7 +182,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
     public class GetCompletionOption : KickAssemblerParsedSourceFileTest
     {
         private static CompletionOptionContext NoOpContext { get; } = new (
-            Substitute.For<IProjectServices>()
+            Substitute.For<IProjectServices>(), Substitute.For<IParsedSourceFile>()
         );
 
         private static CompletionOptionContext CreateContext(ImmutableArray<string> segments, FrozenSet<string> preprocessorSymbols)
@@ -265,7 +265,8 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                     return new Dictionary<ProjectFileKey, FrozenSet<string>> { { new(ProjectFileOrigin.Project, ""), fileSet.ToFrozenSet(StringComparer.OrdinalIgnoreCase) } }
                         .ToFrozenDictionary();
                 });
-            return new(projectServices);
+            var parsedSourceFile = Substitute.For<IParsedSourceFile>();
+            return new(projectServices, parsedSourceFile);
         }
 
         /// <summary>

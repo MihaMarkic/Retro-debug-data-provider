@@ -15,7 +15,15 @@ public record FileSyntaxInfo(
 
 public record SegmentDefinitionInfo(string Name, int Line);
 
-public abstract class ParsedSourceFile
+public interface IParsedSourceFile
+{
+    /// <summary>
+    /// Returns ranged variables scoped to file, such as those from .for loops.
+    /// </summary>
+    /// <returns></returns>
+    IEnumerable<Variable> GetLocalVariables();
+}
+public abstract class ParsedSourceFile: IParsedSourceFile
 {
     public string FileName { get; }
     /// <summary>
@@ -192,5 +200,11 @@ public abstract class ParsedSourceFile
     protected bool IsLineIgnoredContent(int line)
     {
         return _ignoredDefineContent?.Any(r => r.Start.Row <= line && r.End.Row >= line) ?? false;
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<Variable> GetLocalVariables()
+    {
+        return VariableDefinitions.Where(v => v.VariableType == VariableType.For);
     }
 }

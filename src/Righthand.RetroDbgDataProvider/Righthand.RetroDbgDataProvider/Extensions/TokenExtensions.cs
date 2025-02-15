@@ -1,5 +1,7 @@
 // ReSharper disable once CheckNamespace
 
+using Righthand.RetroDbgDataProvider.Models.Parsing;
+
 namespace Antlr4.Runtime;
 
 public static class TokenExtensions
@@ -23,5 +25,22 @@ public static class TokenExtensions
     {
         var endIndex = absoluteColumn - token.StartIndex;
         return token.Text[..endIndex];
+    }
+
+    public static Position? ToPositionAtStart(this IToken? token)
+    {
+        if (token is null)
+        {
+            return null;
+        }
+        return new (token.Line-1, token.Column, token.TokenIndex);
+    }
+    public static Position? ToPositionAtEnd(this IToken? token)
+    {
+        if (token is null)
+        {
+            return null;
+        }
+        return new (token.Line-1, token.Column + token.Length(), token.TokenIndex);
     }
 }

@@ -28,6 +28,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    public ImmutableList<Macro> MacroDefinitions => [.._macroDefinitions];
    public ImmutableList<Function> FunctionDefinitions => [.._functionDefinitions];
    private readonly Stack<VariablesScope> _variableScopes = new();
+   private readonly Stack<ForVariableScope> _forVariableScopes = new();
    public override void EnterPreprocessorImport(PreprocessorImportContext context)
    {
       var fileReference = context.fileReference;
@@ -93,10 +94,46 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var data = GetAssignment(assignmentContext);
             if (data is not null)
             {
-                _variableDefinitions.Add(new (data.Value.Left, Range: null));
+                _variableDefinitions.Add(new (data.Value.Left, VariableType.Global, Range: null));
             }
         }
     }
+
+    public override void ExitForVar(ForVarContext context)
+    {
+        base.ExitForVar(context);
+        var assignmentContext = context.assignment_expression();
+        if (assignmentContext is not null)
+        {
+            var data = GetAssignment(assignmentContext);
+            if (data is not null)
+            {
+                var scope = _forVariableScopes.Peek();
+                scope.Variable = new(data.Value.Left, VariableType.For, null);
+            }
+        }
+    }
+
+    public override void EnterFor(ForContext context)
+    {
+        _forVariableScopes.Push(new());
+        base.EnterFor(context);
+    }
+
+    public override void ExitFor(ForContext context)
+    {
+        base.ExitFor(context);
+        var scope = _forVariableScopes.Pop();
+        if (scope.Variable is not null)
+        {
+            var ranged = scope.Variable with
+            {
+                Range = new(context.Start.ToPositionAtStart(), context.Stop.ToPositionAtEnd()),
+            };
+            _variableDefinitions.Add(ranged);
+        }
+    }
+
     public override void ExitConst(ConstContext context)
     {
         base.ExitConst(context);
@@ -221,5 +258,10 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
     private class VariablesScope
     {
         public List<string> VariableNames { get; } = new List<string>();
+    }
+
+    private class ForVariableScope
+    {
+        public Variable? Variable { get; set; }
     }
 }

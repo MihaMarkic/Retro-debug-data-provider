@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Antlr4.Runtime;
 using NSubstitute;
 using Righthand.RetroDbgDataProvider.KickAssembler;
+using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 
@@ -23,7 +24,7 @@ public abstract class CompletionOptionTestBase
         projectServices.CollectEnumValues().ReturnsForAnyArgs([]);
         projectServices.CollectMacros().ReturnsForAnyArgs([]);
         projectServices.CollectFunctions().ReturnsForAnyArgs([]);
-        NoOpContext = new CompletionOptionContext(projectServices);
+        NoOpContext = new CompletionOptionContext(projectServices, Substitute.For<IParsedSourceFile>());
     }
 
     private static ImmutableArray<IToken> GetAllTokens(string text)

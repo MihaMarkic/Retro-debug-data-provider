@@ -52,7 +52,11 @@ public static class GenericCompletionOptions
         FrozenSet<string> labelNames = [..allUniqueLabels.Select(l =>  l.FullName)];
         Add(builder, root, SuggestionOrigin.Label, labelNames);
 
-        FrozenSet<string> variableNames = [.. context.ProjectServices.CollectVariables().Select(v => v.Name)];
+        // variables are made up by global ones and local ones within file
+        var localVariables = context.SourceFile.GetLocalVariables().Where(v => v.Range!.IsInRange(lineStart, lineCursor));
+        var globalVariables = context.ProjectServices.CollectVariables().Where(v => v.VariableType == VariableType.Global);
+        var variables = globalVariables.Union(localVariables);
+        FrozenSet<string> variableNames = [.. variables.Select(v => v.Name)];
         Add(builder, root, SuggestionOrigin.Variable, variableNames);
 
         FrozenSet<string> constantNames = [.. context.ProjectServices.CollectConstants().Select(l => l.Name)];

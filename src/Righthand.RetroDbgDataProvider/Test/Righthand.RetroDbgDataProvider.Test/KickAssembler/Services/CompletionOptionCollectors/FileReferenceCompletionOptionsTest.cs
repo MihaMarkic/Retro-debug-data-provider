@@ -4,6 +4,7 @@ using Antlr4.Runtime;
 using NSubstitute;
 using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
+using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 
@@ -71,7 +72,7 @@ public class FileReferenceCompletionOptionsTest: CompletionOptionTestBase
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.GetMatchingFiles(null!, null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             projectServices.GetMatchingDirectories(null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
-            var context = new CompletionOptionContext(projectServices);
+            var context = new CompletionOptionContext(projectServices, Substitute.For<IParsedSourceFile>());
 
             var tc = CreateCase(input, 0);
 
@@ -98,7 +99,7 @@ public class FileReferenceCompletionOptionsTest: CompletionOptionTestBase
             var projectServices = Substitute.For<IProjectServices>();
             projectServices.GetMatchingFiles(null!, null!, null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
             projectServices.GetMatchingDirectories(null!, null!).ReturnsForAnyArgs(FrozenDictionary<ProjectFileKey, FrozenSet<string>>.Empty);
-            var context = new CompletionOptionContext(projectServices);
+            var context = new CompletionOptionContext(projectServices, Substitute.For<IParsedSourceFile>());
 
             var tc = CreateCase(input, 0);
 
