@@ -169,44 +169,50 @@ public static class DirectiveCompletionOptions
 
         var directiveToken = lineTokens[index];
         index++;
-        var nextToken = lineTokens[index];
         IToken? paramsToken = null;
         PositionType? positionType = null;
         var root = "";
-        if (nextToken.IsTextType())
-        {
-            paramsToken = nextToken;
-            index++;
-        }
-
         string value = "";
-        nextToken = lineTokens[index];
         int replacementLength = 0;
         bool hasEndDelimiter = false;
-        switch (nextToken.Type)
+        if (index < lineTokens.Length)
         {
-            case STRING:
-                value = nextToken.Text.Trim('\"');
-                if (nextToken.ContainsColumn(absoluteLineCursor))
-                {
-                    positionType = PositionType.Value;
-                    root = nextToken.TextUpToColumn(absoluteLineCursor).Trim('\"');
-                    replacementLength = value.Length;
-                    hasEndDelimiter = true;
-                }
+            var nextToken = lineTokens[index];
+            if (nextToken.IsTextType())
+            {
+                paramsToken = nextToken;
+                index++;
+            }
 
-                break;
-            case OPEN_STRING:
-                value = nextToken.Text.TrimStart('\"');
-                if (nextToken.ContainsColumn(absoluteLineCursor))
+            if (index < lineTokens.Length)
+            {
+                nextToken = lineTokens[index];
+                switch (nextToken.Type)
                 {
-                    positionType = PositionType.Value;
-                    root = nextToken.TextUpToColumn(absoluteLineCursor).TrimStart('\"');
-                    replacementLength = value.Length;
-                    hasEndDelimiter = false;
-                }
+                    case STRING:
+                        value = nextToken.Text.Trim('\"');
+                        if (nextToken.ContainsColumn(absoluteLineCursor))
+                        {
+                            positionType = PositionType.Value;
+                            root = nextToken.TextUpToColumn(absoluteLineCursor).Trim('\"');
+                            replacementLength = value.Length;
+                            hasEndDelimiter = true;
+                        }
 
-                break;
+                        break;
+                    case OPEN_STRING:
+                        value = nextToken.Text.TrimStart('\"');
+                        if (nextToken.ContainsColumn(absoluteLineCursor))
+                        {
+                            positionType = PositionType.Value;
+                            root = nextToken.TextUpToColumn(absoluteLineCursor).TrimStart('\"');
+                            replacementLength = value.Length;
+                            hasEndDelimiter = false;
+                        }
+
+                        break;
+                }
+            }
         }
 
         if (positionType is null)

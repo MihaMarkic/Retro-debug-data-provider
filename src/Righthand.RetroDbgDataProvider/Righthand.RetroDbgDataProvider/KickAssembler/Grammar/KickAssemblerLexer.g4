@@ -3,12 +3,13 @@ lexer grammar KickAssemblerLexer;
 channels {
     COMMENTS_CHANNEL,
     DIRECTIVE,
+    EOL_CHANNEL,
     // #if undefined stuff goes here
     IGNORED
 }
 
 WS : [ \t]+ -> channel(HIDDEN) ; // skip spaces, tabs, newlines
-EOL: '\r\n' | '\r' | '\n';
+EOL: ('\r\n' | '\r' | '\n') -> channel(EOL_CHANNEL) ;
 
 HASH: '#';
 
@@ -597,7 +598,7 @@ HD_WS
 
 HD_NEWLINE
     : EOL
-    -> type(EOL),PopMode
+    -> type(EOL),channel(EOL_CHANNEL),PopMode
     ;
 
 mode HASHUNDEF_MODE;
@@ -616,7 +617,7 @@ HU_WS
 
 HU_NEWLINE
     : EOL
-    -> type(EOL),PopMode
+    -> type(EOL),channel(EOL_CHANNEL),PopMode
     ;
 
 mode HASHIF_WAITSPACE_MODE;
@@ -657,14 +658,14 @@ mode IGNORE_WAITNEWLINE_MODE;
 
 IWNL_NEWLINE
     : EOL
-    -> type(EOL),mode(IGNORE_MODE)  // here I use mode to avoid another push/pop pair
+    -> type(EOL),channel(EOL_CHANNEL),mode(IGNORE_MODE)  // here I use mode to avoid another push/pop pair
     ;
     
 mode DEFAULT_WAITEOL_MODE;
 
 DWE_NEWLINE
     : EOL
-    -> type(EOL),mode(DEFAULT_MODE)  // here I use mode to avoid another push/pop pair
+    -> type(EOL),channel(EOL_CHANNEL),mode(DEFAULT_MODE)  // here I use mode to avoid another push/pop pair
     ;
     
 DWE_WS
@@ -717,7 +718,7 @@ IAWNL_WS
     
 IAWNL_NEWLINE
     : EOL
-    -> type(EOL),mode(IGNOREALL_MODE)  // here I use mode to avoid another push/pop pair
+    -> type(EOL),channel(EOL_CHANNEL),mode(IGNOREALL_MODE)  // here I use mode to avoid another push/pop pair
     ;
 
 mode IGNOREALL_CONDITION_WAITSPACE_MODE;
@@ -794,7 +795,7 @@ IM_WS
     
 IM_EOL
     : EOL
-    ->type(EOL),channel(COMMENTS_CHANNEL),PopMode
+    ->type(EOL),channel(EOL_CHANNEL),PopMode
     ;
     
 mode IMPORTIF_MODE;
@@ -819,3 +820,5 @@ IIF_WS
     : WS
     -> type(WS),channel(HIDDEN)
     ;
+    
+HASH_UNQUOTED_STRING: '#' INTERNAL_STRING;

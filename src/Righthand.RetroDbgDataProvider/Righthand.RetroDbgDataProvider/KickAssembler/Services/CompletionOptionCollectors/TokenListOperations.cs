@@ -686,12 +686,12 @@ public static partial class TokenListOperations
     internal static int? GetTokenIndexToTheLeftOfColumn(this ReadOnlySpan<IToken> tokens, int lineStart, int column)
     {
         int position = lineStart + column;
-        for (int i = 0; i < tokens.Length; i++)
+        for (int i = tokens.Length-1; i >= 0; i--)
         {
             var t = tokens[i];
-            if (t.StopIndex >= position)
+            if (t.StopIndex < position)
             {
-                return i > 0 ? i - 1 : null;
+                return i;
             }
         }
 

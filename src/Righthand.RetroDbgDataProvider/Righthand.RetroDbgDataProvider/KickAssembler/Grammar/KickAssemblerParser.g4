@@ -4,6 +4,8 @@ options {
     tokenVocab = KickAssemblerLexer;
 }
 
+eol: { IsEolPrevious(); };
+
 program: units EOF;
              // unit is a basic unit separated by newline or semicolon
 
@@ -11,7 +13,7 @@ program: units EOF;
 // zero or more units separated by either EOL os SEMICOLON
 units
     : unit SEMICOLON+ units
-    | unit EOL+ units
+    | unit eol units
     | unit
     |
     ;
@@ -215,8 +217,8 @@ assert: ASSERT STRING unit COMMA unit;
 assertError: ASSERTERROR STRING unit;
 
 pseudopc: numeric scope;                            // or should use number?
-zp: ZP OPEN_BRACE EOL* zpArgumentList EOL* CLOSE_BRACE;
-zpArgumentList: zpArgument (EOL zpArgument)*;
+zp: ZP OPEN_BRACE zpArgumentList CLOSE_BRACE;
+zpArgumentList: zpArgument (zpArgument)*;
 zpArgument: atName COLON DOTBYTE DEC_NUMBER; // DEC_NUMBER is really just 0
     
 //segmentOptions: segmentOption (COMMA segmentOption)*;
@@ -277,7 +279,10 @@ preprocessorImport: HASHIMPORT fileReference=STRING;
 preprocessorImportIf: HASHIMPORTIF IIF_CONDITION fileReference=STRING;
 preprocessorImportOnce: HASHIMPORTONCE fileReference=STRING;
 preprocessorIf: HASHIF IF_CONDITION preprocessorBlock (HASHELIF IF_CONDITION preprocessorBlock)* (HASHELSE preprocessorBlock)? HASHENDIF;
-preprocessorBlock: EOL+ (unit EOL+)?;
+preprocessorBlock
+    : eol unit eol
+    | eol
+    ;
 preprocessorCondition
     : OPEN_PARENS preprocessorCondition CLOSE_PARENS
     | BANG preprocessorCondition

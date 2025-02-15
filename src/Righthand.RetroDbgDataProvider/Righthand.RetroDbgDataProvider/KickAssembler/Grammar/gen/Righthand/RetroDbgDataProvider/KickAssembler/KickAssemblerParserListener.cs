@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:/GitProjects/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
+// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -31,6 +31,16 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.13.2")]
 [System.CLSCompliant(false)]
 public interface IKickAssemblerParserListener : IParseTreeListener {
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.eol"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEol([NotNull] KickAssemblerParser.EolContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.eol"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEol([NotNull] KickAssemblerParser.EolContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.program"/>.
 	/// </summary>

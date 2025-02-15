@@ -14,7 +14,7 @@ public class DirectiveCompletionOptionsTest
         var lexer = new KickAssemblerLexer(input);
         var stream = new BufferedTokenStream(lexer);
         stream.Fill();
-        var tokens = stream.GetTokens().Where(t => t.Channel == 0);
+        var tokens = stream.GetTokens().Where(t => t.Channel == 0 && t.Type != KickAssemblerLexer.Eof);
         return [..tokens];
     }
     [TestFixture]
@@ -25,6 +25,7 @@ public class DirectiveCompletionOptionsTest
         [TestCase("label: .import c64 \"xx/p|")]
         [TestCase("\"\".import c64 \"|")]
         [TestCase("\"xxx\".import c64 \"|")]
+        [TestCase(".print fo|")]
         public void GivenSampleInputThatPutsCursorWithinArray_ReturnsNonNullResult(string line)
         {
             var (replaced, cursor) = line.ExtractCaret();

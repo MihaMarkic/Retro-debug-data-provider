@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:/GitProjects/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
+// Generated from D:/Git/Righthand/C64/retro-dbg-data-provider/src/Righthand.RetroDbgDataProvider/Righthand.RetroDbgDataProvider/KickAssembler/Grammar/KickAssemblerParser.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -36,6 +36,18 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.Diagnostics.DebuggerNonUserCode]
 [System.CLSCompliant(false)]
 public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListener {
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.eol"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEol([NotNull] KickAssemblerParser.EolContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.eol"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEol([NotNull] KickAssemblerParser.EolContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.program"/>.
 	/// <para>The default implementation does nothing.</para>

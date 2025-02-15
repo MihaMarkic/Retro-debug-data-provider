@@ -8,7 +8,19 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOption
 
 public static class GenericCompletionOptions
 {
-    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int lineCursor, CompletionOptionContext context)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="lineTokens"></param>
+    /// <param name="text"></param>
+    /// <param name="lineStart"></param>
+    /// <param name="lineLength"></param>
+    /// <param name="lineNumber">0 based line number in source file</param>
+    /// <param name="column">0 based column number within selected line</param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength,
+        int lineNumber, int lineCursor, CompletionOptionContext context)
     {
         Debug.WriteLine($"Trying {nameof(GenericCompletionOptions)}");
         int absoluteLineCursor = lineStart + lineCursor;
@@ -53,7 +65,7 @@ public static class GenericCompletionOptions
         Add(builder, root, SuggestionOrigin.Label, labelNames);
 
         // variables are made up by global ones and local ones within file
-        var localVariables = context.SourceFile.GetLocalVariables().Where(v => v.Range!.IsInRange(lineStart, lineCursor));
+        var localVariables = context.SourceFile.GetLocalVariables().Where(v => v.Range!.IsInRange(lineNumber, lineCursor));
         var globalVariables = context.ProjectServices.CollectVariables().Where(v => v.VariableType == VariableType.Global);
         var variables = globalVariables.Union(localVariables);
         FrozenSet<string> variableNames = [.. variables.Select(v => v.Name)];

@@ -107,8 +107,8 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="allTokensByLineMap"></param>
     /// <param name="trigger"></param>
     /// <param name="triggerChar">Character that triggered request, only valid when <see cref="trigger"/> is <see cref="TextChangeTrigger.CharacterTyped"/></param>
-    /// <param name="lineNumber"></param>
-    /// <param name="column">Column within selected line</param>
+    /// <param name="lineNumber">0 based line number in source file</param>
+    /// <param name="column">0 based column number within selected line</param>
     /// <param name="text"></param>
     /// <param name="textStart"></param>
     /// <param name="textLength"></param>
@@ -128,7 +128,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         var lineToCursor = text.AsSpan().Slice(textStart, column);
         if (lineToCursor.IsEmpty)
         {
-            return GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context);
+            return GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, lineNumber, column, context);
         }
         
         var columnTokenIndex = tokensAtLine.AsSpan().GetTokenIndexAtColumn(textStart, column);
@@ -149,7 +149,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
                      ?? DirectiveCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, relativePath, context)
                      ?? FileReferenceCompletionOptions.GetOption(lineTokens, line, trigger, column, relativePath, context)
                      ?? PreprocessorExpressionCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
-                     ?? GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context);
+                     ?? GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, lineNumber, column, context);
         return result;
     }
     /// <summary>
