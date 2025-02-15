@@ -1981,7 +1981,7 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class FunctionContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING() { return GetToken(KickAssemblerParser.STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_PARENS() { return GetToken(KickAssemblerParser.OPEN_PARENS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_PARENS() { return GetToken(KickAssemblerParser.CLOSE_PARENS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ArgumentListContext argumentList() {
@@ -2019,7 +2019,7 @@ public partial class KickAssemblerParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 401;
-			Match(STRING);
+			Match(UNQUOTED_STRING);
 			State = 402;
 			Match(OPEN_PARENS);
 			State = 404;
@@ -8818,7 +8818,7 @@ public partial class KickAssemblerParser : Parser {
 		1,0,0,0,388,384,1,0,0,0,388,386,1,0,0,0,389,29,1,0,0,0,390,391,7,2,0,0,
 		391,31,1,0,0,0,392,393,5,143,0,0,393,394,5,94,0,0,394,395,5,143,0,0,395,
 		397,5,92,0,0,396,398,3,14,7,0,397,396,1,0,0,0,397,398,1,0,0,0,398,399,
-		1,0,0,0,399,400,5,93,0,0,400,33,1,0,0,0,401,402,5,143,0,0,402,404,5,92,
+		1,0,0,0,399,400,5,93,0,0,400,33,1,0,0,0,401,402,5,504,0,0,402,404,5,92,
 		0,0,403,405,3,14,7,0,404,403,1,0,0,0,404,405,1,0,0,0,405,406,1,0,0,0,406,
 		407,5,93,0,0,407,35,1,0,0,0,408,409,3,20,10,0,409,37,1,0,0,0,410,443,3,
 		40,20,0,411,443,3,42,21,0,412,443,3,48,24,0,413,443,3,50,25,0,414,443,

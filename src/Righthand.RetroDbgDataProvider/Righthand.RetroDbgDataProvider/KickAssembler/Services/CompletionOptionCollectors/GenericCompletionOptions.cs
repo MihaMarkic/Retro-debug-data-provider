@@ -85,6 +85,8 @@ public static class GenericCompletionOptions
         
         Add(builder, root, SuggestionOrigin.Color, ColorConstants.Colors);
 
+        Add(builder, root, SuggestionOrigin.Math, MathLibrary.FunctionNames);
+
         if (builder.Count > 0)
         {
             var suggestions = builder.ToFrozenSet();

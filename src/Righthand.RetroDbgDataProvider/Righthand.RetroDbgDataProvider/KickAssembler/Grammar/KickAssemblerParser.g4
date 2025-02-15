@@ -108,7 +108,7 @@ compareop
     | GT
     | LT;
 classFunction: STRING DOT STRING OPEN_PARENS argumentList? CLOSE_PARENS;
-function: STRING OPEN_PARENS argumentList? CLOSE_PARENS;
+function: UNQUOTED_STRING OPEN_PARENS argumentList? CLOSE_PARENS;
 	
 condition: expression;
 	

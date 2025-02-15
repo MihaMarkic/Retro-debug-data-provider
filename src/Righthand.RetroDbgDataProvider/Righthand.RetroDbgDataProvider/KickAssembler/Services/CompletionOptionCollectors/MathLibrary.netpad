@@ -1,0 +1,52 @@
+85a85b8e-6009-4ef4-b0c8-bf51c95661c5
+{"config":{"kind":"Program","targetFrameworkVersion":"DotNet9","optimizationLevel":"Debug","useAspNet":false,"namespaces":["System","System.Collections","System.Collections.Generic","System.Data","System.Diagnostics","System.IO","System.Linq","System.Linq.Expressions","System.Net.Http","System.Reflection","System.Text","System.Text.RegularExpressions","System.Threading","System.Threading.Tasks","System.Xml","System.Xml.Linq","System.Xml.XPath","System.Collections.Immutable","System.Collections.Frozen","System.Xml.Serialization"],"references":[{"discriminator":"PackageReference","packageId":"Newtonsoft.Json","version":"13.0.3","title":"Json.NET"}]},"dataConnection":null}
+#Code
+const string source = """
+abs(x) 	Returns the absolute (positive) value of x.
+acos(x) 	Returns the arc cosine of x.
+asin(x) 	Returns the arc sine of x.
+atan(x) 	Returns the arc tangent x
+atan2(y,x) 	Returns the angle of the coordinate (x,y) relative to the positive x-axis. Useful when converting to polar coordinates.
+cbrt(x) 	Returns the cube root of x.
+ceil(x) 	Rounds up to the nearest integer.
+cos(r) 	Returns the cosine of r.
+cosh(x) 	Returns the hyperbolic cosine of r.
+exp(x) 	Returns ex.
+expm1(x) 	Returns ex-1.
+floor(x) 	Rounds down to the nearest integer.
+hypot(a,b) 	Returns sqrt(x2+y2).
+IEEEremainder(x,y) 	Returns the remainder of the two numbers as described in the IEEE 754 standard.
+log(x) 	Returns the natural logarithm of x.
+log10(x) 	Returns the base 10 logarithm of x.
+log1p(x) 	Returns log(x+1).
+max(x,y) 	Returns the highest number of x and y.
+min(x,y) 	Returns the smallest number of x and y.
+mod(a,b) 	Converts a and b to integers and returns the remainder of a/b.
+pow(x,y) 	Returns x raised to the power of y.
+random() 	Returns a random number x where 0 ≤ x < 1.
+round(x) 	Rounds x to the nearest integer.
+signum(x) 	Returns 1 if x>0, -1 if x<0 and 0 if x=0.
+sin(r) 	Returns the sine of r.
+sinh(x) 	Returns the hyperbolic sine of x.
+sqrt(x) 	Returns the square root of x.
+tan(r) 	Returns the tangent of r.
+tanh(x) 	Returns the hyperbolic tangent of x.
+toDegrees(r) 	Converts a radian angle to degrees.
+toRadians(d) 	Converts a degree angle to radians.
+""";
+
+var reader = new StringReader(source);
+string? line;
+List<string> funcs = new();
+while ((line = reader.ReadLine()) is not null)
+{
+    int indexOfStartParenthesis = line.IndexOf('(');
+    int indexOfEndParenthesis = line.IndexOf(')');
+    var argsText = line[(indexOfStartParenthesis + 1)..indexOfEndParenthesis];
+    var funcArgs = argsText.Split(',').ToImmutableArray();
+    var funcArgsText = string.Join(", ", funcArgs.Select(a => $"\"{a}\""));
+    string name = $"\"{line[..indexOfStartParenthesis]}\"";
+    funcs.Add($"{{ {name}, new ({name}, false, [{funcArgsText}]) }}");
+}
+
+string.Join(",\n", funcs).Dump();
