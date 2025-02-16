@@ -4,6 +4,7 @@ using Antlr4.Runtime.Tree;
 using Microsoft.Extensions.Logging;
 using Righthand.RetroDbgDataProvider.KickAssembler.Models;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Abstract;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.Models;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Services.Implementation;
@@ -329,11 +330,9 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
                 fileName);
             return new KickAssemblerParsedSourceFile(fileName, relativePath, [],
                 MapReferencedFilesToDictionary(lexer.ReferencedFiles, tokenStream.GetTokens()),
-                inDefines, outDefines: inDefines, parserListener.SegmentDefinitions, parserListener.LabelDefinitions,
-                parserListener.VariableDefinitions, parserListener.ConstantDefinitions, parserListener.EnumValuesDefinitions,
-                parserListener.MacroDefinitions, parserListener.FunctionDefinitions,
+                inDefines, outDefines: inDefines, parserListener.DefaultScope ?? throw new NullReferenceException(),
                 lastModified, liveContent,
-                lexer.IsImportOnce, lexerErrorListener.Errors, parserErrorListener.Errors);
+                lexer.IsImportOnce, lexerErrorListener.Errors, parserErrorListener.Errors, []);
         }
         finally
         {
@@ -350,13 +349,10 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         return new KickAssemblerParsedSourceFile(fileName, relativePath, allTokens,
             MapReferencedFilesToDictionary(absoluteReferencePaths, allTokens),
             inDefines, lexer.DefinedSymbols.ToFrozenSet(),
-            parserListener.SegmentDefinitions, parserListener.LabelDefinitions,
-            parserListener.VariableDefinitions, parserListener.ConstantDefinitions,
-            parserListener.EnumValuesDefinitions, parserListener.MacroDefinitions,
-            parserListener.FunctionDefinitions,
+            parserListener.DefaultScope ?? throw new NullReferenceException(),
             lastModified, liveContent,
             lexer.IsImportOnce,
-            lexerErrorListener.Errors, parserErrorListener.Errors);
+            lexerErrorListener.Errors, parserErrorListener.Errors, parserListener.SyntaxErrors);
     }
 
     internal FrozenDictionary<IToken, ReferencedFileInfo> MapReferencedFilesToDictionary(

@@ -1,17 +1,19 @@
-﻿namespace Righthand.RetroDbgDataProvider.Models.Parsing;
+﻿using Antlr4.Runtime;
+
+namespace Righthand.RetroDbgDataProvider.Models.Parsing;
 
 /// <summary>
 /// Open-ended position within file.
 /// </summary>
 /// <param name="Start"></param>
 /// <param name="End"></param>
-public record RangeInFile(Position? Start, Position? End)
+public readonly record struct RangeInFile(Position? Start, Position? End)
 {
     public bool IsInRange(int line, int column)
     {
         if (Start is not null)
         {
-            if (line < Start.Line || line == Start.Line && column < Start.Column)
+            if (line < Start.Value.Line || line == Start.Value.Line && column < Start.Value.Column)
             {
                 return false;
             }
@@ -19,7 +21,7 @@ public record RangeInFile(Position? Start, Position? End)
 
         if (End is not null)
         {
-            if (line > End.Line || line == End.Line && column > End.Column)
+            if (line > End.Value.Line || line == End.Value.Line && column > End.Value.Column)
             {
                 return false;
             }
@@ -32,4 +34,5 @@ public record RangeInFile(Position? Start, Position? End)
 /// </summary>
 /// <param name="Line">0 based line index</param>
 /// <param name="Column">0 based columns index</param>
-public record Position(int Line, int Column, int TokenIndex);
+/// <param name="Token"></param>
+public readonly record struct Position(int Line, int Column, IToken Token);

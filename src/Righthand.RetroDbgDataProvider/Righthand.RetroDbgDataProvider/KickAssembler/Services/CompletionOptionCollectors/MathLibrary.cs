@@ -2,50 +2,53 @@
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
+
 /// <summary>
 /// Provides math library function definitions.
 /// </summary>
 /// <remarks>Generated with MathLibrary.netpad</remarks>
 public static class MathLibrary
 {
-    public static FrozenDictionary<string, Function> Functions { get; }
+    public static FrozenDictionary<string, FunctionDefinition> Functions { get; }
     public static ImmutableArray<string> FunctionNames => Functions.Keys;
 
     static MathLibrary()
     {
-        Functions = new Dictionary<string, Function>
+        Functions = new Dictionary<string, FunctionDefinition>
         {
-            { "abs", new ("abs", false, ["x"]) },
-            { "acos", new ("acos", false, ["x"]) },
-            { "asin", new ("asin", false, ["x"]) },
-            { "atan", new ("atan", false, ["x"]) },
-            { "atan2", new ("atan2", false, ["y", "x"]) },
-            { "cbrt", new ("cbrt", false, ["x"]) },
-            { "ceil", new ("ceil", false, ["x"]) },
-            { "cos", new ("cos", false, ["r"]) },
-            { "cosh", new ("cosh", false, ["x"]) },
-            { "exp", new ("exp", false, ["x"]) },
-            { "expm1", new ("expm1", false, ["x"]) },
-            { "floor", new ("floor", false, ["x"]) },
-            { "hypot", new ("hypot", false, ["a", "b"]) },
-            { "IEEEremainder", new ("IEEEremainder", false, ["x", "y"]) },
-            { "log", new ("log", false, ["x"]) },
-            { "log10", new ("log10", false, ["x"]) },
-            { "log1p", new ("log1p", false, ["x"]) },
-            { "max", new ("max", false, ["x", "y"]) },
-            { "min", new ("min", false, ["x", "y"]) },
-            { "mod", new ("mod", false, ["a", "b"]) },
-            { "pow", new ("pow", false, ["x", "y"]) },
-            { "random", new ("random", false, [""]) },
-            { "round", new ("round", false, ["x"]) },
-            { "signum", new ("signum", false, ["x"]) },
-            { "sin", new ("sin", false, ["r"]) },
-            { "sinh", new ("sinh", false, ["x"]) },
-            { "sqrt", new ("sqrt", false, ["x"]) },
-            { "tan", new ("tan", false, ["r"]) },
-            { "tanh", new ("tanh", false, ["x"]) },
-            { "toDegrees", new ("toDegrees", false, ["r"]) },
-            { "toRadians", new ("toRadians", false, ["d"]) }
+            { "abs", new("abs", ["x"]) },
+            { "acos", new("acos", ["x"]) },
+            { "asin", new("asin", ["x"]) },
+            { "atan", new("atan", ["x"]) },
+            { "atan2", new("atan2", ["y", "x"]) },
+            { "cbrt", new("cbrt", ["x"]) },
+            { "ceil", new("ceil", ["x"]) },
+            { "cos", new("cos", ["r"]) },
+            { "cosh", new("cosh", ["x"]) },
+            { "exp", new("exp", ["x"]) },
+            { "expm1", new("expm1", ["x"]) },
+            { "floor", new("floor", ["x"]) },
+            { "hypot", new("hypot", ["a", "b"]) },
+            { "IEEEremainder", new("IEEEremainder", ["x", "y"]) },
+            { "log", new("log", ["x"]) },
+            { "log10", new("log10", ["x"]) },
+            { "log1p", new("log1p", ["x"]) },
+            { "max", new("max", ["x", "y"]) },
+            { "min", new("min", ["x", "y"]) },
+            { "mod", new("mod", ["a", "b"]) },
+            { "pow", new("pow", ["x", "y"]) },
+            { "random", new("random", [""]) },
+            { "round", new("round", ["x"]) },
+            { "signum", new("signum", ["x"]) },
+            { "sin", new("sin", ["r"]) },
+            { "sinh", new("sinh", ["x"]) },
+            { "sqrt", new("sqrt", ["x"]) },
+            { "tan", new("tan", ["r"]) },
+            { "tanh", new("tanh", ["x"]) },
+            { "toDegrees", new("toDegrees", ["r"]) },
+            { "toRadians", new("toRadians", ["d"]) }
         }.ToFrozenDictionary();
     }
+
+    public record FunctionDefinition(string Name, ImmutableList<string> Arguments);
 }

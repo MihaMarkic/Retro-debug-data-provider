@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 using Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
+using Righthand.RetroDbgDataProvider.Test.Mocks;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Services.CompletionOptionCollectors;
@@ -270,21 +271,5 @@ public class TokenListOperationsTest
             
             Assert.That(actual, Is.EqualTo(td.ExpectedResult));
         }
-    }
-
-    [DebuggerDisplay("{TypeText,q}")]
-    public class MockToken: IToken
-    {
-        public string Text { get; init; } = "";
-        public int Type { get; init; } = -1;
-        public int Line { get; } = -1;
-        public int Column { get; } = -1;
-        public int Channel { get; } = -1;
-        public int TokenIndex { get; init; } = -1;
-        public int StartIndex { get; init; } = -1;
-        public int StopIndex { get; init; } = -1;
-        public ITokenSource TokenSource { get; } = null!;
-        public ICharStream InputStream { get; } = null!;
-        public string TypeText => KickAssemblerLexer.DefaultVocabulary.GetSymbolicName(Type);
     }
 }

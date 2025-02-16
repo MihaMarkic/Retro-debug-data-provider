@@ -173,7 +173,14 @@ public class ArrayCompletionOptionsTest
             string expectedResult)
         {
             var projectServices = Substitute.For<IProjectServices>();
-            projectServices.CollectSegments().Returns(["sx1", "sy2"]);
+            var scope = new Scope(
+                [], 
+                [
+                    new SegmentDefinitionInfo("sx1", 0, new KickAssemblerParser.SegmentDefContext(ParserRuleContext.EMPTY, 0)),
+                    new SegmentDefinitionInfo("sy2", 0, new KickAssemblerParser.SegmentDefContext(ParserRuleContext.EMPTY, 0))
+                ],
+                null);
+            projectServices.CollectDefaultScopes().ReturnsForAnyArgs([scope]);
             var arrayProperty = new ValuesArrayProperty("segments", ArrayPropertyType.Segments);
             var startValueToken = Substitute.For<IToken>();
             startValueToken.StartIndex.Returns(0);

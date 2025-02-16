@@ -13,16 +13,11 @@ public record FileSyntaxInfo(
     FrozenDictionary<int, SyntaxErrorLine> SyntaxErrorLines,
     FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap);
 
-public record SegmentDefinitionInfo(string Name, int Line);
-
 public interface IParsedSourceFile
 {
-    /// <summary>
-    /// Returns ranged variables scoped to file, such as those from .for loops.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerable<Variable> GetLocalVariables();
+    Scope DefaultScope { get; }
 }
+
 public abstract class ParsedSourceFile: IParsedSourceFile
 {
     public string FileName { get; }
@@ -40,13 +35,7 @@ public abstract class ParsedSourceFile: IParsedSourceFile
     /// </summary>
     public FrozenSet<string> OutDefines { get; }
     public DateTimeOffset LastModified { get; }
-    public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions { get; }
-    public ImmutableList<Label> LabelDefinitions { get; }
-    public ImmutableList<Variable> VariableDefinitions { get; }
-    public ImmutableList<Constant> ConstantDefinitions { get; }
-    public ImmutableList<EnumValues> EnumValuesDefinitions { get; }
-    public ImmutableList<Macro> MacroDefinitions { get; }
-    public ImmutableList<Function> FunctionDefinitions { get; }
+    public Scope DefaultScope { get; }
     public string? LiveContent { get; }
     /// <summary>
     /// All tokens regardless of channel.
@@ -79,11 +68,7 @@ public abstract class ParsedSourceFile: IParsedSourceFile
     
     protected ParsedSourceFile(string fileName, string relativePath, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
         FrozenSet<string> outDefines, 
-        FrozenSet<SegmentDefinitionInfo> segmentDefinitions, ImmutableList<Label> labelDefinitions,
-        ImmutableList<Variable> variableDefinitions, ImmutableList<Constant> constantDefinitions,
-        ImmutableList<EnumValues> enumValuesDefinitions,
-        ImmutableList<Macro> macroDefinitions,
-        ImmutableList<Function> functionDefinitions,
+        Scope defaultScope,
         DateTimeOffset lastModified, string? liveContent)
     {
         FileName = fileName;
@@ -92,13 +77,7 @@ public abstract class ParsedSourceFile: IParsedSourceFile
         ReferencedFiles = referencedFiles;
         InDefines = inDefines;
         OutDefines = outDefines;
-        SegmentDefinitions = segmentDefinitions;
-        LabelDefinitions = labelDefinitions;
-        VariableDefinitions = variableDefinitions;
-        ConstantDefinitions = constantDefinitions;
-        EnumValuesDefinitions = enumValuesDefinitions;
-        MacroDefinitions = macroDefinitions;
-        FunctionDefinitions = functionDefinitions;
+        DefaultScope = defaultScope;
         LastModified = lastModified;
         LiveContent = liveContent;
         // these two properties below are populated asynchronously through GetSyntaxInfoAsync function
@@ -200,11 +179,5 @@ public abstract class ParsedSourceFile: IParsedSourceFile
     protected bool IsLineIgnoredContent(int line)
     {
         return _ignoredDefineContent?.Any(r => r.Start.Row <= line && r.End.Row >= line) ?? false;
-    }
-
-    /// <inheritdoc />
-    public IEnumerable<Variable> GetLocalVariables()
-    {
-        return VariableDefinitions.Where(v => v.VariableType == VariableType.For);
     }
 }

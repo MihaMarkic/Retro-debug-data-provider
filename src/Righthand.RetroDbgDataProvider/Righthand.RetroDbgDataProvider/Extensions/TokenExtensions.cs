@@ -27,13 +27,21 @@ public static class TokenExtensions
         return token.Text[..endIndex];
     }
 
+    public static RangeInFile ToRange(this ParserRuleContext context)
+    {
+        return new RangeInFile(
+            context.Start.ToPositionAtStart(),
+            context.Stop.ToPositionAtEnd()
+        );
+    }
+    
     public static Position? ToPositionAtStart(this IToken? token)
     {
         if (token is null)
         {
             return null;
         }
-        return new (token.Line-1, token.Column, token.TokenIndex);
+        return new (token.Line-1, token.Column, token);
     }
     public static Position? ToPositionAtEnd(this IToken? token)
     {
@@ -41,6 +49,6 @@ public static class TokenExtensions
         {
             return null;
         }
-        return new (token.Line-1, token.Column + token.Length(), token.TokenIndex);
+        return new (token.Line-1, token.Column + token.Length(), token);
     }
 }

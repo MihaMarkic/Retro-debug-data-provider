@@ -2,6 +2,7 @@
 using Righthand.RetroDbgDataProvider.KickAssembler;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
+using Righthand.RetroDbgDataProvider.Test.Mocks;
 
 namespace Righthand.RetroDbgDataProvider.Test.KickAssembler.Grammar;
 
@@ -156,12 +157,13 @@ public class ParserTest: ParserBootstrap<ParserTest>
     [TestFixture]
     public class Errors : ParserTest
     {
-        private KickAssemblerParserErrorListener RunProgram(string text,
+        private (KickAssemblerParserErrorListener ErrorListner, KickAssemblerParserListener Listener) RunProgram(string text,
             params string[] defineSymbols)
         {
-            Run<KickAssemblerParserBaseListener, KickAssemblerParserErrorListener, KickAssemblerParser.ProgramContext>(
-                text, p => p.program(), out var errors);
-            return errors;
+            var listener = new KickAssemblerParserListener();
+            Run<KickAssemblerParser.ProgramContext, KickAssemblerParserErrorListener>(
+                listener, text, p => p.program(), out var errors);
+            return (errors, listener);
         }
 
         [Test]
@@ -173,9 +175,9 @@ public class ParserTest: ParserBootstrap<ParserTest>
 
             var actual = RunProgram(input);
             
-            Assert.That(actual.Errors.Length, Is.EqualTo(1));
-            var error = actual.Errors.Single();
-            Assert.That((error.Line, error.CharPositionInLine), Is.EqualTo((1, 7)));
+            Assert.That(actual.Listener.SyntaxErrors.Length, Is.EqualTo(1));
+            var error = actual.Listener.SyntaxErrors.Single();
+            Assert.That((error.Line, error.CharPositionInLine), Is.EqualTo((1, 0)));
         }
         [Test]
         public void WhenAnotherSimpleError_HasSingleMatchingError()
@@ -186,7 +188,7 @@ public class ParserTest: ParserBootstrap<ParserTest>
 
             var actual = RunProgram(input);
             
-            Assert.That(actual.Errors.Length, Is.EqualTo(1));
+            Assert.That(actual.ErrorListner.Errors.Length, Is.EqualTo(1));
         }
     }
 
@@ -203,20 +205,20 @@ public class ParserTest: ParserBootstrap<ParserTest>
             [TestCase("tubo:", ExpectedResult = "tubo")]
             public string? GivenInput_ExtractsLabelName(string input)
             {
-                var actual = Run(input, p => p.label(), out ErrorListener _)
-                    .LabelDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<RetroDbgDataProvider.Models.Parsing.Label>();
 
-                return actual.SingleOrDefault()?.Name;
+                return actual?.SingleOrDefault()?.Name;
             }
             [TestCase("!:", ExpectedResult = true)]
             [TestCase("!tubo:", ExpectedResult = true)]
             [TestCase("tubo:", ExpectedResult = false)]
             public bool? GivenInput_ExtractsIsMultiOccurence(string input)
             {
-                var actual = Run(input, p => p.label(), out ErrorListener _)
-                    .LabelDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<RetroDbgDataProvider.Models.Parsing.Label>();
 
-                return actual.SingleOrDefault()?.IsMultiOccurrence;
+                return actual?.SingleOrDefault()?.IsMultiOccurrence;
             }
         }
 
@@ -226,10 +228,10 @@ public class ParserTest: ParserBootstrap<ParserTest>
             [TestCase(".var tubo=5", ExpectedResult = "tubo")]
             public string? GivenInput_ExtractsVarName(string input)
             {
-                var actual = Run(input, p => p.var(), out ErrorListener _)
-                    .VariableDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<Variable>();
                 
-                return actual.SingleOrDefault()?.Name;
+                return actual?.SingleOrDefault()?.Name;
             }
         }
         [TestFixture]
@@ -238,19 +240,19 @@ public class ParserTest: ParserBootstrap<ParserTest>
             [TestCase(".const tubo=5", ExpectedResult = "tubo")]
             public string? GivenInput_ExtractsConstName(string input)
             {
-                var actual = Run(input, p => p.@const(), out ErrorListener _)
-                    .ConstantDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<Constant>();
                 
-                return actual.SingleOrDefault()?.Name;
+                return actual?.SingleOrDefault()?.Name;
             }
             [TestCase(".const tubo=5", ExpectedResult = "5")]
             [TestCase(".const tubo= \"pingo\"", ExpectedResult = "\"pingo\"")]
             public string? GivenInput_ExtractsAssignment(string input)
             {
-                var actual = Run(input, p => p.@const(), out ErrorListener _)
-                    .ConstantDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<Constant>();
                 
-                return actual.SingleOrDefault()?.Value;
+                return actual?.SingleOrDefault()?.Value;
             }
         }
 
@@ -261,17 +263,17 @@ public class ParserTest: ParserBootstrap<ParserTest>
             [TestCase(".enum { one=5, two=$8 }", ExpectedResult = "one,two")]
             public string? GivenInput_ExtractsEnumValueNames(string input)
             {
-                var actual = Run(input, p => p.@enum(), out ErrorListener _)
-                    .EnumValuesDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<RetroDbgDataProvider.Models.Parsing.EnumValues>();
                 
-                return string.Join(",", actual.SingleOrDefault()?.Values.Select(v => v.Name) ?? []);
+                return string.Join(",", actual?.SingleOrDefault()?.Values.Select(v => v.Name) ?? []);
             }
 
             [Test]
             public void WhenNoEnumValues_DoesNotAddRecord()
             {
-                var actual = Run(".enum {}", p => p.@enum(), out ErrorListener _)
-                    .EnumValuesDefinitions;
+                var actual = Run(".enum {}", p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<RetroDbgDataProvider.Models.Parsing.EnumValues>();
                 
                 Assert.That(actual, Is.Empty); 
             }
@@ -284,20 +286,20 @@ public class ParserTest: ParserBootstrap<ParserTest>
             [TestCase(".macro Tubo() { }", ExpectedResult = "Tubo")]
             public string? GivenInput_ExtractsMacroName(string input)
             {
-                var actual = Run(input, p => p.macroDefine(), out ErrorListener _)
-                    .MacroDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<Macro>();
 
-                return actual.SingleOrDefault()?.Name;
+                return actual?.SingleOrDefault()?.Name;
             }
             [TestCase(".macro Tubo() { }", ExpectedResult = "")]
             [TestCase(".macro Tubo(one) { }", ExpectedResult = "one")]
             [TestCase(".macro Tubo(one,two) { }", ExpectedResult = "one,two")]
             public string? GivenInput_ExtractsArgumentsCorrectly(string input)
             {
-                var actual = Run(input, p => p.macroDefine(), out ErrorListener _)
-                    .MacroDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<Macro>();
 
-                return string.Join(",", actual.SingleOrDefault()?.Arguments ?? []);
+                return string.Join(",", actual?.SingleOrDefault()?.Arguments ?? []);
             }
         }
         [TestFixture]
@@ -307,20 +309,20 @@ public class ParserTest: ParserBootstrap<ParserTest>
             [TestCase(".function Tubo() { }", ExpectedResult = "Tubo")]
             public string? GivenInput_ExtractsMacroName(string input)
             {
-                var actual = Run(input, p => p.functionDefine(), out ErrorListener _)
-                    .FunctionDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<Function>();
 
-                return actual.SingleOrDefault()?.Name;
+                return actual?.SingleOrDefault()?.Name;
             }
             [TestCase(".function Tubo() { }", ExpectedResult = "")]
             [TestCase(".function Tubo(one) { }", ExpectedResult = "one")]
             [TestCase(".function Tubo(one,two) { }", ExpectedResult = "one,two")]
             public string? GivenInput_ExtractsArgumentsCorrectly(string input)
             {
-                var actual = Run(input, p => p.functionDefine(), out ErrorListener _)
-                    .FunctionDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<Function>();
 
-                return string.Join(",", actual.SingleOrDefault()?.Arguments ?? []);
+                return string.Join(",", actual?.SingleOrDefault()?.Arguments ?? []);
             }
         }
 
@@ -330,25 +332,41 @@ public class ParserTest: ParserBootstrap<ParserTest>
             [TestCase(".for (var x=0;;) { }", ExpectedResult = "x")]
             public string? GivenInput_ExtractsVariableName(string input)
             {
-                var actual = Run(input, p => p.@for(), out ErrorListener _)
-                    .VariableDefinitions;
+                var actual = Run(input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<For>().SingleOrDefault()?.Variables;
 
-                return actual.SingleOrDefault()?.Name;
+                return actual?.SingleOrDefault()?.Name;
             }
 
-            public record ExtractVariableRangeTestItem(string Input, RangeInFile Expected);
+            public record ExtractVariableRangeTestItem(string Input, (int Line, int Column) ExpectedStart, (int Line, int Column) ExpectedEnd);
 
             public static IEnumerable<ExtractVariableRangeTestItem> GetExtractsVariableRangeItems()
             {
-                yield return new(".for (var x=0;;) { }", new (new (0,0, 0), new (0, 20, 14)));
+                yield return new(".for (var x=0;;) { }",
+                    new(0, 0), new(0, 20));
+            }
+
+            [TestCaseSource(nameof(GetExtractsVariableRangeItems))]
+            public void GivenInput_ExtractsVariableStartPosition(ExtractVariableRangeTestItem td)
+            {
+                var actual = Run(td.Input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<For>().SingleOrDefault();
+
+                var pos = actual!.Range!.Value.Start!;
+                var actualPosition = (pos.Value.Line, pos.Value.Column);
+                
+                Assert.That(actualPosition, Is.EqualTo(td.ExpectedStart));
             }
             [TestCaseSource(nameof(GetExtractsVariableRangeItems))]
-            public void GivenInput_ExtractsVariableRange(ExtractVariableRangeTestItem td)
+            public void GivenInput_ExtractsVariableEndPosition(ExtractVariableRangeTestItem td)
             {
-                var actual = Run(td.Input, p => p.@for(), out ErrorListener _)
-                    .VariableDefinitions.SingleOrDefault()?.Range;
+                var actual = Run(td.Input, p => p.program(), out ErrorListener _)
+                    .DefaultScope?.Elements.OfType<For>().SingleOrDefault();
 
-                Assert.That(actual, Is.EqualTo(td.Expected));
+                var pos = actual!.Range!.Value.End!;
+                var actualPosition = (pos.Value.Line, pos.Value.Column);
+                
+                Assert.That(actualPosition, Is.EqualTo(td.ExpectedEnd));
             }
         }
     }

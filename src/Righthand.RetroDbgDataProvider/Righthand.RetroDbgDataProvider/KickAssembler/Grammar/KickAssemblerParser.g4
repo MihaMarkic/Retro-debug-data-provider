@@ -22,9 +22,17 @@ unit
     : instruction
     | label
     | directive
+    | namedScope
     | scope
     | compiler_statement
-    | preprocessorDirective;
+    | preprocessorDirective
+    | errorSyntax
+    ;
+
+errorSyntax
+    : UNQUOTED_STRING
+    | DOT_UNQUOTED_STRING
+    ;
 
 label
     : labelName COLON unit
@@ -33,8 +41,9 @@ label
 instruction: COLON? fullOpcode argumentList?;               // pseudocommands are prefixed with :
 
 scope
-    : UNQUOTED_STRING COLON OPEN_BRACE units CLOSE_BRACE  // Function1: { ... }
-    | OPEN_BRACE units CLOSE_BRACE;                       // { ... }
+    : OPEN_BRACE units CLOSE_BRACE ;                       // { ... }
+namedScope
+    : UNQUOTED_STRING COLON OPEN_BRACE units CLOSE_BRACE;  // Function1: { ... }
 
 argumentList
 	: argument (COMMA argument)*
@@ -126,7 +135,7 @@ compiler_statement
     | for
     | while
     | struct
-    | define
+    //| define
     | functionDefine
     | macroDefine
     | pseudoCommandDefine
@@ -183,7 +192,7 @@ variableList
     |
     ;
 variable: UNQUOTED_STRING;
-define: variableList scope;
+//define: variableList scope;
 functionDefine: FUNCTION atName OPEN_PARENS variableList CLOSE_PARENS scope;
 return: RETURN expression;
 macroDefine: MACRO atName OPEN_PARENS variableList CLOSE_PARENS scope;

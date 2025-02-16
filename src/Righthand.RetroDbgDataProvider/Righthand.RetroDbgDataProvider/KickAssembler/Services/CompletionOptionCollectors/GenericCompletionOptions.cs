@@ -16,7 +16,7 @@ public static class GenericCompletionOptions
     /// <param name="lineStart"></param>
     /// <param name="lineLength"></param>
     /// <param name="lineNumber">0 based line number in source file</param>
-    /// <param name="column">0 based column number within selected line</param>
+    /// <param name="lineCursor">0 based column number within selected line</param>
     /// <param name="context"></param>
     /// <returns></returns>
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength,
@@ -60,27 +60,34 @@ public static class GenericCompletionOptions
         Add(builder, root, SuggestionOrigin.PreprocessorDirective, PreprocessorDirectives);
         Add(builder, root, SuggestionOrigin.DirectiveOption, DirectiveProperties.AllDirectives);
 
-        FrozenSet<Label> allUniqueLabels = [..context.ProjectServices.CollectLabels()];
+        var defaultScopes = context.ProjectServices.CollectDefaultScopes();
+        // valid scopes are those where caret is in range
+        var validScopeElements = defaultScopes.SelectMany(s => s.GetAllElementsInRange(lineNumber, lineCursor));
+        ImmutableArray<IScopeElement> validElements = [..validScopeElements.Select(p => p.Element)];
+        
+        FrozenSet<Label> allUniqueLabels = [.. validElements.OfType<Label>()];
         FrozenSet<string> labelNames = [..allUniqueLabels.Select(l =>  l.FullName)];
         Add(builder, root, SuggestionOrigin.Label, labelNames);
 
         // variables are made up by global ones and local ones within file
-        var localVariables = context.SourceFile.GetLocalVariables().Where(v => v.Range!.IsInRange(lineNumber, lineCursor));
-        var globalVariables = context.ProjectServices.CollectVariables().Where(v => v.VariableType == VariableType.Global);
+        var validLocalScopeElements = context.SourceFile.DefaultScope.GetAllElementsInRange(lineNumber, lineCursor);
+        ImmutableArray<IScopeElement> localValidElements = [..validLocalScopeElements.Select(p => p.Element)];
+        var localVariables = localValidElements.OfType<InitVariable>();
+        var globalVariables = validElements.OfType<IVariableDefinition>();
         var variables = globalVariables.Union(localVariables);
         FrozenSet<string> variableNames = [.. variables.Select(v => v.Name)];
         Add(builder, root, SuggestionOrigin.Variable, variableNames);
 
-        FrozenSet<string> constantNames = [.. context.ProjectServices.CollectConstants().Select(l => l.Name)];
+        FrozenSet<string> constantNames = [.. validElements.OfType<Constant>().Select(l => l.Name)];
         Add(builder, root, SuggestionOrigin.Constant, constantNames);
 
-        FrozenSet<string> enumValueNames = [.. context.ProjectServices.CollectEnumValues().SelectMany(l => l.Values.Select(v => v.Name))];
+        FrozenSet<string> enumValueNames = [..  validElements.OfType<EnumValues>().SelectMany(l => l.Values.Select(v => v.Name))];
         Add(builder, root, SuggestionOrigin.EnumValue, enumValueNames);
 
-        FrozenSet<string> macroNames = [.. context.ProjectServices.CollectMacros().Select(m => m.Name)];
+        FrozenSet<string> macroNames = [..  validElements.OfType<Macro>().Select(m => m.Name)];
         Add(builder, root, SuggestionOrigin.Macro, macroNames);
         
-        FrozenSet<string> functionNames = [.. context.ProjectServices.CollectFunctions().Select(m => m.Name)];
+        FrozenSet<string> functionNames = [..  validElements.OfType<Function>().Select(m => m.Name)];
         Add(builder, root, SuggestionOrigin.Function, functionNames);
         
         Add(builder, root, SuggestionOrigin.Color, ColorConstants.Colors);

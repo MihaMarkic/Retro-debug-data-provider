@@ -64,11 +64,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var input = GetParsed("");
             var target = new KickAssemblerParsedSourceFile("fileName", "", [],
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, ImmutableList<Function>.Empty, 
+                FrozenSet<string>.Empty, FrozenSet<string>.Empty, 
+                Scope.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
-                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
+                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors, input.ParserListener.SyntaxErrors);
 
             var actual = target.GetIgnoredDefineContent(CancellationToken.None);
 
@@ -85,11 +84,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                   """.FixLineEndings());
             var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty,ImmutableList<Function>.Empty,  
+                FrozenSet<string>.Empty, FrozenSet<string>.Empty, 
+                Scope.Empty,  
                 _lastModified, liveContent: null, isImportOnce: false,
-                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
+                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors, input.ParserListener.SyntaxErrors);
 
             var actual = target.GetIgnoredDefineContent(CancellationToken.None);
 
@@ -109,11 +107,10 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                                   """.FixLineEndings());
             var target = new KickAssemblerParsedSourceFile("fileName", "", input.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, ImmutableList<Function>.Empty, 
+                FrozenSet<string>.Empty, FrozenSet<string>.Empty, 
+                Scope.Empty, 
                 _lastModified, liveContent: null, isImportOnce: false,
-                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors);
+                input.LexerErrorListener.Errors, input.ParserErrorListener.Errors, input.ParserListener.SyntaxErrors);
 
             var actual = target.GetIgnoredDefineContent(CancellationToken.None);
 
@@ -210,13 +207,12 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 }
             }.ToFrozenDictionary();
             var projectServices = Substitute.For<IProjectServices>();
-            projectServices.CollectSegments().Returns(segments);
-            projectServices.CollectLabels().Returns([]);
-            projectServices.CollectVariables().Returns([]);
-            projectServices.CollectFunctions().Returns([]);
-            projectServices.CollectMacros().Returns([]);
-            projectServices.CollectConstants().Returns([]);
-            projectServices.CollectEnumValues().Returns([]);
+            projectServices.CollectDefaultScopes().Returns([
+                new Scope(
+                    [], 
+                    [..segments.Select(ps => new SegmentDefinitionInfo(ps, 0, new KickAssemblerParser.SegmentDefContext(ParserRuleContext.EMPTY, 0)))],
+                    null)
+            ]);
             projectServices.CollectPreprocessorSymbols().Returns(preprocessorSymbols);
             projectServices.GetMatchingFiles(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<FrozenSet<string>>(), Arg.Any<ICollection<string>>())
                 .Returns(a =>
@@ -285,7 +281,7 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 if (caretIndex >= 0)
                 {
                     // 1 should be subtracted from line length because of caret
-                    return (index + caretIndex, i, index, index + lineText.Length - 1, text.Replace("|", ""), lineText.Length - 1);
+                    return (caretIndex, i, index, index + lineText.Length - 1, text.Replace("|", ""), lineText.Length - 1);
                 }
 
                 if (index > 0)
@@ -307,6 +303,31 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
             var actual = KickAssemblerParsedSourceFile.GetCompletionOption(tokens, tokensByLine, trigger, TriggerChar.DoubleQuote, lineNumber, column, realText, lineTextStart,
                 textLength, "", context);
             return actual;
+        }
+
+        /// <summary>
+        /// Runs full parsing on single content.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private CompletionOption? RunFullTest(string text)
+        {
+            var (tokens, tokensByLine) = GetTokens(text);
+            var (column, lineNumber, lineTextStart, lineTextEnd, realText, textLength) = GetPosition(text);
+                
+            var logger = Fixture.Freeze<ILogger<KickAssemblerSourceCodeParser>>();
+            var fileService = Fixture.Freeze<IFileService>();
+            var parser = new KickAssemblerSourceCodeParser(logger, fileService);
+            var parsed = parser.ParseStream("FILE_NAME", "RELATIVE_PATH", new AntlrInputStream(realText), DateTimeOffset.Now, [], [], null);
+            var projectServices = Substitute.For<IProjectServices>();
+            projectServices.CollectDefaultScopes().ReturnsForAnyArgs([parsed.DefaultScope]);
+            var context = new CompletionOptionContext(projectServices, parsed);
+                
+            var actualOption = KickAssemblerParsedSourceFile.GetCompletionOption(
+                tokens, tokensByLine, TextChangeTrigger.CharacterTyped, TriggerChar.DoubleQuote, lineNumber, column, realText, lineTextStart,
+                textLength, "", context);
+            
+            return actualOption;
         }
 
         [TestFixture]
@@ -545,6 +566,25 @@ public class KickAssemblerParsedSourceFileTest : BaseTest<KickAssemblerParsedSou
                 var actual = actualOption!.Value.Suggestions.Select(s => s.Text).ToFrozenSet();
                 var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
                 
+                Assert.That(actual, Is.EquivalentTo(expected));
+            }
+        }
+
+        [TestFixture]
+        public class ForVariables : GetCompletionOption
+        {
+            [TestCase("""
+                      .for (var forvar=0; 
+                        forvar < 2; forvar++) {
+                        forv|
+                      } 
+                      """, "forvar")]
+            public void GivenTestCase_ReturnsSuggestedVariableNames(string text, string? expectedText)
+            {
+                var actualOption = RunFullTest(text);
+                
+                var actual = actualOption!.Value.Suggestions.Select(s => s.Text).ToFrozenSet();
+                var expected = expectedText!.Split(',').Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => t.Trim()).ToFrozenSet();
                 Assert.That(actual, Is.EquivalentTo(expected));
             }
         }

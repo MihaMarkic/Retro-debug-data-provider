@@ -146,57 +146,58 @@ public partial class KickAssemblerParser : Parser {
 		I_INTENTIONALLY_IGNORED=511, IA_INTENTIONALLY_IGNORED=512, IIF_CONDITION=513, 
 		HASH_UNQUOTED_STRING=514;
 	public const int
-		RULE_eol = 0, RULE_program = 1, RULE_units = 2, RULE_unit = 3, RULE_label = 4, 
-		RULE_instruction = 5, RULE_scope = 6, RULE_argumentList = 7, RULE_argument = 8, 
-		RULE_labelOffsetReference = 9, RULE_expression = 10, RULE_binaryop = 11, 
-		RULE_assignment_expression = 12, RULE_shorthand_assignment_expression = 13, 
-		RULE_unary_operator = 14, RULE_compareop = 15, RULE_classFunction = 16, 
-		RULE_function = 17, RULE_condition = 18, RULE_compiler_statement = 19, 
-		RULE_print = 20, RULE_printnow = 21, RULE_forInit = 22, RULE_forVar = 23, 
-		RULE_var = 24, RULE_const = 25, RULE_if = 26, RULE_errorif = 27, RULE_eval = 28, 
-		RULE_evalAssignment = 29, RULE_break = 30, RULE_watch = 31, RULE_watchArguments = 32, 
-		RULE_enum = 33, RULE_enumValues = 34, RULE_enumValue = 35, RULE_for = 36, 
-		RULE_while = 37, RULE_struct = 38, RULE_variableList = 39, RULE_variable = 40, 
-		RULE_define = 41, RULE_functionDefine = 42, RULE_return = 43, RULE_macroDefine = 44, 
-		RULE_pseudoCommandDefine = 45, RULE_pseudoCommandDefineArguments = 46, 
-		RULE_namespace = 47, RULE_labelDirective = 48, RULE_plugin = 49, RULE_segment = 50, 
-		RULE_segmentDef = 51, RULE_segmentOut = 52, RULE_fileDirective = 53, RULE_diskDirective = 54, 
-		RULE_diskDirectiveContent = 55, RULE_parameterMap = 56, RULE_parameterMapItems = 57, 
-		RULE_parameterMapItem = 58, RULE_modify = 59, RULE_fileModify = 60, RULE_assert = 61, 
-		RULE_assertError = 62, RULE_pseudopc = 63, RULE_zp = 64, RULE_zpArgumentList = 65, 
-		RULE_zpArgument = 66, RULE_fileName = 67, RULE_preprocessorDirective = 68, 
-		RULE_preprocessorDefine = 69, RULE_preprocessorUndef = 70, RULE_preprocessorImport = 71, 
-		RULE_preprocessorImportIf = 72, RULE_preprocessorImportOnce = 73, RULE_preprocessorIf = 74, 
-		RULE_preprocessorBlock = 75, RULE_preprocessorCondition = 76, RULE_directive = 77, 
-		RULE_memoryDirective = 78, RULE_cpuDirective = 79, RULE_byteDirective = 80, 
-		RULE_wordDirective = 81, RULE_dwordDirective = 82, RULE_textDirective = 83, 
-		RULE_fillDirective = 84, RULE_fillDirectiveArguments = 85, RULE_fillExpression = 86, 
-		RULE_encodingDirective = 87, RULE_importDataDirective = 88, RULE_labelName = 89, 
-		RULE_atName = 90, RULE_file = 91, RULE_numberList = 92, RULE_numericList = 93, 
-		RULE_numeric = 94, RULE_number = 95, RULE_lohibyte = 96, RULE_decNumber = 97, 
-		RULE_hexNumber = 98, RULE_binNumber = 99, RULE_boolean = 100, RULE_opcodeExtension = 101, 
-		RULE_fullOpcode = 102, RULE_opcode = 103, RULE_color = 104, RULE_opcodeConstant = 105;
+		RULE_eol = 0, RULE_program = 1, RULE_units = 2, RULE_unit = 3, RULE_errorSyntax = 4, 
+		RULE_label = 5, RULE_instruction = 6, RULE_scope = 7, RULE_namedScope = 8, 
+		RULE_argumentList = 9, RULE_argument = 10, RULE_labelOffsetReference = 11, 
+		RULE_expression = 12, RULE_binaryop = 13, RULE_assignment_expression = 14, 
+		RULE_shorthand_assignment_expression = 15, RULE_unary_operator = 16, RULE_compareop = 17, 
+		RULE_classFunction = 18, RULE_function = 19, RULE_condition = 20, RULE_compiler_statement = 21, 
+		RULE_print = 22, RULE_printnow = 23, RULE_forInit = 24, RULE_forVar = 25, 
+		RULE_var = 26, RULE_const = 27, RULE_if = 28, RULE_errorif = 29, RULE_eval = 30, 
+		RULE_evalAssignment = 31, RULE_break = 32, RULE_watch = 33, RULE_watchArguments = 34, 
+		RULE_enum = 35, RULE_enumValues = 36, RULE_enumValue = 37, RULE_for = 38, 
+		RULE_while = 39, RULE_struct = 40, RULE_variableList = 41, RULE_variable = 42, 
+		RULE_functionDefine = 43, RULE_return = 44, RULE_macroDefine = 45, RULE_pseudoCommandDefine = 46, 
+		RULE_pseudoCommandDefineArguments = 47, RULE_namespace = 48, RULE_labelDirective = 49, 
+		RULE_plugin = 50, RULE_segment = 51, RULE_segmentDef = 52, RULE_segmentOut = 53, 
+		RULE_fileDirective = 54, RULE_diskDirective = 55, RULE_diskDirectiveContent = 56, 
+		RULE_parameterMap = 57, RULE_parameterMapItems = 58, RULE_parameterMapItem = 59, 
+		RULE_modify = 60, RULE_fileModify = 61, RULE_assert = 62, RULE_assertError = 63, 
+		RULE_pseudopc = 64, RULE_zp = 65, RULE_zpArgumentList = 66, RULE_zpArgument = 67, 
+		RULE_fileName = 68, RULE_preprocessorDirective = 69, RULE_preprocessorDefine = 70, 
+		RULE_preprocessorUndef = 71, RULE_preprocessorImport = 72, RULE_preprocessorImportIf = 73, 
+		RULE_preprocessorImportOnce = 74, RULE_preprocessorIf = 75, RULE_preprocessorBlock = 76, 
+		RULE_preprocessorCondition = 77, RULE_directive = 78, RULE_memoryDirective = 79, 
+		RULE_cpuDirective = 80, RULE_byteDirective = 81, RULE_wordDirective = 82, 
+		RULE_dwordDirective = 83, RULE_textDirective = 84, RULE_fillDirective = 85, 
+		RULE_fillDirectiveArguments = 86, RULE_fillExpression = 87, RULE_encodingDirective = 88, 
+		RULE_importDataDirective = 89, RULE_labelName = 90, RULE_atName = 91, 
+		RULE_file = 92, RULE_numberList = 93, RULE_numericList = 94, RULE_numeric = 95, 
+		RULE_number = 96, RULE_lohibyte = 97, RULE_decNumber = 98, RULE_hexNumber = 99, 
+		RULE_binNumber = 100, RULE_boolean = 101, RULE_opcodeExtension = 102, 
+		RULE_fullOpcode = 103, RULE_opcode = 104, RULE_color = 105, RULE_opcodeConstant = 106;
 	public static readonly string[] ruleNames = {
-		"eol", "program", "units", "unit", "label", "instruction", "scope", "argumentList", 
-		"argument", "labelOffsetReference", "expression", "binaryop", "assignment_expression", 
-		"shorthand_assignment_expression", "unary_operator", "compareop", "classFunction", 
-		"function", "condition", "compiler_statement", "print", "printnow", "forInit", 
-		"forVar", "var", "const", "if", "errorif", "eval", "evalAssignment", "break", 
-		"watch", "watchArguments", "enum", "enumValues", "enumValue", "for", "while", 
-		"struct", "variableList", "variable", "define", "functionDefine", "return", 
-		"macroDefine", "pseudoCommandDefine", "pseudoCommandDefineArguments", 
-		"namespace", "labelDirective", "plugin", "segment", "segmentDef", "segmentOut", 
-		"fileDirective", "diskDirective", "diskDirectiveContent", "parameterMap", 
-		"parameterMapItems", "parameterMapItem", "modify", "fileModify", "assert", 
-		"assertError", "pseudopc", "zp", "zpArgumentList", "zpArgument", "fileName", 
-		"preprocessorDirective", "preprocessorDefine", "preprocessorUndef", "preprocessorImport", 
-		"preprocessorImportIf", "preprocessorImportOnce", "preprocessorIf", "preprocessorBlock", 
-		"preprocessorCondition", "directive", "memoryDirective", "cpuDirective", 
-		"byteDirective", "wordDirective", "dwordDirective", "textDirective", "fillDirective", 
-		"fillDirectiveArguments", "fillExpression", "encodingDirective", "importDataDirective", 
-		"labelName", "atName", "file", "numberList", "numericList", "numeric", 
-		"number", "lohibyte", "decNumber", "hexNumber", "binNumber", "boolean", 
-		"opcodeExtension", "fullOpcode", "opcode", "color", "opcodeConstant"
+		"eol", "program", "units", "unit", "errorSyntax", "label", "instruction", 
+		"scope", "namedScope", "argumentList", "argument", "labelOffsetReference", 
+		"expression", "binaryop", "assignment_expression", "shorthand_assignment_expression", 
+		"unary_operator", "compareop", "classFunction", "function", "condition", 
+		"compiler_statement", "print", "printnow", "forInit", "forVar", "var", 
+		"const", "if", "errorif", "eval", "evalAssignment", "break", "watch", 
+		"watchArguments", "enum", "enumValues", "enumValue", "for", "while", "struct", 
+		"variableList", "variable", "functionDefine", "return", "macroDefine", 
+		"pseudoCommandDefine", "pseudoCommandDefineArguments", "namespace", "labelDirective", 
+		"plugin", "segment", "segmentDef", "segmentOut", "fileDirective", "diskDirective", 
+		"diskDirectiveContent", "parameterMap", "parameterMapItems", "parameterMapItem", 
+		"modify", "fileModify", "assert", "assertError", "pseudopc", "zp", "zpArgumentList", 
+		"zpArgument", "fileName", "preprocessorDirective", "preprocessorDefine", 
+		"preprocessorUndef", "preprocessorImport", "preprocessorImportIf", "preprocessorImportOnce", 
+		"preprocessorIf", "preprocessorBlock", "preprocessorCondition", "directive", 
+		"memoryDirective", "cpuDirective", "byteDirective", "wordDirective", "dwordDirective", 
+		"textDirective", "fillDirective", "fillDirectiveArguments", "fillExpression", 
+		"encodingDirective", "importDataDirective", "labelName", "atName", "file", 
+		"numberList", "numericList", "numeric", "number", "lohibyte", "decNumber", 
+		"hexNumber", "binNumber", "boolean", "opcodeExtension", "fullOpcode", 
+		"opcode", "color", "opcodeConstant"
 	};
 
 	private static readonly string[] _LiteralNames = {
@@ -484,9 +485,9 @@ public partial class KickAssemblerParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 214;
+			State = 216;
 			units();
-			State = 215;
+			State = 217;
 			Match(Eof);
 			}
 		}
@@ -544,47 +545,47 @@ public partial class KickAssemblerParser : Parser {
 		EnterRule(_localctx, 4, RULE_units);
 		int _la;
 		try {
-			State = 231;
+			State = 233;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,1,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 217;
-				unit();
 				State = 219;
+				unit();
+				State = 221;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 218;
+					State = 220;
 					Match(SEMICOLON);
 					}
 					}
-					State = 221;
+					State = 223;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( _la==SEMICOLON );
-				State = 223;
+				State = 225;
 				units();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 225;
-				unit();
-				State = 226;
-				eol();
 				State = 227;
+				unit();
+				State = 228;
+				eol();
+				State = 229;
 				units();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 229;
+				State = 231;
 				unit();
 				}
 				break;
@@ -616,6 +617,9 @@ public partial class KickAssemblerParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public DirectiveContext directive() {
 			return GetRuleContext<DirectiveContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public NamedScopeContext namedScope() {
+			return GetRuleContext<NamedScopeContext>(0);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public ScopeContext scope() {
 			return GetRuleContext<ScopeContext>(0);
 		}
@@ -624,6 +628,9 @@ public partial class KickAssemblerParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public PreprocessorDirectiveContext preprocessorDirective() {
 			return GetRuleContext<PreprocessorDirectiveContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ErrorSyntaxContext errorSyntax() {
+			return GetRuleContext<ErrorSyntaxContext>(0);
 		}
 		public UnitContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -653,51 +660,121 @@ public partial class KickAssemblerParser : Parser {
 		UnitContext _localctx = new UnitContext(Context, State);
 		EnterRule(_localctx, 6, RULE_unit);
 		try {
-			State = 239;
+			State = 243;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 233;
+				State = 235;
 				instruction();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 234;
+				State = 236;
 				label();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 235;
+				State = 237;
 				directive();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 236;
-				scope();
+				State = 238;
+				namedScope();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 237;
-				compiler_statement();
+				State = 239;
+				scope();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 238;
+				State = 240;
+				compiler_statement();
+				}
+				break;
+			case 7:
+				EnterOuterAlt(_localctx, 7);
+				{
+				State = 241;
 				preprocessorDirective();
 				}
 				break;
+			case 8:
+				EnterOuterAlt(_localctx, 8);
+				{
+				State = 242;
+				errorSyntax();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ErrorSyntaxContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOT_UNQUOTED_STRING() { return GetToken(KickAssemblerParser.DOT_UNQUOTED_STRING, 0); }
+		public ErrorSyntaxContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_errorSyntax; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterErrorSyntax(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitErrorSyntax(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitErrorSyntax(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ErrorSyntaxContext errorSyntax() {
+		ErrorSyntaxContext _localctx = new ErrorSyntaxContext(Context, State);
+		EnterRule(_localctx, 8, RULE_errorSyntax);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 245;
+			_la = TokenStream.LA(1);
+			if ( !(_la==UNQUOTED_STRING || _la==DOT_UNQUOTED_STRING) ) {
+			ErrorHandler.RecoverInline(this);
+			}
+			else {
+				ErrorHandler.ReportMatch(this);
+			    Consume();
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -745,28 +822,28 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public LabelContext label() {
 		LabelContext _localctx = new LabelContext(Context, State);
-		EnterRule(_localctx, 8, RULE_label);
+		EnterRule(_localctx, 10, RULE_label);
 		try {
-			State = 248;
+			State = 254;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 241;
+				State = 247;
 				labelName();
-				State = 242;
+				State = 248;
 				Match(COLON);
-				State = 243;
+				State = 249;
 				unit();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 245;
+				State = 251;
 				labelName();
-				State = 246;
+				State = 252;
 				Match(COLON);
 				}
 				break;
@@ -817,29 +894,29 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public InstructionContext instruction() {
 		InstructionContext _localctx = new InstructionContext(Context, State);
-		EnterRule(_localctx, 10, RULE_instruction);
+		EnterRule(_localctx, 12, RULE_instruction);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 251;
+			State = 257;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==COLON) {
 				{
-				State = 250;
+				State = 256;
 				Match(COLON);
 				}
 			}
 
-			State = 253;
+			State = 259;
 			fullOpcode();
-			State = 255;
+			State = 261;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
 			case 1:
 				{
-				State = 254;
+				State = 260;
 				argumentList();
 				}
 				break;
@@ -858,8 +935,6 @@ public partial class KickAssemblerParser : Parser {
 	}
 
 	public partial class ScopeContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON() { return GetToken(KickAssemblerParser.COLON, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_BRACE() { return GetToken(KickAssemblerParser.OPEN_BRACE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public UnitsContext units() {
 			return GetRuleContext<UnitsContext>(0);
@@ -891,39 +966,77 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ScopeContext scope() {
 		ScopeContext _localctx = new ScopeContext(Context, State);
-		EnterRule(_localctx, 12, RULE_scope);
+		EnterRule(_localctx, 14, RULE_scope);
 		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 263;
+			Match(OPEN_BRACE);
+			State = 264;
+			units();
+			State = 265;
+			Match(CLOSE_BRACE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class NamedScopeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode UNQUOTED_STRING() { return GetToken(KickAssemblerParser.UNQUOTED_STRING, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON() { return GetToken(KickAssemblerParser.COLON, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_BRACE() { return GetToken(KickAssemblerParser.OPEN_BRACE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public UnitsContext units() {
+			return GetRuleContext<UnitsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_BRACE() { return GetToken(KickAssemblerParser.CLOSE_BRACE, 0); }
+		public NamedScopeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_namedScope; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.EnterNamedScope(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
+			if (typedListener != null) typedListener.ExitNamedScope(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNamedScope(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public NamedScopeContext namedScope() {
+		NamedScopeContext _localctx = new NamedScopeContext(Context, State);
+		EnterRule(_localctx, 16, RULE_namedScope);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
 			State = 267;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case UNQUOTED_STRING:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 257;
-				Match(UNQUOTED_STRING);
-				State = 258;
-				Match(COLON);
-				State = 259;
-				Match(OPEN_BRACE);
-				State = 260;
-				units();
-				State = 261;
-				Match(CLOSE_BRACE);
-				}
-				break;
-			case OPEN_BRACE:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 263;
-				Match(OPEN_BRACE);
-				State = 264;
-				units();
-				State = 265;
-				Match(CLOSE_BRACE);
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
+			Match(UNQUOTED_STRING);
+			State = 268;
+			Match(COLON);
+			State = 269;
+			Match(OPEN_BRACE);
+			State = 270;
+			units();
+			State = 271;
+			Match(CLOSE_BRACE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -974,30 +1087,30 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ArgumentListContext argumentList() {
 		ArgumentListContext _localctx = new ArgumentListContext(Context, State);
-		EnterRule(_localctx, 14, RULE_argumentList);
+		EnterRule(_localctx, 18, RULE_argumentList);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 269;
+			State = 273;
 			argument();
-			State = 274;
+			State = 278;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,6,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 270;
+					State = 274;
 					Match(COMMA);
-					State = 271;
+					State = 275;
 					argument();
 					}
 					} 
 				}
-				State = 276;
+				State = 280;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,6,Context);
 			}
 			}
 		}
@@ -1068,22 +1181,22 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ArgumentContext argument() {
 		ArgumentContext _localctx = new ArgumentContext(Context, State);
-		EnterRule(_localctx, 16, RULE_argument);
+		EnterRule(_localctx, 20, RULE_argument);
 		int _la;
 		try {
-			State = 299;
+			State = 303;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 278;
+				State = 282;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 277;
+					State = 281;
 					_la = TokenStream.LA(1);
 					if ( !(_la==PLUS || _la==MINUS) ) {
 					ErrorHandler.RecoverInline(this);
@@ -1094,7 +1207,7 @@ public partial class KickAssemblerParser : Parser {
 					}
 					}
 					}
-					State = 280;
+					State = 284;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( _la==PLUS || _la==MINUS );
@@ -1103,70 +1216,70 @@ public partial class KickAssemblerParser : Parser {
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 282;
+				State = 286;
 				Match(HASH);
-				State = 283;
+				State = 287;
 				opcodeConstant();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 284;
+				State = 288;
 				Match(HASH);
-				State = 285;
+				State = 289;
 				numeric();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 286;
+				State = 290;
 				Match(OPEN_PARENS);
-				State = 287;
+				State = 291;
 				argumentList();
-				State = 288;
+				State = 292;
 				Match(CLOSE_PARENS);
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 290;
+				State = 294;
 				Match(OPEN_BRACKET);
-				State = 291;
+				State = 295;
 				argumentList();
-				State = 292;
+				State = 296;
 				Match(CLOSE_BRACKET);
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 294;
+				State = 298;
 				labelOffsetReference();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 295;
+				State = 299;
 				Match(STAR);
-				State = 296;
+				State = 300;
 				expression(0);
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 297;
+				State = 301;
 				expression(0);
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 298;
+				State = 302;
 				Match(STAR);
 				}
 				break;
@@ -1215,26 +1328,26 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public LabelOffsetReferenceContext labelOffsetReference() {
 		LabelOffsetReferenceContext _localctx = new LabelOffsetReferenceContext(Context, State);
-		EnterRule(_localctx, 18, RULE_labelOffsetReference);
+		EnterRule(_localctx, 22, RULE_labelOffsetReference);
 		try {
-			State = 307;
+			State = 311;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,10,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 301;
+				State = 305;
 				labelName();
-				State = 302;
+				State = 306;
 				Match(MINUS);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 304;
+				State = 308;
 				labelName();
-				State = 305;
+				State = 309;
 				Match(PLUS);
 				}
 				break;
@@ -1331,122 +1444,122 @@ public partial class KickAssemblerParser : Parser {
 		int _parentState = State;
 		ExpressionContext _localctx = new ExpressionContext(Context, _parentState);
 		ExpressionContext _prevctx = _localctx;
-		int _startState = 20;
-		EnterRecursionRule(_localctx, 20, RULE_expression, _p);
+		int _startState = 24;
+		EnterRecursionRule(_localctx, 24, RULE_expression, _p);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 330;
+			State = 334;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,11,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,10,Context) ) {
 			case 1:
 				{
-				State = 310;
+				State = 314;
 				Match(OPEN_PARENS);
-				State = 311;
+				State = 315;
 				expression(0);
-				State = 312;
+				State = 316;
 				Match(CLOSE_PARENS);
 				}
 				break;
 			case 2:
 				{
-				State = 314;
+				State = 318;
 				Match(OPEN_BRACKET);
-				State = 315;
+				State = 319;
 				expression(0);
-				State = 316;
+				State = 320;
 				Match(CLOSE_BRACKET);
 				}
 				break;
 			case 3:
 				{
-				State = 318;
+				State = 322;
 				Match(PLUS);
-				State = 319;
+				State = 323;
 				expression(12);
 				}
 				break;
 			case 4:
 				{
-				State = 320;
+				State = 324;
 				Match(MINUS);
-				State = 321;
+				State = 325;
 				expression(11);
 				}
 				break;
 			case 5:
 				{
-				State = 322;
+				State = 326;
 				classFunction();
 				}
 				break;
 			case 6:
 				{
-				State = 323;
+				State = 327;
 				function();
 				}
 				break;
 			case 7:
 				{
-				State = 324;
+				State = 328;
 				numeric();
 				}
 				break;
 			case 8:
 				{
-				State = 325;
+				State = 329;
 				opcodeConstant();
 				}
 				break;
 			case 9:
 				{
-				State = 326;
+				State = 330;
 				color();
 				}
 				break;
 			case 10:
 				{
-				State = 327;
+				State = 331;
 				boolean();
 				}
 				break;
 			case 11:
 				{
-				State = 328;
+				State = 332;
 				labelName();
 				}
 				break;
 			case 12:
 				{
-				State = 329;
+				State = 333;
 				Match(STRING);
 				}
 				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 364;
+			State = 368;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,13,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,12,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 362;
+					State = 366;
 					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,12,Context) ) {
+					switch ( Interpreter.AdaptivePredict(TokenStream,11,Context) ) {
 					case 1:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 332;
+						State = 336;
 						if (!(Precpred(Context, 19))) throw new FailedPredicateException(this, "Precpred(Context, 19)");
-						State = 333;
+						State = 337;
 						binaryop();
-						State = 334;
+						State = 338;
 						expression(20);
 						}
 						break;
@@ -1454,11 +1567,11 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 336;
+						State = 340;
 						if (!(Precpred(Context, 18))) throw new FailedPredicateException(this, "Precpred(Context, 18)");
-						State = 337;
+						State = 341;
 						Match(STAR);
-						State = 338;
+						State = 342;
 						expression(19);
 						}
 						break;
@@ -1466,11 +1579,11 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 339;
+						State = 343;
 						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
-						State = 340;
+						State = 344;
 						Match(DIV);
-						State = 341;
+						State = 345;
 						expression(18);
 						}
 						break;
@@ -1478,11 +1591,11 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 342;
+						State = 346;
 						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
-						State = 343;
+						State = 347;
 						Match(PLUS);
-						State = 344;
+						State = 348;
 						expression(17);
 						}
 						break;
@@ -1490,11 +1603,11 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 345;
+						State = 349;
 						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
-						State = 346;
+						State = 350;
 						Match(MINUS);
-						State = 347;
+						State = 351;
 						expression(16);
 						}
 						break;
@@ -1502,11 +1615,11 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 348;
+						State = 352;
 						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
-						State = 349;
+						State = 353;
 						compareop();
-						State = 350;
+						State = 354;
 						expression(11);
 						}
 						break;
@@ -1514,15 +1627,15 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 352;
-						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
-						State = 353;
-						Match(INTERR);
-						State = 354;
-						expression(0);
-						State = 355;
-						Match(COLON);
 						State = 356;
+						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
+						State = 357;
+						Match(INTERR);
+						State = 358;
+						expression(0);
+						State = 359;
+						Match(COLON);
+						State = 360;
 						expression(10);
 						}
 						break;
@@ -1530,9 +1643,9 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 358;
+						State = 362;
 						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
-						State = 359;
+						State = 363;
 						Match(OP_INC);
 						}
 						break;
@@ -1540,18 +1653,18 @@ public partial class KickAssemblerParser : Parser {
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 360;
+						State = 364;
 						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
-						State = 361;
+						State = 365;
 						Match(OP_DEC);
 						}
 						break;
 					}
 					} 
 				}
-				State = 366;
+				State = 370;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,13,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,12,Context);
 			}
 			}
 		}
@@ -1599,12 +1712,12 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public BinaryopContext binaryop() {
 		BinaryopContext _localctx = new BinaryopContext(Context, State);
-		EnterRule(_localctx, 22, RULE_binaryop);
+		EnterRule(_localctx, 26, RULE_binaryop);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 367;
+			State = 371;
 			_la = TokenStream.LA(1);
 			if ( !(((((_la - 103)) & ~0x3f) == 0 && ((1L << (_la - 103)) & 1610612759L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1659,15 +1772,15 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public Assignment_expressionContext assignment_expression() {
 		Assignment_expressionContext _localctx = new Assignment_expressionContext(Context, State);
-		EnterRule(_localctx, 24, RULE_assignment_expression);
+		EnterRule(_localctx, 28, RULE_assignment_expression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 369;
+			State = 373;
 			_localctx.name = Match(UNQUOTED_STRING);
-			State = 370;
+			State = 374;
 			Match(ASSIGNMENT);
-			State = 371;
+			State = 375;
 			expression(0);
 			}
 		}
@@ -1714,13 +1827,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public Shorthand_assignment_expressionContext shorthand_assignment_expression() {
 		Shorthand_assignment_expressionContext _localctx = new Shorthand_assignment_expressionContext(Context, State);
-		EnterRule(_localctx, 26, RULE_shorthand_assignment_expression);
+		EnterRule(_localctx, 30, RULE_shorthand_assignment_expression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 373;
+			State = 377;
 			_localctx.name = Match(UNQUOTED_STRING);
-			State = 374;
+			State = 378;
 			unary_operator();
 			}
 		}
@@ -1773,62 +1886,62 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public Unary_operatorContext unary_operator() {
 		Unary_operatorContext _localctx = new Unary_operatorContext(Context, State);
-		EnterRule(_localctx, 28, RULE_unary_operator);
+		EnterRule(_localctx, 32, RULE_unary_operator);
 		try {
-			State = 388;
+			State = 392;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,13,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 376;
+				State = 380;
 				Match(PLUS);
-				State = 377;
+				State = 381;
 				Match(PLUS);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 378;
+				State = 382;
 				Match(MINUS);
-				State = 379;
+				State = 383;
 				Match(MINUS);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 380;
+				State = 384;
 				Match(PLUS);
-				State = 381;
+				State = 385;
 				Match(ASSIGNMENT);
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 382;
+				State = 386;
 				Match(MINUS);
-				State = 383;
+				State = 387;
 				Match(ASSIGNMENT);
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 384;
+				State = 388;
 				Match(STAR);
-				State = 385;
+				State = 389;
 				Match(ASSIGNMENT);
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 386;
+				State = 390;
 				Match(DIV);
-				State = 387;
+				State = 391;
 				Match(ASSIGNMENT);
 				}
 				break;
@@ -1878,12 +1991,12 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public CompareopContext compareop() {
 		CompareopContext _localctx = new CompareopContext(Context, State);
-		EnterRule(_localctx, 30, RULE_compareop);
+		EnterRule(_localctx, 34, RULE_compareop);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 390;
+			State = 394;
 			_la = TokenStream.LA(1);
 			if ( !(((((_la - 110)) & ~0x3f) == 0 && ((1L << (_la - 110)) & 15363L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1942,30 +2055,30 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ClassFunctionContext classFunction() {
 		ClassFunctionContext _localctx = new ClassFunctionContext(Context, State);
-		EnterRule(_localctx, 32, RULE_classFunction);
+		EnterRule(_localctx, 36, RULE_classFunction);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 392;
+			State = 396;
 			Match(STRING);
-			State = 393;
-			Match(DOT);
-			State = 394;
-			Match(STRING);
-			State = 395;
-			Match(OPEN_PARENS);
 			State = 397;
+			Match(DOT);
+			State = 398;
+			Match(STRING);
+			State = 399;
+			Match(OPEN_PARENS);
+			State = 401;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==HASH || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & 7288033640447L) != 0) || ((((_la - 137)) & ~0x3f) == 0 && ((1L << (_la - 137)) & 127L) != 0) || ((((_la - 208)) & ~0x3f) == 0 && ((1L << (_la - 208)) & -1L) != 0) || ((((_la - 272)) & ~0x3f) == 0 && ((1L << (_la - 272)) & -1L) != 0) || ((((_la - 336)) & ~0x3f) == 0 && ((1L << (_la - 336)) & -1L) != 0) || ((((_la - 400)) & ~0x3f) == 0 && ((1L << (_la - 400)) & -1L) != 0) || ((((_la - 464)) & ~0x3f) == 0 && ((1L << (_la - 464)) & 2199023255551L) != 0)) {
 				{
-				State = 396;
+				State = 400;
 				argumentList();
 				}
 			}
 
-			State = 399;
+			State = 403;
 			Match(CLOSE_PARENS);
 			}
 		}
@@ -2013,26 +2126,26 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FunctionContext function() {
 		FunctionContext _localctx = new FunctionContext(Context, State);
-		EnterRule(_localctx, 34, RULE_function);
+		EnterRule(_localctx, 38, RULE_function);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 401;
+			State = 405;
 			Match(UNQUOTED_STRING);
-			State = 402;
+			State = 406;
 			Match(OPEN_PARENS);
-			State = 404;
+			State = 408;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==HASH || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & 7288033640447L) != 0) || ((((_la - 137)) & ~0x3f) == 0 && ((1L << (_la - 137)) & 127L) != 0) || ((((_la - 208)) & ~0x3f) == 0 && ((1L << (_la - 208)) & -1L) != 0) || ((((_la - 272)) & ~0x3f) == 0 && ((1L << (_la - 272)) & -1L) != 0) || ((((_la - 336)) & ~0x3f) == 0 && ((1L << (_la - 336)) & -1L) != 0) || ((((_la - 400)) & ~0x3f) == 0 && ((1L << (_la - 400)) & -1L) != 0) || ((((_la - 464)) & ~0x3f) == 0 && ((1L << (_la - 464)) & 2199023255551L) != 0)) {
 				{
-				State = 403;
+				State = 407;
 				argumentList();
 				}
 			}
 
-			State = 406;
+			State = 410;
 			Match(CLOSE_PARENS);
 			}
 		}
@@ -2077,11 +2190,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ConditionContext condition() {
 		ConditionContext _localctx = new ConditionContext(Context, State);
-		EnterRule(_localctx, 36, RULE_condition);
+		EnterRule(_localctx, 40, RULE_condition);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 408;
+			State = 412;
 			expression(0);
 			}
 		}
@@ -2135,9 +2248,6 @@ public partial class KickAssemblerParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StructContext @struct() {
 			return GetRuleContext<StructContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public DefineContext define() {
-			return GetRuleContext<DefineContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public FunctionDefineContext functionDefine() {
 			return GetRuleContext<FunctionDefineContext>(0);
@@ -2219,219 +2329,211 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public Compiler_statementContext compiler_statement() {
 		Compiler_statementContext _localctx = new Compiler_statementContext(Context, State);
-		EnterRule(_localctx, 38, RULE_compiler_statement);
+		EnterRule(_localctx, 42, RULE_compiler_statement);
 		try {
-			State = 442;
+			State = 445;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case PRINT:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 410;
+				State = 414;
 				print();
 				}
 				break;
 			case PRINTNOW:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 411;
+				State = 415;
 				printnow();
 				}
 				break;
 			case DOTVAR:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 412;
+				State = 416;
 				var();
 				}
 				break;
 			case CONST:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 413;
+				State = 417;
 				@const();
 				}
 				break;
 			case IF:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 414;
+				State = 418;
 				@if();
 				}
 				break;
 			case ERRORIF:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 415;
+				State = 419;
 				errorif();
 				}
 				break;
 			case EVAL:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 416;
+				State = 420;
 				eval();
 				}
 				break;
 			case BREAK:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 417;
+				State = 421;
 				@break();
 				}
 				break;
 			case WATCH:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 418;
+				State = 422;
 				watch();
 				}
 				break;
 			case ENUM:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 419;
+				State = 423;
 				@enum();
 				}
 				break;
 			case FOR:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 420;
+				State = 424;
 				@for();
 				}
 				break;
 			case WHILE:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 421;
+				State = 425;
 				@while();
 				}
 				break;
 			case STRUCT:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 422;
+				State = 426;
 				@struct();
 				}
 				break;
-			case OPEN_BRACE:
-			case UNQUOTED_STRING:
+			case FUNCTION:
 				EnterOuterAlt(_localctx, 14);
 				{
-				State = 423;
-				define();
-				}
-				break;
-			case FUNCTION:
-				EnterOuterAlt(_localctx, 15);
-				{
-				State = 424;
+				State = 427;
 				functionDefine();
 				}
 				break;
 			case MACRO:
-				EnterOuterAlt(_localctx, 16);
+				EnterOuterAlt(_localctx, 15);
 				{
-				State = 425;
+				State = 428;
 				macroDefine();
 				}
 				break;
 			case PSEUDOCOMMAND:
-				EnterOuterAlt(_localctx, 17);
+				EnterOuterAlt(_localctx, 16);
 				{
-				State = 426;
+				State = 429;
 				pseudoCommandDefine();
 				}
 				break;
 			case NAMESPACE:
-				EnterOuterAlt(_localctx, 18);
+				EnterOuterAlt(_localctx, 17);
 				{
-				State = 427;
+				State = 430;
 				@namespace();
 				}
 				break;
 			case LABEL:
-				EnterOuterAlt(_localctx, 19);
+				EnterOuterAlt(_localctx, 18);
 				{
-				State = 428;
+				State = 431;
 				labelDirective();
 				}
 				break;
 			case SEGMENT:
-				EnterOuterAlt(_localctx, 20);
+				EnterOuterAlt(_localctx, 19);
 				{
-				State = 429;
+				State = 432;
 				segment();
 				}
 				break;
 			case SEGMENTDEF:
-				EnterOuterAlt(_localctx, 21);
+				EnterOuterAlt(_localctx, 20);
 				{
-				State = 430;
+				State = 433;
 				segmentDef();
 				}
 				break;
 			case SEGMENTOUT:
-				EnterOuterAlt(_localctx, 22);
+				EnterOuterAlt(_localctx, 21);
 				{
-				State = 431;
+				State = 434;
 				segmentOut();
 				}
 				break;
 			case PLUGIN:
-				EnterOuterAlt(_localctx, 23);
+				EnterOuterAlt(_localctx, 22);
 				{
-				State = 432;
+				State = 435;
 				plugin();
 				}
 				break;
 			case FILE:
-				EnterOuterAlt(_localctx, 24);
+				EnterOuterAlt(_localctx, 23);
 				{
-				State = 433;
+				State = 436;
 				fileDirective();
 				}
 				break;
 			case DISK:
-				EnterOuterAlt(_localctx, 25);
+				EnterOuterAlt(_localctx, 24);
 				{
-				State = 434;
+				State = 437;
 				diskDirective();
 				}
 				break;
 			case MODIFY:
-				EnterOuterAlt(_localctx, 26);
+				EnterOuterAlt(_localctx, 25);
 				{
-				State = 435;
+				State = 438;
 				modify();
 				}
 				break;
 			case FILEMODIFY:
-				EnterOuterAlt(_localctx, 27);
+				EnterOuterAlt(_localctx, 26);
 				{
-				State = 436;
+				State = 439;
 				fileModify();
 				}
 				break;
 			case RETURN:
-				EnterOuterAlt(_localctx, 28);
+				EnterOuterAlt(_localctx, 27);
 				{
-				State = 437;
+				State = 440;
 				@return();
 				}
 				break;
 			case ASSERT:
-				EnterOuterAlt(_localctx, 29);
+				EnterOuterAlt(_localctx, 28);
 				{
-				State = 438;
+				State = 441;
 				assert();
 				}
 				break;
 			case ASSERTERROR:
-				EnterOuterAlt(_localctx, 30);
+				EnterOuterAlt(_localctx, 29);
 				{
-				State = 439;
+				State = 442;
 				assertError();
 				}
 				break;
@@ -2441,16 +2543,16 @@ public partial class KickAssemblerParser : Parser {
 			case HEX_NUMBER:
 			case BIN_NUMBER:
 			case CHAR:
-				EnterOuterAlt(_localctx, 31);
+				EnterOuterAlt(_localctx, 30);
 				{
-				State = 440;
+				State = 443;
 				pseudopc();
 				}
 				break;
 			case ZP:
-				EnterOuterAlt(_localctx, 32);
+				EnterOuterAlt(_localctx, 31);
 				{
-				State = 441;
+				State = 444;
 				zp();
 				}
 				break;
@@ -2500,13 +2602,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PrintContext print() {
 		PrintContext _localctx = new PrintContext(Context, State);
-		EnterRule(_localctx, 40, RULE_print);
+		EnterRule(_localctx, 44, RULE_print);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 444;
+			State = 447;
 			Match(PRINT);
-			State = 445;
+			State = 448;
 			expression(0);
 			}
 		}
@@ -2552,13 +2654,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PrintnowContext printnow() {
 		PrintnowContext _localctx = new PrintnowContext(Context, State);
-		EnterRule(_localctx, 42, RULE_printnow);
+		EnterRule(_localctx, 46, RULE_printnow);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 447;
+			State = 450;
 			Match(PRINTNOW);
-			State = 448;
+			State = 451;
 			expression(0);
 			}
 		}
@@ -2606,22 +2708,22 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ForInitContext forInit() {
 		ForInitContext _localctx = new ForInitContext(Context, State);
-		EnterRule(_localctx, 44, RULE_forInit);
+		EnterRule(_localctx, 48, RULE_forInit);
 		try {
-			State = 452;
+			State = 455;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case VAR:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 450;
+				State = 453;
 				forVar();
 				}
 				break;
 			case UNQUOTED_STRING:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 451;
+				State = 454;
 				assignment_expression();
 				}
 				break;
@@ -2671,13 +2773,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ForVarContext forVar() {
 		ForVarContext _localctx = new ForVarContext(Context, State);
-		EnterRule(_localctx, 46, RULE_forVar);
+		EnterRule(_localctx, 50, RULE_forVar);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 454;
+			State = 457;
 			Match(VAR);
-			State = 455;
+			State = 458;
 			assignment_expression();
 			}
 		}
@@ -2723,13 +2825,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public VarContext var() {
 		VarContext _localctx = new VarContext(Context, State);
-		EnterRule(_localctx, 48, RULE_var);
+		EnterRule(_localctx, 52, RULE_var);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 457;
+			State = 460;
 			Match(DOTVAR);
-			State = 458;
+			State = 461;
 			assignment_expression();
 			}
 		}
@@ -2775,13 +2877,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ConstContext @const() {
 		ConstContext _localctx = new ConstContext(Context, State);
-		EnterRule(_localctx, 50, RULE_const);
+		EnterRule(_localctx, 54, RULE_const);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 460;
+			State = 463;
 			Match(CONST);
-			State = 461;
+			State = 464;
 			assignment_expression();
 			}
 		}
@@ -2836,28 +2938,28 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public IfContext @if() {
 		IfContext _localctx = new IfContext(Context, State);
-		EnterRule(_localctx, 52, RULE_if);
+		EnterRule(_localctx, 56, RULE_if);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 463;
-			Match(IF);
-			State = 464;
-			Match(OPEN_PARENS);
-			State = 465;
-			expression(0);
 			State = 466;
-			Match(CLOSE_PARENS);
+			Match(IF);
 			State = 467;
-			unit();
+			Match(OPEN_PARENS);
+			State = 468;
+			expression(0);
+			State = 469;
+			Match(CLOSE_PARENS);
 			State = 470;
+			unit();
+			State = 473;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
 			case 1:
 				{
-				State = 468;
+				State = 471;
 				Match(ELSE);
-				State = 469;
+				State = 472;
 				unit();
 				}
 				break;
@@ -2910,21 +3012,21 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ErrorifContext errorif() {
 		ErrorifContext _localctx = new ErrorifContext(Context, State);
-		EnterRule(_localctx, 54, RULE_errorif);
+		EnterRule(_localctx, 58, RULE_errorif);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 472;
-			Match(ERRORIF);
-			State = 473;
-			Match(OPEN_PARENS);
-			State = 474;
-			expression(0);
 			State = 475;
-			Match(CLOSE_PARENS);
+			Match(ERRORIF);
 			State = 476;
-			Match(COMMA);
+			Match(OPEN_PARENS);
 			State = 477;
+			expression(0);
+			State = 478;
+			Match(CLOSE_PARENS);
+			State = 479;
+			Match(COMMA);
+			State = 480;
 			Match(STRING);
 			}
 		}
@@ -2970,13 +3072,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EvalContext eval() {
 		EvalContext _localctx = new EvalContext(Context, State);
-		EnterRule(_localctx, 56, RULE_eval);
+		EnterRule(_localctx, 60, RULE_eval);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 479;
+			State = 482;
 			Match(EVAL);
-			State = 480;
+			State = 483;
 			evalAssignment();
 			}
 		}
@@ -3024,22 +3126,22 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EvalAssignmentContext evalAssignment() {
 		EvalAssignmentContext _localctx = new EvalAssignmentContext(Context, State);
-		EnterRule(_localctx, 58, RULE_evalAssignment);
+		EnterRule(_localctx, 62, RULE_evalAssignment);
 		try {
-			State = 484;
+			State = 487;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,20,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 482;
+				State = 485;
 				assignment_expression();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 483;
+				State = 486;
 				shorthand_assignment_expression();
 				}
 				break;
@@ -3085,19 +3187,19 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public BreakContext @break() {
 		BreakContext _localctx = new BreakContext(Context, State);
-		EnterRule(_localctx, 60, RULE_break);
+		EnterRule(_localctx, 64, RULE_break);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 486;
+			State = 489;
 			Match(BREAK);
-			State = 488;
+			State = 491;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==STRING) {
 				{
-				State = 487;
+				State = 490;
 				Match(STRING);
 				}
 			}
@@ -3146,13 +3248,13 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public WatchContext watch() {
 		WatchContext _localctx = new WatchContext(Context, State);
-		EnterRule(_localctx, 62, RULE_watch);
+		EnterRule(_localctx, 66, RULE_watch);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 490;
+			State = 493;
 			Match(WATCH);
-			State = 491;
+			State = 494;
 			watchArguments();
 			}
 		}
@@ -3205,50 +3307,50 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public WatchArgumentsContext watchArguments() {
 		WatchArgumentsContext _localctx = new WatchArgumentsContext(Context, State);
-		EnterRule(_localctx, 64, RULE_watchArguments);
+		EnterRule(_localctx, 68, RULE_watchArguments);
 		int _la;
 		try {
-			State = 506;
+			State = 509;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,23,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,22,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 493;
+				State = 496;
 				expression(0);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 494;
+				State = 497;
 				expression(0);
-				State = 495;
+				State = 498;
 				Match(COMMA);
-				State = 496;
+				State = 499;
 				expression(0);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 498;
-				expression(0);
-				State = 499;
-				Match(COMMA);
 				State = 501;
+				expression(0);
+				State = 502;
+				Match(COMMA);
+				State = 504;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & 7285886156799L) != 0) || ((((_la - 137)) & ~0x3f) == 0 && ((1L << (_la - 137)) & 127L) != 0) || ((((_la - 208)) & ~0x3f) == 0 && ((1L << (_la - 208)) & -1L) != 0) || ((((_la - 272)) & ~0x3f) == 0 && ((1L << (_la - 272)) & -1L) != 0) || ((((_la - 336)) & ~0x3f) == 0 && ((1L << (_la - 336)) & -1L) != 0) || ((((_la - 400)) & ~0x3f) == 0 && ((1L << (_la - 400)) & -1L) != 0) || ((((_la - 464)) & ~0x3f) == 0 && ((1L << (_la - 464)) & 2199023255551L) != 0)) {
 					{
-					State = 500;
+					State = 503;
 					expression(0);
 					}
 				}
 
-				State = 503;
+				State = 506;
 				Match(COMMA);
-				State = 504;
+				State = 507;
 				Match(STRING);
 				}
 				break;
@@ -3298,26 +3400,26 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EnumContext @enum() {
 		EnumContext _localctx = new EnumContext(Context, State);
-		EnterRule(_localctx, 66, RULE_enum);
+		EnterRule(_localctx, 70, RULE_enum);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 508;
-			Match(ENUM);
-			State = 509;
-			Match(OPEN_BRACE);
 			State = 511;
+			Match(ENUM);
+			State = 512;
+			Match(OPEN_BRACE);
+			State = 514;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==UNQUOTED_STRING) {
 				{
-				State = 510;
+				State = 513;
 				enumValues();
 				}
 			}
 
-			State = 513;
+			State = 516;
 			Match(CLOSE_BRACE);
 			}
 		}
@@ -3369,26 +3471,26 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EnumValuesContext enumValues() {
 		EnumValuesContext _localctx = new EnumValuesContext(Context, State);
-		EnterRule(_localctx, 68, RULE_enumValues);
+		EnterRule(_localctx, 72, RULE_enumValues);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 515;
+			State = 518;
 			enumValue();
-			State = 520;
+			State = 523;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 516;
+				State = 519;
 				Match(COMMA);
-				State = 517;
+				State = 520;
 				enumValue();
 				}
 				}
-				State = 522;
+				State = 525;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -3437,21 +3539,21 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EnumValueContext enumValue() {
 		EnumValueContext _localctx = new EnumValueContext(Context, State);
-		EnterRule(_localctx, 70, RULE_enumValue);
+		EnterRule(_localctx, 74, RULE_enumValue);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 523;
-			Match(UNQUOTED_STRING);
 			State = 526;
+			Match(UNQUOTED_STRING);
+			State = 529;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==ASSIGNMENT) {
 				{
-				State = 524;
+				State = 527;
 				Match(ASSIGNMENT);
-				State = 525;
+				State = 528;
 				number();
 				}
 			}
@@ -3515,57 +3617,57 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ForContext @for() {
 		ForContext _localctx = new ForContext(Context, State);
-		EnterRule(_localctx, 72, RULE_for);
+		EnterRule(_localctx, 76, RULE_for);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 528;
-			Match(FOR);
-			State = 529;
-			Match(OPEN_PARENS);
 			State = 531;
+			Match(FOR);
+			State = 532;
+			Match(OPEN_PARENS);
+			State = 534;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==VAR || _la==UNQUOTED_STRING) {
 				{
-				State = 530;
+				State = 533;
 				forInit();
 				}
 			}
 
-			State = 533;
+			State = 536;
 			Match(SEMICOLON);
-			State = 535;
+			State = 538;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & 7285886156799L) != 0) || ((((_la - 137)) & ~0x3f) == 0 && ((1L << (_la - 137)) & 127L) != 0) || ((((_la - 208)) & ~0x3f) == 0 && ((1L << (_la - 208)) & -1L) != 0) || ((((_la - 272)) & ~0x3f) == 0 && ((1L << (_la - 272)) & -1L) != 0) || ((((_la - 336)) & ~0x3f) == 0 && ((1L << (_la - 336)) & -1L) != 0) || ((((_la - 400)) & ~0x3f) == 0 && ((1L << (_la - 400)) & -1L) != 0) || ((((_la - 464)) & ~0x3f) == 0 && ((1L << (_la - 464)) & 2199023255551L) != 0)) {
 				{
-				State = 534;
+				State = 537;
 				condition();
 				}
 			}
 
-			State = 537;
+			State = 540;
 			Match(SEMICOLON);
-			State = 539;
+			State = 542;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & 7285886156799L) != 0) || ((((_la - 137)) & ~0x3f) == 0 && ((1L << (_la - 137)) & 127L) != 0) || ((((_la - 208)) & ~0x3f) == 0 && ((1L << (_la - 208)) & -1L) != 0) || ((((_la - 272)) & ~0x3f) == 0 && ((1L << (_la - 272)) & -1L) != 0) || ((((_la - 336)) & ~0x3f) == 0 && ((1L << (_la - 336)) & -1L) != 0) || ((((_la - 400)) & ~0x3f) == 0 && ((1L << (_la - 400)) & -1L) != 0) || ((((_la - 464)) & ~0x3f) == 0 && ((1L << (_la - 464)) & 2199023255551L) != 0)) {
 				{
-				State = 538;
+				State = 541;
 				expression(0);
 				}
 			}
 
-			State = 541;
+			State = 544;
 			Match(CLOSE_PARENS);
-			State = 543;
+			State = 546;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,30,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,29,Context) ) {
 			case 1:
 				{
-				State = 542;
+				State = 545;
 				unit();
 				}
 				break;
@@ -3619,19 +3721,19 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public WhileContext @while() {
 		WhileContext _localctx = new WhileContext(Context, State);
-		EnterRule(_localctx, 74, RULE_while);
+		EnterRule(_localctx, 78, RULE_while);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 545;
-			Match(WHILE);
-			State = 546;
-			Match(OPEN_PARENS);
-			State = 547;
-			condition();
 			State = 548;
-			Match(CLOSE_PARENS);
+			Match(WHILE);
 			State = 549;
+			Match(OPEN_PARENS);
+			State = 550;
+			condition();
+			State = 551;
+			Match(CLOSE_PARENS);
+			State = 552;
 			unit();
 			}
 		}
@@ -3680,19 +3782,19 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public StructContext @struct() {
 		StructContext _localctx = new StructContext(Context, State);
-		EnterRule(_localctx, 76, RULE_struct);
+		EnterRule(_localctx, 80, RULE_struct);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 551;
-			Match(STRUCT);
-			State = 552;
-			Match(UNQUOTED_STRING);
-			State = 553;
-			Match(OPEN_BRACE);
 			State = 554;
-			variableList();
+			Match(STRUCT);
 			State = 555;
+			Match(UNQUOTED_STRING);
+			State = 556;
+			Match(OPEN_BRACE);
+			State = 557;
+			variableList();
+			State = 558;
 			Match(CLOSE_BRACE);
 			}
 		}
@@ -3744,40 +3846,43 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public VariableListContext variableList() {
 		VariableListContext _localctx = new VariableListContext(Context, State);
-		EnterRule(_localctx, 78, RULE_variableList);
+		EnterRule(_localctx, 82, RULE_variableList);
 		int _la;
 		try {
-			State = 566;
+			State = 569;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,32,Context) ) {
-			case 1:
+			switch (TokenStream.LA(1)) {
+			case UNQUOTED_STRING:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 557;
+				State = 560;
 				variable();
-				State = 562;
+				State = 565;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					State = 558;
+					State = 561;
 					Match(COMMA);
-					State = 559;
+					State = 562;
 					variable();
 					}
 					}
-					State = 564;
+					State = 567;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
 				}
 				break;
-			case 2:
+			case CLOSE_BRACE:
+			case CLOSE_PARENS:
 				EnterOuterAlt(_localctx, 2);
 				{
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3819,66 +3924,12 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public VariableContext variable() {
 		VariableContext _localctx = new VariableContext(Context, State);
-		EnterRule(_localctx, 80, RULE_variable);
+		EnterRule(_localctx, 84, RULE_variable);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 568;
-			Match(UNQUOTED_STRING);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class DefineContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public VariableListContext variableList() {
-			return GetRuleContext<VariableListContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ScopeContext scope() {
-			return GetRuleContext<ScopeContext>(0);
-		}
-		public DefineContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_define; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
-			if (typedListener != null) typedListener.EnterDefine(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			IKickAssemblerParserListener typedListener = listener as IKickAssemblerParserListener;
-			if (typedListener != null) typedListener.ExitDefine(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IKickAssemblerParserVisitor<TResult> typedVisitor = visitor as IKickAssemblerParserVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitDefine(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public DefineContext define() {
-		DefineContext _localctx = new DefineContext(Context, State);
-		EnterRule(_localctx, 82, RULE_define);
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 570;
-			variableList();
 			State = 571;
-			scope();
+			Match(UNQUOTED_STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3931,7 +3982,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FunctionDefineContext functionDefine() {
 		FunctionDefineContext _localctx = new FunctionDefineContext(Context, State);
-		EnterRule(_localctx, 84, RULE_functionDefine);
+		EnterRule(_localctx, 86, RULE_functionDefine);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -3991,7 +4042,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ReturnContext @return() {
 		ReturnContext _localctx = new ReturnContext(Context, State);
-		EnterRule(_localctx, 86, RULE_return);
+		EnterRule(_localctx, 88, RULE_return);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4051,7 +4102,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public MacroDefineContext macroDefine() {
 		MacroDefineContext _localctx = new MacroDefineContext(Context, State);
-		EnterRule(_localctx, 88, RULE_macroDefine);
+		EnterRule(_localctx, 90, RULE_macroDefine);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4112,7 +4163,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PseudoCommandDefineContext pseudoCommandDefine() {
 		PseudoCommandDefineContext _localctx = new PseudoCommandDefineContext(Context, State);
-		EnterRule(_localctx, 90, RULE_pseudoCommandDefine);
+		EnterRule(_localctx, 92, RULE_pseudoCommandDefine);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4170,7 +4221,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PseudoCommandDefineArgumentsContext pseudoCommandDefineArguments() {
 		PseudoCommandDefineArgumentsContext _localctx = new PseudoCommandDefineArgumentsContext(Context, State);
-		EnterRule(_localctx, 92, RULE_pseudoCommandDefineArguments);
+		EnterRule(_localctx, 94, RULE_pseudoCommandDefineArguments);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
@@ -4179,7 +4230,7 @@ public partial class KickAssemblerParser : Parser {
 			Match(UNQUOTED_STRING);
 			State = 599;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,33,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,32,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
@@ -4193,7 +4244,7 @@ public partial class KickAssemblerParser : Parser {
 				}
 				State = 601;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,33,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,32,Context);
 			}
 			}
 		}
@@ -4240,7 +4291,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public NamespaceContext @namespace() {
 		NamespaceContext _localctx = new NamespaceContext(Context, State);
-		EnterRule(_localctx, 94, RULE_namespace);
+		EnterRule(_localctx, 96, RULE_namespace);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4250,7 +4301,7 @@ public partial class KickAssemblerParser : Parser {
 			Match(UNQUOTED_STRING);
 			State = 605;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,34,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,33,Context) ) {
 			case 1:
 				{
 				State = 604;
@@ -4305,7 +4356,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public LabelDirectiveContext labelDirective() {
 		LabelDirectiveContext _localctx = new LabelDirectiveContext(Context, State);
-		EnterRule(_localctx, 96, RULE_labelDirective);
+		EnterRule(_localctx, 98, RULE_labelDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4357,7 +4408,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PluginContext plugin() {
 		PluginContext _localctx = new PluginContext(Context, State);
-		EnterRule(_localctx, 98, RULE_plugin);
+		EnterRule(_localctx, 100, RULE_plugin);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4412,11 +4463,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public SegmentContext segment() {
 		SegmentContext _localctx = new SegmentContext(Context, State);
-		EnterRule(_localctx, 100, RULE_segment);
+		EnterRule(_localctx, 102, RULE_segment);
 		try {
 			State = 622;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,35,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,34,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
@@ -4494,7 +4545,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public SegmentDefContext segmentDef() {
 		SegmentDefContext _localctx = new SegmentDefContext(Context, State);
-		EnterRule(_localctx, 102, RULE_segmentDef);
+		EnterRule(_localctx, 104, RULE_segmentDef);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4549,7 +4600,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public SegmentOutContext segmentOut() {
 		SegmentOutContext _localctx = new SegmentOutContext(Context, State);
-		EnterRule(_localctx, 104, RULE_segmentOut);
+		EnterRule(_localctx, 106, RULE_segmentOut);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4603,7 +4654,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FileDirectiveContext fileDirective() {
 		FileDirectiveContext _localctx = new FileDirectiveContext(Context, State);
-		EnterRule(_localctx, 106, RULE_fileDirective);
+		EnterRule(_localctx, 108, RULE_fileDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -4661,7 +4712,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DiskDirectiveContext diskDirective() {
 		DiskDirectiveContext _localctx = new DiskDirectiveContext(Context, State);
-		EnterRule(_localctx, 108, RULE_diskDirective);
+		EnterRule(_localctx, 110, RULE_diskDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -4736,7 +4787,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DiskDirectiveContentContext diskDirectiveContent() {
 		DiskDirectiveContentContext _localctx = new DiskDirectiveContentContext(Context, State);
-		EnterRule(_localctx, 110, RULE_diskDirectiveContent);
+		EnterRule(_localctx, 112, RULE_diskDirectiveContent);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -4807,7 +4858,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ParameterMapContext parameterMap() {
 		ParameterMapContext _localctx = new ParameterMapContext(Context, State);
-		EnterRule(_localctx, 112, RULE_parameterMap);
+		EnterRule(_localctx, 114, RULE_parameterMap);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -4880,7 +4931,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ParameterMapItemsContext parameterMapItems() {
 		ParameterMapItemsContext _localctx = new ParameterMapItemsContext(Context, State);
-		EnterRule(_localctx, 114, RULE_parameterMapItems);
+		EnterRule(_localctx, 116, RULE_parameterMapItems);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -4952,7 +5003,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ParameterMapItemContext parameterMapItem() {
 		ParameterMapItemContext _localctx = new ParameterMapItemContext(Context, State);
-		EnterRule(_localctx, 116, RULE_parameterMapItem);
+		EnterRule(_localctx, 118, RULE_parameterMapItem);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5034,7 +5085,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ModifyContext modify() {
 		ModifyContext _localctx = new ModifyContext(Context, State);
-		EnterRule(_localctx, 118, RULE_modify);
+		EnterRule(_localctx, 120, RULE_modify);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5095,7 +5146,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FileModifyContext fileModify() {
 		FileModifyContext _localctx = new FileModifyContext(Context, State);
-		EnterRule(_localctx, 120, RULE_fileModify);
+		EnterRule(_localctx, 122, RULE_fileModify);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5158,7 +5209,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public AssertContext assert() {
 		AssertContext _localctx = new AssertContext(Context, State);
-		EnterRule(_localctx, 122, RULE_assert);
+		EnterRule(_localctx, 124, RULE_assert);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5217,7 +5268,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public AssertErrorContext assertError() {
 		AssertErrorContext _localctx = new AssertErrorContext(Context, State);
-		EnterRule(_localctx, 124, RULE_assertError);
+		EnterRule(_localctx, 126, RULE_assertError);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5273,7 +5324,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PseudopcContext pseudopc() {
 		PseudopcContext _localctx = new PseudopcContext(Context, State);
-		EnterRule(_localctx, 126, RULE_pseudopc);
+		EnterRule(_localctx, 128, RULE_pseudopc);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5327,7 +5378,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ZpContext zp() {
 		ZpContext _localctx = new ZpContext(Context, State);
-		EnterRule(_localctx, 128, RULE_zp);
+		EnterRule(_localctx, 130, RULE_zp);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5385,7 +5436,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ZpArgumentListContext zpArgumentList() {
 		ZpArgumentListContext _localctx = new ZpArgumentListContext(Context, State);
-		EnterRule(_localctx, 130, RULE_zpArgumentList);
+		EnterRule(_localctx, 132, RULE_zpArgumentList);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -5452,7 +5503,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ZpArgumentContext zpArgument() {
 		ZpArgumentContext _localctx = new ZpArgumentContext(Context, State);
-		EnterRule(_localctx, 132, RULE_zpArgument);
+		EnterRule(_localctx, 134, RULE_zpArgument);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5505,7 +5556,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FileNameContext fileName() {
 		FileNameContext _localctx = new FileNameContext(Context, State);
-		EnterRule(_localctx, 134, RULE_fileName);
+		EnterRule(_localctx, 136, RULE_fileName);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5569,7 +5620,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorDirectiveContext preprocessorDirective() {
 		PreprocessorDirectiveContext _localctx = new PreprocessorDirectiveContext(Context, State);
-		EnterRule(_localctx, 136, RULE_preprocessorDirective);
+		EnterRule(_localctx, 138, RULE_preprocessorDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5657,7 +5708,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorDefineContext preprocessorDefine() {
 		PreprocessorDefineContext _localctx = new PreprocessorDefineContext(Context, State);
-		EnterRule(_localctx, 138, RULE_preprocessorDefine);
+		EnterRule(_localctx, 140, RULE_preprocessorDefine);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5707,7 +5758,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorUndefContext preprocessorUndef() {
 		PreprocessorUndefContext _localctx = new PreprocessorUndefContext(Context, State);
-		EnterRule(_localctx, 140, RULE_preprocessorUndef);
+		EnterRule(_localctx, 142, RULE_preprocessorUndef);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5758,7 +5809,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorImportContext preprocessorImport() {
 		PreprocessorImportContext _localctx = new PreprocessorImportContext(Context, State);
-		EnterRule(_localctx, 142, RULE_preprocessorImport);
+		EnterRule(_localctx, 144, RULE_preprocessorImport);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5810,7 +5861,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorImportIfContext preprocessorImportIf() {
 		PreprocessorImportIfContext _localctx = new PreprocessorImportIfContext(Context, State);
-		EnterRule(_localctx, 144, RULE_preprocessorImportIf);
+		EnterRule(_localctx, 146, RULE_preprocessorImportIf);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5863,7 +5914,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorImportOnceContext preprocessorImportOnce() {
 		PreprocessorImportOnceContext _localctx = new PreprocessorImportOnceContext(Context, State);
-		EnterRule(_localctx, 146, RULE_preprocessorImportOnce);
+		EnterRule(_localctx, 148, RULE_preprocessorImportOnce);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -5928,7 +5979,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorIfContext preprocessorIf() {
 		PreprocessorIfContext _localctx = new PreprocessorIfContext(Context, State);
-		EnterRule(_localctx, 148, RULE_preprocessorIf);
+		EnterRule(_localctx, 150, RULE_preprocessorIf);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -6020,7 +6071,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public PreprocessorBlockContext preprocessorBlock() {
 		PreprocessorBlockContext _localctx = new PreprocessorBlockContext(Context, State);
-		EnterRule(_localctx, 150, RULE_preprocessorBlock);
+		EnterRule(_localctx, 152, RULE_preprocessorBlock);
 		try {
 			State = 766;
 			ErrorHandler.Sync(this);
@@ -6145,6 +6196,7 @@ public partial class KickAssemblerParser : Parser {
 			case TXS:
 			case TYA:
 			case UNQUOTED_STRING:
+			case DOT_UNQUOTED_STRING:
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 761;
@@ -6227,8 +6279,8 @@ public partial class KickAssemblerParser : Parser {
 		int _parentState = State;
 		PreprocessorConditionContext _localctx = new PreprocessorConditionContext(Context, _parentState);
 		PreprocessorConditionContext _prevctx = _localctx;
-		int _startState = 152;
-		EnterRecursionRule(_localctx, 152, RULE_preprocessorCondition, _p);
+		int _startState = 154;
+		EnterRecursionRule(_localctx, 154, RULE_preprocessorCondition, _p);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
@@ -6266,7 +6318,7 @@ public partial class KickAssemblerParser : Parser {
 			Context.Stop = TokenStream.LT(-1);
 			State = 792;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,48,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,47,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
@@ -6275,7 +6327,7 @@ public partial class KickAssemblerParser : Parser {
 					{
 					State = 790;
 					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,47,Context) ) {
+					switch ( Interpreter.AdaptivePredict(TokenStream,46,Context) ) {
 					case 1:
 						{
 						_localctx = new PreprocessorConditionContext(_parentctx, _parentState);
@@ -6329,7 +6381,7 @@ public partial class KickAssemblerParser : Parser {
 				}
 				State = 794;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,48,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,47,Context);
 			}
 			}
 		}
@@ -6398,7 +6450,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DirectiveContext directive() {
 		DirectiveContext _localctx = new DirectiveContext(Context, State);
-		EnterRule(_localctx, 154, RULE_directive);
+		EnterRule(_localctx, 156, RULE_directive);
 		try {
 			State = 804;
 			ErrorHandler.Sync(this);
@@ -6518,7 +6570,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public MemoryDirectiveContext memoryDirective() {
 		MemoryDirectiveContext _localctx = new MemoryDirectiveContext(Context, State);
-		EnterRule(_localctx, 156, RULE_memoryDirective);
+		EnterRule(_localctx, 158, RULE_memoryDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -6546,7 +6598,7 @@ public partial class KickAssemblerParser : Parser {
 
 			State = 812;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,51,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,50,Context) ) {
 			case 1:
 				{
 				State = 811;
@@ -6599,7 +6651,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public CpuDirectiveContext cpuDirective() {
 		CpuDirectiveContext _localctx = new CpuDirectiveContext(Context, State);
-		EnterRule(_localctx, 158, RULE_cpuDirective);
+		EnterRule(_localctx, 160, RULE_cpuDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -6659,7 +6711,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ByteDirectiveContext byteDirective() {
 		ByteDirectiveContext _localctx = new ByteDirectiveContext(Context, State);
-		EnterRule(_localctx, 160, RULE_byteDirective);
+		EnterRule(_localctx, 162, RULE_byteDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -6711,7 +6763,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public WordDirectiveContext wordDirective() {
 		WordDirectiveContext _localctx = new WordDirectiveContext(Context, State);
-		EnterRule(_localctx, 162, RULE_wordDirective);
+		EnterRule(_localctx, 164, RULE_wordDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -6763,7 +6815,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DwordDirectiveContext dwordDirective() {
 		DwordDirectiveContext _localctx = new DwordDirectiveContext(Context, State);
-		EnterRule(_localctx, 164, RULE_dwordDirective);
+		EnterRule(_localctx, 166, RULE_dwordDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -6813,7 +6865,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public TextDirectiveContext textDirective() {
 		TextDirectiveContext _localctx = new TextDirectiveContext(Context, State);
-		EnterRule(_localctx, 166, RULE_textDirective);
+		EnterRule(_localctx, 168, RULE_textDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -6871,7 +6923,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FillDirectiveContext fillDirective() {
 		FillDirectiveContext _localctx = new FillDirectiveContext(Context, State);
-		EnterRule(_localctx, 168, RULE_fillDirective);
+		EnterRule(_localctx, 170, RULE_fillDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -6942,11 +6994,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FillDirectiveArgumentsContext fillDirectiveArguments() {
 		FillDirectiveArgumentsContext _localctx = new FillDirectiveArgumentsContext(Context, State);
-		EnterRule(_localctx, 170, RULE_fillDirectiveArguments);
+		EnterRule(_localctx, 172, RULE_fillDirectiveArguments);
 		try {
 			State = 840;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,52,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,51,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
@@ -7012,7 +7064,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FillExpressionContext fillExpression() {
 		FillExpressionContext _localctx = new FillExpressionContext(Context, State);
-		EnterRule(_localctx, 172, RULE_fillExpression);
+		EnterRule(_localctx, 174, RULE_fillExpression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -7058,7 +7110,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public EncodingDirectiveContext encodingDirective() {
 		EncodingDirectiveContext _localctx = new EncodingDirectiveContext(Context, State);
-		EnterRule(_localctx, 174, RULE_encodingDirective);
+		EnterRule(_localctx, 176, RULE_encodingDirective);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -7124,7 +7176,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ImportDataDirectiveContext importDataDirective() {
 		ImportDataDirectiveContext _localctx = new ImportDataDirectiveContext(Context, State);
-		EnterRule(_localctx, 176, RULE_importDataDirective);
+		EnterRule(_localctx, 178, RULE_importDataDirective);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -7144,7 +7196,7 @@ public partial class KickAssemblerParser : Parser {
 			file();
 			State = 856;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,54,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,53,Context) ) {
 			case 1:
 				{
 				State = 850;
@@ -7153,7 +7205,7 @@ public partial class KickAssemblerParser : Parser {
 				number();
 				State = 854;
 				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,53,Context) ) {
+				switch ( Interpreter.AdaptivePredict(TokenStream,52,Context) ) {
 				case 1:
 					{
 					State = 852;
@@ -7258,11 +7310,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public LabelNameContext labelName() {
 		LabelNameContext _localctx = new LabelNameContext(Context, State);
-		EnterRule(_localctx, 178, RULE_labelName);
+		EnterRule(_localctx, 180, RULE_labelName);
 		try {
 			State = 862;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,55,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,54,Context) ) {
 			case 1:
 				_localctx = new MultiLabelContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
@@ -7331,7 +7383,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public AtNameContext atName() {
 		AtNameContext _localctx = new AtNameContext(Context, State);
-		EnterRule(_localctx, 180, RULE_atName);
+		EnterRule(_localctx, 182, RULE_atName);
 		try {
 			State = 867;
 			ErrorHandler.Sync(this);
@@ -7395,7 +7447,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FileContext file() {
 		FileContext _localctx = new FileContext(Context, State);
-		EnterRule(_localctx, 182, RULE_file);
+		EnterRule(_localctx, 184, RULE_file);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -7451,7 +7503,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public NumberListContext numberList() {
 		NumberListContext _localctx = new NumberListContext(Context, State);
-		EnterRule(_localctx, 184, RULE_numberList);
+		EnterRule(_localctx, 186, RULE_numberList);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
@@ -7460,7 +7512,7 @@ public partial class KickAssemblerParser : Parser {
 			number();
 			State = 876;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,57,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,56,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
@@ -7474,7 +7526,7 @@ public partial class KickAssemblerParser : Parser {
 				}
 				State = 878;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,57,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,56,Context);
 			}
 			}
 		}
@@ -7526,7 +7578,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public NumericListContext numericList() {
 		NumericListContext _localctx = new NumericListContext(Context, State);
-		EnterRule(_localctx, 186, RULE_numericList);
+		EnterRule(_localctx, 188, RULE_numericList);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -7596,7 +7648,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public NumericContext numeric() {
 		NumericContext _localctx = new NumericContext(Context, State);
-		EnterRule(_localctx, 188, RULE_numeric);
+		EnterRule(_localctx, 190, RULE_numeric);
 		int _la;
 		try {
 			State = 892;
@@ -7681,7 +7733,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public NumberContext number() {
 		NumberContext _localctx = new NumberContext(Context, State);
-		EnterRule(_localctx, 190, RULE_number);
+		EnterRule(_localctx, 192, RULE_number);
 		try {
 			State = 897;
 			ErrorHandler.Sync(this);
@@ -7751,7 +7803,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public LohibyteContext lohibyte() {
 		LohibyteContext _localctx = new LohibyteContext(Context, State);
-		EnterRule(_localctx, 192, RULE_lohibyte);
+		EnterRule(_localctx, 194, RULE_lohibyte);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -7806,7 +7858,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public DecNumberContext decNumber() {
 		DecNumberContext _localctx = new DecNumberContext(Context, State);
-		EnterRule(_localctx, 194, RULE_decNumber);
+		EnterRule(_localctx, 196, RULE_decNumber);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -7853,7 +7905,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public HexNumberContext hexNumber() {
 		HexNumberContext _localctx = new HexNumberContext(Context, State);
-		EnterRule(_localctx, 196, RULE_hexNumber);
+		EnterRule(_localctx, 198, RULE_hexNumber);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -7900,7 +7952,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public BinNumberContext binNumber() {
 		BinNumberContext _localctx = new BinNumberContext(Context, State);
-		EnterRule(_localctx, 198, RULE_binNumber);
+		EnterRule(_localctx, 200, RULE_binNumber);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -7948,7 +8000,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public BooleanContext boolean() {
 		BooleanContext _localctx = new BooleanContext(Context, State);
-		EnterRule(_localctx, 200, RULE_boolean);
+		EnterRule(_localctx, 202, RULE_boolean);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -8003,7 +8055,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public OpcodeExtensionContext opcodeExtension() {
 		OpcodeExtensionContext _localctx = new OpcodeExtensionContext(Context, State);
-		EnterRule(_localctx, 202, RULE_opcodeExtension);
+		EnterRule(_localctx, 204, RULE_opcodeExtension);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -8056,11 +8108,11 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public FullOpcodeContext fullOpcode() {
 		FullOpcodeContext _localctx = new FullOpcodeContext(Context, State);
-		EnterRule(_localctx, 204, RULE_fullOpcode);
+		EnterRule(_localctx, 206, RULE_fullOpcode);
 		try {
 			State = 916;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,62,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,61,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
@@ -8180,7 +8232,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public OpcodeContext opcode() {
 		OpcodeContext _localctx = new OpcodeContext(Context, State);
-		EnterRule(_localctx, 206, RULE_opcode);
+		EnterRule(_localctx, 208, RULE_opcode);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -8253,7 +8305,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public ColorContext color() {
 		ColorContext _localctx = new ColorContext(Context, State);
-		EnterRule(_localctx, 208, RULE_color);
+		EnterRule(_localctx, 210, RULE_color);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -8603,7 +8655,7 @@ public partial class KickAssemblerParser : Parser {
 	[RuleVersion(0)]
 	public OpcodeConstantContext opcodeConstant() {
 		OpcodeConstantContext _localctx = new OpcodeConstantContext(Context, State);
-		EnterRule(_localctx, 210, RULE_opcodeConstant);
+		EnterRule(_localctx, 212, RULE_opcodeConstant);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -8632,8 +8684,8 @@ public partial class KickAssemblerParser : Parser {
 
 	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 10: return expression_sempred((ExpressionContext)_localctx, predIndex);
-		case 76: return preprocessorCondition_sempred((PreprocessorConditionContext)_localctx, predIndex);
+		case 12: return expression_sempred((ExpressionContext)_localctx, predIndex);
+		case 77: return preprocessorCondition_sempred((PreprocessorConditionContext)_localctx, predIndex);
 		}
 		return true;
 	}
@@ -8677,299 +8729,300 @@ public partial class KickAssemblerParser : Parser {
 		2,85,7,85,2,86,7,86,2,87,7,87,2,88,7,88,2,89,7,89,2,90,7,90,2,91,7,91,
 		2,92,7,92,2,93,7,93,2,94,7,94,2,95,7,95,2,96,7,96,2,97,7,97,2,98,7,98,
 		2,99,7,99,2,100,7,100,2,101,7,101,2,102,7,102,2,103,7,103,2,104,7,104,
-		2,105,7,105,1,0,1,0,1,1,1,1,1,1,1,2,1,2,4,2,220,8,2,11,2,12,2,221,1,2,
-		1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,232,8,2,1,3,1,3,1,3,1,3,1,3,1,3,3,3,240,
-		8,3,1,4,1,4,1,4,1,4,1,4,1,4,1,4,3,4,249,8,4,1,5,3,5,252,8,5,1,5,1,5,3,
-		5,256,8,5,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,3,6,268,8,6,1,7,1,7,
-		1,7,5,7,273,8,7,10,7,12,7,276,9,7,1,8,4,8,279,8,8,11,8,12,8,280,1,8,1,
-		8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,300,
-		8,8,1,9,1,9,1,9,1,9,1,9,1,9,3,9,308,8,9,1,10,1,10,1,10,1,10,1,10,1,10,
-		1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,
-		1,10,3,10,331,8,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,
-		10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,
-		10,1,10,1,10,1,10,1,10,1,10,5,10,363,8,10,10,10,12,10,366,9,10,1,11,1,
-		11,1,12,1,12,1,12,1,12,1,13,1,13,1,13,1,14,1,14,1,14,1,14,1,14,1,14,1,
-		14,1,14,1,14,1,14,1,14,1,14,3,14,389,8,14,1,15,1,15,1,16,1,16,1,16,1,16,
-		1,16,3,16,398,8,16,1,16,1,16,1,17,1,17,1,17,3,17,405,8,17,1,17,1,17,1,
-		18,1,18,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,
-		19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,19,1,
-		19,1,19,1,19,1,19,1,19,1,19,3,19,443,8,19,1,20,1,20,1,20,1,21,1,21,1,21,
-		1,22,1,22,3,22,453,8,22,1,23,1,23,1,23,1,24,1,24,1,24,1,25,1,25,1,25,1,
-		26,1,26,1,26,1,26,1,26,1,26,1,26,3,26,471,8,26,1,27,1,27,1,27,1,27,1,27,
-		1,27,1,27,1,28,1,28,1,28,1,29,1,29,3,29,485,8,29,1,30,1,30,3,30,489,8,
-		30,1,31,1,31,1,31,1,32,1,32,1,32,1,32,1,32,1,32,1,32,1,32,3,32,502,8,32,
-		1,32,1,32,1,32,3,32,507,8,32,1,33,1,33,1,33,3,33,512,8,33,1,33,1,33,1,
-		34,1,34,1,34,5,34,519,8,34,10,34,12,34,522,9,34,1,35,1,35,1,35,3,35,527,
-		8,35,1,36,1,36,1,36,3,36,532,8,36,1,36,1,36,3,36,536,8,36,1,36,1,36,3,
-		36,540,8,36,1,36,1,36,3,36,544,8,36,1,37,1,37,1,37,1,37,1,37,1,37,1,38,
-		1,38,1,38,1,38,1,38,1,38,1,39,1,39,1,39,5,39,561,8,39,10,39,12,39,564,
-		9,39,1,39,3,39,567,8,39,1,40,1,40,1,41,1,41,1,41,1,42,1,42,1,42,1,42,1,
-		42,1,42,1,42,1,43,1,43,1,43,1,44,1,44,1,44,1,44,1,44,1,44,1,44,1,45,1,
-		45,1,45,1,45,1,46,1,46,1,46,5,46,598,8,46,10,46,12,46,601,9,46,1,47,1,
-		47,1,47,3,47,606,8,47,1,48,1,48,1,48,1,48,1,49,1,49,1,49,1,50,1,50,1,50,
-		1,50,1,50,1,50,1,50,1,50,3,50,623,8,50,1,51,1,51,1,51,1,51,1,52,1,52,1,
-		52,1,52,1,53,1,53,1,53,1,54,1,54,3,54,638,8,54,1,54,1,54,1,54,1,54,1,54,
-		1,55,1,55,1,55,5,55,648,8,55,10,55,12,55,651,9,55,1,56,1,56,5,56,655,8,
-		56,10,56,12,56,658,9,56,1,56,1,56,1,57,1,57,1,57,5,57,665,8,57,10,57,12,
-		57,668,9,57,1,58,1,58,1,58,1,58,1,58,3,58,675,8,58,1,59,1,59,1,59,1,59,
-		1,59,1,59,1,60,1,60,1,60,1,60,1,60,1,60,1,61,1,61,1,61,1,61,1,61,1,61,
-		1,62,1,62,1,62,1,62,1,63,1,63,1,63,1,64,1,64,1,64,1,64,1,64,1,65,1,65,
-		5,65,709,8,65,10,65,12,65,712,9,65,1,66,1,66,1,66,1,66,1,66,1,67,1,67,
-		1,68,1,68,1,68,1,68,1,68,1,68,3,68,727,8,68,1,69,1,69,1,69,1,70,1,70,1,
-		70,1,71,1,71,1,71,1,72,1,72,1,72,1,72,1,73,1,73,1,73,1,74,1,74,1,74,1,
-		74,1,74,1,74,5,74,751,8,74,10,74,12,74,754,9,74,1,74,1,74,3,74,758,8,74,
-		1,74,1,74,1,75,1,75,1,75,1,75,1,75,3,75,767,8,75,1,76,1,76,1,76,1,76,1,
-		76,1,76,1,76,1,76,3,76,777,8,76,1,76,1,76,1,76,1,76,1,76,1,76,1,76,1,76,
-		1,76,1,76,1,76,1,76,5,76,791,8,76,10,76,12,76,794,9,76,1,77,1,77,1,77,
-		1,77,1,77,1,77,1,77,1,77,1,77,3,77,805,8,77,1,78,1,78,1,78,3,78,810,8,
-		78,1,78,3,78,813,8,78,1,79,1,79,1,79,1,80,1,80,1,80,1,81,1,81,1,81,1,82,
-		1,82,1,82,1,83,1,83,1,83,1,84,1,84,1,84,1,84,1,84,1,85,1,85,1,85,1,85,
-		1,85,1,85,3,85,841,8,85,1,86,1,86,1,87,1,87,1,87,1,88,1,88,1,88,1,88,1,
-		88,1,88,1,88,3,88,855,8,88,3,88,857,8,88,1,89,1,89,1,89,1,89,3,89,863,
-		8,89,1,90,1,90,1,90,3,90,868,8,90,1,91,1,91,1,92,1,92,1,92,5,92,875,8,
-		92,10,92,12,92,878,9,92,1,93,1,93,1,93,5,93,883,8,93,10,93,12,93,886,9,
-		93,1,94,1,94,3,94,890,8,94,1,94,3,94,893,8,94,1,95,1,95,1,95,3,95,898,
-		8,95,1,96,1,96,1,97,1,97,1,98,1,98,1,99,1,99,1,100,1,100,1,101,1,101,1,
-		102,1,102,1,102,1,102,1,102,3,102,917,8,102,1,103,1,103,1,104,1,104,1,
-		105,1,105,1,105,0,2,20,152,106,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,
-		30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,
-		78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,
-		120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,
-		156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,
-		192,194,196,198,200,202,204,206,208,210,0,12,1,0,98,99,3,0,103,105,107,
-		107,132,133,2,0,110,111,120,123,2,0,65,65,126,126,1,0,29,32,1,0,19,21,
-		2,0,13,14,16,17,1,0,110,111,1,0,137,138,1,0,147,207,1,0,69,87,1,0,208,
-		503,965,0,212,1,0,0,0,2,214,1,0,0,0,4,231,1,0,0,0,6,239,1,0,0,0,8,248,
-		1,0,0,0,10,251,1,0,0,0,12,267,1,0,0,0,14,269,1,0,0,0,16,299,1,0,0,0,18,
-		307,1,0,0,0,20,330,1,0,0,0,22,367,1,0,0,0,24,369,1,0,0,0,26,373,1,0,0,
-		0,28,388,1,0,0,0,30,390,1,0,0,0,32,392,1,0,0,0,34,401,1,0,0,0,36,408,1,
-		0,0,0,38,442,1,0,0,0,40,444,1,0,0,0,42,447,1,0,0,0,44,452,1,0,0,0,46,454,
-		1,0,0,0,48,457,1,0,0,0,50,460,1,0,0,0,52,463,1,0,0,0,54,472,1,0,0,0,56,
-		479,1,0,0,0,58,484,1,0,0,0,60,486,1,0,0,0,62,490,1,0,0,0,64,506,1,0,0,
-		0,66,508,1,0,0,0,68,515,1,0,0,0,70,523,1,0,0,0,72,528,1,0,0,0,74,545,1,
-		0,0,0,76,551,1,0,0,0,78,566,1,0,0,0,80,568,1,0,0,0,82,570,1,0,0,0,84,573,
-		1,0,0,0,86,580,1,0,0,0,88,583,1,0,0,0,90,590,1,0,0,0,92,594,1,0,0,0,94,
-		602,1,0,0,0,96,607,1,0,0,0,98,611,1,0,0,0,100,622,1,0,0,0,102,624,1,0,
-		0,0,104,628,1,0,0,0,106,632,1,0,0,0,108,635,1,0,0,0,110,644,1,0,0,0,112,
-		652,1,0,0,0,114,661,1,0,0,0,116,669,1,0,0,0,118,676,1,0,0,0,120,682,1,
-		0,0,0,122,688,1,0,0,0,124,694,1,0,0,0,126,698,1,0,0,0,128,701,1,0,0,0,
-		130,706,1,0,0,0,132,713,1,0,0,0,134,718,1,0,0,0,136,726,1,0,0,0,138,728,
-		1,0,0,0,140,731,1,0,0,0,142,734,1,0,0,0,144,737,1,0,0,0,146,741,1,0,0,
-		0,148,744,1,0,0,0,150,766,1,0,0,0,152,776,1,0,0,0,154,804,1,0,0,0,156,
-		806,1,0,0,0,158,814,1,0,0,0,160,817,1,0,0,0,162,820,1,0,0,0,164,823,1,
-		0,0,0,166,826,1,0,0,0,168,829,1,0,0,0,170,840,1,0,0,0,172,842,1,0,0,0,
-		174,844,1,0,0,0,176,847,1,0,0,0,178,862,1,0,0,0,180,867,1,0,0,0,182,869,
-		1,0,0,0,184,871,1,0,0,0,186,879,1,0,0,0,188,892,1,0,0,0,190,897,1,0,0,
-		0,192,899,1,0,0,0,194,901,1,0,0,0,196,903,1,0,0,0,198,905,1,0,0,0,200,
-		907,1,0,0,0,202,909,1,0,0,0,204,916,1,0,0,0,206,918,1,0,0,0,208,920,1,
-		0,0,0,210,922,1,0,0,0,212,213,6,0,-1,0,213,1,1,0,0,0,214,215,3,4,2,0,215,
-		216,5,0,0,1,216,3,1,0,0,0,217,219,3,6,3,0,218,220,5,97,0,0,219,218,1,0,
-		0,0,220,221,1,0,0,0,221,219,1,0,0,0,221,222,1,0,0,0,222,223,1,0,0,0,223,
-		224,3,4,2,0,224,232,1,0,0,0,225,226,3,6,3,0,226,227,3,0,0,0,227,228,3,
-		4,2,0,228,232,1,0,0,0,229,232,3,6,3,0,230,232,1,0,0,0,231,217,1,0,0,0,
-		231,225,1,0,0,0,231,229,1,0,0,0,231,230,1,0,0,0,232,5,1,0,0,0,233,240,
-		3,10,5,0,234,240,3,8,4,0,235,240,3,154,77,0,236,240,3,12,6,0,237,240,3,
-		38,19,0,238,240,3,136,68,0,239,233,1,0,0,0,239,234,1,0,0,0,239,235,1,0,
-		0,0,239,236,1,0,0,0,239,237,1,0,0,0,239,238,1,0,0,0,240,7,1,0,0,0,241,
-		242,3,178,89,0,242,243,5,96,0,0,243,244,3,6,3,0,244,249,1,0,0,0,245,246,
-		3,178,89,0,246,247,5,96,0,0,247,249,1,0,0,0,248,241,1,0,0,0,248,245,1,
-		0,0,0,249,9,1,0,0,0,250,252,5,96,0,0,251,250,1,0,0,0,251,252,1,0,0,0,252,
-		253,1,0,0,0,253,255,3,204,102,0,254,256,3,14,7,0,255,254,1,0,0,0,255,256,
-		1,0,0,0,256,11,1,0,0,0,257,258,5,504,0,0,258,259,5,96,0,0,259,260,5,88,
-		0,0,260,261,3,4,2,0,261,262,5,89,0,0,262,268,1,0,0,0,263,264,5,88,0,0,
-		264,265,3,4,2,0,265,266,5,89,0,0,266,268,1,0,0,0,267,257,1,0,0,0,267,263,
-		1,0,0,0,268,13,1,0,0,0,269,274,3,16,8,0,270,271,5,95,0,0,271,273,3,16,
-		8,0,272,270,1,0,0,0,273,276,1,0,0,0,274,272,1,0,0,0,274,275,1,0,0,0,275,
-		15,1,0,0,0,276,274,1,0,0,0,277,279,7,0,0,0,278,277,1,0,0,0,279,280,1,0,
-		0,0,280,278,1,0,0,0,280,281,1,0,0,0,281,300,1,0,0,0,282,283,5,3,0,0,283,
-		300,3,210,105,0,284,285,5,3,0,0,285,300,3,188,94,0,286,287,5,92,0,0,287,
-		288,3,14,7,0,288,289,5,93,0,0,289,300,1,0,0,0,290,291,5,90,0,0,291,292,
-		3,14,7,0,292,293,5,91,0,0,293,300,1,0,0,0,294,300,3,18,9,0,295,296,5,100,
-		0,0,296,300,3,20,10,0,297,300,3,20,10,0,298,300,5,100,0,0,299,278,1,0,
-		0,0,299,282,1,0,0,0,299,284,1,0,0,0,299,286,1,0,0,0,299,290,1,0,0,0,299,
-		294,1,0,0,0,299,295,1,0,0,0,299,297,1,0,0,0,299,298,1,0,0,0,300,17,1,0,
-		0,0,301,302,3,178,89,0,302,303,5,99,0,0,303,308,1,0,0,0,304,305,3,178,
-		89,0,305,306,5,98,0,0,306,308,1,0,0,0,307,301,1,0,0,0,307,304,1,0,0,0,
-		308,19,1,0,0,0,309,310,6,10,-1,0,310,311,5,92,0,0,311,312,3,20,10,0,312,
-		313,5,93,0,0,313,331,1,0,0,0,314,315,5,90,0,0,315,316,3,20,10,0,316,317,
-		5,91,0,0,317,331,1,0,0,0,318,319,5,98,0,0,319,331,3,20,10,12,320,321,5,
-		99,0,0,321,331,3,20,10,11,322,331,3,32,16,0,323,331,3,34,17,0,324,331,
-		3,188,94,0,325,331,3,210,105,0,326,331,3,208,104,0,327,331,3,200,100,0,
-		328,331,3,178,89,0,329,331,5,143,0,0,330,309,1,0,0,0,330,314,1,0,0,0,330,
-		318,1,0,0,0,330,320,1,0,0,0,330,322,1,0,0,0,330,323,1,0,0,0,330,324,1,
-		0,0,0,330,325,1,0,0,0,330,326,1,0,0,0,330,327,1,0,0,0,330,328,1,0,0,0,
-		330,329,1,0,0,0,331,364,1,0,0,0,332,333,10,19,0,0,333,334,3,22,11,0,334,
-		335,3,20,10,20,335,363,1,0,0,0,336,337,10,18,0,0,337,338,5,100,0,0,338,
-		363,3,20,10,19,339,340,10,17,0,0,340,341,5,101,0,0,341,363,3,20,10,18,
-		342,343,10,16,0,0,343,344,5,98,0,0,344,363,3,20,10,17,345,346,10,15,0,
-		0,346,347,5,99,0,0,347,363,3,20,10,16,348,349,10,10,0,0,349,350,3,30,15,
-		0,350,351,3,20,10,11,351,363,1,0,0,0,352,353,10,9,0,0,353,354,5,112,0,
-		0,354,355,3,20,10,0,355,356,5,96,0,0,356,357,3,20,10,10,357,363,1,0,0,
-		0,358,359,10,14,0,0,359,363,5,115,0,0,360,361,10,13,0,0,361,363,5,116,
-		0,0,362,332,1,0,0,0,362,336,1,0,0,0,362,339,1,0,0,0,362,342,1,0,0,0,362,
-		345,1,0,0,0,362,348,1,0,0,0,362,352,1,0,0,0,362,358,1,0,0,0,362,360,1,
-		0,0,0,363,366,1,0,0,0,364,362,1,0,0,0,364,365,1,0,0,0,365,21,1,0,0,0,366,
-		364,1,0,0,0,367,368,7,1,0,0,368,23,1,0,0,0,369,370,5,504,0,0,370,371,5,
-		109,0,0,371,372,3,20,10,0,372,25,1,0,0,0,373,374,5,504,0,0,374,375,3,28,
-		14,0,375,27,1,0,0,0,376,377,5,98,0,0,377,389,5,98,0,0,378,379,5,99,0,0,
-		379,389,5,99,0,0,380,381,5,98,0,0,381,389,5,109,0,0,382,383,5,99,0,0,383,
-		389,5,109,0,0,384,385,5,100,0,0,385,389,5,109,0,0,386,387,5,101,0,0,387,
-		389,5,109,0,0,388,376,1,0,0,0,388,378,1,0,0,0,388,380,1,0,0,0,388,382,
-		1,0,0,0,388,384,1,0,0,0,388,386,1,0,0,0,389,29,1,0,0,0,390,391,7,2,0,0,
-		391,31,1,0,0,0,392,393,5,143,0,0,393,394,5,94,0,0,394,395,5,143,0,0,395,
-		397,5,92,0,0,396,398,3,14,7,0,397,396,1,0,0,0,397,398,1,0,0,0,398,399,
-		1,0,0,0,399,400,5,93,0,0,400,33,1,0,0,0,401,402,5,504,0,0,402,404,5,92,
-		0,0,403,405,3,14,7,0,404,403,1,0,0,0,404,405,1,0,0,0,405,406,1,0,0,0,406,
-		407,5,93,0,0,407,35,1,0,0,0,408,409,3,20,10,0,409,37,1,0,0,0,410,443,3,
-		40,20,0,411,443,3,42,21,0,412,443,3,48,24,0,413,443,3,50,25,0,414,443,
-		3,52,26,0,415,443,3,54,27,0,416,443,3,56,28,0,417,443,3,60,30,0,418,443,
-		3,62,31,0,419,443,3,66,33,0,420,443,3,72,36,0,421,443,3,74,37,0,422,443,
-		3,76,38,0,423,443,3,82,41,0,424,443,3,84,42,0,425,443,3,88,44,0,426,443,
-		3,90,45,0,427,443,3,94,47,0,428,443,3,96,48,0,429,443,3,100,50,0,430,443,
-		3,102,51,0,431,443,3,104,52,0,432,443,3,98,49,0,433,443,3,106,53,0,434,
-		443,3,108,54,0,435,443,3,118,59,0,436,443,3,120,60,0,437,443,3,86,43,0,
-		438,443,3,122,61,0,439,443,3,124,62,0,440,443,3,126,63,0,441,443,3,128,
-		64,0,442,410,1,0,0,0,442,411,1,0,0,0,442,412,1,0,0,0,442,413,1,0,0,0,442,
-		414,1,0,0,0,442,415,1,0,0,0,442,416,1,0,0,0,442,417,1,0,0,0,442,418,1,
-		0,0,0,442,419,1,0,0,0,442,420,1,0,0,0,442,421,1,0,0,0,442,422,1,0,0,0,
-		442,423,1,0,0,0,442,424,1,0,0,0,442,425,1,0,0,0,442,426,1,0,0,0,442,427,
-		1,0,0,0,442,428,1,0,0,0,442,429,1,0,0,0,442,430,1,0,0,0,442,431,1,0,0,
-		0,442,432,1,0,0,0,442,433,1,0,0,0,442,434,1,0,0,0,442,435,1,0,0,0,442,
-		436,1,0,0,0,442,437,1,0,0,0,442,438,1,0,0,0,442,439,1,0,0,0,442,440,1,
-		0,0,0,442,441,1,0,0,0,443,39,1,0,0,0,444,445,5,35,0,0,445,446,3,20,10,
-		0,446,41,1,0,0,0,447,448,5,36,0,0,448,449,3,20,10,0,449,43,1,0,0,0,450,
-		453,3,46,23,0,451,453,3,24,12,0,452,450,1,0,0,0,452,451,1,0,0,0,453,45,
-		1,0,0,0,454,455,5,38,0,0,455,456,3,24,12,0,456,47,1,0,0,0,457,458,5,37,
-		0,0,458,459,3,24,12,0,459,49,1,0,0,0,460,461,5,40,0,0,461,462,3,24,12,
-		0,462,51,1,0,0,0,463,464,5,41,0,0,464,465,5,92,0,0,465,466,3,20,10,0,466,
-		467,5,93,0,0,467,470,3,6,3,0,468,469,5,42,0,0,469,471,3,6,3,0,470,468,
-		1,0,0,0,470,471,1,0,0,0,471,53,1,0,0,0,472,473,5,43,0,0,473,474,5,92,0,
-		0,474,475,3,20,10,0,475,476,5,93,0,0,476,477,5,95,0,0,477,478,5,143,0,
-		0,478,55,1,0,0,0,479,480,5,44,0,0,480,481,3,58,29,0,481,57,1,0,0,0,482,
-		485,3,24,12,0,483,485,3,26,13,0,484,482,1,0,0,0,484,483,1,0,0,0,485,59,
-		1,0,0,0,486,488,5,66,0,0,487,489,5,143,0,0,488,487,1,0,0,0,488,489,1,0,
-		0,0,489,61,1,0,0,0,490,491,5,67,0,0,491,492,3,64,32,0,492,63,1,0,0,0,493,
-		507,3,20,10,0,494,495,3,20,10,0,495,496,5,95,0,0,496,497,3,20,10,0,497,
-		507,1,0,0,0,498,499,3,20,10,0,499,501,5,95,0,0,500,502,3,20,10,0,501,500,
-		1,0,0,0,501,502,1,0,0,0,502,503,1,0,0,0,503,504,5,95,0,0,504,505,5,143,
-		0,0,505,507,1,0,0,0,506,493,1,0,0,0,506,494,1,0,0,0,506,498,1,0,0,0,507,
-		65,1,0,0,0,508,509,5,45,0,0,509,511,5,88,0,0,510,512,3,68,34,0,511,510,
-		1,0,0,0,511,512,1,0,0,0,512,513,1,0,0,0,513,514,5,89,0,0,514,67,1,0,0,
-		0,515,520,3,70,35,0,516,517,5,95,0,0,517,519,3,70,35,0,518,516,1,0,0,0,
-		519,522,1,0,0,0,520,518,1,0,0,0,520,521,1,0,0,0,521,69,1,0,0,0,522,520,
-		1,0,0,0,523,526,5,504,0,0,524,525,5,109,0,0,525,527,3,190,95,0,526,524,
-		1,0,0,0,526,527,1,0,0,0,527,71,1,0,0,0,528,529,5,46,0,0,529,531,5,92,0,
-		0,530,532,3,44,22,0,531,530,1,0,0,0,531,532,1,0,0,0,532,533,1,0,0,0,533,
-		535,5,97,0,0,534,536,3,36,18,0,535,534,1,0,0,0,535,536,1,0,0,0,536,537,
-		1,0,0,0,537,539,5,97,0,0,538,540,3,20,10,0,539,538,1,0,0,0,539,540,1,0,
-		0,0,540,541,1,0,0,0,541,543,5,93,0,0,542,544,3,6,3,0,543,542,1,0,0,0,543,
-		544,1,0,0,0,544,73,1,0,0,0,545,546,5,47,0,0,546,547,5,92,0,0,547,548,3,
-		36,18,0,548,549,5,93,0,0,549,550,3,6,3,0,550,75,1,0,0,0,551,552,5,48,0,
-		0,552,553,5,504,0,0,553,554,5,88,0,0,554,555,3,78,39,0,555,556,5,89,0,
-		0,556,77,1,0,0,0,557,562,3,80,40,0,558,559,5,95,0,0,559,561,3,80,40,0,
-		560,558,1,0,0,0,561,564,1,0,0,0,562,560,1,0,0,0,562,563,1,0,0,0,563,567,
-		1,0,0,0,564,562,1,0,0,0,565,567,1,0,0,0,566,557,1,0,0,0,566,565,1,0,0,
-		0,567,79,1,0,0,0,568,569,5,504,0,0,569,81,1,0,0,0,570,571,3,78,39,0,571,
-		572,3,12,6,0,572,83,1,0,0,0,573,574,5,50,0,0,574,575,3,180,90,0,575,576,
-		5,92,0,0,576,577,3,78,39,0,577,578,5,93,0,0,578,579,3,12,6,0,579,85,1,
-		0,0,0,580,581,5,51,0,0,581,582,3,20,10,0,582,87,1,0,0,0,583,584,5,52,0,
-		0,584,585,3,180,90,0,585,586,5,92,0,0,586,587,3,78,39,0,587,588,5,93,0,
-		0,588,589,3,12,6,0,589,89,1,0,0,0,590,591,5,53,0,0,591,592,5,504,0,0,592,
-		593,3,92,46,0,593,91,1,0,0,0,594,599,5,504,0,0,595,596,5,96,0,0,596,598,
-		5,504,0,0,597,595,1,0,0,0,598,601,1,0,0,0,599,597,1,0,0,0,599,600,1,0,
-		0,0,600,93,1,0,0,0,601,599,1,0,0,0,602,603,5,55,0,0,603,605,5,504,0,0,
-		604,606,3,12,6,0,605,604,1,0,0,0,605,606,1,0,0,0,606,95,1,0,0,0,607,608,
-		5,62,0,0,608,609,3,24,12,0,609,610,3,12,6,0,610,97,1,0,0,0,611,612,5,61,
-		0,0,612,613,5,143,0,0,613,99,1,0,0,0,614,615,5,56,0,0,615,616,5,504,0,
-		0,616,623,3,112,56,0,617,618,5,56,0,0,618,619,5,504,0,0,619,623,5,143,
-		0,0,620,621,5,56,0,0,621,623,5,504,0,0,622,614,1,0,0,0,622,617,1,0,0,0,
-		622,620,1,0,0,0,623,101,1,0,0,0,624,625,5,57,0,0,625,626,5,504,0,0,626,
-		627,3,112,56,0,627,103,1,0,0,0,628,629,5,58,0,0,629,630,5,504,0,0,630,
-		631,3,112,56,0,631,105,1,0,0,0,632,633,5,63,0,0,633,634,3,112,56,0,634,
-		107,1,0,0,0,635,637,5,64,0,0,636,638,5,504,0,0,637,636,1,0,0,0,637,638,
-		1,0,0,0,638,639,1,0,0,0,639,640,3,112,56,0,640,641,5,88,0,0,641,642,3,
-		110,55,0,642,643,5,89,0,0,643,109,1,0,0,0,644,649,3,112,56,0,645,646,5,
-		95,0,0,646,648,3,112,56,0,647,645,1,0,0,0,648,651,1,0,0,0,649,647,1,0,
-		0,0,649,650,1,0,0,0,650,111,1,0,0,0,651,649,1,0,0,0,652,656,5,90,0,0,653,
-		655,3,114,57,0,654,653,1,0,0,0,655,658,1,0,0,0,656,654,1,0,0,0,656,657,
-		1,0,0,0,657,659,1,0,0,0,658,656,1,0,0,0,659,660,5,91,0,0,660,113,1,0,0,
-		0,661,666,3,116,58,0,662,663,5,95,0,0,663,665,3,116,58,0,664,662,1,0,0,
-		0,665,668,1,0,0,0,666,664,1,0,0,0,666,667,1,0,0,0,667,115,1,0,0,0,668,
-		666,1,0,0,0,669,670,5,504,0,0,670,674,5,109,0,0,671,675,3,190,95,0,672,
-		675,5,143,0,0,673,675,3,200,100,0,674,671,1,0,0,0,674,672,1,0,0,0,674,
-		673,1,0,0,0,675,117,1,0,0,0,676,677,5,59,0,0,677,678,5,504,0,0,678,679,
-		5,92,0,0,679,680,5,93,0,0,680,681,3,12,6,0,681,119,1,0,0,0,682,683,5,60,
-		0,0,683,684,5,504,0,0,684,685,5,92,0,0,685,686,3,16,8,0,686,687,5,93,0,
-		0,687,121,1,0,0,0,688,689,5,33,0,0,689,690,5,143,0,0,690,691,3,6,3,0,691,
-		692,5,95,0,0,692,693,3,6,3,0,693,123,1,0,0,0,694,695,5,34,0,0,695,696,
-		5,143,0,0,696,697,3,6,3,0,697,125,1,0,0,0,698,699,3,188,94,0,699,700,3,
-		12,6,0,700,127,1,0,0,0,701,702,5,68,0,0,702,703,5,88,0,0,703,704,3,130,
-		65,0,704,705,5,89,0,0,705,129,1,0,0,0,706,710,3,132,66,0,707,709,3,132,
-		66,0,708,707,1,0,0,0,709,712,1,0,0,0,710,708,1,0,0,0,710,711,1,0,0,0,711,
-		131,1,0,0,0,712,710,1,0,0,0,713,714,3,180,90,0,714,715,5,96,0,0,715,716,
-		5,26,0,0,716,717,5,139,0,0,717,133,1,0,0,0,718,719,5,504,0,0,719,135,1,
-		0,0,0,720,727,3,138,69,0,721,727,3,140,70,0,722,727,3,142,71,0,723,727,
-		3,144,72,0,724,727,3,146,73,0,725,727,3,148,74,0,726,720,1,0,0,0,726,721,
-		1,0,0,0,726,722,1,0,0,0,726,723,1,0,0,0,726,724,1,0,0,0,726,725,1,0,0,
-		0,727,137,1,0,0,0,728,729,5,4,0,0,729,730,5,506,0,0,730,139,1,0,0,0,731,
-		732,5,5,0,0,732,733,5,508,0,0,733,141,1,0,0,0,734,735,5,10,0,0,735,736,
-		5,143,0,0,736,143,1,0,0,0,737,738,5,12,0,0,738,739,5,513,0,0,739,740,5,
-		143,0,0,740,145,1,0,0,0,741,742,5,11,0,0,742,743,5,143,0,0,743,147,1,0,
-		0,0,744,745,5,6,0,0,745,746,5,510,0,0,746,752,3,150,75,0,747,748,5,9,0,
-		0,748,749,5,510,0,0,749,751,3,150,75,0,750,747,1,0,0,0,751,754,1,0,0,0,
-		752,750,1,0,0,0,752,753,1,0,0,0,753,757,1,0,0,0,754,752,1,0,0,0,755,756,
-		5,8,0,0,756,758,3,150,75,0,757,755,1,0,0,0,757,758,1,0,0,0,758,759,1,0,
-		0,0,759,760,5,7,0,0,760,149,1,0,0,0,761,762,3,0,0,0,762,763,3,6,3,0,763,
-		764,3,0,0,0,764,767,1,0,0,0,765,767,3,0,0,0,766,761,1,0,0,0,766,765,1,
-		0,0,0,767,151,1,0,0,0,768,769,6,76,-1,0,769,770,5,92,0,0,770,771,3,152,
-		76,0,771,772,5,93,0,0,772,777,1,0,0,0,773,774,5,106,0,0,774,777,3,152,
-		76,6,775,777,5,504,0,0,776,768,1,0,0,0,776,773,1,0,0,0,776,775,1,0,0,0,
-		777,792,1,0,0,0,778,779,10,5,0,0,779,780,5,117,0,0,780,791,3,152,76,6,
-		781,782,10,4,0,0,782,783,5,118,0,0,783,791,3,152,76,5,784,785,10,3,0,0,
-		785,786,5,120,0,0,786,791,3,152,76,4,787,788,10,2,0,0,788,789,5,121,0,
-		0,789,791,3,152,76,3,790,778,1,0,0,0,790,781,1,0,0,0,790,784,1,0,0,0,790,
-		787,1,0,0,0,791,794,1,0,0,0,792,790,1,0,0,0,792,793,1,0,0,0,793,153,1,
-		0,0,0,794,792,1,0,0,0,795,805,3,158,79,0,796,805,3,160,80,0,797,805,3,
-		162,81,0,798,805,3,164,82,0,799,805,3,166,83,0,800,805,3,168,84,0,801,
-		805,3,174,87,0,802,805,3,176,88,0,803,805,3,156,78,0,804,795,1,0,0,0,804,
-		796,1,0,0,0,804,797,1,0,0,0,804,798,1,0,0,0,804,799,1,0,0,0,804,800,1,
-		0,0,0,804,801,1,0,0,0,804,802,1,0,0,0,804,803,1,0,0,0,805,155,1,0,0,0,
-		806,807,7,3,0,0,807,809,3,190,95,0,808,810,5,143,0,0,809,808,1,0,0,0,809,
-		810,1,0,0,0,810,812,1,0,0,0,811,813,5,504,0,0,812,811,1,0,0,0,812,813,
-		1,0,0,0,813,157,1,0,0,0,814,815,5,25,0,0,815,816,7,4,0,0,816,159,1,0,0,
-		0,817,818,5,26,0,0,818,819,3,184,92,0,819,161,1,0,0,0,820,821,5,27,0,0,
-		821,822,3,184,92,0,822,163,1,0,0,0,823,824,5,28,0,0,824,825,3,184,92,0,
-		825,165,1,0,0,0,826,827,5,15,0,0,827,828,5,143,0,0,828,167,1,0,0,0,829,
-		830,7,5,0,0,830,831,3,190,95,0,831,832,5,95,0,0,832,833,3,170,85,0,833,
-		169,1,0,0,0,834,841,3,190,95,0,835,836,5,90,0,0,836,837,3,184,92,0,837,
-		838,5,91,0,0,838,841,1,0,0,0,839,841,3,172,86,0,840,834,1,0,0,0,840,835,
-		1,0,0,0,840,839,1,0,0,0,841,171,1,0,0,0,842,843,1,0,0,0,843,173,1,0,0,
-		0,844,845,5,18,0,0,845,846,5,143,0,0,846,175,1,0,0,0,847,848,5,39,0,0,
-		848,849,7,6,0,0,849,856,3,182,91,0,850,851,5,95,0,0,851,854,3,190,95,0,
-		852,853,5,95,0,0,853,855,3,190,95,0,854,852,1,0,0,0,854,855,1,0,0,0,855,
-		857,1,0,0,0,856,850,1,0,0,0,856,857,1,0,0,0,857,177,1,0,0,0,858,859,5,
-		106,0,0,859,863,5,504,0,0,860,863,5,106,0,0,861,863,3,180,90,0,862,858,
-		1,0,0,0,862,860,1,0,0,0,862,861,1,0,0,0,863,179,1,0,0,0,864,865,5,108,
-		0,0,865,868,5,504,0,0,866,868,5,504,0,0,867,864,1,0,0,0,867,866,1,0,0,
-		0,868,181,1,0,0,0,869,870,5,143,0,0,870,183,1,0,0,0,871,876,3,190,95,0,
-		872,873,5,95,0,0,873,875,3,190,95,0,874,872,1,0,0,0,875,878,1,0,0,0,876,
-		874,1,0,0,0,876,877,1,0,0,0,877,185,1,0,0,0,878,876,1,0,0,0,879,884,3,
-		188,94,0,880,881,5,95,0,0,881,883,3,188,94,0,882,880,1,0,0,0,883,886,1,
-		0,0,0,884,882,1,0,0,0,884,885,1,0,0,0,885,187,1,0,0,0,886,884,1,0,0,0,
-		887,893,5,142,0,0,888,890,3,192,96,0,889,888,1,0,0,0,889,890,1,0,0,0,890,
-		891,1,0,0,0,891,893,3,190,95,0,892,887,1,0,0,0,892,889,1,0,0,0,893,189,
-		1,0,0,0,894,898,3,194,97,0,895,898,3,196,98,0,896,898,3,198,99,0,897,894,
-		1,0,0,0,897,895,1,0,0,0,897,896,1,0,0,0,898,191,1,0,0,0,899,900,7,7,0,
-		0,900,193,1,0,0,0,901,902,5,139,0,0,902,195,1,0,0,0,903,904,5,140,0,0,
-		904,197,1,0,0,0,905,906,5,141,0,0,906,199,1,0,0,0,907,908,7,8,0,0,908,
-		201,1,0,0,0,909,910,5,504,0,0,910,203,1,0,0,0,911,917,3,206,103,0,912,
-		913,3,206,103,0,913,914,5,94,0,0,914,915,3,202,101,0,915,917,1,0,0,0,916,
-		911,1,0,0,0,916,912,1,0,0,0,917,205,1,0,0,0,918,919,7,9,0,0,919,207,1,
-		0,0,0,920,921,7,10,0,0,921,209,1,0,0,0,922,923,7,11,0,0,923,211,1,0,0,
-		0,63,221,231,239,248,251,255,267,274,280,299,307,330,362,364,388,397,404,
-		442,452,470,484,488,501,506,511,520,526,531,535,539,543,562,566,599,605,
-		622,637,649,656,666,674,710,726,752,757,766,776,790,792,804,809,812,840,
-		854,856,862,867,876,884,889,892,897,916
+		2,105,7,105,2,106,7,106,1,0,1,0,1,1,1,1,1,1,1,2,1,2,4,2,222,8,2,11,2,12,
+		2,223,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,234,8,2,1,3,1,3,1,3,1,3,1,3,
+		1,3,1,3,1,3,3,3,244,8,3,1,4,1,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,3,5,255,8,
+		5,1,6,3,6,258,8,6,1,6,1,6,3,6,262,8,6,1,7,1,7,1,7,1,7,1,8,1,8,1,8,1,8,
+		1,8,1,8,1,9,1,9,1,9,5,9,277,8,9,10,9,12,9,280,9,9,1,10,4,10,283,8,10,11,
+		10,12,10,284,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,
+		10,1,10,1,10,1,10,1,10,1,10,3,10,304,8,10,1,11,1,11,1,11,1,11,1,11,1,11,
+		3,11,312,8,11,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,
+		12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,3,12,335,8,12,1,12,1,12,
+		1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,
+		1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,
+		5,12,367,8,12,10,12,12,12,370,9,12,1,13,1,13,1,14,1,14,1,14,1,14,1,15,
+		1,15,1,15,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,
+		3,16,393,8,16,1,17,1,17,1,18,1,18,1,18,1,18,1,18,3,18,402,8,18,1,18,1,
+		18,1,19,1,19,1,19,3,19,409,8,19,1,19,1,19,1,20,1,20,1,21,1,21,1,21,1,21,
+		1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,
+		1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,3,21,
+		446,8,21,1,22,1,22,1,22,1,23,1,23,1,23,1,24,1,24,3,24,456,8,24,1,25,1,
+		25,1,25,1,26,1,26,1,26,1,27,1,27,1,27,1,28,1,28,1,28,1,28,1,28,1,28,1,
+		28,3,28,474,8,28,1,29,1,29,1,29,1,29,1,29,1,29,1,29,1,30,1,30,1,30,1,31,
+		1,31,3,31,488,8,31,1,32,1,32,3,32,492,8,32,1,33,1,33,1,33,1,34,1,34,1,
+		34,1,34,1,34,1,34,1,34,1,34,3,34,505,8,34,1,34,1,34,1,34,3,34,510,8,34,
+		1,35,1,35,1,35,3,35,515,8,35,1,35,1,35,1,36,1,36,1,36,5,36,522,8,36,10,
+		36,12,36,525,9,36,1,37,1,37,1,37,3,37,530,8,37,1,38,1,38,1,38,3,38,535,
+		8,38,1,38,1,38,3,38,539,8,38,1,38,1,38,3,38,543,8,38,1,38,1,38,3,38,547,
+		8,38,1,39,1,39,1,39,1,39,1,39,1,39,1,40,1,40,1,40,1,40,1,40,1,40,1,41,
+		1,41,1,41,5,41,564,8,41,10,41,12,41,567,9,41,1,41,3,41,570,8,41,1,42,1,
+		42,1,43,1,43,1,43,1,43,1,43,1,43,1,43,1,44,1,44,1,44,1,45,1,45,1,45,1,
+		45,1,45,1,45,1,45,1,46,1,46,1,46,1,46,1,47,1,47,1,47,5,47,598,8,47,10,
+		47,12,47,601,9,47,1,48,1,48,1,48,3,48,606,8,48,1,49,1,49,1,49,1,49,1,50,
+		1,50,1,50,1,51,1,51,1,51,1,51,1,51,1,51,1,51,1,51,3,51,623,8,51,1,52,1,
+		52,1,52,1,52,1,53,1,53,1,53,1,53,1,54,1,54,1,54,1,55,1,55,3,55,638,8,55,
+		1,55,1,55,1,55,1,55,1,55,1,56,1,56,1,56,5,56,648,8,56,10,56,12,56,651,
+		9,56,1,57,1,57,5,57,655,8,57,10,57,12,57,658,9,57,1,57,1,57,1,58,1,58,
+		1,58,5,58,665,8,58,10,58,12,58,668,9,58,1,59,1,59,1,59,1,59,1,59,3,59,
+		675,8,59,1,60,1,60,1,60,1,60,1,60,1,60,1,61,1,61,1,61,1,61,1,61,1,61,1,
+		62,1,62,1,62,1,62,1,62,1,62,1,63,1,63,1,63,1,63,1,64,1,64,1,64,1,65,1,
+		65,1,65,1,65,1,65,1,66,1,66,5,66,709,8,66,10,66,12,66,712,9,66,1,67,1,
+		67,1,67,1,67,1,67,1,68,1,68,1,69,1,69,1,69,1,69,1,69,1,69,3,69,727,8,69,
+		1,70,1,70,1,70,1,71,1,71,1,71,1,72,1,72,1,72,1,73,1,73,1,73,1,73,1,74,
+		1,74,1,74,1,75,1,75,1,75,1,75,1,75,1,75,5,75,751,8,75,10,75,12,75,754,
+		9,75,1,75,1,75,3,75,758,8,75,1,75,1,75,1,76,1,76,1,76,1,76,1,76,3,76,767,
+		8,76,1,77,1,77,1,77,1,77,1,77,1,77,1,77,1,77,3,77,777,8,77,1,77,1,77,1,
+		77,1,77,1,77,1,77,1,77,1,77,1,77,1,77,1,77,1,77,5,77,791,8,77,10,77,12,
+		77,794,9,77,1,78,1,78,1,78,1,78,1,78,1,78,1,78,1,78,1,78,3,78,805,8,78,
+		1,79,1,79,1,79,3,79,810,8,79,1,79,3,79,813,8,79,1,80,1,80,1,80,1,81,1,
+		81,1,81,1,82,1,82,1,82,1,83,1,83,1,83,1,84,1,84,1,84,1,85,1,85,1,85,1,
+		85,1,85,1,86,1,86,1,86,1,86,1,86,1,86,3,86,841,8,86,1,87,1,87,1,88,1,88,
+		1,88,1,89,1,89,1,89,1,89,1,89,1,89,1,89,3,89,855,8,89,3,89,857,8,89,1,
+		90,1,90,1,90,1,90,3,90,863,8,90,1,91,1,91,1,91,3,91,868,8,91,1,92,1,92,
+		1,93,1,93,1,93,5,93,875,8,93,10,93,12,93,878,9,93,1,94,1,94,1,94,5,94,
+		883,8,94,10,94,12,94,886,9,94,1,95,1,95,3,95,890,8,95,1,95,3,95,893,8,
+		95,1,96,1,96,1,96,3,96,898,8,96,1,97,1,97,1,98,1,98,1,99,1,99,1,100,1,
+		100,1,101,1,101,1,102,1,102,1,103,1,103,1,103,1,103,1,103,3,103,917,8,
+		103,1,104,1,104,1,105,1,105,1,106,1,106,1,106,0,2,24,154,107,0,2,4,6,8,
+		10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,
+		58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,
+		104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,
+		140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,
+		176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,
+		212,0,13,1,0,504,505,1,0,98,99,3,0,103,105,107,107,132,133,2,0,110,111,
+		120,123,2,0,65,65,126,126,1,0,29,32,1,0,19,21,2,0,13,14,16,17,1,0,110,
+		111,1,0,137,138,1,0,147,207,1,0,69,87,1,0,208,503,964,0,214,1,0,0,0,2,
+		216,1,0,0,0,4,233,1,0,0,0,6,243,1,0,0,0,8,245,1,0,0,0,10,254,1,0,0,0,12,
+		257,1,0,0,0,14,263,1,0,0,0,16,267,1,0,0,0,18,273,1,0,0,0,20,303,1,0,0,
+		0,22,311,1,0,0,0,24,334,1,0,0,0,26,371,1,0,0,0,28,373,1,0,0,0,30,377,1,
+		0,0,0,32,392,1,0,0,0,34,394,1,0,0,0,36,396,1,0,0,0,38,405,1,0,0,0,40,412,
+		1,0,0,0,42,445,1,0,0,0,44,447,1,0,0,0,46,450,1,0,0,0,48,455,1,0,0,0,50,
+		457,1,0,0,0,52,460,1,0,0,0,54,463,1,0,0,0,56,466,1,0,0,0,58,475,1,0,0,
+		0,60,482,1,0,0,0,62,487,1,0,0,0,64,489,1,0,0,0,66,493,1,0,0,0,68,509,1,
+		0,0,0,70,511,1,0,0,0,72,518,1,0,0,0,74,526,1,0,0,0,76,531,1,0,0,0,78,548,
+		1,0,0,0,80,554,1,0,0,0,82,569,1,0,0,0,84,571,1,0,0,0,86,573,1,0,0,0,88,
+		580,1,0,0,0,90,583,1,0,0,0,92,590,1,0,0,0,94,594,1,0,0,0,96,602,1,0,0,
+		0,98,607,1,0,0,0,100,611,1,0,0,0,102,622,1,0,0,0,104,624,1,0,0,0,106,628,
+		1,0,0,0,108,632,1,0,0,0,110,635,1,0,0,0,112,644,1,0,0,0,114,652,1,0,0,
+		0,116,661,1,0,0,0,118,669,1,0,0,0,120,676,1,0,0,0,122,682,1,0,0,0,124,
+		688,1,0,0,0,126,694,1,0,0,0,128,698,1,0,0,0,130,701,1,0,0,0,132,706,1,
+		0,0,0,134,713,1,0,0,0,136,718,1,0,0,0,138,726,1,0,0,0,140,728,1,0,0,0,
+		142,731,1,0,0,0,144,734,1,0,0,0,146,737,1,0,0,0,148,741,1,0,0,0,150,744,
+		1,0,0,0,152,766,1,0,0,0,154,776,1,0,0,0,156,804,1,0,0,0,158,806,1,0,0,
+		0,160,814,1,0,0,0,162,817,1,0,0,0,164,820,1,0,0,0,166,823,1,0,0,0,168,
+		826,1,0,0,0,170,829,1,0,0,0,172,840,1,0,0,0,174,842,1,0,0,0,176,844,1,
+		0,0,0,178,847,1,0,0,0,180,862,1,0,0,0,182,867,1,0,0,0,184,869,1,0,0,0,
+		186,871,1,0,0,0,188,879,1,0,0,0,190,892,1,0,0,0,192,897,1,0,0,0,194,899,
+		1,0,0,0,196,901,1,0,0,0,198,903,1,0,0,0,200,905,1,0,0,0,202,907,1,0,0,
+		0,204,909,1,0,0,0,206,916,1,0,0,0,208,918,1,0,0,0,210,920,1,0,0,0,212,
+		922,1,0,0,0,214,215,6,0,-1,0,215,1,1,0,0,0,216,217,3,4,2,0,217,218,5,0,
+		0,1,218,3,1,0,0,0,219,221,3,6,3,0,220,222,5,97,0,0,221,220,1,0,0,0,222,
+		223,1,0,0,0,223,221,1,0,0,0,223,224,1,0,0,0,224,225,1,0,0,0,225,226,3,
+		4,2,0,226,234,1,0,0,0,227,228,3,6,3,0,228,229,3,0,0,0,229,230,3,4,2,0,
+		230,234,1,0,0,0,231,234,3,6,3,0,232,234,1,0,0,0,233,219,1,0,0,0,233,227,
+		1,0,0,0,233,231,1,0,0,0,233,232,1,0,0,0,234,5,1,0,0,0,235,244,3,12,6,0,
+		236,244,3,10,5,0,237,244,3,156,78,0,238,244,3,16,8,0,239,244,3,14,7,0,
+		240,244,3,42,21,0,241,244,3,138,69,0,242,244,3,8,4,0,243,235,1,0,0,0,243,
+		236,1,0,0,0,243,237,1,0,0,0,243,238,1,0,0,0,243,239,1,0,0,0,243,240,1,
+		0,0,0,243,241,1,0,0,0,243,242,1,0,0,0,244,7,1,0,0,0,245,246,7,0,0,0,246,
+		9,1,0,0,0,247,248,3,180,90,0,248,249,5,96,0,0,249,250,3,6,3,0,250,255,
+		1,0,0,0,251,252,3,180,90,0,252,253,5,96,0,0,253,255,1,0,0,0,254,247,1,
+		0,0,0,254,251,1,0,0,0,255,11,1,0,0,0,256,258,5,96,0,0,257,256,1,0,0,0,
+		257,258,1,0,0,0,258,259,1,0,0,0,259,261,3,206,103,0,260,262,3,18,9,0,261,
+		260,1,0,0,0,261,262,1,0,0,0,262,13,1,0,0,0,263,264,5,88,0,0,264,265,3,
+		4,2,0,265,266,5,89,0,0,266,15,1,0,0,0,267,268,5,504,0,0,268,269,5,96,0,
+		0,269,270,5,88,0,0,270,271,3,4,2,0,271,272,5,89,0,0,272,17,1,0,0,0,273,
+		278,3,20,10,0,274,275,5,95,0,0,275,277,3,20,10,0,276,274,1,0,0,0,277,280,
+		1,0,0,0,278,276,1,0,0,0,278,279,1,0,0,0,279,19,1,0,0,0,280,278,1,0,0,0,
+		281,283,7,1,0,0,282,281,1,0,0,0,283,284,1,0,0,0,284,282,1,0,0,0,284,285,
+		1,0,0,0,285,304,1,0,0,0,286,287,5,3,0,0,287,304,3,212,106,0,288,289,5,
+		3,0,0,289,304,3,190,95,0,290,291,5,92,0,0,291,292,3,18,9,0,292,293,5,93,
+		0,0,293,304,1,0,0,0,294,295,5,90,0,0,295,296,3,18,9,0,296,297,5,91,0,0,
+		297,304,1,0,0,0,298,304,3,22,11,0,299,300,5,100,0,0,300,304,3,24,12,0,
+		301,304,3,24,12,0,302,304,5,100,0,0,303,282,1,0,0,0,303,286,1,0,0,0,303,
+		288,1,0,0,0,303,290,1,0,0,0,303,294,1,0,0,0,303,298,1,0,0,0,303,299,1,
+		0,0,0,303,301,1,0,0,0,303,302,1,0,0,0,304,21,1,0,0,0,305,306,3,180,90,
+		0,306,307,5,99,0,0,307,312,1,0,0,0,308,309,3,180,90,0,309,310,5,98,0,0,
+		310,312,1,0,0,0,311,305,1,0,0,0,311,308,1,0,0,0,312,23,1,0,0,0,313,314,
+		6,12,-1,0,314,315,5,92,0,0,315,316,3,24,12,0,316,317,5,93,0,0,317,335,
+		1,0,0,0,318,319,5,90,0,0,319,320,3,24,12,0,320,321,5,91,0,0,321,335,1,
+		0,0,0,322,323,5,98,0,0,323,335,3,24,12,12,324,325,5,99,0,0,325,335,3,24,
+		12,11,326,335,3,36,18,0,327,335,3,38,19,0,328,335,3,190,95,0,329,335,3,
+		212,106,0,330,335,3,210,105,0,331,335,3,202,101,0,332,335,3,180,90,0,333,
+		335,5,143,0,0,334,313,1,0,0,0,334,318,1,0,0,0,334,322,1,0,0,0,334,324,
+		1,0,0,0,334,326,1,0,0,0,334,327,1,0,0,0,334,328,1,0,0,0,334,329,1,0,0,
+		0,334,330,1,0,0,0,334,331,1,0,0,0,334,332,1,0,0,0,334,333,1,0,0,0,335,
+		368,1,0,0,0,336,337,10,19,0,0,337,338,3,26,13,0,338,339,3,24,12,20,339,
+		367,1,0,0,0,340,341,10,18,0,0,341,342,5,100,0,0,342,367,3,24,12,19,343,
+		344,10,17,0,0,344,345,5,101,0,0,345,367,3,24,12,18,346,347,10,16,0,0,347,
+		348,5,98,0,0,348,367,3,24,12,17,349,350,10,15,0,0,350,351,5,99,0,0,351,
+		367,3,24,12,16,352,353,10,10,0,0,353,354,3,34,17,0,354,355,3,24,12,11,
+		355,367,1,0,0,0,356,357,10,9,0,0,357,358,5,112,0,0,358,359,3,24,12,0,359,
+		360,5,96,0,0,360,361,3,24,12,10,361,367,1,0,0,0,362,363,10,14,0,0,363,
+		367,5,115,0,0,364,365,10,13,0,0,365,367,5,116,0,0,366,336,1,0,0,0,366,
+		340,1,0,0,0,366,343,1,0,0,0,366,346,1,0,0,0,366,349,1,0,0,0,366,352,1,
+		0,0,0,366,356,1,0,0,0,366,362,1,0,0,0,366,364,1,0,0,0,367,370,1,0,0,0,
+		368,366,1,0,0,0,368,369,1,0,0,0,369,25,1,0,0,0,370,368,1,0,0,0,371,372,
+		7,2,0,0,372,27,1,0,0,0,373,374,5,504,0,0,374,375,5,109,0,0,375,376,3,24,
+		12,0,376,29,1,0,0,0,377,378,5,504,0,0,378,379,3,32,16,0,379,31,1,0,0,0,
+		380,381,5,98,0,0,381,393,5,98,0,0,382,383,5,99,0,0,383,393,5,99,0,0,384,
+		385,5,98,0,0,385,393,5,109,0,0,386,387,5,99,0,0,387,393,5,109,0,0,388,
+		389,5,100,0,0,389,393,5,109,0,0,390,391,5,101,0,0,391,393,5,109,0,0,392,
+		380,1,0,0,0,392,382,1,0,0,0,392,384,1,0,0,0,392,386,1,0,0,0,392,388,1,
+		0,0,0,392,390,1,0,0,0,393,33,1,0,0,0,394,395,7,3,0,0,395,35,1,0,0,0,396,
+		397,5,143,0,0,397,398,5,94,0,0,398,399,5,143,0,0,399,401,5,92,0,0,400,
+		402,3,18,9,0,401,400,1,0,0,0,401,402,1,0,0,0,402,403,1,0,0,0,403,404,5,
+		93,0,0,404,37,1,0,0,0,405,406,5,504,0,0,406,408,5,92,0,0,407,409,3,18,
+		9,0,408,407,1,0,0,0,408,409,1,0,0,0,409,410,1,0,0,0,410,411,5,93,0,0,411,
+		39,1,0,0,0,412,413,3,24,12,0,413,41,1,0,0,0,414,446,3,44,22,0,415,446,
+		3,46,23,0,416,446,3,52,26,0,417,446,3,54,27,0,418,446,3,56,28,0,419,446,
+		3,58,29,0,420,446,3,60,30,0,421,446,3,64,32,0,422,446,3,66,33,0,423,446,
+		3,70,35,0,424,446,3,76,38,0,425,446,3,78,39,0,426,446,3,80,40,0,427,446,
+		3,86,43,0,428,446,3,90,45,0,429,446,3,92,46,0,430,446,3,96,48,0,431,446,
+		3,98,49,0,432,446,3,102,51,0,433,446,3,104,52,0,434,446,3,106,53,0,435,
+		446,3,100,50,0,436,446,3,108,54,0,437,446,3,110,55,0,438,446,3,120,60,
+		0,439,446,3,122,61,0,440,446,3,88,44,0,441,446,3,124,62,0,442,446,3,126,
+		63,0,443,446,3,128,64,0,444,446,3,130,65,0,445,414,1,0,0,0,445,415,1,0,
+		0,0,445,416,1,0,0,0,445,417,1,0,0,0,445,418,1,0,0,0,445,419,1,0,0,0,445,
+		420,1,0,0,0,445,421,1,0,0,0,445,422,1,0,0,0,445,423,1,0,0,0,445,424,1,
+		0,0,0,445,425,1,0,0,0,445,426,1,0,0,0,445,427,1,0,0,0,445,428,1,0,0,0,
+		445,429,1,0,0,0,445,430,1,0,0,0,445,431,1,0,0,0,445,432,1,0,0,0,445,433,
+		1,0,0,0,445,434,1,0,0,0,445,435,1,0,0,0,445,436,1,0,0,0,445,437,1,0,0,
+		0,445,438,1,0,0,0,445,439,1,0,0,0,445,440,1,0,0,0,445,441,1,0,0,0,445,
+		442,1,0,0,0,445,443,1,0,0,0,445,444,1,0,0,0,446,43,1,0,0,0,447,448,5,35,
+		0,0,448,449,3,24,12,0,449,45,1,0,0,0,450,451,5,36,0,0,451,452,3,24,12,
+		0,452,47,1,0,0,0,453,456,3,50,25,0,454,456,3,28,14,0,455,453,1,0,0,0,455,
+		454,1,0,0,0,456,49,1,0,0,0,457,458,5,38,0,0,458,459,3,28,14,0,459,51,1,
+		0,0,0,460,461,5,37,0,0,461,462,3,28,14,0,462,53,1,0,0,0,463,464,5,40,0,
+		0,464,465,3,28,14,0,465,55,1,0,0,0,466,467,5,41,0,0,467,468,5,92,0,0,468,
+		469,3,24,12,0,469,470,5,93,0,0,470,473,3,6,3,0,471,472,5,42,0,0,472,474,
+		3,6,3,0,473,471,1,0,0,0,473,474,1,0,0,0,474,57,1,0,0,0,475,476,5,43,0,
+		0,476,477,5,92,0,0,477,478,3,24,12,0,478,479,5,93,0,0,479,480,5,95,0,0,
+		480,481,5,143,0,0,481,59,1,0,0,0,482,483,5,44,0,0,483,484,3,62,31,0,484,
+		61,1,0,0,0,485,488,3,28,14,0,486,488,3,30,15,0,487,485,1,0,0,0,487,486,
+		1,0,0,0,488,63,1,0,0,0,489,491,5,66,0,0,490,492,5,143,0,0,491,490,1,0,
+		0,0,491,492,1,0,0,0,492,65,1,0,0,0,493,494,5,67,0,0,494,495,3,68,34,0,
+		495,67,1,0,0,0,496,510,3,24,12,0,497,498,3,24,12,0,498,499,5,95,0,0,499,
+		500,3,24,12,0,500,510,1,0,0,0,501,502,3,24,12,0,502,504,5,95,0,0,503,505,
+		3,24,12,0,504,503,1,0,0,0,504,505,1,0,0,0,505,506,1,0,0,0,506,507,5,95,
+		0,0,507,508,5,143,0,0,508,510,1,0,0,0,509,496,1,0,0,0,509,497,1,0,0,0,
+		509,501,1,0,0,0,510,69,1,0,0,0,511,512,5,45,0,0,512,514,5,88,0,0,513,515,
+		3,72,36,0,514,513,1,0,0,0,514,515,1,0,0,0,515,516,1,0,0,0,516,517,5,89,
+		0,0,517,71,1,0,0,0,518,523,3,74,37,0,519,520,5,95,0,0,520,522,3,74,37,
+		0,521,519,1,0,0,0,522,525,1,0,0,0,523,521,1,0,0,0,523,524,1,0,0,0,524,
+		73,1,0,0,0,525,523,1,0,0,0,526,529,5,504,0,0,527,528,5,109,0,0,528,530,
+		3,192,96,0,529,527,1,0,0,0,529,530,1,0,0,0,530,75,1,0,0,0,531,532,5,46,
+		0,0,532,534,5,92,0,0,533,535,3,48,24,0,534,533,1,0,0,0,534,535,1,0,0,0,
+		535,536,1,0,0,0,536,538,5,97,0,0,537,539,3,40,20,0,538,537,1,0,0,0,538,
+		539,1,0,0,0,539,540,1,0,0,0,540,542,5,97,0,0,541,543,3,24,12,0,542,541,
+		1,0,0,0,542,543,1,0,0,0,543,544,1,0,0,0,544,546,5,93,0,0,545,547,3,6,3,
+		0,546,545,1,0,0,0,546,547,1,0,0,0,547,77,1,0,0,0,548,549,5,47,0,0,549,
+		550,5,92,0,0,550,551,3,40,20,0,551,552,5,93,0,0,552,553,3,6,3,0,553,79,
+		1,0,0,0,554,555,5,48,0,0,555,556,5,504,0,0,556,557,5,88,0,0,557,558,3,
+		82,41,0,558,559,5,89,0,0,559,81,1,0,0,0,560,565,3,84,42,0,561,562,5,95,
+		0,0,562,564,3,84,42,0,563,561,1,0,0,0,564,567,1,0,0,0,565,563,1,0,0,0,
+		565,566,1,0,0,0,566,570,1,0,0,0,567,565,1,0,0,0,568,570,1,0,0,0,569,560,
+		1,0,0,0,569,568,1,0,0,0,570,83,1,0,0,0,571,572,5,504,0,0,572,85,1,0,0,
+		0,573,574,5,50,0,0,574,575,3,182,91,0,575,576,5,92,0,0,576,577,3,82,41,
+		0,577,578,5,93,0,0,578,579,3,14,7,0,579,87,1,0,0,0,580,581,5,51,0,0,581,
+		582,3,24,12,0,582,89,1,0,0,0,583,584,5,52,0,0,584,585,3,182,91,0,585,586,
+		5,92,0,0,586,587,3,82,41,0,587,588,5,93,0,0,588,589,3,14,7,0,589,91,1,
+		0,0,0,590,591,5,53,0,0,591,592,5,504,0,0,592,593,3,94,47,0,593,93,1,0,
+		0,0,594,599,5,504,0,0,595,596,5,96,0,0,596,598,5,504,0,0,597,595,1,0,0,
+		0,598,601,1,0,0,0,599,597,1,0,0,0,599,600,1,0,0,0,600,95,1,0,0,0,601,599,
+		1,0,0,0,602,603,5,55,0,0,603,605,5,504,0,0,604,606,3,14,7,0,605,604,1,
+		0,0,0,605,606,1,0,0,0,606,97,1,0,0,0,607,608,5,62,0,0,608,609,3,28,14,
+		0,609,610,3,14,7,0,610,99,1,0,0,0,611,612,5,61,0,0,612,613,5,143,0,0,613,
+		101,1,0,0,0,614,615,5,56,0,0,615,616,5,504,0,0,616,623,3,114,57,0,617,
+		618,5,56,0,0,618,619,5,504,0,0,619,623,5,143,0,0,620,621,5,56,0,0,621,
+		623,5,504,0,0,622,614,1,0,0,0,622,617,1,0,0,0,622,620,1,0,0,0,623,103,
+		1,0,0,0,624,625,5,57,0,0,625,626,5,504,0,0,626,627,3,114,57,0,627,105,
+		1,0,0,0,628,629,5,58,0,0,629,630,5,504,0,0,630,631,3,114,57,0,631,107,
+		1,0,0,0,632,633,5,63,0,0,633,634,3,114,57,0,634,109,1,0,0,0,635,637,5,
+		64,0,0,636,638,5,504,0,0,637,636,1,0,0,0,637,638,1,0,0,0,638,639,1,0,0,
+		0,639,640,3,114,57,0,640,641,5,88,0,0,641,642,3,112,56,0,642,643,5,89,
+		0,0,643,111,1,0,0,0,644,649,3,114,57,0,645,646,5,95,0,0,646,648,3,114,
+		57,0,647,645,1,0,0,0,648,651,1,0,0,0,649,647,1,0,0,0,649,650,1,0,0,0,650,
+		113,1,0,0,0,651,649,1,0,0,0,652,656,5,90,0,0,653,655,3,116,58,0,654,653,
+		1,0,0,0,655,658,1,0,0,0,656,654,1,0,0,0,656,657,1,0,0,0,657,659,1,0,0,
+		0,658,656,1,0,0,0,659,660,5,91,0,0,660,115,1,0,0,0,661,666,3,118,59,0,
+		662,663,5,95,0,0,663,665,3,118,59,0,664,662,1,0,0,0,665,668,1,0,0,0,666,
+		664,1,0,0,0,666,667,1,0,0,0,667,117,1,0,0,0,668,666,1,0,0,0,669,670,5,
+		504,0,0,670,674,5,109,0,0,671,675,3,192,96,0,672,675,5,143,0,0,673,675,
+		3,202,101,0,674,671,1,0,0,0,674,672,1,0,0,0,674,673,1,0,0,0,675,119,1,
+		0,0,0,676,677,5,59,0,0,677,678,5,504,0,0,678,679,5,92,0,0,679,680,5,93,
+		0,0,680,681,3,14,7,0,681,121,1,0,0,0,682,683,5,60,0,0,683,684,5,504,0,
+		0,684,685,5,92,0,0,685,686,3,20,10,0,686,687,5,93,0,0,687,123,1,0,0,0,
+		688,689,5,33,0,0,689,690,5,143,0,0,690,691,3,6,3,0,691,692,5,95,0,0,692,
+		693,3,6,3,0,693,125,1,0,0,0,694,695,5,34,0,0,695,696,5,143,0,0,696,697,
+		3,6,3,0,697,127,1,0,0,0,698,699,3,190,95,0,699,700,3,14,7,0,700,129,1,
+		0,0,0,701,702,5,68,0,0,702,703,5,88,0,0,703,704,3,132,66,0,704,705,5,89,
+		0,0,705,131,1,0,0,0,706,710,3,134,67,0,707,709,3,134,67,0,708,707,1,0,
+		0,0,709,712,1,0,0,0,710,708,1,0,0,0,710,711,1,0,0,0,711,133,1,0,0,0,712,
+		710,1,0,0,0,713,714,3,182,91,0,714,715,5,96,0,0,715,716,5,26,0,0,716,717,
+		5,139,0,0,717,135,1,0,0,0,718,719,5,504,0,0,719,137,1,0,0,0,720,727,3,
+		140,70,0,721,727,3,142,71,0,722,727,3,144,72,0,723,727,3,146,73,0,724,
+		727,3,148,74,0,725,727,3,150,75,0,726,720,1,0,0,0,726,721,1,0,0,0,726,
+		722,1,0,0,0,726,723,1,0,0,0,726,724,1,0,0,0,726,725,1,0,0,0,727,139,1,
+		0,0,0,728,729,5,4,0,0,729,730,5,506,0,0,730,141,1,0,0,0,731,732,5,5,0,
+		0,732,733,5,508,0,0,733,143,1,0,0,0,734,735,5,10,0,0,735,736,5,143,0,0,
+		736,145,1,0,0,0,737,738,5,12,0,0,738,739,5,513,0,0,739,740,5,143,0,0,740,
+		147,1,0,0,0,741,742,5,11,0,0,742,743,5,143,0,0,743,149,1,0,0,0,744,745,
+		5,6,0,0,745,746,5,510,0,0,746,752,3,152,76,0,747,748,5,9,0,0,748,749,5,
+		510,0,0,749,751,3,152,76,0,750,747,1,0,0,0,751,754,1,0,0,0,752,750,1,0,
+		0,0,752,753,1,0,0,0,753,757,1,0,0,0,754,752,1,0,0,0,755,756,5,8,0,0,756,
+		758,3,152,76,0,757,755,1,0,0,0,757,758,1,0,0,0,758,759,1,0,0,0,759,760,
+		5,7,0,0,760,151,1,0,0,0,761,762,3,0,0,0,762,763,3,6,3,0,763,764,3,0,0,
+		0,764,767,1,0,0,0,765,767,3,0,0,0,766,761,1,0,0,0,766,765,1,0,0,0,767,
+		153,1,0,0,0,768,769,6,77,-1,0,769,770,5,92,0,0,770,771,3,154,77,0,771,
+		772,5,93,0,0,772,777,1,0,0,0,773,774,5,106,0,0,774,777,3,154,77,6,775,
+		777,5,504,0,0,776,768,1,0,0,0,776,773,1,0,0,0,776,775,1,0,0,0,777,792,
+		1,0,0,0,778,779,10,5,0,0,779,780,5,117,0,0,780,791,3,154,77,6,781,782,
+		10,4,0,0,782,783,5,118,0,0,783,791,3,154,77,5,784,785,10,3,0,0,785,786,
+		5,120,0,0,786,791,3,154,77,4,787,788,10,2,0,0,788,789,5,121,0,0,789,791,
+		3,154,77,3,790,778,1,0,0,0,790,781,1,0,0,0,790,784,1,0,0,0,790,787,1,0,
+		0,0,791,794,1,0,0,0,792,790,1,0,0,0,792,793,1,0,0,0,793,155,1,0,0,0,794,
+		792,1,0,0,0,795,805,3,160,80,0,796,805,3,162,81,0,797,805,3,164,82,0,798,
+		805,3,166,83,0,799,805,3,168,84,0,800,805,3,170,85,0,801,805,3,176,88,
+		0,802,805,3,178,89,0,803,805,3,158,79,0,804,795,1,0,0,0,804,796,1,0,0,
+		0,804,797,1,0,0,0,804,798,1,0,0,0,804,799,1,0,0,0,804,800,1,0,0,0,804,
+		801,1,0,0,0,804,802,1,0,0,0,804,803,1,0,0,0,805,157,1,0,0,0,806,807,7,
+		4,0,0,807,809,3,192,96,0,808,810,5,143,0,0,809,808,1,0,0,0,809,810,1,0,
+		0,0,810,812,1,0,0,0,811,813,5,504,0,0,812,811,1,0,0,0,812,813,1,0,0,0,
+		813,159,1,0,0,0,814,815,5,25,0,0,815,816,7,5,0,0,816,161,1,0,0,0,817,818,
+		5,26,0,0,818,819,3,186,93,0,819,163,1,0,0,0,820,821,5,27,0,0,821,822,3,
+		186,93,0,822,165,1,0,0,0,823,824,5,28,0,0,824,825,3,186,93,0,825,167,1,
+		0,0,0,826,827,5,15,0,0,827,828,5,143,0,0,828,169,1,0,0,0,829,830,7,6,0,
+		0,830,831,3,192,96,0,831,832,5,95,0,0,832,833,3,172,86,0,833,171,1,0,0,
+		0,834,841,3,192,96,0,835,836,5,90,0,0,836,837,3,186,93,0,837,838,5,91,
+		0,0,838,841,1,0,0,0,839,841,3,174,87,0,840,834,1,0,0,0,840,835,1,0,0,0,
+		840,839,1,0,0,0,841,173,1,0,0,0,842,843,1,0,0,0,843,175,1,0,0,0,844,845,
+		5,18,0,0,845,846,5,143,0,0,846,177,1,0,0,0,847,848,5,39,0,0,848,849,7,
+		7,0,0,849,856,3,184,92,0,850,851,5,95,0,0,851,854,3,192,96,0,852,853,5,
+		95,0,0,853,855,3,192,96,0,854,852,1,0,0,0,854,855,1,0,0,0,855,857,1,0,
+		0,0,856,850,1,0,0,0,856,857,1,0,0,0,857,179,1,0,0,0,858,859,5,106,0,0,
+		859,863,5,504,0,0,860,863,5,106,0,0,861,863,3,182,91,0,862,858,1,0,0,0,
+		862,860,1,0,0,0,862,861,1,0,0,0,863,181,1,0,0,0,864,865,5,108,0,0,865,
+		868,5,504,0,0,866,868,5,504,0,0,867,864,1,0,0,0,867,866,1,0,0,0,868,183,
+		1,0,0,0,869,870,5,143,0,0,870,185,1,0,0,0,871,876,3,192,96,0,872,873,5,
+		95,0,0,873,875,3,192,96,0,874,872,1,0,0,0,875,878,1,0,0,0,876,874,1,0,
+		0,0,876,877,1,0,0,0,877,187,1,0,0,0,878,876,1,0,0,0,879,884,3,190,95,0,
+		880,881,5,95,0,0,881,883,3,190,95,0,882,880,1,0,0,0,883,886,1,0,0,0,884,
+		882,1,0,0,0,884,885,1,0,0,0,885,189,1,0,0,0,886,884,1,0,0,0,887,893,5,
+		142,0,0,888,890,3,194,97,0,889,888,1,0,0,0,889,890,1,0,0,0,890,891,1,0,
+		0,0,891,893,3,192,96,0,892,887,1,0,0,0,892,889,1,0,0,0,893,191,1,0,0,0,
+		894,898,3,196,98,0,895,898,3,198,99,0,896,898,3,200,100,0,897,894,1,0,
+		0,0,897,895,1,0,0,0,897,896,1,0,0,0,898,193,1,0,0,0,899,900,7,8,0,0,900,
+		195,1,0,0,0,901,902,5,139,0,0,902,197,1,0,0,0,903,904,5,140,0,0,904,199,
+		1,0,0,0,905,906,5,141,0,0,906,201,1,0,0,0,907,908,7,9,0,0,908,203,1,0,
+		0,0,909,910,5,504,0,0,910,205,1,0,0,0,911,917,3,208,104,0,912,913,3,208,
+		104,0,913,914,5,94,0,0,914,915,3,204,102,0,915,917,1,0,0,0,916,911,1,0,
+		0,0,916,912,1,0,0,0,917,207,1,0,0,0,918,919,7,10,0,0,919,209,1,0,0,0,920,
+		921,7,11,0,0,921,211,1,0,0,0,922,923,7,12,0,0,923,213,1,0,0,0,62,223,233,
+		243,254,257,261,278,284,303,311,334,366,368,392,401,408,445,455,473,487,
+		491,504,509,514,523,529,534,538,542,546,565,569,599,605,622,637,649,656,
+		666,674,710,726,752,757,766,776,790,792,804,809,812,840,854,856,862,867,
+		876,884,889,892,897,916
 	};
 
 	public static readonly ATN _ATN =

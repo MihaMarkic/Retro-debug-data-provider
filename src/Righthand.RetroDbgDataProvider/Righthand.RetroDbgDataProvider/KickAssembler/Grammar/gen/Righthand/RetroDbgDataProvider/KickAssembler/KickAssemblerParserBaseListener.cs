@@ -85,6 +85,18 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitUnit([NotNull] KickAssemblerParser.UnitContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.errorSyntax"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterErrorSyntax([NotNull] KickAssemblerParser.ErrorSyntaxContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.errorSyntax"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitErrorSyntax([NotNull] KickAssemblerParser.ErrorSyntaxContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.label"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -120,6 +132,18 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitScope([NotNull] KickAssemblerParser.ScopeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="KickAssemblerParser.namedScope"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterNamedScope([NotNull] KickAssemblerParser.NamedScopeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="KickAssemblerParser.namedScope"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitNamedScope([NotNull] KickAssemblerParser.NamedScopeContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.argumentList"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -528,18 +552,6 @@ public partial class KickAssemblerParserBaseListener : IKickAssemblerParserListe
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVariable([NotNull] KickAssemblerParser.VariableContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="KickAssemblerParser.define"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterDefine([NotNull] KickAssemblerParser.DefineContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="KickAssemblerParser.define"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitDefine([NotNull] KickAssemblerParser.DefineContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="KickAssemblerParser.functionDefine"/>.
 	/// <para>The default implementation does nothing.</para>

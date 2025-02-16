@@ -5,6 +5,7 @@ using Antlr4.Runtime.Tree;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Extensions;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.Models;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerParser;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
@@ -12,23 +13,59 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 public class KickAssemblerParserListener: KickAssemblerParserBaseListener
 {
    private readonly Dictionary<IToken, string> _fileReferences = new();
-   private readonly HashSet<SegmentDefinitionInfo> _segmentDefinitions = new();
-   private readonly List<Label> _labelDefinitions = new();
-   private readonly List<Variable> _variableDefinitions = new();
-   private readonly List<Constant> _constantDefinitions = new();
-   private readonly List<EnumValues> _enumValuesDefinitions = new();
-   private readonly List<Macro> _macroDefinitions = new();
-   private readonly List<Function> _functionDefinitions = new();
+   private readonly ScopeBuilder _defaultScopeBuilder = new(context: null);
+   private readonly Stack<ScopeBuilder> _scopes = new();
+   private readonly List<KickAssemblerParserSyntaxError> _errors = new();
+   public Scope? DefaultScope { get; private set; }
+   /// <summary>
+   /// Errors collected through invalid text in unit.
+   /// </summary>
+   /// <remarks>
+   /// Parser is intentionally lax on this to allow better code completion.
+   /// </remarks>
+   public ImmutableArray<KickAssemblerParserSyntaxError> SyntaxErrors => [.._errors];
    public FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
-    public FrozenSet<SegmentDefinitionInfo> SegmentDefinitions => [.. _segmentDefinitions];
-   public ImmutableList<Label> LabelDefinitions => [.._labelDefinitions];
-   public ImmutableList<Variable> VariableDefinitions => [.._variableDefinitions];
-   public ImmutableList<Constant> ConstantDefinitions => [.._constantDefinitions];
-   public ImmutableList<EnumValues> EnumValuesDefinitions => [.._enumValuesDefinitions];
-   public ImmutableList<Macro> MacroDefinitions => [.._macroDefinitions];
-   public ImmutableList<Function> FunctionDefinitions => [.._functionDefinitions];
    private readonly Stack<VariablesScope> _variableScopes = new();
-   private readonly Stack<ForVariableScope> _forVariableScopes = new();
+   private readonly Stack<ForScope> _forScopes = new();
+
+   public override void EnterProgram(ProgramContext context)
+   {
+       _scopes.Push(_defaultScopeBuilder);
+       base.EnterProgram(context);
+   }
+
+   public override void ExitErrorSyntax(ErrorSyntaxContext context)
+   {
+       base.ExitErrorSyntax(context);
+       _errors.Add(new KickAssemblerParserSyntaxError(context));
+   }
+
+   private void AddElementToCurrentScope(IScopeElement element)
+   {
+       _scopes.Peek().Elements.Add(element);
+   }
+
+   public override void ExitProgram(ProgramContext context)
+   {
+       base.ExitProgram(context);
+       DefaultScope = _defaultScopeBuilder.ToScope();
+   }
+
+   public override void EnterScope(ScopeContext context)
+   {
+       var newScope = new ScopeBuilder(context);
+       _scopes.Push(newScope);
+       base.EnterScope(context);
+   }
+
+   public override void ExitScope(ScopeContext context)
+   {
+       base.ExitScope(context);
+       var scope = _scopes.Pop();
+       var current = _scopes.Peek();
+       current.Scopes.Add(scope);
+   }
+
    public override void EnterPreprocessorImport(PreprocessorImportContext context)
    {
       var fileReference = context.fileReference;
@@ -43,8 +80,8 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    {
       if (context.Name is not null)
       {
-         var segmentInfo = new SegmentDefinitionInfo(context.Name.Text, context.Name.Line);
-         _segmentDefinitions.Add(segmentInfo);
+         var segmentInfo = new SegmentDefinitionInfo(context.Name.Text, context.Name.Line, context);
+         AddElementToCurrentScope(segmentInfo);
       }
 
       base.ExitSegmentDef(context);
@@ -59,7 +96,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var label = CreateLabel(labelName);
             if (label is not null)
             {
-                _labelDefinitions.Add(label);
+                AddElementToCurrentScope(label);
             }
         }
     }
@@ -71,15 +108,15 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             case ITerminalNode terminalNode when terminalNode.Symbol.Type == BANG:
                 if (context.ChildCount == 1)
                 {
-                    return new Label("", IsMultiOccurrence: true);
+                    return new Label("", IsMultiOccurrence: true, context);
                 }
                 else if (context.ChildCount > 1 && context.GetChild(1) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING)
                 {
-                    return new Label(nameNode.GetText(), IsMultiOccurrence: true);
+                    return new Label(nameNode.GetText(), IsMultiOccurrence: true, context);
                 }
                 break;
             case AtNameContext { ChildCount: 1 } atName when atName.GetChild(0) is ITerminalNode nameNode && nameNode.Symbol.Type == UNQUOTED_STRING:
-                return new Label(nameNode.GetText(), IsMultiOccurrence: false);
+                return new Label(nameNode.GetText(), IsMultiOccurrence: false, context);
         }
 
         return null;
@@ -94,7 +131,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var data = GetAssignment(assignmentContext);
             if (data is not null)
             {
-                _variableDefinitions.Add(new (data.Value.Left, VariableType.Global, Range: null));
+                AddElementToCurrentScope(new Variable(data.Value.Left, context));
             }
         }
     }
@@ -108,29 +145,26 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var data = GetAssignment(assignmentContext);
             if (data is not null)
             {
-                var scope = _forVariableScopes.Peek();
-                scope.Variable = new(data.Value.Left, VariableType.For, null);
+                var forScope = _forScopes.Peek();
+                forScope.Variable = new (data.Value.Left, context);
             }
         }
     }
 
     public override void EnterFor(ForContext context)
     {
-        _forVariableScopes.Push(new());
+        _forScopes.Push(new());
         base.EnterFor(context);
     }
 
     public override void ExitFor(ForContext context)
     {
         base.ExitFor(context);
-        var scope = _forVariableScopes.Pop();
+        var scope = _forScopes.Pop();
         if (scope.Variable is not null)
         {
-            var ranged = scope.Variable with
-            {
-                Range = new(context.Start.ToPositionAtStart(), context.Stop.ToPositionAtEnd()),
-            };
-            _variableDefinitions.Add(ranged);
+            var forElement = new For([scope.Variable], context);
+            AddElementToCurrentScope(forElement);
         }
     }
 
@@ -143,7 +177,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var data = GetAssignment(assignmentContext);
             if (data is not null)
             {
-                _constantDefinitions.Add(new Constant(data.Value.Left, data.Value.Right));
+                AddElementToCurrentScope(new Constant(data.Value.Left, data.Value.Right, context));
             }
         }
     }
@@ -172,7 +206,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
         base.ExitEnumValues(context);
         if (_tempEnumValues.Count > 0)
         {
-            _enumValuesDefinitions.Add(new EnumValues([.._tempEnumValues]));
+            AddElementToCurrentScope(new EnumValues([.._tempEnumValues], context));
         }
     }
     public override void ExitEnumValue(EnumValueContext context)
@@ -208,7 +242,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var atName = CreateAtName(atNameContext);
             if (atName is not null)
             {
-                _macroDefinitions.Add(new(atName.Value.Name, atName.Value.IsScopeEsc, [..scope.VariableNames]));
+                AddElementToCurrentScope(new Macro(atName.Value.Name, atName.Value.IsScopeEsc, [..scope.VariableNames], context));
             }
         }
     }
@@ -229,7 +263,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             var atName = CreateAtName(atNameContext);
             if (atName is not null)
             {
-                _functionDefinitions.Add(new(atName.Value.Name, atName.Value.IsScopeEsc, [..scope.VariableNames]));
+                AddElementToCurrentScope(new Function(atName.Value.Name, atName.Value.IsScopeEsc, [..scope.VariableNames], context));
             }
         }
     }
@@ -257,11 +291,11 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
 
     private class VariablesScope
     {
-        public List<string> VariableNames { get; } = new List<string>();
+        public List<string> VariableNames { get; } = new ();
     }
 
-    private class ForVariableScope
+    private class ForScope
     {
-        public Variable? Variable { get; set; }
+        public InitVariable? Variable { get; set; }
     }
 }

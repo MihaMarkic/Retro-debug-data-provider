@@ -57,6 +57,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <return>The visitor result.</return>
 	Result VisitUnit([NotNull] KickAssemblerParser.UnitContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.errorSyntax"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitErrorSyntax([NotNull] KickAssemblerParser.ErrorSyntaxContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.label"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -74,6 +80,12 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitScope([NotNull] KickAssemblerParser.ScopeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="KickAssemblerParser.namedScope"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNamedScope([NotNull] KickAssemblerParser.NamedScopeContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.argumentList"/>.
 	/// </summary>
@@ -278,12 +290,6 @@ public interface IKickAssemblerParserVisitor<Result> : IParseTreeVisitor<Result>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitVariable([NotNull] KickAssemblerParser.VariableContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="KickAssemblerParser.define"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDefine([NotNull] KickAssemblerParser.DefineContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="KickAssemblerParser.functionDefine"/>.
 	/// </summary>

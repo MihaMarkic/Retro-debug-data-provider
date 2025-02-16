@@ -1,6 +1,8 @@
 ﻿using System.Collections.Frozen;
 using Antlr4.Runtime;
+using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
+using Righthand.RetroDbgDataProvider.Models.Program;
 using Righthand.RetroDbgDataProvider.Services.Abstract;
 using Righthand.RetroDbgDataProvider.Services.Implementation;
 
@@ -32,8 +34,11 @@ public static class CompletionOptionCollectorsCommon
 
     internal static FrozenSet<string> CollectSegmentsSuggestions(string rootText, FrozenSet<string> excluded, IProjectServices projectServices)
     {
-        var result = projectServices.CollectSegments()
-            .Where(s => !excluded.Contains(s) && s.StartsWith(rootText, StringComparison.OrdinalIgnoreCase))
+        var defaultScopes = projectServices.CollectDefaultScopes();
+        var segments = defaultScopes.SelectMany(s => s.Elements.OfType<SegmentDefinitionInfo>());
+        var result = segments
+            .Where(s => !excluded.Contains(s.Name) && s.Name.StartsWith(rootText, StringComparison.OrdinalIgnoreCase))
+            .Select(s => s.Name)
             .Distinct()
             .ToFrozenSet();
         return result;

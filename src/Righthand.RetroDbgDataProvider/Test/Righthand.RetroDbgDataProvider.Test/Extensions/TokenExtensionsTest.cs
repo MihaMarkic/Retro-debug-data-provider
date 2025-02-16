@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using NUnit.Framework;
+using Righthand.RetroDbgDataProvider.Test.Mocks;
 
 namespace Righthand.RetroDbgDataProvider.Test.Extensions;
 
@@ -21,19 +22,5 @@ public class TokenExtensionsTest
             
             return token.TextUpToColumn(absoluteColumnIndex);
         }
-    }
-    
-    public class MockToken: IToken
-    {
-        public required string Text { get; init; }
-        public int Type { get; } = 0;
-        public int Line { get; } = 0;
-        public int Column { get; } = 0;
-        public int Channel { get; } = 0;
-        public int TokenIndex { get; } = 0;
-        public required int StartIndex { get; init; }
-        public required int StopIndex { get; init; }
-        public ITokenSource TokenSource { get; } = null!;
-        public ICharStream InputStream { get; } = null!;
     }
 }

@@ -270,9 +270,11 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
     [TestFixture]
     public class LoadReferencedFilesAsync : KickAssemblerSourceCodeParserTest
     {
-        (KickAssemblerLexer Lexer, CommonTokenStream Stream, KickAssemblerParser Parser, KickAssemblerParserListener
+        (KickAssemblerLexer Lexer, CommonTokenStream Stream, KickAssemblerParser Parser, 
+            KickAssemblerParserListener
             ParserListener,
-            KickAssemblerLexerErrorListener LexerErrorListener, KickAssemblerParserErrorListener ParserErrorListener,
+            KickAssemblerLexerErrorListener LexerErrorListener, 
+            KickAssemblerParserErrorListener ParserErrorListener,
             ImmutableArray<IToken> AllTokens)
             GetParser(string text,
                 params string[] definitions)
@@ -305,11 +307,9 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
                                        """);
             var source = new KickAssemblerParsedSourceFile("main.asm", "", mainParsed.AllTokens,
                 FrozenDictionary<IToken, ReferencedFileInfo>.Empty, FrozenSet<string>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, ImmutableList<Function>.Empty, 
+                FrozenSet<string>.Empty, Scope.Empty, 
                 _now, liveContent: null, isImportOnce: false, 
-                mainParsed.LexerErrorListener.Errors, mainParsed.ParserErrorListener.Errors);
+                mainParsed.LexerErrorListener.Errors, mainParsed.ParserErrorListener.Errors, mainParsed.ParserListener.SyntaxErrors);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
             var oldState =
                 new ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>(
@@ -338,13 +338,12 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
             var source = new KickAssemblerParsedSourceFile("main.asm", "", mainParsed.AllTokens,
                 referencedFiles,
                 FrozenSet<string>.Empty,
-                FrozenSet<string>.Empty, FrozenSet<SegmentDefinitionInfo>.Empty,
-                ImmutableList<Label>.Empty, ImmutableList<Variable>.Empty, ImmutableList<Constant>.Empty, 
-                ImmutableList<EnumValues>.Empty, ImmutableList<Macro>.Empty, ImmutableList<Function>.Empty, 
+                FrozenSet<string>.Empty, 
+                Scope.Empty, 
                 _now,
                 liveContent: null, 
                 isImportOnce: false, 
-                mainParsed.LexerErrorListener.Errors, mainParsed.ParserErrorListener.Errors);
+                mainParsed.LexerErrorListener.Errors, mainParsed.ParserErrorListener.Errors, mainParsed.ParserListener.SyntaxErrors);
             var parsed = new ModifiableParsedFilesIndex<KickAssemblerParsedSourceFile>();
             var oldState =
                 new ImmutableParsedFilesIndex<KickAssemblerParsedSourceFile>(

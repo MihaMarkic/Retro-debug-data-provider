@@ -1,3 +1,7 @@
-﻿namespace Righthand.RetroDbgDataProvider.Models.Parsing;
+﻿using Antlr4.Runtime;
+using Righthand.RetroDbgDataProvider.KickAssembler;
 
-public record EnumValues(ImmutableList<EnumValue> Values);
+namespace Righthand.RetroDbgDataProvider.Models.Parsing;
+
+public record EnumValues(ImmutableList<EnumValue> Values,  KickAssemblerParser.EnumValuesContext ParserContext)
+    : ScopeElement<KickAssemblerParser.EnumValuesContext>(ParserContext);

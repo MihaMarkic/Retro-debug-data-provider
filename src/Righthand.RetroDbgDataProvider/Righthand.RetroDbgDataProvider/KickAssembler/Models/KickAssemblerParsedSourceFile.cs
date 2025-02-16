@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Antlr4.Runtime;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 using Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
+using Righthand.RetroDbgDataProvider.KickAssembler.Services.Models;
 using Righthand.RetroDbgDataProvider.Models;
 using Righthand.RetroDbgDataProvider.Models.Parsing;
 using Righthand.RetroDbgDataProvider.Models.Program;
@@ -13,7 +14,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 {
     public FrozenDictionary<IToken, ReferencedFileInfo> ReferencedFilesMap { get; init; }
     public ImmutableArray<KickAssemblerLexerError> LexerErrors { get; }
-    public ImmutableArray<KickAssemblerParserError> ParserErrors { get; }
+    public ImmutableArray<KickAssemblerCodeError> ParserErrors { get; }
     public bool IsImportOnce { get; }
 
     /// <summary>
@@ -25,44 +26,44 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="referencedFilesMap"></param>
     /// <param name="inDefines"></param>
     /// <param name="outDefines"></param>
-    /// <param name="segmentDefinitions"></param>
-    /// <param name="labelDefinitions"></param>
-    /// <param name="variableDefinitions"></param>
-    /// <param name="constantDefinitions"></param>
-    /// <param name="enumValuesDefinitions"></param>
-    /// <param name="macroDefinitions"></param>
-    /// <param name="functionDefinitions"></param>
+    /// <param name="defaultScope"></param>
     /// <param name="lastModified"></param>
     /// <param name="liveContent"></param>
     /// <param name="isImportOnce"></param>
     /// <param name="lexerErrors"></param>
     /// <param name="parserErrors"></param>
+    /// <param name="listenerErrors"></param>
     public KickAssemblerParsedSourceFile(
         string fileName, string relativePath, 
         ImmutableArray<IToken> allTokens,
         FrozenDictionary<IToken, ReferencedFileInfo> referencedFilesMap,
         FrozenSet<string> inDefines,
         FrozenSet<string> outDefines,
-        FrozenSet<SegmentDefinitionInfo> segmentDefinitions,
-        ImmutableList<RetroDbgDataProvider.Models.Parsing.Label> labelDefinitions,
-        ImmutableList<Variable> variableDefinitions, 
-        ImmutableList<Constant> constantDefinitions,
-        ImmutableList<EnumValues> enumValuesDefinitions,
-        ImmutableList<Macro> macroDefinitions,
-        ImmutableList<Function> functionDefinitions,
+        Scope defaultScope,
         DateTimeOffset lastModified,
         string? liveContent,
         bool isImportOnce,
         ImmutableArray<KickAssemblerLexerError> lexerErrors,
-        ImmutableArray<KickAssemblerParserError> parserErrors
-    ) : base(fileName, relativePath, allTokens, referencedFilesMap.Values, inDefines, outDefines, segmentDefinitions, labelDefinitions, 
-        variableDefinitions,constantDefinitions, enumValuesDefinitions, macroDefinitions, functionDefinitions,
-        lastModified, liveContent)
+        ImmutableArray<KickAssemblerParserError> parserErrors,
+        ImmutableArray<KickAssemblerParserSyntaxError> listenerErrors)
+        : base(fileName, relativePath, allTokens, referencedFilesMap.Values, inDefines, outDefines, defaultScope,
+            lastModified, liveContent)
     {
         IsImportOnce = isImportOnce;
         ReferencedFilesMap = referencedFilesMap;
         LexerErrors = lexerErrors;
-        ParserErrors = parserErrors;
+        if (!parserErrors.IsEmpty || !listenerErrors.IsEmpty)
+        {
+            ParserErrors =
+            [
+                ..parserErrors.CastArray<KickAssemblerCodeError>()
+            ];
+            ParserErrors = ParserErrors.AddRange(listenerErrors.CastArray<KickAssemblerCodeError>());
+        }
+        else
+        {
+            ParserErrors = [];
+        }
     }
 
     /// <inheritdoc />
@@ -351,9 +352,9 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
             SyntaxErrorLexerSource.Default);
     }
 
-    private SyntaxError ConvertParserError(KickAssemblerParserError error)
+    private SyntaxError ConvertParserError(KickAssemblerCodeError error)
     {
-        return new(error.Msg, error.OffendingSymbol.StartIndex, error.Line - 1,
+        return new(error.Message, error.CharPositionInLine, error.Line - 1,
             new(error.CharPositionInLine, error.CharPositionInLine + 1),
             SyntaxErrorParserSource.Default);
     }

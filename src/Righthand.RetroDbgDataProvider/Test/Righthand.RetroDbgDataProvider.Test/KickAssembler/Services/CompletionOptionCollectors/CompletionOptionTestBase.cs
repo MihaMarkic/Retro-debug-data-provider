@@ -18,13 +18,10 @@ public abstract class CompletionOptionTestBase
     static CompletionOptionTestBase()
     {
         var projectServices = Substitute.For<IProjectServices>();
-        projectServices.CollectLabels().ReturnsForAnyArgs([]);
-        projectServices.CollectVariables().ReturnsForAnyArgs([]);
-        projectServices.CollectConstants().ReturnsForAnyArgs([]);
-        projectServices.CollectEnumValues().ReturnsForAnyArgs([]);
-        projectServices.CollectMacros().ReturnsForAnyArgs([]);
-        projectServices.CollectFunctions().ReturnsForAnyArgs([]);
-        NoOpContext = new CompletionOptionContext(projectServices, Substitute.For<IParsedSourceFile>());
+        projectServices.CollectDefaultScopes().ReturnsForAnyArgs([]);
+        var parsedSourceFile = Substitute.For<IParsedSourceFile>();
+        parsedSourceFile.DefaultScope.Returns(Scope.Empty);
+        NoOpContext = new CompletionOptionContext(projectServices, parsedSourceFile);
     }
 
     private static ImmutableArray<IToken> GetAllTokens(string text)

@@ -15,47 +15,16 @@ public interface IProjectServices
      /// <returns>A dictionary with source as key and relative file names to <see cref="Path"/> array as value. For project level files, the value is 'Project'.</returns>
      FrozenDictionary<ProjectFileKey, FrozenSet<string>> GetMatchingFiles(string relativeFilePath, string filter, FrozenSet<string> extensions, ICollection<string> excludedFiles);
      FrozenDictionary<ProjectFileKey, FrozenSet<string>> GetMatchingDirectories(string relativeFilePath, string filter);
-
-     /// <summary>
-     /// Collects segment names from entire project.
-     /// </summary>
-     /// <returns>All segment names</returns>
-     IEnumerable<string> CollectSegments();
      /// <summary>
      /// Collects preprocessor symbols from entire project.
      /// </summary>
      /// <returns></returns>
      FrozenSet<string> CollectPreprocessorSymbols();
      /// <summary>
-     /// Collects label definitions.
+     /// Collects default (global) scopes from all files in project.
      /// </summary>
      /// <returns></returns>
-     ImmutableList<Label> CollectLabels();
-     /// <summary>
-     /// Collects variable definitions.
-     /// </summary>
-     /// <returns></returns>
-     ImmutableList<Variable> CollectVariables();
-     /// <summary>
-     /// Collects constant definitions.
-     /// </summary>
-     /// <returns></returns>
-     ImmutableList<Constant> CollectConstants();
-     /// <summary>
-     /// Collects enum value definitions.
-     /// </summary>
-     /// <returns></returns>
-     ImmutableList<EnumValues> CollectEnumValues();
-     /// <summary>
-     /// Collects macro definitions.
-     /// </summary>
-     /// <returns></returns>
-     ImmutableList<Macro> CollectMacros();
-     /// <summary>
-     /// Collects function definitions.
-     /// </summary>
-     /// <returns></returns>
-     ImmutableList<Function> CollectFunctions(); 
+     ImmutableList<Scope> CollectDefaultScopes();
 }
 
 public readonly record struct ProjectFileKey(ProjectFileOrigin Origin, string Path) : IEqualityComparer<ProjectFileKey>

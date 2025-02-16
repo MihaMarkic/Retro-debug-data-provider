@@ -15,7 +15,7 @@ public class GenericCompletionOptionsTest: CompletionOptionTestBase
         {
             var tc = CreateCase(input, start);
 
-            var actual = GenericCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content, tc.Start, tc.End, tc.Column, NoOpContext);
+            var actual = GenericCompletionOptions.GetOption(tc.Tokens.AsSpan(), tc.Content, tc.Start, tc.End, 0, tc.Column, NoOpContext);
 
             return actual?.RootText;
         }
