@@ -11,6 +11,7 @@ public class GenericCompletionOptionsTest: CompletionOptionTestBase
         [TestCase("|", 0, ExpectedResult = "")]
         [TestCase("#impo|rt", 0, ExpectedResult = "#impo")]
         [TestCase(".encod|ing", 0, ExpectedResult = ".encod")]
+        [TestCase("\tld|", 0, ExpectedResult = "ld")]
         public string? GivenTestCase_ReturnsCorrectRoot(string input, int start)
         {
             var tc = CreateCase(input, start);

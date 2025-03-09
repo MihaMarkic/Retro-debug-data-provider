@@ -25,7 +25,8 @@ public enum SuggestionOrigin
     Macro,
     Function,
     Color,
-    Math
+    Math,
+    Mnemonic
 }
 
 public abstract record Suggestion(SuggestionOrigin Origin, string Text, int Priority)

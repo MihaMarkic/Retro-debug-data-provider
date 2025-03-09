@@ -94,6 +94,8 @@ public static class GenericCompletionOptions
 
         Add(builder, root, SuggestionOrigin.Math, MathLibrary.FunctionNames);
 
+        Add(builder, root, SuggestionOrigin.Mnemonic, Assembler.Mnemonics);
+
         if (builder.Count > 0)
         {
             var suggestions = builder.ToFrozenSet();
