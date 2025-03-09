@@ -3,6 +3,12 @@ using Righthand.RetroDbgDataProvider.KickAssembler;
 
 namespace Righthand.RetroDbgDataProvider.Models.Parsing;
 
+/// <summary>
+/// Defines scope for semantic analysis elements.
+/// </summary>
+/// <remarks>
+/// Elements such as for loop variables would be scoped inside for loop only and should not appear in code completion suggestions outside
+/// </remarks>
 public class Scope: IScopeRange
 {
     public static Scope Empty { get; } = new Scope([], [], null);

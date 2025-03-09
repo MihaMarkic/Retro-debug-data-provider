@@ -131,17 +131,21 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         {
             return GenericCompletionOptions.GetOption(lineTokens, text, textStart, textLength, lineNumber, column, context);
         }
-        
-        var columnTokenIndex = tokensAtLine.AsSpan().GetTokenIndexAtColumn(textStart, column);
-        if (columnTokenIndex is null)
+
+        // check preconditions only for implicit request
+        if (trigger == TextChangeTrigger.CharacterTyped)
         {
-            return null;
-        }
-        
-        var lineTokensToCursor = tokensAtLine.AsSpan()[..(columnTokenIndex.Value+1)];
-        if (!ArePreconditionsValid(trigger, triggerChar, column, lineTokensToCursor))
-        {
-            return null;
+            var columnTokenIndex = tokensAtLine.AsSpan().GetTokenIndexAtColumn(textStart, column);
+            if (columnTokenIndex is null)
+            {
+                return null;
+            }
+
+            var lineTokensToCursor = tokensAtLine.AsSpan()[..(columnTokenIndex.Value + 1)];
+            if (!ArePreconditionsValid(trigger, triggerChar, column, lineTokensToCursor))
+            {
+                return null;
+            }
         }
 
         var line = text.AsSpan()[textStart..(textStart + textLength)];

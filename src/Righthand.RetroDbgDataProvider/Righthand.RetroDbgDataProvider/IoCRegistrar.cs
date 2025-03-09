@@ -21,11 +21,19 @@ public static class IoCRegistrar
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            services.AddSingleton<IOsDependent, WindowsDependent>();
+            services.AddSingleton<IOSDependent, WindowsDependent>();
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            services.AddSingleton<IOSDependent, MacDependent>();
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            services.AddSingleton<IOSDependent, LinuxDependent>();
         }
         else
         {
-            services.AddSingleton<IOsDependent, NonWindowsDependent>();
+            throw new Exception($"{RuntimeInformation.OSDescription} is not supported");
         }
         return services
             .AddSingleton<IKickAssemblerCompiler, KickAssemblerCompiler>()

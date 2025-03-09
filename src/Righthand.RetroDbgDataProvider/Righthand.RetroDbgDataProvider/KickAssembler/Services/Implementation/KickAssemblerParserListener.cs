@@ -34,6 +34,12 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
        base.EnterProgram(context);
    }
 
+   public override void ExitProgram(ProgramContext context)
+   {
+       base.ExitProgram(context);
+       DefaultScope = _defaultScopeBuilder.ToScope();
+   }
+
    public override void ExitErrorSyntax(ErrorSyntaxContext context)
    {
        base.ExitErrorSyntax(context);
@@ -43,12 +49,6 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    private void AddElementToCurrentScope(IScopeElement element)
    {
        _scopes.Peek().Elements.Add(element);
-   }
-
-   public override void ExitProgram(ProgramContext context)
-   {
-       base.ExitProgram(context);
-       DefaultScope = _defaultScopeBuilder.ToScope();
    }
 
    public override void EnterScope(ScopeContext context)

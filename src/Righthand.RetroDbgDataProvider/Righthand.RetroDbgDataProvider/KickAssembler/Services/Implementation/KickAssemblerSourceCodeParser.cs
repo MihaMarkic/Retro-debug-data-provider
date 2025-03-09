@@ -112,7 +112,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
         if (_parsingCts is not null)
         {
             _logger.LogInformation("Issuing cancellation");
-            _parsingCts.Cancel();
+            await _parsingCts.CancelAsync();
             _parsingCts.Dispose();
             _parsingCts = null;
         }
@@ -278,7 +278,7 @@ public sealed class KickAssemblerSourceCodeParser : SourceCodeParser<KickAssembl
             return oldState;
         }
 
-        var content = await _fileService.ReadAllTextAsync(fileName, ct);
+        var content = await _fileService.ReadAllTextAsync(fileName, ReadAllTextOption.FixLineEndings, ct);
         return ParseStream(fileName, relativePath, new AntlrInputStream(content), lastWrite, inDefines, libraryDirectories,
             liveContent: null);
     }

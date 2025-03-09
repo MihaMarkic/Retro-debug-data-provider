@@ -26,7 +26,7 @@ public class KickAssemblerSourceCodeParserTest : BaseTest<KickAssemblerSourceCod
         var result = ImmutableDictionary<string, string>.Empty.AddRange(files);
         var fileService = Fixture.Freeze<IFileService>();
         fileService.FileExists(Arg.Any<string>()).Returns(x => result.ContainsKey((string)x[0]));
-        fileService.ReadAllTextAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        fileService.ReadAllTextAsync(Arg.Any<string>(), Arg.Any<ReadAllTextOption>(), Arg.Any<CancellationToken>())
             .Returns(x => Task.FromResult(result[(string)x[0]]));
         return result;
     }
