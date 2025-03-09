@@ -1,11 +1,12 @@
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Righthand.RetroDbgDataProvider;
 
 public static class FileReader
 {
-    public static async IAsyncEnumerable<char> ReadAllTextAsChars(Stream stream, CancellationToken ct = default)
+    public static async IAsyncEnumerable<char> ReadAllTextAsChars(Stream stream, [EnumeratorCancellation]CancellationToken ct = default)
     {
         const int BufferSize = 8096;
         using var reader = new StreamReader(stream, Encoding.UTF8, true, BufferSize, leaveOpen: true);

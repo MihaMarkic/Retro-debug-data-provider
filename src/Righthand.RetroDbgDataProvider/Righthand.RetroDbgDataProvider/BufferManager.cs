@@ -13,7 +13,7 @@ public static class BufferManager
     /// Gets a buffer with given size or larger.
     /// </summary>
     /// <param name="minLength">A minimum size requested.</param>
-    /// <returns>An instance of <see cref="ManagedBuffer"/> with a byte buffer of given minimal size or larger.</returns>
+    /// <returns>An instance of <see cref="ManagedBuffer{T}"/> with a byte buffer of given minimal size or larger.</returns>
     public static ManagedBuffer<T> GetBuffer<T>(uint minLength)
     {
         return GetBuffer(ArrayPool<T>.Shared, minLength);
@@ -24,7 +24,7 @@ public static class BufferManager
     /// </summary>
     /// <param name="pool">Pool where the buffer is retrieved from.</param>
     /// <param name="minLength">A minimum size requested.</param>
-    /// <returns>An instance of <see cref="ManagedBuffer"/> with a byte buffer of given minimal size or larger.</returns>
+    /// <returns>An instance of <see cref="ManagedBuffer{T}"/> with a byte buffer of given minimal size or larger.</returns>
     public static ManagedBuffer<T> GetBuffer<T>(this ArrayPool<T> pool, uint minLength)
     {
         return new ManagedBuffer<T>(pool, pool.Rent((int)minLength), minLength);
@@ -72,7 +72,7 @@ public readonly struct ManagedBuffer<T> : IDisposable
     }
 
     /// <summary>
-    /// Releases all resources used by the <see cref="ManagedBuffer"/>.
+    /// Releases all resources used by the <see cref="ManagedBuffer{T}"/>.
     /// </summary>
     public void Dispose()
     {
