@@ -54,7 +54,12 @@ public static class DirectiveProperties
     {
         return types.ToFrozenDictionary(v => v.Name, v => v.ValueTypes.OfType<DirectiveValueType>().ToFrozenSet(), StringComparer.OrdinalIgnoreCase);
     }
-    
+    /// <summary>
+    /// Gets the directive associated with specified key.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="directive"></param>
+    /// <returns></returns>
     public static bool TryGetDirective(string key, [NotNullWhen(true)]out Directive? directive) => Data.TryGetValue(key, out directive);
 
     /// <summary>
@@ -66,9 +71,16 @@ public static class DirectiveProperties
     {
         return [..Data.Keys.Where(k => k.Length > root.Length && k.StartsWith(root, StringComparison.OrdinalIgnoreCase))];
     }
-
+    /// <summary>
+    /// Gets all directives.
+    /// </summary>
     public static ImmutableArray<string> AllDirectives => Data.Keys;
-
+    /// <summary>
+    /// Gets directive value types associated with specified directive name and directive type.
+    /// </summary>
+    /// <param name="directiveName"></param>
+    /// <param name="directiveType"></param>
+    /// <returns></returns>
     public static FrozenSet<DirectiveValueType>? GetValueTypes(string directiveName, string? directiveType)
     {
         if (Data.TryGetValue(directiveName, out var directive))
@@ -98,15 +110,37 @@ public static class DirectiveProperties
         return null;
     }
 }
-
+/// <summary>
+/// Base directive type.
+/// </summary>
+/// <param name="Name"></param>
 public abstract record Directive(string Name);
-
+/// <summary>
+/// Directive containing one or more types.
+/// </summary>
+/// <example>.import</example>
+/// <param name="Name"></param>
+/// <param name="ValueTypes"></param>
 public record DirectiveWithType(string Name, FrozenDictionary<string, FrozenSet<DirectiveValueType>> ValueTypes) : Directive(Name);
-
+/// <summary>
+/// Directive without type.
+/// </summary>
+/// <example>.fill</example>
+/// <param name="Name"></param>
+/// <param name="ValueTypes"></param>
 public record DirectiveWithoutType(string Name, FrozenSet<DirectiveValueType> ValueTypes) : Directive(Name);
 
-
+/// <summary>
+/// Directive value type base.
+/// </summary>
 public abstract record DirectiveValueType();
-
+/// <summary>
+/// File reference directive type.
+/// </summary>
+/// <param name="FileExtension"></param>
 public record FileDirectiveValueType(string FileExtension) : DirectiveValueType();
+/// <summary>
+/// Enumerable directive type.
+/// </summary>
+/// <param name="Value"></param>
 public record EnumerableDirectiveValueType(string Value) : DirectiveValueType();

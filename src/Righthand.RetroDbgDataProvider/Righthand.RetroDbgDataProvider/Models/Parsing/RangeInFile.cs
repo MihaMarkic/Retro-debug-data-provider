@@ -9,6 +9,12 @@ namespace Righthand.RetroDbgDataProvider.Models.Parsing;
 /// <param name="End"></param>
 public readonly record struct RangeInFile(Position? Start, Position? End)
 {
+    /// <summary>
+    /// Evaluates whether range contains given position.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
     public bool IsInRange(int line, int column)
     {
         if (Start is not null)

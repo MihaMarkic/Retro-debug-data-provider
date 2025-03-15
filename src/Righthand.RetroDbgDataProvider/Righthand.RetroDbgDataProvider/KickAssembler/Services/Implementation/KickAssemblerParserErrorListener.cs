@@ -3,11 +3,11 @@ using Righthand.RetroDbgDataProvider.KickAssembler.Services.Models;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
 
-public class KickAssemblerParserErrorListener: BaseErrorListener
+internal class KickAssemblerParserErrorListener: BaseErrorListener
 {
     private readonly List<KickAssemblerParserError> _errors = new();
     public ImmutableArray<KickAssemblerParserError> Errors => [.._errors];
-    
+    /// <inheritdoc />
     public override void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine,
         string msg, RecognitionException e)
     {

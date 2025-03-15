@@ -7,6 +7,9 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOption
 /// </summary>
 public static class Assembler
 {
+    /// <summary>
+    /// All the assembler mnemonics.
+    /// </summary>
     public static FrozenSet<string> Mnemonics { get; } =
     [
         "adc",

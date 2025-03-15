@@ -23,6 +23,9 @@ public abstract record SyntaxErrorSource
 /// </summary>
 public record SyntaxErrorLexerSource : SyntaxErrorSource
 {
+    /// <summary>
+    /// Gets a default static instance.
+    /// </summary>
     public static SyntaxErrorLexerSource Default { get; } = new();
 }
 /// <summary>
@@ -30,6 +33,9 @@ public record SyntaxErrorLexerSource : SyntaxErrorSource
 /// </summary>
 public record SyntaxErrorParserSource: SyntaxErrorSource
 {
+    /// <summary>
+    /// Gets a default static instance.
+    /// </summary>
     public static SyntaxErrorParserSource Default { get; } = new();
 }
 /// <summary>
@@ -42,5 +48,8 @@ public record SyntaxErrorFileSource(bool IsInMemory): SyntaxErrorSource;
 /// </summary>
 public record SyntaxErrorCompiledFileSource : SyntaxErrorSource
 {
+    /// <summary>
+    /// Gets a default static instance.
+    /// </summary>
     public static SyntaxErrorCompiledFileSource Default { get; } = new();
 }

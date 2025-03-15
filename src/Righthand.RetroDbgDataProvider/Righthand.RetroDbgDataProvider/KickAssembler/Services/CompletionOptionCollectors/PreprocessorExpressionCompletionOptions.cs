@@ -6,7 +6,7 @@ using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public static class PreprocessorExpressionCompletionOptions
+internal static class PreprocessorExpressionCompletionOptions
 {
     internal static CompletionOption? GetOption(ReadOnlySpan<IToken> lineTokens, string text, int lineStart, int lineLength, int column,
         CompletionOptionContext context)
@@ -83,7 +83,7 @@ public static class PreprocessorExpressionCompletionOptions
     /// Determines whether char is part of a symbol name or not.
     /// </summary>
     /// <param name="c"></param>
-    /// <returns>True when <param name="c"/> is part of symbol name, false otherwise</returns>
+    /// <returns>True when <paramref name="c"/> is part of symbol name, false otherwise</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsPartOfSymbolName(this char c) => char.IsDigit(c) || char.IsLetter(c);
 

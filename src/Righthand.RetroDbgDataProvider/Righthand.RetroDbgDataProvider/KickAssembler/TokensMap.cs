@@ -3,8 +3,14 @@ using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler;
 
+/// <summary>
+/// Maps token by meaning.
+/// </summary>
 public static class TokensMap
 {
+    /// <summary>
+    /// Gets the tokens map.
+    /// </summary>
     public static FrozenDictionary<int, TokenType> Map { get; }
 
     static TokensMap()

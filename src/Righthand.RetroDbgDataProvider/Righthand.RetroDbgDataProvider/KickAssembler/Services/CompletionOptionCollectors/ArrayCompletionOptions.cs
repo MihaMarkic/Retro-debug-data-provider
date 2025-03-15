@@ -5,7 +5,7 @@ using Righthand.RetroDbgDataProvider.Models.Parsing;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public static class ArrayCompletionOptions
+internal static class ArrayCompletionOptions
 {
     /// <summary>
     /// Get completion option for arrays within a body, such as files in .disk.
@@ -221,7 +221,7 @@ public static class ArrayCompletionOptions
     }
 
     /// <summary>
-    /// Gets active value and root value left of the <param name="relativeColumn"/>. Stops upon space, comma and close bracket.
+    /// Gets active value and root value left of the <paramref name="relativeColumn"/>. Stops upon space, comma and close bracket.
     /// </summary>
     /// <param name="values"></param>
     /// <param name="relativeColumn"></param>
@@ -247,7 +247,7 @@ public static class ArrayCompletionOptions
     }
 
     /// <summary>
-    /// Gets minimum position of given <param name="values" /> starting with <param name="defaultEnding" />.
+    /// Gets minimum position of given <paramref name="values" /> starting with <paramref name="defaultEnding" />.
     /// Negative values are ignored.
     /// </summary>
     /// <param name="defaultEnding"></param>

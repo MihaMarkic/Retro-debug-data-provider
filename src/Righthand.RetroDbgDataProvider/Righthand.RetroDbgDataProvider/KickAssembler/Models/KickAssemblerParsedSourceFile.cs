@@ -10,11 +10,26 @@ using Righthand.RetroDbgDataProvider.Models.Program;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Models;
 
+/// <summary>
+/// Represents all the parse data for a given file.
+/// </summary>
 public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 {
+    /// <summary>
+    /// Map of referenced files by <see cref="IToken"/>.
+    /// </summary>
     public FrozenDictionary<IToken, ReferencedFileInfo> ReferencedFilesMap { get; init; }
+    /// <summary>
+    /// A list of lexer errors.
+    /// </summary>
     public ImmutableArray<KickAssemblerLexerError> LexerErrors { get; }
+    /// <summary>
+    /// A list of parser errors.
+    /// </summary>
     public ImmutableArray<KickAssemblerCodeError> ParserErrors { get; }
+    /// <summary>
+    /// A flag signaling whether file contains #importonce preprocessor directive.
+    /// </summary>
     public bool IsImportOnce { get; }
 
     /// <summary>
@@ -107,7 +122,10 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
     /// <param name="tokens">Tokens from default channel</param>
     /// <param name="allTokensByLineMap"></param>
     /// <param name="trigger"></param>
-    /// <param name="triggerChar">Character that triggered request, only valid when <see cref="trigger"/> is <see cref="TextChangeTrigger.CharacterTyped"/></param>
+    /// <param name="triggerChar">
+    /// Character that triggered request, only valid when <paramref name="trigger"/> is
+    /// <paremref cref="TextChangeTrigger.CharacterTyped"/>
+    /// </param>
     /// <param name="lineNumber">0 based line number in source file</param>
     /// <param name="column">0 based column number within selected line</param>
     /// <param name="text"></param>
@@ -150,7 +168,6 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         var line = text.AsSpan()[textStart..(textStart + textLength)];
         var result = ArrayCompletionOptions.GetOption(tokens.AsSpan(), text, textStart, textLength, column, relativePath, context)
-                     ?? PreprocessorDirectivesCompletionOptionsObsolete.GetOption(lineTokens, text, textStart, textLength, column, context)
                      ?? DirectiveCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, relativePath, context)
                      ?? FileReferenceCompletionOptions.GetOption(lineTokens, line, trigger, column, relativePath, context)
                      ?? PreprocessorExpressionCompletionOptions.GetOption(lineTokens, text, textStart, textLength, column, context)
@@ -208,7 +225,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         return allTokensByLineMap;
     }
     /// <summary>
-    /// Returns token at location defined by <param name="line"/> and <param name="column"/>.
+    /// Returns token at location defined by <paremref name="line"/> and <paremref name="column"/>.
     /// </summary>
     /// <param name="tokensMap">0 based line map of tokens</param>
     /// <param name="line">0 based line index</param>
@@ -278,7 +295,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         return builder.ToImmutable();
     }
-
+    /// <inheritdoc />
     protected override async Task<FrozenDictionary<int, SyntaxLine>> GetSyntaxLinesAsync(CancellationToken ct)
     {
         var lexerBasedSyntaxLinesTask = Task.Run(() => GetLexerBasedSyntaxLines(ct), ct).ConfigureAwait(false);
@@ -325,7 +342,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         var lines = GetLexerBasedTokens(linesCount, tokens, CancellationToken.None);
         return lines;
     }
-
+    /// <inheritdoc />
     protected override FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct)
     {
         List<SyntaxError> builder = new(LexerErrors.Length + ParserErrors.Length);
@@ -415,7 +432,7 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
 
         return builder.ToImmutable();
     }
-
+    /// <inheritdoc />
     public override SingleLineTextRange? GetTokenRangeAt(int line, int column)
     {
         var tokens = AllTokens;
@@ -427,11 +444,5 @@ public partial class KickAssemblerParsedSourceFile : ParsedSourceFile
         }
 
         return null;
-    }
-    
-    public enum ValuesCount
-    {
-        Single,
-        Multiple,
     }
 }

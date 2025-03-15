@@ -7,24 +7,42 @@ using Label = Righthand.RetroDbgDataProvider.Models.Parsing.Label;
 
 namespace Righthand.RetroDbgDataProvider.Models;
 
+/// <summary>
+/// Represents syntax file info.
+/// </summary>
+/// <param name="SyntaxLines"></param>
+/// <param name="IgnoredDefineContent"></param>
+/// <param name="SyntaxErrorLines"></param>
+/// <param name="AllTokensByLineMap"></param>
 public record FileSyntaxInfo(
     FrozenDictionary<int, SyntaxLine> SyntaxLines,
     ImmutableArray<MultiLineTextRange> IgnoredDefineContent,
     FrozenDictionary<int, SyntaxErrorLine> SyntaxErrorLines,
     FrozenDictionary<int, ImmutableArray<IToken>> AllTokensByLineMap);
-
+/// <summary>
+/// Represents a parsed source file.
+/// </summary>
 public interface IParsedSourceFile
 {
+    /// <summary>
+    /// Gets root scope.
+    /// </summary>
     Scope DefaultScope { get; }
 }
-
+/// <inheritdoc cref="IParsedSourceFile"/>
 public abstract class ParsedSourceFile: IParsedSourceFile
 {
+    /// <summary>
+    /// Gets file name.
+    /// </summary>
     public string FileName { get; }
     /// <summary>
     /// Relative path to either project or library, depends on file origin
     /// </summary>
     public string RelativePath { get; }
+    /// <summary>
+    /// Gets a list of referenced files.
+    /// </summary>
     public ImmutableArray<ReferencedFileInfo> ReferencedFiles { get; private set; }
     /// <summary>
     /// Preprocessor symbol names defined to include this file.
@@ -34,8 +52,15 @@ public abstract class ParsedSourceFile: IParsedSourceFile
     /// Preprocessor symbol names defined in this file.
     /// </summary>
     public FrozenSet<string> OutDefines { get; }
+    /// <summary>
+    /// Gets file's last modified date on file system.
+    /// </summary>
     public DateTimeOffset LastModified { get; }
+    /// <inheritdoc />
     public Scope DefaultScope { get; }
+    /// <summary>
+    /// Unsaved live content.
+    /// </summary>
     public string? LiveContent { get; }
     /// <summary>
     /// All tokens regardless of channel.
@@ -61,11 +86,32 @@ public abstract class ParsedSourceFile: IParsedSourceFile
     /// <returns>An array of <see cref="MultiLineTextRange"/> values.</returns>
     internal abstract ImmutableArray<MultiLineTextRange> GetIgnoredDefineContent(CancellationToken ct);
     private FrozenDictionary<int, SyntaxLine>? _syntaxLines;
+    /// <summary>
+    /// Get all lines containing syntax tokens.
+    /// </summary>
+    /// <param name="ct"></param>
+    /// <returns></returns>
     protected abstract Task<FrozenDictionary<int, SyntaxLine>> GetSyntaxLinesAsync(CancellationToken ct);
     private Task<FileSyntaxInfo>? _syntaxInfoInitTask;
+    /// <summary>
+    /// Gets all syntax errors.
+    /// </summary>
+    /// <param name="ct"></param>
+    /// <returns></returns>
     protected abstract FrozenDictionary<int, SyntaxErrorLine> GetSyntaxErrors(CancellationToken ct);
     private FrozenDictionary<int, SyntaxErrorLine>? _syntaxErrors;
-    
+    /// <summary>
+    /// Creates an instance of <see cref="ParsedSourceFile"/>.
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="relativePath"></param>
+    /// <param name="allTokens"></param>
+    /// <param name="referencedFiles"></param>
+    /// <param name="inDefines"></param>
+    /// <param name="outDefines"></param>
+    /// <param name="defaultScope"></param>
+    /// <param name="lastModified"></param>
+    /// <param name="liveContent"></param>
     protected ParsedSourceFile(string fileName, string relativePath, ImmutableArray<IToken> allTokens, ImmutableArray<ReferencedFileInfo> referencedFiles, FrozenSet<string> inDefines,
         FrozenSet<string> outDefines, 
         Scope defaultScope,
@@ -94,7 +140,7 @@ public abstract class ParsedSourceFile: IParsedSourceFile
     // public virtual CompletionOption? GetCompletionOption(TextChangeTrigger trigger, int offset) => null;
 
     /// <summary>
-    /// Checks if there are completion options available at document position defined by <param name="line"/> and <param name="column"/>.
+    /// Checks if there are completion options available at document position defined by <paramref name="line"/> and <paramref name="column"/>.
     /// </summary>
     /// <param name="trigger"></param>
     /// <param name="triggerChar"></param>
@@ -164,18 +210,28 @@ public abstract class ParsedSourceFile: IParsedSourceFile
             syntaxErrors, allTokensByLineMap);
     }
 
+    /// <summary>
+    /// Updates referenced file info.
+    /// </summary>
+    /// <param name="old"></param>
+    /// <param name="new"></param>
     public void UpdateReferencedFileInfo(ReferencedFileInfo old, ReferencedFileInfo @new)
     {
         ReferencedFiles = ReferencedFiles.Replace(old, @new);
     }
-
+    /// <summary>
+    /// Gets token range at give position.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
     public abstract SingleLineTextRange? GetTokenRangeAt(int line, int column);
 
     /// <summary>
-    /// Checks whether given <param name="line"/> falls into ignored content.
+    /// Checks whether given <paramref name="line"/> falls into ignored content.
     /// </summary>
     /// <param name="line"></param>
-    /// <returns>True when <param name="line"/> is within ignored content, false otherwise.</returns>
+    /// <returns>True when <paramref name="line"/> is within ignored content, false otherwise.</returns>
     protected bool IsLineIgnoredContent(int line)
     {
         return _ignoredDefineContent?.Any(r => r.Start.Row <= line && r.End.Row >= line) ?? false;

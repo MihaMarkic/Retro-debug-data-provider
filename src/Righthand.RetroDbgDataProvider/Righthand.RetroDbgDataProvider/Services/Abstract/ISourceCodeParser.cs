@@ -15,7 +15,7 @@ public interface ISourceCodeParser<out T>: IDisposable, IAsyncDisposable
     /// <summary>
     /// Parsed data for all files in current state.
     /// </summary>
-    /// <remarks><see cref="AllFilesChanged"/> is triggered on each change.</remarks>
+    /// <remarks><see cref="FilesChanged"/> is triggered on each change.</remarks>
     IParsedFilesIndex<T> AllFiles { get; }
     /// <summary>
     /// Returns parsing <see cref="Task"/>.

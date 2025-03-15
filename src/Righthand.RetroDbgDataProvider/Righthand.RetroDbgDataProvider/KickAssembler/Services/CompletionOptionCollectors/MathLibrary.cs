@@ -9,7 +9,13 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOption
 /// <remarks>Generated with MathLibrary.netpad</remarks>
 public static class MathLibrary
 {
+    /// <summary>
+    /// Gets all math functions grouped by name.
+    /// </summary>
     public static FrozenDictionary<string, FunctionDefinition> Functions { get; }
+    /// <summary>
+    /// Gets all function names.
+    /// </summary>
     public static ImmutableArray<string> FunctionNames => Functions.Keys;
 
     static MathLibrary()
@@ -50,5 +56,10 @@ public static class MathLibrary
         }.ToFrozenDictionary();
     }
 
+    /// <summary>
+    /// Function definition.
+    /// </summary>
+    /// <param name="Name"></param>
+    /// <param name="Arguments"></param>
     public record FunctionDefinition(string Name, ImmutableList<string> Arguments);
 }

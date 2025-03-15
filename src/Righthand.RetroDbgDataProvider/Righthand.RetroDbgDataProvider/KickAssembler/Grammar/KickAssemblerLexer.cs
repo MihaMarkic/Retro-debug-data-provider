@@ -6,9 +6,18 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler;
 
 partial class KickAssemblerLexer
 {
+    /// <summary>
+    /// A set of #define symbols.
+    /// </summary>
     public HashSet<string> DefinedSymbols { get; init; } = new();   
     private int? ModeOnDefaultEol { get; set; }
+    /// <summary>
+    /// A flag signaling whether file contains #importonce preprocessor directive.
+    /// </summary>
     public bool IsImportOnce { get; private set; }
+    /// <summary>
+    /// A list of referenced files.
+    /// </summary>
     public List<ReferencedFileInfo> ReferencedFiles { get; } = new();
     private bool IsDefined(string text) => PreprocessorConditionEvaluator.IsDefined(DefinedSymbols.ToFrozenSet(), text);
 
@@ -30,6 +39,7 @@ partial class KickAssemblerLexer
         return [..tokens.Select(t => ruleNames[t])];
     }
 
+    /// <inheritdoc />
     public override void PushMode(int m)
     {
         //Debug.WriteLine($"Push mode {modeNames[m]}");
@@ -45,6 +55,7 @@ partial class KickAssemblerLexer
         ReferencedFiles.Add(info);
     }
 
+    /// <inheritdoc />
     public override int PopMode()
     {
         int oldMode = base.PopMode();

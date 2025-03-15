@@ -4,7 +4,7 @@ namespace Righthand.RetroDbgDataProvider.KickAssembler;
 
 partial class KickAssemblerParser
 {
-    public bool IsEolPrevious()
+    internal bool IsEolPrevious()
     {
         int idx = CurrentToken.TokenIndex;
         int ch;

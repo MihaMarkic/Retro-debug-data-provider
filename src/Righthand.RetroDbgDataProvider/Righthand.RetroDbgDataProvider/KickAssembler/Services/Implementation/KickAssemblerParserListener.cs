@@ -9,37 +9,40 @@ using Righthand.RetroDbgDataProvider.KickAssembler.Services.Models;
 using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerParser;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.Implementation;
-
+/// <summary>
+/// Parser listener.
+/// </summary>
 public class KickAssemblerParserListener: KickAssemblerParserBaseListener
 {
    private readonly Dictionary<IToken, string> _fileReferences = new();
    private readonly ScopeBuilder _defaultScopeBuilder = new(context: null);
    private readonly Stack<ScopeBuilder> _scopes = new();
    private readonly List<KickAssemblerParserSyntaxError> _errors = new();
-   public Scope? DefaultScope { get; private set; }
+   internal Scope? DefaultScope { get; private set; }
    /// <summary>
    /// Errors collected through invalid text in unit.
    /// </summary>
    /// <remarks>
    /// Parser is intentionally lax on this to allow better code completion.
    /// </remarks>
-   public ImmutableArray<KickAssemblerParserSyntaxError> SyntaxErrors => [.._errors];
-   public FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
+   internal ImmutableArray<KickAssemblerParserSyntaxError> SyntaxErrors => [.._errors];
+   internal FrozenDictionary<IToken, string> FileReferences => _fileReferences.ToFrozenDictionary();
    private readonly Stack<VariablesScope> _variableScopes = new();
    private readonly Stack<ForScope> _forScopes = new();
 
+   /// <inheritdoc />
    public override void EnterProgram(ProgramContext context)
    {
        _scopes.Push(_defaultScopeBuilder);
        base.EnterProgram(context);
    }
-
+   /// <inheritdoc />
    public override void ExitProgram(ProgramContext context)
    {
        base.ExitProgram(context);
        DefaultScope = _defaultScopeBuilder.ToScope();
    }
-
+   /// <inheritdoc />
    public override void ExitErrorSyntax(ErrorSyntaxContext context)
    {
        base.ExitErrorSyntax(context);
@@ -50,14 +53,14 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
    {
        _scopes.Peek().Elements.Add(element);
    }
-
+   /// <inheritdoc />
    public override void EnterScope(ScopeContext context)
    {
        var newScope = new ScopeBuilder(context);
        _scopes.Push(newScope);
        base.EnterScope(context);
    }
-
+   /// <inheritdoc />
    public override void ExitScope(ScopeContext context)
    {
        base.ExitScope(context);
@@ -65,7 +68,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
        var current = _scopes.Peek();
        current.Scopes.Add(scope);
    }
-
+   /// <inheritdoc />
    public override void EnterPreprocessorImport(PreprocessorImportContext context)
    {
       var fileReference = context.fileReference;
@@ -75,7 +78,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
       }
       base.EnterPreprocessorImport(context);
    }
-
+   /// <inheritdoc />
    public override void ExitSegmentDef(SegmentDefContext context)
    {
       if (context.Name is not null)
@@ -86,7 +89,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
 
       base.ExitSegmentDef(context);
    }
-
+   /// <inheritdoc />
     public override void ExitLabel([NotNull] LabelContext context)
     {
         base.ExitLabel(context);
@@ -121,7 +124,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
 
         return null;
     }
-
+    /// <inheritdoc />
     public override void ExitVar(VarContext context)
     {
         base.ExitVar(context);
@@ -135,7 +138,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             }
         }
     }
-
+    /// <inheritdoc />
     public override void ExitForVar(ForVarContext context)
     {
         base.ExitForVar(context);
@@ -150,13 +153,13 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             }
         }
     }
-
+    /// <inheritdoc />
     public override void EnterFor(ForContext context)
     {
         _forScopes.Push(new());
         base.EnterFor(context);
     }
-
+    /// <inheritdoc />
     public override void ExitFor(ForContext context)
     {
         base.ExitFor(context);
@@ -167,7 +170,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             AddElementToCurrentScope(forElement);
         }
     }
-
+    /// <inheritdoc />
     public override void ExitConst(ConstContext context)
     {
         base.ExitConst(context);
@@ -195,12 +198,13 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
     }
 
     private readonly List<EnumValue> _tempEnumValues = new List<EnumValue>();
+    /// <inheritdoc />
     public override void EnterEnumValues(EnumValuesContext context)
     {
         _tempEnumValues.Clear();
         base.EnterEnumValues(context);
     }
-
+    /// <inheritdoc />
     public override void ExitEnumValues(EnumValuesContext context)
     {
         base.ExitEnumValues(context);
@@ -209,6 +213,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             AddElementToCurrentScope(new EnumValues([.._tempEnumValues], context));
         }
     }
+    /// <inheritdoc />
     public override void ExitEnumValue(EnumValueContext context)
     {
         base.ExitEnumValue(context);
@@ -226,12 +231,13 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             }
         }
     }
+    /// <inheritdoc />
     public override void EnterMacroDefine(MacroDefineContext context)
     {
         _variableScopes.Push();
         base.EnterMacroDefine(context);
     }
-
+    /// <inheritdoc />
     public override void ExitMacroDefine(MacroDefineContext context)
     {
         base.ExitMacroDefine(context);
@@ -246,13 +252,13 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             }
         }
     }
-
+    /// <inheritdoc />
     public override void EnterFunctionDefine(FunctionDefineContext context)
     {
         _variableScopes.Push();
         base.EnterFunctionDefine(context);
     }
-
+    /// <inheritdoc />
     public override void ExitFunctionDefine(FunctionDefineContext context)
     {
         base.ExitFunctionDefine(context);
@@ -267,7 +273,7 @@ public class KickAssemblerParserListener: KickAssemblerParserBaseListener
             }
         }
     }
-
+    /// <inheritdoc />
     public override void ExitVariable(VariableContext context)
     {
         base.ExitVariable(context);

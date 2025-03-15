@@ -6,7 +6,7 @@ using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public static class GenericCompletionOptions
+internal static class GenericCompletionOptions
 {
     /// <summary>
     /// 

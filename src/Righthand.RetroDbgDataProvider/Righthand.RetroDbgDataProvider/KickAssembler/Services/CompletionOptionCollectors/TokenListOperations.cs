@@ -6,14 +6,23 @@ using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
+/// <summary>
+/// Token position within array.
+/// </summary>
 public enum PositionWithinArray
 {
+    /// <summary>
+    /// Name.
+    /// </summary>
     Name,
+    /// <summary>
+    /// Value.
+    /// </summary>
     Value
 }
 
 /// <summary>
-/// 
+/// Meta data for array properties.
 /// </summary>
 /// <param name="Assignment"></param>
 /// <param name="StartValue"></param>
@@ -21,10 +30,12 @@ public enum PositionWithinArray
 /// <param name="Comma"/>
 public record ArrayPropertyMeta(IToken? Assignment = null, IToken? StartValue = null, IToken? EndValue = null, IToken? Comma = null)
 {
+    /// <summary>
+    /// An empty instance of <see cref="ArrayPropertyMeta"/>.
+    /// </summary>
     public static readonly ArrayPropertyMeta Empty = new();
-    public IToken? LastToken => Comma ?? EndValue ?? StartValue ?? Assignment;
 
-    public string GetValue(ReadOnlySpan<char> content, int? maxValue = null)
+    internal string GetValue(ReadOnlySpan<char> content, int? maxValue = null)
     {
         if (StartValue is null || EndValue is null)
         {
@@ -36,7 +47,7 @@ public record ArrayPropertyMeta(IToken? Assignment = null, IToken? StartValue = 
     }
 }
 
-public static partial class TokenListOperations
+internal static partial class TokenListOperations
 {
     public enum TokenTypeFamily
     {
@@ -44,7 +55,7 @@ public static partial class TokenListOperations
         Directive,
     }
 
-    public static readonly FrozenSet<int> DirectiveTypes =
+    internal static readonly FrozenSet<int> DirectiveTypes =
     [
         DOTTEXT, DOTENCODING, DOTFILL, DOTFILLWORD, DOTLOHIFILL, DOTCPU, DOTBYTE, DOTWORD, DOTDWORD, PRINT, PRINTNOW,
         VAR, DOTIMPORT, CONST, IF, ELSE, ERRORIF, EVAL, FOR, WHILE, STRUCT, DEFINE, FUNCTION, RETURN, MACRO,
@@ -52,23 +63,23 @@ public static partial class TokenListOperations
         DISK, PC, BREAK, WATCH, ZP
     ];
 
-    public static readonly FrozenSet<int> TextTypes =
+    internal static readonly FrozenSet<int> TextTypes =
     [
         UNQUOTED_STRING, C64, BINARY, TEXT, SOURCE,
     ];
 
-    public static readonly FrozenSet<int> PropertyValueTypes =
+    internal static readonly FrozenSet<int> PropertyValueTypes =
     [
         STRING, BIN_NUMBER, HEX_NUMBER, DEC_NUMBER, UNQUOTED_STRING, TRUE, FALSE,
     ];
 
-    public static readonly FrozenSet<int> PreprocessorDirectiveTypes =
+    internal static readonly FrozenSet<int> PreprocessorDirectiveTypes =
         [HASHIF, HASHELIF, HASHELSE, HASHENDIF, HASHDEFINE, HASHUNDEF, HASHIMPORT, HASHIMPORTIF, HASHIMPORTONCE];
     
-    public static bool IsTextType(this IToken token) => TextTypes.Contains(token.Type);
-    public static bool IsDirectiveType(this IToken token) => DirectiveTypes.Contains(token.Type);
-    public static bool IsPreprocessorDirectiveType(this IToken token) => PreprocessorDirectiveTypes.Contains(token.Type);
-    public static bool IsPropertyValueType(this IToken token) => PropertyValueTypes.Contains(token.Type);
+    internal static bool IsTextType(this IToken token) => TextTypes.Contains(token.Type);
+    internal static bool IsDirectiveType(this IToken token) => DirectiveTypes.Contains(token.Type);
+    internal static bool IsPreprocessorDirectiveType(this IToken token) => PreprocessorDirectiveTypes.Contains(token.Type);
+    internal static bool IsPropertyValueType(this IToken token) => PropertyValueTypes.Contains(token.Type);
 
     internal static TokenTypeFamily GetTokenTypeFamily(IToken token)
     {
@@ -644,7 +655,7 @@ public static partial class TokenListOperations
     }
 
     /// <summary>
-    /// Returns token index containing <param name="column"/>.
+    /// Returns token index containing <paramref name="column"/>.
     /// When cursor is right in front of token, such as |4, it returns token 4 but only when there is space/tab to the left. 
     /// </summary>
     /// <param name="tokens"></param>

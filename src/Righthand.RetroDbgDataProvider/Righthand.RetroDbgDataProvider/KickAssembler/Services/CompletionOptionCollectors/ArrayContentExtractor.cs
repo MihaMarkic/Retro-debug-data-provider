@@ -1,6 +1,6 @@
 ﻿namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public static class ArrayContentExtractor
+internal static class ArrayContentExtractor
 {
     /// <summary>
     /// Extracts last value from text array, such as from "value1, value2, value3" it would extract value3.
@@ -18,7 +18,7 @@ public static class ArrayContentExtractor
         return line.Trim().ToString();
     }
     /// <summary>
-    /// Extract key-value pairs from incomplete <param name="text" /> with some tolerance.
+    /// Extract key-value pairs from incomplete <paramref name="text" /> with some tolerance.
     /// </summary>
     /// <param name="text">A key-value pairs as text, optionally ends with ]</param>
     /// <returns></returns>

@@ -6,6 +6,9 @@ using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
+/// <summary>
+/// Evaluates completion options for directives.
+/// </summary>
 public static class DirectiveCompletionOptions
 {
     
@@ -114,10 +117,22 @@ public static class DirectiveCompletionOptions
         return null;
     }
 
+    /// <summary>
+    /// Token position type.
+    /// </summary>
     public enum PositionType
     {
+        /// <summary>
+        /// At directive.
+        /// </summary>
         Directive,
+        /// <summary>
+        /// At directive type.
+        /// </summary>
         Type,
+        /// <summary>
+        /// At directive value.
+        /// </summary>
         Value,
     }
 

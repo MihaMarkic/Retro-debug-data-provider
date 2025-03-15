@@ -6,7 +6,7 @@ using static Righthand.RetroDbgDataProvider.KickAssembler.KickAssemblerLexer;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
-public static class FileReferenceCompletionOptions
+internal static class FileReferenceCompletionOptions
 {
     /// <summary>
     /// Returns possible completion for file references.

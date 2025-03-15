@@ -4,13 +4,22 @@ using Righthand.RetroDbgDataProvider.Services.Abstract;
 
 namespace Righthand.RetroDbgDataProvider.Services.Implementation;
 
+/// <summary>
+/// Commmon non windows OS dependent code.
+/// </summary>
 public abstract class NonWindowsDependent
 {
+    /// <inheritdoc />
     public StringComparison FileStringComparison => StringComparison.CurrentCulture;
+    /// <inheritdoc />
     public StringComparer FileStringComparer => StringComparer.CurrentCulture;
+    /// <inheritdoc />
     public string ViceExeName => "x64sc";
+    /// <inheritdoc />
     public string JavaExeName => "java";
+    /// <inheritdoc />
     public string NormalizePath(string path) => path.Replace('\\', '/');
+    /// <inheritdoc />
     public async Task<string> ReadAllTextAndAdjustLineEndingsAsync(Stream stream, CancellationToken ct = default)
     {
         var sb = new StringBuilder((int)stream.Length);

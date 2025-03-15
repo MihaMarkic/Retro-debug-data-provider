@@ -8,17 +8,35 @@ using Righthand.RetroDbgDataProvider.Services.Implementation;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.Services.CompletionOptionCollectors;
 
+/// <summary>
+/// Flags for syntax status.
+/// </summary>
 [Flags]
 public enum SyntaxStatus
 {
+    /// <summary>
+    /// Normal.
+    /// </summary>
     None = 0,
+    /// <summary>
+    /// An error.
+    /// </summary>
     Error = 1,
+    /// <summary>
+    /// A string.
+    /// </summary>
     String = 2,
+    /// <summary>
+    /// A comment.
+    /// </summary>
     Comment = 4,
+    /// <summary>
+    /// An array.
+    /// </summary>
     Array = 8,
 }
 
-public static class CompletionOptionCollectorsCommon
+internal static class CompletionOptionCollectorsCommon
 {
     internal static FrozenSet<Suggestion> CreateSuggestionsFromTexts(string root, FrozenSet<string> suggestionTexts, SuggestionOrigin origin)
     {

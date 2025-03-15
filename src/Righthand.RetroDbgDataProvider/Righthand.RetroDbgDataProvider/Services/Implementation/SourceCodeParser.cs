@@ -4,14 +4,23 @@ using Righthand.RetroDbgDataProvider.Models;
 
 namespace Righthand.RetroDbgDataProvider.Services.Implementation;
 
+/// <summary>
+/// Source code parser.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public abstract class SourceCodeParser<T> : DisposableObject
     where T : ParsedSourceFile
 {
-    /// <inheritdoc cref="ISourcecodeParser"/>
+    /// <inheritdoc cref="ISourceCodeParsed{out T}.FilesChanged"/>
     public event EventHandler<FilesChangedEventArgs>? FilesChanged;
+    /// <inheritdoc cref="ISourceCodeParsed{out T}.AllFiles"/>
     public IParsedFilesIndex<T> AllFiles { get; private set; }
-    /// <inheritdoc />
+    /// <inheritdoc cref="ISourceCodeParsed{out T}.ParsingTask"/> 
     public Task? ParsingTask { get; protected set; }
+    /// <summary>
+    /// Creates an instance of <see cref="SourceCodeParser{T}"/> with given files.
+    /// </summary>
+    /// <param name="allFiles"></param>
     protected SourceCodeParser(IParsedFilesIndex<T> allFiles)
     {
         AllFiles = allFiles;
@@ -22,6 +31,12 @@ public abstract class SourceCodeParser<T> : DisposableObject
         await e.WaitAllClientTasksAsync();
     }
 
+    /// <summary>
+    /// Assigns a list of referenced files. If file list has changed, an <see cref="OnFilesChangedAsync"/>
+    /// event is raised.
+    /// </summary>
+    /// <param name="newFiles"></param>
+    /// <param name="ct"></param>
     protected async Task AssignNewFilesAsync(IParsedFilesIndex<T> newFiles, CancellationToken ct)
     {
         if (!ReferenceEquals(newFiles, AllFiles))
@@ -37,6 +52,7 @@ public abstract class SourceCodeParser<T> : DisposableObject
     /// </summary>
     /// <param name="existingFiles"></param>
     /// <param name="newFiles"></param>
+    /// <param name="ct"></param>
     /// <returns></returns>
     internal FilesChangedEventArgs ExtractFileChanges(IParsedFilesIndex<T> existingFiles, IParsedFilesIndex<T> newFiles,
         CancellationToken ct)

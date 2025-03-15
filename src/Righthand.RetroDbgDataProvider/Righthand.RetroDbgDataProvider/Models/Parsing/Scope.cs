@@ -11,18 +11,44 @@ namespace Righthand.RetroDbgDataProvider.Models.Parsing;
 /// </remarks>
 public class Scope: IScopeRange
 {
+    /// <summary>
+    /// Gets a static empty instance.
+    /// </summary>
     public static Scope Empty { get; } = new Scope([], [], null);
+    /// <summary>
+    /// A <see cref="KickAssemblerParser.ScopeContext?"/>. Can be null.
+    /// </summary>
     public KickAssemblerParser.ScopeContext? Context { get; }
+    /// <summary>
+    /// A list of children scopes.
+    /// </summary>
     public ImmutableList<Scope> Scopes { get; }
+    /// <summary>
+    /// Gets elements within the scope.
+    /// </summary>
     public ImmutableList<IScopeElement> Elements { get; }
+    /// <summary>
+    /// Gets range in the file.
+    /// </summary>
     public RangeInFile? Range => Context?.ToRange();
+    /// <summary>
+    /// Creates an instance of <see cref="Scope"/>.
+    /// </summary>
+    /// <param name="scopes"></param>
+    /// <param name="elements"></param>
+    /// <param name="context"></param>
     public Scope(ImmutableList<Scope> scopes, ImmutableList<IScopeElement> elements, KickAssemblerParser.ScopeContext? context)
     {
         Context = context;
         Scopes = scopes;
         Elements = elements;
     }
-
+    /// <summary>
+    /// Evaluates whether scope contains given positon.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="column"></param>
+    /// <returns></returns>
     public bool ContainsPosition(int line, int column)
     {
         return Context is null || Range!.Value.IsInRange(line, column);
@@ -59,24 +85,29 @@ public class Scope: IScopeRange
         }
     }
 }
-
+/// <summary>
+/// Represents a scope rangee.
+/// </summary>
 public interface IScopeRange
 {
+    /// <summary>
+    /// Range in file.
+    /// </summary>
     public RangeInFile? Range { get; }
 }
 
-public class ScopeBuilder
+internal class ScopeBuilder
 {
-    public KickAssemblerParser.ScopeContext? Context { get; }
-    public List<ScopeBuilder> Scopes { get; } = new();
-    public List<IScopeElement> Elements { get; } = new();
+    internal KickAssemblerParser.ScopeContext? Context { get; }
+    internal List<ScopeBuilder> Scopes { get; } = new();
+    internal List<IScopeElement> Elements { get; } = new();
 
-    public ScopeBuilder(KickAssemblerParser.ScopeContext? context)
+    internal ScopeBuilder(KickAssemblerParser.ScopeContext? context)
     {
         Context = context;
     }
 
-    public Scope ToScope()
+    internal Scope ToScope()
     {
         return new Scope(
             [..Scopes.Select(s => s.ToScope())],
@@ -85,11 +116,20 @@ public class ScopeBuilder
         );
     }
 }
-
+/// <summary>
+/// Represents a <see cref="Scope"/> element.
+/// </summary>
 public interface IScopeElement;
-
+/// <summary>
+/// A base scope element.
+/// </summary>
+/// <param name="ParserContext"></param>
+/// <typeparam name="T"></typeparam>
 public abstract record ScopeElement<T>(T ParserContext) : IScopeElement
     where T : ParserRuleContext
 {
+    /// <summary>
+    /// Gets range in file.
+    /// </summary>
     public RangeInFile? Range => ParserContext.ToRange();
 }

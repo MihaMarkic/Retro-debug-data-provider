@@ -5,9 +5,12 @@ using Righthand.Retro.KickAssembler.PreprocessorCondition;
 
 namespace Righthand.RetroDbgDataProvider.KickAssembler.PreprocessorCondition;
 
-public static class PreprocessorConditionEvaluator
+/// <summary>
+/// Evaluates possible completion options for preprocessor directives.
+/// </summary>
+internal static class PreprocessorConditionEvaluator
 {
-    public static bool IsDefined(FrozenSet<string> definedSymbols, string text)
+    internal static bool IsDefined(FrozenSet<string> definedSymbols, string text)
     {
         var input = new AntlrInputStream(text);
         var lexer = new PreprocessorConditionLexer(input);
